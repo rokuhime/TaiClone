@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/taiko-normal-hitclap.wav-84179f5c2070ab3c397bd22211db813c.sample"
+
+[deps]
+
+source_file="res://Skins/Default/taiko-normal-hitclap.wav"
+dest_files=[ "res://.import/taiko-normal-hitclap.wav-84179f5c2070ab3c397bd22211db813c.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

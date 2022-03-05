@@ -1,0 +1,145 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Skins/Default/taiko-bar-right.png" type="Texture" id=1]
+[ext_resource path="res://Skins/Default/approachcircle.png" type="Texture" id=2]
+[ext_resource path="res://Skins/Default/taiko-bar-left.png" type="Texture" id=3]
+[ext_resource path="res://Skins/Default/taiko-drum-outer.png" type="Texture" id=4]
+[ext_resource path="res://Skins/Default/taiko-drum-inner.png" type="Texture" id=5]
+[ext_resource path="res://Skins/Default/taiko-normal-hitclap.wav" type="AudioStream" id=6]
+[ext_resource path="res://Skins/Default/taiko-normal-hitnormal.wav" type="AudioStream" id=7]
+[ext_resource path="res://Scripts/DrumInteraction.gd" type="Script" id=8]
+[ext_resource path="res://Scripts/HitManager.gd" type="Script" id=9]
+[ext_resource path="res://Scripts/SongManager.gd" type="Script" id=10]
+[ext_resource path="res://Sprite.gd" type="Script" id=11]
+[ext_resource path="res://Scripts/ChartManager.gd" type="Script" id=12]
+[ext_resource path="res://Skins/Default/taikohitcircle.png" type="Texture" id=13]
+[ext_resource path="res://Skins/Default/taiko-normal-hitfinish.wav" type="AudioStream" id=14]
+[ext_resource path="res://Skins/Default/taiko-hit0.png" type="Texture" id=15]
+[ext_resource path="res://Skins/Default/taiko-hit300.png" type="Texture" id=16]
+[ext_resource path="res://Skins/Default/taiko-hit100.png" type="Texture" id=17]
+
+[node name="Game" type="Node2D"]
+position = Vector2( 1, 0 )
+
+[node name="DrumInteraction" type="Node" parent="."]
+script = ExtResource( 8 )
+
+[node name="DrumAnimationTween" type="Tween" parent="DrumInteraction"]
+
+[node name="leftDonAudio" type="AudioStreamPlayer2D" parent="DrumInteraction"]
+position = Vector2( 450, 0 )
+stream = ExtResource( 7 )
+
+[node name="rightDonAudio" type="AudioStreamPlayer2D" parent="DrumInteraction"]
+position = Vector2( 550, 0 )
+stream = ExtResource( 7 )
+
+[node name="leftKatAudio" type="AudioStreamPlayer2D" parent="DrumInteraction"]
+position = Vector2( 400, 0 )
+stream = ExtResource( 6 )
+
+[node name="rightKatAudio" type="AudioStreamPlayer2D" parent="DrumInteraction"]
+position = Vector2( 600, 0 )
+stream = ExtResource( 6 )
+
+[node name="HitManager" type="Node" parent="."]
+script = ExtResource( 9 )
+
+[node name="SongManager" type="Node" parent="."]
+script = ExtResource( 10 )
+
+[node name="Song" type="AudioStreamPlayer" parent="SongManager"]
+stream = ExtResource( 14 )
+volume_db = -13.109
+
+[node name="ChartManager" type="Node" parent="."]
+script = ExtResource( 12 )
+
+[node name="Taiko-bar-right" type="Sprite" parent="."]
+position = Vector2( 0, 170 )
+scale = Vector2( 1.02, 0.78 )
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Approachcircle" type="Sprite" parent="Taiko-bar-right"]
+self_modulate = Color( 1, 1, 1, 0.392157 )
+position = Vector2( 194.118, 96.1538 )
+scale = Vector2( 0.637255, 0.833333 )
+texture = ExtResource( 2 )
+
+[node name="Taikohitcircle2" type="Sprite" parent="Taiko-bar-right/Approachcircle"]
+self_modulate = Color( 1, 1, 1, 0.137255 )
+texture = ExtResource( 13 )
+
+[node name="MissNotif" type="Sprite" parent="Taiko-bar-right/Approachcircle"]
+self_modulate = Color( 1, 1, 1, 0 )
+scale = Vector2( 1.25, 1.25 )
+texture = ExtResource( 15 )
+
+[node name="InnaccurateNotif" type="Sprite" parent="Taiko-bar-right/Approachcircle"]
+self_modulate = Color( 1, 1, 1, 0 )
+scale = Vector2( 1.25, 1.25 )
+texture = ExtResource( 17 )
+
+[node name="AccurateNotif" type="Sprite" parent="Taiko-bar-right/Approachcircle"]
+self_modulate = Color( 1, 1, 1, 0 )
+scale = Vector2( 1.25, 1.25 )
+texture = ExtResource( 16 )
+
+[node name="ChartHolder" type="Node2D" parent="."]
+position = Vector2( 0, 244.75 )
+
+[node name="HitNotes" type="Node2D" parent="."]
+visible = false
+modulate = Color( 0.423529, 0.423529, 0.423529, 0.392157 )
+position = Vector2( 0, 244.75 )
+
+[node name="MissedNotes" type="Node2D" parent="."]
+modulate = Color( 0.511719, 0.511719, 0.511719, 0.392157 )
+position = Vector2( 0, 244.75 )
+
+[node name="Taiko-bar-left" type="Sprite" parent="."]
+position = Vector2( 0, 246 )
+scale = Vector2( 0.75, 0.75 )
+texture = ExtResource( 3 )
+centered = false
+offset = Vector2( 0, -98.9 )
+
+[node name="leftKat" type="Sprite" parent="Taiko-bar-left"]
+self_modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 45, 0 )
+scale = Vector2( -1, 1 )
+texture = ExtResource( 4 )
+
+[node name="rightKat" type="Sprite" parent="Taiko-bar-left"]
+self_modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 135, 0 )
+texture = ExtResource( 4 )
+
+[node name="leftDon" type="Sprite" parent="Taiko-bar-left"]
+self_modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 45, 0 )
+texture = ExtResource( 5 )
+
+[node name="rightDon" type="Sprite" parent="Taiko-bar-left"]
+self_modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 135, 0 )
+scale = Vector2( -1, 1 )
+texture = ExtResource( 5 )
+
+[node name="urbar" type="Sprite" parent="."]
+self_modulate = Color( 0, 0.858824, 1, 1 )
+position = Vector2( 525, 550 )
+scale = Vector2( 0.4, 0.3 )
+texture = ExtResource( 1 )
+script = ExtResource( 11 )
+
+[node name="Sprite" type="Sprite" parent="urbar"]
+scale = Vector2( 0.1, 2.56 )
+texture = ExtResource( 13 )
+
+[node name="movingpoint" type="Sprite" parent="urbar"]
+self_modulate = Color( 1, 0, 0, 1 )
+position = Vector2( 0, 1000 )
+scale = Vector2( 0.1, 2.56 )
+texture = ExtResource( 13 )

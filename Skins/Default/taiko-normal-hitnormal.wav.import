@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/taiko-normal-hitnormal.wav-31e71711407f79e8bdc512a3ca76edcb.sample"
+
+[deps]
+
+source_file="res://Skins/Default/taiko-normal-hitnormal.wav"
+dest_files=[ "res://.import/taiko-normal-hitnormal.wav-31e71711407f79e8bdc512a3ca76edcb.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

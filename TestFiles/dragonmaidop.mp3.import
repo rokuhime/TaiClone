@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/dragonmaidop.mp3-beb3ddaa47e3cfe0e0505adec5cfaad4.mp3str"
+
+[deps]
+
+source_file="res://TestFiles/dragonmaidop.mp3"
+dest_files=[ "res://.import/dragonmaidop.mp3-beb3ddaa47e3cfe0e0505adec5cfaad4.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
