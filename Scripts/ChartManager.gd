@@ -65,8 +65,8 @@ func load_chart(chartType, chartText):
 				#noteDataSection[4] = hitsound
 				
 				#slider
-				#noteDataSection[noteDataSection.length() - 1]) = length (osupx)
-				#noteDataSection[noteDataSection.length() - 2]) = repeats
+				#noteDataSection[noteDataSection.size() - 1]) = length (osupx)
+				#noteDataSection[noteDataSection.size() - 2]) = repeats
 				
 				#spinner
 				#noteDataSection[5] = length (time)
@@ -75,7 +75,7 @@ func load_chart(chartType, chartText):
 				match noteDataSection[3]:
 					"2": #slider
 						note.noteType = 2
-						note.makeSpecial("slider", noteDataSection[noteDataSection.length() - 1], noteDataSection[noteDataSection.length() - 2])
+						note.makeSpecial("slider", float(noteDataSection[noteDataSection.size() - 1]), float(noteDataSection[noteDataSection.size() - 2]))
 						pass
 					"12": #spinner
 						note.noteType = 3

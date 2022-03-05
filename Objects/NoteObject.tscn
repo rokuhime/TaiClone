@@ -16,13 +16,12 @@ position = Vector2( 198, 0 )
 
 [node name="SliderMiddle" type="Sprite" parent="TransOffset"]
 self_modulate = Color( 1, 1, 1, 0 )
-position = Vector2( 50, 0 )
-scale = Vector2( 100, 0.55 )
+scale = Vector2( 1e-05, 0.55 )
 texture = ExtResource( 5 )
+offset = Vector2( 0.5, 0 )
 
 [node name="SliderEnd" type="Sprite" parent="TransOffset"]
 self_modulate = Color( 1, 1, 1, 0 )
-position = Vector2( 100, 0 )
 scale = Vector2( 0.55, 0.55 )
 texture = ExtResource( 4 )
 offset = Vector2( 29, 0 )

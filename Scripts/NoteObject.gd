@@ -34,20 +34,25 @@ func initialize() -> void:
 func makeSpecial(type, time, ex): #fix me hookhat!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	match type:
 		"slider":
-			var distance = 2 * ex
+			var pixelLength = time * ex # slider length * repeats
+			endTime = pixelLength / (100 * SongSettings.baseVelocity);
+			get_child(0).get_child(0).scale = Vector2(endTime * 100,0.55)
+			get_child(0).get_child(1).position = Vector2(time + endTime, 0)
 			pass
 		"spinner":
+			endTime = ex
 			pass
 
 func noteHit() -> void:
-	var new_parent = get_node("../../HitNotes")
-	get_parent().remove_child(self)
-	new_parent.add_child(self)
+	if (noteType > 2) : # if d/k
+		var new_parent = get_node("../../HitNotes")
+		get_parent().remove_child(self)
+		new_parent.add_child(self)
 
 func _process(_delta) -> void:
 	self.position = Vector2((time - songManager.getSongPos()) * scrollVelocity, 0)
 	
-	if (songManager.getSongPos() - hitManager.hitWindow + SongSettings.offset > time) && self.get_parent() == get_node("../../ChartHolder"):
+	if (songManager.getSongPos() - hitManager.hitWindow + SongSettings.offset > time) && self.get_parent() == get_node("../../ChartHolder") && noteType < 2:
 		print("note missed")
 		var new_parent = get_node("../../MissedNotes")
 		get_parent().remove_child(self)
