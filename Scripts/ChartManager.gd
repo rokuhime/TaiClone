@@ -2,6 +2,7 @@ extends Node
 
 onready var noteObj = preload("res://Objects/NoteObject.tscn")
 onready var chartHolder = get_node("../ChartHolder")
+onready var songManager = get_node("../SongManager")
 onready var hitNotes = get_node("../HitNotes")
 
 var chartFilePath = "E:/Games/osu!/Songs/1385528 fhana - Aozora no Rhapsody (TV Size)"
@@ -44,7 +45,19 @@ func load_chart(chartType, chartText):
 			music.set_stream(audio_loader.loadfile(chartFilePath + "/" + audioFileName))
 			
 			### CHART
-			##format it so that its just the notes
+			#get bpm
+			######## edit for adding changing bpm maps!!!
+			var parsedTimingPoints = chartText.substr(chartText.find("[TimingPoints]") + 15, chartText.find("[HitObjects]"))
+			var parsedTiming = parsedTimingPoints.split("\n", false, 0)
+			for timingData in parsedTiming:
+				var timingDataSection = timingData.split(",")
+				if timingDataSection[6] == "1": # bpm change
+					songManager.bpm = float(timingDataSection[6])
+					break
+				else: #sv change
+					pass
+			
+			#format it so that its just the notes
 			var parsedChart = chartText.substr(chartText.find("[HitObjects]") + 13, chartText.length() - chartText.find("[HitObjects]"))
 			#split by linebreak
 			var parsedNotes = parsedChart.split("\n", false, 0)

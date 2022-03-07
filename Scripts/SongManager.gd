@@ -3,6 +3,7 @@ extends Node
 onready var songAud = get_node("Song")
 export var offset = 1
 export var baseVelocity = 1
+export var bpm = 1
 
 func getSongPos() -> float:
 	var song_position_raw = (

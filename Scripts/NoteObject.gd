@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+onready var spinnerObj = preload("res://Objects/SpinnerObject.tscn")
+
 onready var drumInteraction = get_node("../../DrumInteraction")
 onready var songManager = get_node("../../SongManager")
 onready var hitManager = get_node("../../HitManager")
@@ -7,9 +9,10 @@ export var noteType = 1
 #0 = d, 1 = k, 2 = slider, 3 = spinner
 
 export var finisher = false
+var passedHitPoint = false
 
 export var time = 4.655
-export var endTime = 0
+var endTime = 0
 export var scrollVelocity = 1000
 
 func initialize() -> void:
@@ -40,11 +43,11 @@ func makeSpecial(type, time, ex): #fix me hookhat!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			get_child(0).get_child(1).position = Vector2(time + endTime, 0)
 			pass
 		"spinner":
-			endTime = ex
+			endTime = float(time) / 1000
 			pass
 
 func noteHit() -> void:
-	if (noteType > 2) : # if d/k
+	if (noteType < 2) : # if d/k
 		var new_parent = get_node("../../HitNotes")
 		get_parent().remove_child(self)
 		new_parent.add_child(self)
@@ -52,6 +55,7 @@ func noteHit() -> void:
 func _process(_delta) -> void:
 	self.position = Vector2((time - songManager.getSongPos()) * scrollVelocity, 0)
 	
+	#missing notes
 	if (songManager.getSongPos() - hitManager.hitWindow + SongSettings.offset > time) && self.get_parent() == get_node("../../ChartHolder") && noteType < 2:
 		print("note missed")
 		var new_parent = get_node("../../MissedNotes")
@@ -59,3 +63,14 @@ func _process(_delta) -> void:
 		new_parent.add_child(self)
 		get_node("../../DrumInteraction/leftDonAudio").play()
 		drumInteraction.hitNotifyAnimation("miss")
+	
+	#spinner spawning
+	if ((songManager.getSongPos() - SongSettings.offset > time) && self.get_parent() == get_node("../../ChartHolder") && noteType == 3) && passedHitPoint == false:
+		passedHitPoint = true
+		print("spinner spawn called")
+		var spinner = spinnerObj.instance()
+		spinner.endTime = endTime
+		spinner.hitGoal = (endTime - time) / songManager.bpm
+		spinner.length = (endTime - time)
+		spinner.initialize(songManager)
+		self.get_parent().add_child(spinner)
