@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Skins/Default/taiko-bar-right.png" type="Texture" id=1]
 [ext_resource path="res://Skins/Default/approachcircle.png" type="Texture" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://Skins/Default/taiko-hit0.png" type="Texture" id=15]
 [ext_resource path="res://Skins/Default/taiko-hit300.png" type="Texture" id=16]
 [ext_resource path="res://Skins/Default/taiko-hit100.png" type="Texture" id=17]
+[ext_resource path="res://Scripts/ScoreManager.gd" type="Script" id=18]
 
 [node name="Game" type="Node2D"]
 position = Vector2( 1, 0 )
@@ -54,6 +55,14 @@ volume_db = -13.109
 
 [node name="ChartManager" type="Node" parent="."]
 script = ExtResource( 12 )
+
+[node name="ScoreManager" type="Node" parent="."]
+script = ExtResource( 18 )
+
+[node name="Label" type="Label" parent="ScoreManager"]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "miss:"
 
 [node name="Taiko-bar-right" type="Sprite" parent="."]
 position = Vector2( 0, 170 )

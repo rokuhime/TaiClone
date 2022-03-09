@@ -5,6 +5,7 @@ onready var spinnerObj = preload("res://Objects/SpinnerObject.tscn")
 onready var drumInteraction = get_node("../../DrumInteraction")
 onready var songManager = get_node("../../SongManager")
 onready var hitManager = get_node("../../HitManager")
+onready var scoreManager = get_node("../../ScoreManager")
 export var noteType = 1
 #0 = d, 1 = k, 2 = slider, 3 = spinner
 
@@ -27,6 +28,11 @@ func initialize() -> void:
 			get_child(0).get_child(1).self_modulate = Color("FCB806") 
 		
 		3: get_child(0).get_child(2).self_modulate = Color("B8B8B8") #spinner
+	
+	if finisher:
+		#fix for skins. maybe make skin manager but that sounds kinda goofy at this point but well see idk
+		get_node("TransOffset/BaseSprite").texture = preload("res://Skins/Default/taikobigcircle.png")
+		get_node("TransOffset/BaseSprite").scale = Vector2(0.95,0.95)
 	
 	#set position in chart
 	self.set_position(Vector2((time + SongSettings.offset) * scrollVelocity, 244.75))
@@ -63,6 +69,7 @@ func _process(_delta) -> void:
 		new_parent.add_child(self)
 		get_node("../../DrumInteraction/leftDonAudio").play()
 		drumInteraction.hitNotifyAnimation("miss")
+		scoreManager.addScore("miss", 0)
 	
 	#spinner spawning
 	if ((songManager.getSongPos() - SongSettings.offset > time) && self.get_parent() == get_node("../../ChartHolder") && noteType == 3) && passedHitPoint == false:
@@ -70,7 +77,8 @@ func _process(_delta) -> void:
 		print("spinner spawn called")
 		var spinner = spinnerObj.instance()
 		spinner.endTime = endTime
-		spinner.hitGoal = (endTime - time) / songManager.bpm
+		spinner.hitGoal = round(((endTime - time) / songManager.bpm) * 4)
 		spinner.length = (endTime - time)
 		spinner.initialize(songManager)
 		self.get_parent().add_child(spinner)
+		self.queue_free()

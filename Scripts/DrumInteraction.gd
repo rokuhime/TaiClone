@@ -10,8 +10,8 @@ onready var rDonAud = get_node("rightDonAudio")
 onready var lKatAud = get_node("leftKatAudio")
 onready var rKatAud = get_node("rightKatAudio")
 
-onready var hit300Obj = get_node("../Taiko-bar-right/Approachcircle/AccurateNotif")
-onready var hit100Obj = get_node("../Taiko-bar-right/Approachcircle/InnaccurateNotif")
+onready var accurateObj = get_node("../Taiko-bar-right/Approachcircle/AccurateNotif")
+onready var inaccurateObj = get_node("../Taiko-bar-right/Approachcircle/InnaccurateNotif")
 onready var missObj = get_node("../Taiko-bar-right/Approachcircle/MissNotif")
 
 onready var tween = get_node("DrumAnimationTween")
@@ -46,9 +46,9 @@ func keypressAnimation(key) -> void:
 func hitNotifyAnimation(type) -> void:
 	var obj
 	match type:
-		"hit300": obj = hit300Obj
-		"hit100": obj = hit100Obj
-		"miss":   obj = missObj
+		"accurate":   obj = accurateObj
+		"inaccurate": obj = inaccurateObj
+		"miss":       obj = missObj
 	
 	tween.interpolate_property(obj, "self_modulate",
 		Color(1,1,1,1), Color(1,1,1,0), 0.2,
