@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/audio.mp3-d59011cd8a24e797729f10d92c14ac5d.mp3str"
+
+[deps]
+
+source_file="res://Charts/audio.mp3"
+dest_files=[ "res://.import/audio.mp3-d59011cd8a24e797729f10d92c14ac5d.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
