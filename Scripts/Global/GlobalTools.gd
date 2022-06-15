@@ -9,12 +9,12 @@ func loadAudio(path) -> AudioStreamSample:
 func loadText(path) -> String:
 	var f = File.new()
 	var fileInText = ""
-	
-	f.open(path, File.READ)
-	while not f.eof_reached(): # iterate through all lines until the end of file is reached
-		var line = f.get_line()
-		fileInText += line + "\n"
-	f.close()
+	if f.file_exists(path):
+		f.open(path, File.READ)
+		while not f.eof_reached(): # iterate through all lines until the end of file is reached
+			var line = f.get_line()
+			fileInText += line + "\n"
+		f.close()
 	return fileInText
 
 func fwdToBackSlash(text) -> String:

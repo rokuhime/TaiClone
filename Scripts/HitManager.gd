@@ -2,7 +2,9 @@ extends Node
 
 onready var music = get_node("../Music")
 onready var drumInteraction = get_node("../DrumInteraction")
-onready var noteContainer = get_node("../BarRight/ObjectContainers/NoteContainer")
+onready var noteContainer = get_node("../BarRight/HitPointOffset/ObjectContainers/NoteContainer")
+
+var auto = false;
 
 var accurateCount = 0;
 var inaccurateCount = 0;
@@ -14,12 +16,17 @@ var accTiming = 0.06
 var nextHittableNote = 0;
 
 func _input(_ev) -> void:
-	if Input.is_action_just_pressed("LeftDon") || Input.is_action_just_pressed("RightDon"): checkInput(false)
-	if Input.is_action_just_pressed("LeftKat") || Input.is_action_just_pressed("RightKat"): checkInput(true)
+	if !auto:
+		if Input.is_action_just_pressed("LeftDon") || Input.is_action_just_pressed("RightDon"): checkInput(false)
+		if Input.is_action_just_pressed("LeftKat") || Input.is_action_just_pressed("RightKat"): checkInput(true)
 	
 func _process(delta) -> void:
 	# UGLY!!!!!!!!!!!!! FIX ME HOOKHAT
 	if (nextNoteExists()):
+		#temp auto
+		if (auto && (music.get_playback_position() - noteContainer.get_child(nextHittableNote).timing) > 0):
+			checkInput(noteContainer.get_child(nextHittableNote).isKat)
+		
 		if (music.get_playback_position() - noteContainer.get_child(nextHittableNote).timing) > inaccTiming:
 			drumInteraction.hitNotifyAnimation("miss");
 			nextHittableNote += 1;
@@ -29,7 +36,7 @@ func checkInput(type) -> void:
 	# might be able to trash if theres a check while loading the chart if theres at least 1 note
 	if (nextNoteExists()):
 		#get next hittable note and current playback position
-		var nextNote = get_node("../BarRight/ObjectContainers/NoteContainer").get_child(nextHittableNote);
+		var nextNote = noteContainer.get_child(nextHittableNote);
 		var curTime = music.get_playback_position();
 		
 		#if the next note is in time to hit and right key pressed
@@ -38,12 +45,10 @@ func checkInput(type) -> void:
 			if (abs(curTime - nextNote.timing) <= accTiming):
 				drumInteraction.hitNotifyAnimation("accurate");
 				nextHittableNote += 1;
-				print("accurate hit")
 				nextNote.deactivate()
 			else: 
 				drumInteraction.hitNotifyAnimation("inaccurate");
 				nextHittableNote += 1;
-				print("inaccurate hit")
 				nextNote.deactivate()
 
 func nextNoteExists() -> bool:

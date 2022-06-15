@@ -10,9 +10,9 @@ onready var rDonAud = get_node("RightDonAudio")
 onready var lKatAud = get_node("LeftKatAudio")
 onready var rKatAud = get_node("RightKatAudio")
 
-onready var accurateObj = get_node("../BarRight/Judgements/JudgeAccurate")
-onready var inaccurateObj = get_node("../BarRight/Judgements/JudgeInaccurate")
-onready var missObj = get_node("../BarRight/Judgements/JudgeMiss")
+onready var accurateObj = get_node("../BarRight/HitPointOffset/Judgements/JudgeAccurate")
+onready var inaccurateObj = get_node("../BarRight/HitPointOffset/Judgements/JudgeInaccurate")
+onready var missObj = get_node("../BarRight/HitPointOffset/Judgements/JudgeMiss")
 
 onready var tween = get_node("DrumAnimationTween")
 

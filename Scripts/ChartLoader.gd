@@ -1,8 +1,9 @@
 extends Node
 
 onready var noteObj = preload("res://Game/Objects/NoteObject.tscn")
-onready var objContainer = get_node("../BarRight/ObjectContainers/NoteContainer")
+onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers/NoteContainer")
 onready var music = get_node("../Music")
+onready var bg = get_node("../Background")
 
 ## finds origin of chart
 #func findChartOrigin(path):
@@ -15,11 +16,11 @@ func loadChart(data):
 	var parsedChart = data.substr(data.find("[HitObjects]") + 13, data.length() - data.find("[HitObjects]"))
 	#split by linebreak
 	var parsedNotes = parsedChart.split("\n", false, 0)
-
-	var noteCollection = {}
+	
+	var noteCollection = []
 	for noteData in parsedNotes:
 		#make note object
-		var note
+		var note = {}
 
 		#split up the line by commas
 		var noteDataSection = noteData.split(",")
@@ -45,6 +46,7 @@ func loadChart(data):
 				match noteDataSection[4]:	
 					"0": # d
 						note["noteType"] = 0
+						note["finisher"] = false
 						pass 
 					"4": # D
 						note["noteType"] = 0
@@ -53,6 +55,7 @@ func loadChart(data):
 
 					"2": # k (whistle)
 						note["noteType"] = 1
+						note["finisher"] = false
 						pass
 					"6": # K (whistle)
 						note["noteType"] = 1
@@ -60,6 +63,7 @@ func loadChart(data):
 						pass
 					"8": # k (clap)
 						note["noteType"] = 1
+						note["finisher"] = false
 						pass
 					"12": # K (clap)
 						note["noteType"] = 1
@@ -68,19 +72,17 @@ func loadChart(data):
 		noteCollection.push_back(note)
 	return noteCollection;
 
-func processAll(data, filePath):
+func processChart(data, filePath):
 	for noteData in data:
 		#fix to use special notes...
 		var note = noteObj.instance()
-		objContainer.get_node("EtcContainer").add_child(note)
-		note.activate()
-	
-	loadAndProcessSong(data, filePath)
+		note.changeProperties(noteData["time"], 3, noteData["noteType"], noteData["finisher"])
+		objContainer.add_child(note)
+		#note.activate()
 
 # returns song file of a chart
 func loadAndProcessSong(data, filePath) -> void:
 	#this is ugly im sorry
-	
 	#get audio file name and separate it in the file
 	var audioFileName = data.substr(data.find("AudioFilename: ") + 15)
 	audioFileName = audioFileName.substr(0, audioFileName.find("\n"))
@@ -88,8 +90,8 @@ func loadAndProcessSong(data, filePath) -> void:
 	#load audio file and apply to song player
 	var audio_loader = AudioLoader.new()
 	var folderPath = filePath.substr(0, filePath.find_last("/"))
-	music.set_stream(audio_loader.loadfile(filePath + "/" + audioFileName))
-	music.play()
+	music.set_stream(audio_loader.loadfile(folderPath + "/" + audioFileName))
+	#music.play()
 
 # returns text info of a chart
 func loadMetadata(data):
@@ -98,7 +100,7 @@ func loadMetadata(data):
 	var result = {};
 	#osu
 	if true:
-		print(data.find("[Metadata]"))
+		#print(data.find("[Metadata]"))
 		var metadataSection = data.substr(data.find("[Metadata]") + 11)
 		metadataSection = metadataSection.substr(0, metadataSection.find("[Difficulty]") - 2)
 		#fix me hook hat, its not working for some reason
@@ -110,100 +112,38 @@ func loadMetadata(data):
 		
 func loadAndProcessAll(filePath) -> void:
 	var data = tools.loadText(filePath)
-	processAll(loadChart(data), filePath)
+	var chartData = loadChart(data)
+	loadAndProcessBackground(data, filePath)
+	wipePastChart()
+	processChart(chartData, filePath)
+	loadAndProcessSong(data, filePath)
 
-#func load_chart(chartType, chartText):
-#	match chartType:
-#		"osu":
-#			### AUDIO
-#			#this is ugly im sorry
-#
-#			#get audio file name and separate it in the file
-#			var audioFileName = chartText.substr(chartText.find("AudioFilename: ") + 15)
-#			audioFileName = audioFileName.substr(0, audioFileName.find("\n"))
-#
-#			#load audio file and apply to song player
-#			var audio_loader = AudioLoader.new()
-#			var music = get_node("../SongManager/Song")
-#			music.set_stream(tools.loadAudio((settings.ChartPath + "/" + audioFileName)))
-#
-#			### CHART
-#			#get bpm
-#			######## edit for adding changing bpm maps!!!
-#			var parsedTimingPoints = chartText.substr(chartText.find("[TimingPoints]") + 15, chartText.find("[HitObjects]"))
-#			var parsedTiming = parsedTimingPoints.split("\n", false, 0)
-#			for timingData in parsedTiming:
-#				var timingDataSection = timingData.split(",")
-##				if timingDataSection[6] == "1": # bpm change
-##					songManager.bpm = float(timingDataSection[6])
-##					break
-##				else: #sv change
-##					pass
-#
-#			#format it so that its just the notes
-#			var parsedChart = chartText.substr(chartText.find("[HitObjects]") + 13, chartText.length() - chartText.find("[HitObjects]"))
-#			#split by linebreak
-#			var parsedNotes = parsedChart.split("\n", false, 0)
-#
-#			for noteData in parsedNotes:
-#				#make note object
-#				var note = noteObj.instance()
-#
-#				#split up the line by commas
-#				var noteDataSection = noteData.split(",")
-#				#set timing
-#				note.time = noteDataSection[2].to_float() / 1000
-#
-#				if (noteDataSection[3] != "2" && noteDataSection[3] != "12"): chartHolder.get_node("Notes").add_child(note)
-#				else: chartHolder.get_node("Special").add_child(note)
-#
-#				#all
-#				#noteDataSection[2] = timing
-#				#noteDataSection[3] = type
-#				#noteDataSection[4] = hitsound
-#
-#				#slider
-#				#noteDataSection[noteDataSection.size() - 1]) = length (osupx)
-#				#noteDataSection[noteDataSection.size() - 2]) = repeats
-#
-#				#spinner
-#				#noteDataSection[5] = length (time)
-#
-#				#get note type
-#				match noteDataSection[3]:
-#					"2": #slider
-#						note.noteType = 2
-#						note.makeSpecial("slider", float(noteDataSection[noteDataSection.size() - 1]), float(noteDataSection[noteDataSection.size() - 2]))
-#						pass
-#					"12": #spinner
-#						note.noteType = 3
-#						note.makeSpecial("spinner", noteDataSection[5], 0)
-#						pass
-#
-#					_:   #normal
-#						#is it d, k, finisher?
-#						match noteDataSection[4]:	
-#							"0": # d
-#								note.noteType = 0
-#								pass 
-#							"4": # D
-#								note.noteType = 0
-#								note.finisher = true
-#								pass 
-#
-#							"2": # k (whistle)
-#								note.noteType = 1
-#								pass
-#							"6": # K (whistle)
-#								note.noteType = 1
-#								note.finisher = true  
-#								pass
-#							"8": # k (clap)
-#								note.noteType = 1
-#								pass
-#							"12": # K (clap)
-#								note.noteType = 1
-#								note.finisher = true  
-#								pass 
-#				note.initialize()
-#			music.play()
+func loadAndProcessBackground(data, filePath) -> void:
+	var folderPath = filePath.substr(0, filePath.find_last("/"))
+	var temp = data.substr(data.find("//Background and Video events"), data.length() - data.find("//Background and Video events"))
+	temp = temp.substr(temp.find("\n") + 1, temp.length())
+	temp = temp.substr(0, temp.find("\n"))
+	temp = temp.substr(temp.find("\"") + 1, temp.find_last("\"") - (temp.find("\"") + 1))
+	
+	var image = Image.new()
+	var err = image.load(folderPath + "/" + temp)
+	if err != OK:
+		# Failed
+		pass
+	else:
+		var newtexture = ImageTexture.new()
+		newtexture.create_from_image(image, 0)
+		bg.texture = newtexture
+
+func playChart() -> void:
+	if (music.playing == false):
+		var allNotes = objContainer.get_children()
+		for note in allNotes:
+			note.activate()
+		music.play()
+	else: music.stop()
+
+func wipePastChart() -> void:
+	for note in objContainer.get_children():
+		objContainer.remove_child(note)
+		note.queue_free()

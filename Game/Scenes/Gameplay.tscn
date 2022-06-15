@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Skins/TestSkin/osu!_rwxudnxmU5.png" type="Texture" id=1]
 [ext_resource path="res://Skins/TestSkin/taiko-bar-right.png" type="Texture" id=2]
@@ -8,7 +8,6 @@
 [ext_resource path="res://Scripts/DrumInteraction.gd" type="Script" id=6]
 [ext_resource path="res://Skins/TestSkin/taiko-drum-hitclap.wav" type="AudioStream" id=7]
 [ext_resource path="res://Skins/TestSkin/taiko-drum-hitnormal.wav" type="AudioStream" id=8]
-[ext_resource path="res://Game/Objects/NoteObject.tscn" type="PackedScene" id=9]
 [ext_resource path="res://Skins/TestSkin/taikobigcircle.png" type="Texture" id=10]
 [ext_resource path="res://Skins/TestSkin/approachcircle.png" type="Texture" id=12]
 [ext_resource path="res://Scripts/ChartLoader.gd" type="Script" id=13]
@@ -21,6 +20,13 @@
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="Background" type="TextureRect" parent="."]
+self_modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand = true
+stretch_mode = 7
 
 [node name="ref" type="TextureRect" parent="."]
 visible = false
@@ -40,20 +46,28 @@ rect_min_size = Vector2( 0, 170 )
 texture = ExtResource( 2 )
 expand = true
 
-[node name="HitPoint" type="TextureRect" parent="BarRight"]
+[node name="HitPointOffset" type="Control" parent="BarRight"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 191.25
+margin_top = -10.0
+margin_right = 191.25
+margin_bottom = -10.0
+
+[node name="HitPoint" type="TextureRect" parent="BarRight/HitPointOffset"]
 self_modulate = Color( 1, 1, 1, 0.435294 )
 anchor_top = 0.5
 anchor_bottom = 0.5
-margin_left = 127.0
-margin_top = -75.0
-margin_right = 256.0
-margin_bottom = 54.0001
+margin_left = -64.0
+margin_top = -64.0
+margin_right = 65.0
+margin_bottom = 65.0001
 rect_scale = Vector2( 0.5, 0.5 )
 rect_pivot_offset = Vector2( 64.5, 64.5 )
 texture = ExtResource( 10 )
 expand = true
 
-[node name="Rim" type="TextureRect" parent="BarRight/HitPoint"]
+[node name="Rim" type="TextureRect" parent="BarRight/HitPointOffset/HitPoint"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_scale = Vector2( 1.25, 1.25 )
@@ -61,31 +75,31 @@ rect_pivot_offset = Vector2( 64.5, 64.5 )
 texture = ExtResource( 12 )
 expand = true
 
-[node name="ObjectContainers" type="Control" parent="BarRight"]
+[node name="ObjectContainers" type="Control" parent="BarRight/HitPointOffset"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 10.0
-margin_bottom = -31.0
+margin_left = -190.847
+margin_top = -65.0
+margin_right = -190.847
+margin_bottom = -65.0
 
-[node name="NoteContainer" type="Control" parent="BarRight/ObjectContainers"]
+[node name="NoteContainer" type="Control" parent="BarRight/HitPointOffset/ObjectContainers"]
 margin_right = 40.0
 margin_bottom = 40.0
 
-[node name="NoteObject" parent="BarRight/ObjectContainers/NoteContainer" instance=ExtResource( 9 )]
-
-[node name="EtcContainer" type="Control" parent="BarRight/ObjectContainers"]
+[node name="EtcContainer" type="Control" parent="BarRight/HitPointOffset/ObjectContainers"]
 margin_right = 40.0
 margin_bottom = 40.0
 
-[node name="Judgements" type="Control" parent="BarRight"]
+[node name="Judgements" type="Control" parent="BarRight/HitPointOffset"]
 anchor_top = 0.5
 anchor_bottom = 0.5
-margin_left = 217.0
-margin_top = 14.5
-margin_right = 217.0
-margin_bottom = 14.5
+margin_left = 25.75
+margin_top = 26.35
+margin_right = 25.75
+margin_bottom = 26.35
 
-[node name="JudgeAccurate" type="TextureRect" parent="BarRight/Judgements"]
+[node name="JudgeAccurate" type="TextureRect" parent="BarRight/HitPointOffset/Judgements"]
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.5
 anchor_top = 0.5
@@ -101,7 +115,7 @@ rect_scale = Vector2( 0.8, 0.8 )
 texture = ExtResource( 14 )
 stretch_mode = 4
 
-[node name="JudgeInaccurate" type="TextureRect" parent="BarRight/Judgements"]
+[node name="JudgeInaccurate" type="TextureRect" parent="BarRight/HitPointOffset/Judgements"]
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.5
 anchor_top = 0.5
@@ -117,7 +131,7 @@ rect_scale = Vector2( 0.8, 0.8 )
 texture = ExtResource( 18 )
 stretch_mode = 4
 
-[node name="JudgeMiss" type="TextureRect" parent="BarRight/Judgements"]
+[node name="JudgeMiss" type="TextureRect" parent="BarRight/HitPointOffset/Judgements"]
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.5
 anchor_top = 0.5
@@ -219,9 +233,7 @@ margin_top = -117.0
 margin_right = 89.0
 margin_bottom = -52.0
 grow_vertical = 0
-text = "metadata: X
-chart: X
-song: X"
+text = "Welcome to TaiClone!"
 valign = 2
 
 [node name="fpstext" type="Label" parent="."]
@@ -244,25 +256,31 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 11.0
 margin_top = -45.0
-margin_right = 314.0
+margin_right = 371.0
 margin_bottom = -7.0
 script = ExtResource( 16 )
 
 [node name="LineEdit" type="LineEdit" parent="temploadchart"]
-margin_right = 215.0
+margin_right = 210.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Chart Location"
 
 [node name="LoadButton" type="Button" parent="temploadchart"]
-margin_left = 219.0
-margin_right = 261.0
+margin_left = 214.0
+margin_right = 256.0
 margin_bottom = 38.0
 text = "Load"
 
 [node name="PlayButton" type="Button" parent="temploadchart"]
-margin_left = 265.0
-margin_right = 303.0
+margin_left = 260.0
+margin_right = 298.0
 margin_bottom = 38.0
 text = "Play"
+
+[node name="AutoToggle" type="CheckBox" parent="temploadchart"]
+margin_left = 302.0
+margin_right = 360.0
+margin_bottom = 38.0
+text = "Auto"

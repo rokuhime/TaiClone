@@ -8,23 +8,28 @@ export var finisher = true
 export var isKat = false
 export var active = false
 
-func _ready() -> void:
-	# note colour
-	
-	
-	if(finisher): get_child(0).rect_scale = Vector2(0.9,0.9)
-	
-	activate()
-
 func _process(delta) -> void:
 	# move note if not hit yet
 	if(active == true): move_and_slide(Vector2((speed * -1 * bpm), 0))
 
-func activate() -> void:
+func changeProperties(newTiming, newSpeed, newIsKat, newFinisher):
+	timing = newTiming
+	speed = newSpeed
+	
+	#finisher scale
+	finisher = newFinisher
+	if(finisher): get_child(0).rect_scale = Vector2(0.9,0.9)
+	
+	#note colour
+	if (newIsKat == 1): isKat = true
+	else: isKat = false
 	if(isKat): get_child(0).self_modulate = skin.KatColour
 	else:      get_child(0).self_modulate = skin.DonColour
-	active = true
+
+func activate() -> void:
+	modulate = Color(1,1,1,1)
 	position = Vector2(timing * speed * bpm, 0)
+	active = true
 
 func deactivate() -> void:
 	modulate = Color(0,0,0,0)
