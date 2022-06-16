@@ -27,7 +27,7 @@ func _process(delta) -> void:
 		if (auto && (music.get_playback_position() - noteContainer.get_child(nextHittableNote).timing) > 0):
 			checkInput(noteContainer.get_child(nextHittableNote).isKat)
 		
-		if (music.get_playback_position() - noteContainer.get_child(nextHittableNote).timing) > inaccTiming:
+		if (!auto && (music.get_playback_position() - noteContainer.get_child(nextHittableNote).timing) > inaccTiming):
 			drumInteraction.hitNotifyAnimation("miss");
 			nextHittableNote += 1;
 
@@ -55,3 +55,9 @@ func nextNoteExists() -> bool:
 		if (noteContainer.get_child_count() - 1 >= nextHittableNote) && (noteContainer.get_child(nextHittableNote) != null):
 			return true;
 		else: return false;
+
+func reset() -> void:
+	accurateCount = 0
+	inaccurateCount = 0
+	missCount = 0
+	nextHittableNote = 0

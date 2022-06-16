@@ -2,7 +2,6 @@ extends KinematicBody2D
 
 export var timing = 0
 export var speed = 1
-export var bpm = 238
 
 export var finisher = true
 export var isKat = false
@@ -10,7 +9,7 @@ export var active = false
 
 func _process(delta) -> void:
 	# move note if not hit yet
-	if(active == true): move_and_slide(Vector2((speed * -1 * bpm), 0))
+	if(active == true): move_and_slide(Vector2((speed * -1), 0))
 
 func changeProperties(newTiming, newSpeed, newIsKat, newFinisher):
 	timing = newTiming
@@ -28,7 +27,7 @@ func changeProperties(newTiming, newSpeed, newIsKat, newFinisher):
 
 func activate() -> void:
 	modulate = Color(1,1,1,1)
-	position = Vector2(timing * speed * bpm, 0)
+	position = Vector2(timing * speed, 0)
 	active = true
 
 func deactivate() -> void:

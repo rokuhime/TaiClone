@@ -20,6 +20,8 @@
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
 
 [node name="Background" type="TextureRect" parent="."]
 self_modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
@@ -43,6 +45,8 @@ anchor_bottom = 0.5
 margin_top = -130.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 170 )
+size_flags_horizontal = 3
+size_flags_vertical = 4
 texture = ExtResource( 2 )
 expand = true
 
@@ -78,10 +82,6 @@ expand = true
 [node name="ObjectContainers" type="Control" parent="BarRight/HitPointOffset"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -190.847
-margin_top = -65.0
-margin_right = -190.847
-margin_bottom = -65.0
 
 [node name="NoteContainer" type="Control" parent="BarRight/HitPointOffset/ObjectContainers"]
 margin_right = 40.0
@@ -153,6 +153,8 @@ anchor_bottom = 0.5
 margin_top = -125.0
 margin_right = 130.0
 margin_bottom = 19.9999
+size_flags_horizontal = 3
+size_flags_vertical = 4
 texture = ExtResource( 3 )
 expand = true
 
@@ -224,6 +226,7 @@ script = ExtResource( 15 )
 
 [node name="ChartLoader" type="Node" parent="."]
 script = ExtResource( 13 )
+baseSVMultiplier = 3
 
 [node name="debugtext" type="Label" parent="."]
 anchor_top = 1.0
