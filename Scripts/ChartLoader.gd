@@ -10,7 +10,7 @@ onready var bg = get_node("../Background")
 
 var currentChartData;
 
-export var baseSVMultiplier = 1
+export var baseSVMultiplier : float = 1
 #only used for osu beatmaps rn cuz its stinky lo
 var mapSVMultiplier = 1
 
@@ -91,54 +91,56 @@ func processChart(data, filePath):
 	mapSVMultiplier = float(mapBaseSV) * baseSVMultiplier
 	
 	var curSVData = getSV(0)
-	currentSV = curSVData[0]
-	nextChange = curSVData[1]
+	# current sv = 0, next change = 1
 	
 	for noteData in data:
 		#fix to use special notes...
 		
 		#change sv if needed
-		if (nextChange != null):
-			if (noteData["time"] >= nextChange):
+		if (curSVData[1] != null):
+			if (noteData["time"] >= curSVData[1]):
 				curSVData = getSV(noteData["time"])
+		#print("note made: t: " + str(noteData["time"]) + ", sv: " + str(curSVData[0]))
 		var note = noteObj.instance()
-		note.changeProperties(noteData["time"], currentSV * mapSVMultiplier, noteData["noteType"], noteData["finisher"])
+		note.changeProperties(noteData["time"], curSVData[0] * mapSVMultiplier, noteData["noteType"], noteData["finisher"])
 		objContainer.add_child(note)
+		objContainer.move_child(note, 0)
 
 func getSV(time):
-	#ok so this is a stupid implimentation i think.
-	#basically it will get the sv you need, and give you the timing for the next bpm change
-	#that way it wont have to run this function every 2 seconds for no reason w
 	var bpm = null;
 	var sv = null;
 	var nextChange = null;
 	
 	var timingList = currentChartData.substr(currentChartData.find("[TimingPoints]") + 15)
-	timingList = timingList.substr(0,timingList.find("[HitObjects]") - 3)
-	timingList = timingList.split("\n", false, 0)
 	
+	if (timingList.find("[Colours]") != -1):
+		timingList = timingList.substr(0,timingList.find("[Colours]") - 3)
+	else: 
+		timingList = timingList.substr(0,timingList.find("[HitObjects]") - 3)
+	
+	timingList = timingList.split("\n", false, 0)
+
 	for timing in timingList:
 		timing = timing.split(",")
-		# if its the next needed sv... 
-		if float(timing[0]) <= time || (bpm == null || sv == null):
-			print("changing sv, curTime = " + str(time) + " and next seen sv timing is " + timing[0])
-			# sv
-			if float(timing[1]) <= 0: 
-				sv = (float(timing[1]) * -1) / 100
-			# bpm
-			else: 
+		# check for if sv/bpm not found yet
+		if (sv == null && float(timing[1]) < 0):
+			sv = (float(timing[1]) * -1) / 100
+		elif (bpm == null && float(timing[1]) >= 0):
+			bpm = 60000 / float(timing[1])
+		
+		elif (float(timing[0]) / 1000 <= time):
+			#sv
+			if(float(timing[1]) < 0):
+				sv = (1 / (float(timing[1]) / -100))
+			#bpm
+			elif(float(timing[1]) >= 0):
 				bpm = 60000 / float(timing[1])
+				
 		else:
-			print("nextChange = " + str(nextChange) + " to " + timing[0])
-			#FIX ME HOOKHAT DDDDDDDDDDD:
-			nextChange = float(timing[0]);
-			break;
-	
-	# should never happen, but protec ya self
-	if sv == null: sv = 1
-	
-	var result = [bpm * sv, nextChange];
-	return result;
+			nextChange = float(timing[0]) / 1000
+			break
+			
+	return [bpm * sv, nextChange]
 
 # returns song file of a chart
 func loadAndProcessSong(filePath) -> void:

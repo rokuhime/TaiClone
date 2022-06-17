@@ -24,10 +24,10 @@ func _process(delta) -> void:
 	# UGLY!!!!!!!!!!!!! FIX ME HOOKHAT
 	if (nextNoteExists()):
 		#temp auto
-		if (auto && (music.get_playback_position() - noteContainer.get_child(nextHittableNote).timing) > 0):
-			checkInput(noteContainer.get_child(nextHittableNote).isKat)
+		if (auto && (music.get_playback_position() - noteContainer.get_child(noteContainer.get_child_count() - nextHittableNote - 1).timing) > 0):
+			checkInput(noteContainer.get_child(noteContainer.get_child_count() - nextHittableNote - 1).isKat)
 		
-		if (!auto && (music.get_playback_position() - noteContainer.get_child(nextHittableNote).timing) > inaccTiming):
+		if (!auto && (music.get_playback_position() - noteContainer.get_child(noteContainer.get_child_count() - nextHittableNote - 1).timing) > inaccTiming):
 			drumInteraction.hitNotifyAnimation("miss");
 			nextHittableNote += 1;
 
@@ -36,7 +36,7 @@ func checkInput(type) -> void:
 	# might be able to trash if theres a check while loading the chart if theres at least 1 note
 	if (nextNoteExists()):
 		#get next hittable note and current playback position
-		var nextNote = noteContainer.get_child(nextHittableNote);
+		var nextNote = noteContainer.get_child(noteContainer.get_child_count() - nextHittableNote - 1);
 		var curTime = music.get_playback_position();
 		
 		#if the next note is in time to hit and right key pressed

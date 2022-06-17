@@ -226,7 +226,7 @@ script = ExtResource( 15 )
 
 [node name="ChartLoader" type="Node" parent="."]
 script = ExtResource( 13 )
-baseSVMultiplier = 3
+baseSVMultiplier = 2.0
 
 [node name="debugtext" type="Label" parent="."]
 anchor_top = 1.0
