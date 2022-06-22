@@ -20,7 +20,7 @@ func _input(_ev) -> void:
 		if Input.is_action_just_pressed("LeftDon") || Input.is_action_just_pressed("RightDon"): checkInput(false)
 		if Input.is_action_just_pressed("LeftKat") || Input.is_action_just_pressed("RightKat"): checkInput(true)
 	
-func _process(delta) -> void:
+func _process(_delta) -> void:
 	# UGLY!!!!!!!!!!!!! FIX ME HOOKHAT
 	if (nextNoteExists()):
 		#temp auto

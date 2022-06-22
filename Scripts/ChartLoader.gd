@@ -3,6 +3,7 @@ extends Node
 onready var hitManager = get_node("../HitManager")
 
 onready var noteObj = preload("res://Game/Objects/NoteObject.tscn")
+onready var spinWarnObj = preload("res://Game/Objects/SpinnerWarnObject.tscn")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers/NoteContainer")
 
 onready var music = get_node("../Music")
@@ -13,6 +14,8 @@ var currentChartData;
 export var baseSVMultiplier : float = 1
 #only used for osu beatmaps rn cuz its stinky lo
 var mapSVMultiplier = 1
+
+#ive got to clean this sometime soon, gosh
 
 ## finds origin of chart
 #func findChartOrigin(path):
@@ -81,10 +84,10 @@ func loadChart():
 		noteCollection.push_back(note)
 	return noteCollection;
 
-func processChart(data, filePath):
+func processChart(data):
 	#note speed is bpm * sv
-	var currentSV = 1;
-	var nextChange = null;
+	#var currentSV = 1;
+	#var nextChange = null;
 	
 	var mapBaseSV;
 	mapBaseSV = currentChartData.substr(currentChartData.find("SliderMultiplier:") + 17, currentChartData.length() - currentChartData.find("SliderTickRate:"))
@@ -177,7 +180,7 @@ func loadAndProcessAll(filePath) -> void:
 	loadAndProcessBackground(filePath)
 	wipePastChart()
 	hitManager.reset()
-	processChart(chartData, filePath)
+	processChart(chartData)
 	loadAndProcessSong(filePath)
 
 func loadAndProcessBackground(filePath) -> void:

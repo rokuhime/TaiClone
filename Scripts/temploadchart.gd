@@ -10,7 +10,7 @@ onready var chartLoader = get_node("../ChartLoader")
 onready var debugTextThing = get_node("../debugtext")
 onready var fpsText = get_node("../fpstext")
 
-func _process(delta):
+func _process(_delta):
 	fpsText.text = "FPS: " + str(Engine.get_frames_per_second())
 	
 func _ready():
