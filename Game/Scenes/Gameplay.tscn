@@ -259,31 +259,51 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 11.0
 margin_top = -45.0
-margin_right = 371.0
+margin_right = 643.0
 margin_bottom = -7.0
 script = ExtResource( 16 )
 
 [node name="LineEdit" type="LineEdit" parent="temploadchart"]
-margin_right = 210.0
+margin_right = 159.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Chart Location"
 
 [node name="LoadButton" type="Button" parent="temploadchart"]
-margin_left = 214.0
-margin_right = 256.0
+margin_left = 163.0
+margin_right = 205.0
 margin_bottom = 38.0
 text = "Load"
 
 [node name="PlayButton" type="Button" parent="temploadchart"]
-margin_left = 260.0
-margin_right = 298.0
+margin_left = 209.0
+margin_right = 247.0
 margin_bottom = 38.0
 text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="temploadchart"]
-margin_left = 302.0
-margin_right = 360.0
+margin_left = 251.0
+margin_right = 309.0
 margin_bottom = 38.0
 text = "Auto"
+
+[node name="MuteToggle" type="CheckBox" parent="temploadchart"]
+margin_left = 313.0
+margin_right = 374.0
+margin_bottom = 38.0
+text = "Mute"
+
+[node name="RateInput" type="LineEdit" parent="temploadchart"]
+margin_left = 378.0
+margin_right = 538.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Target Rate (dont work yet)"
+
+[node name="RateButton" type="Button" parent="temploadchart"]
+margin_left = 542.0
+margin_right = 632.0
+margin_bottom = 38.0
+text = "Change Rate"

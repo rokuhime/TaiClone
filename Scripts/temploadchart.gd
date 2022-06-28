@@ -1,8 +1,13 @@
 extends HBoxContainer
 
+onready var music = get_node("../Music")
+
 onready var input = get_node("LineEdit")
 onready var loadButt = get_node("LoadButton")
 onready var playButt = get_node("PlayButton")
+onready var muteToggle = get_node("MuteToggle")
+onready var rateButt = get_node("PlayButton")
+onready var rateInput = get_node("RateInput")
 onready var autoToggle = get_node("AutoToggle")
 
 onready var hitManager = get_node("../HitManager")
@@ -16,7 +21,9 @@ func _process(_delta):
 func _ready():
 	loadButt.connect("pressed", self, "loadFunc")
 	playButt.connect("pressed", get_node("../ChartLoader"), "playChart")
+	muteToggle.connect("pressed", self, "toggleMute")
 	autoToggle.connect("pressed", self, "autoThing")
+	rateButt.connect("pressed", self, "changeRate")
 	
 func loadFunc():
 	debugTextThing.text = "Loading... [Checking File]"
@@ -32,3 +39,12 @@ func loadFunc():
 
 func autoThing():
 	hitManager.auto = autoToggle.pressed
+
+func changeRate():
+	var rate = float(rateInput.text)
+	music.set_pitch_scale(rate)
+
+func toggleMute():
+	if muteToggle.pressed: music.volume_db = -100000
+	else: music.volume_db = 0
+	pass

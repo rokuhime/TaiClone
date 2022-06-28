@@ -4,7 +4,8 @@ onready var hitManager = get_node("../HitManager")
 
 onready var noteObj = preload("res://Game/Objects/NoteObject.tscn")
 onready var spinWarnObj = preload("res://Game/Objects/SpinnerWarnObject.tscn")
-onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers/NoteContainer")
+onready var rollObj = preload("res://Game/Objects/RollObject.tscn")
+onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
 
 onready var music = get_node("../Music")
 onready var bg = get_node("../Background")
@@ -44,15 +45,40 @@ func loadChart():
 		#noteDataSection[3] = type
 		#noteDataSection[4] = hitsound
 
-		#slider
-		#noteDataSection[noteDataSection.size() - 1]) = length (osupx)
-		#noteDataSection[noteDataSection.size() - 2]) = repeats
+		#roll
+		#noteDataSection[noteDataSection.size() - 1] = length (osupx)
+		#noteDataSection[noteDataSection.size() - 2] = repeats
 
 		#spinner
 		#noteDataSection[5] = length (time)
 
 		#get note type
+		#please fix me. :(
+		#osu keeps type as an int that references bytes
 		match noteDataSection[3]:
+			"12": #spinner
+				note["noteType"] = 2
+				note["length"] = (float(noteDataSection[5]) / 1000) - note["time"]
+				pass
+			
+			"2": #roll
+				# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
+				# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
+				# so the length = osupx * repeats * 100 to get it into seconds essentially
+				var osupx = float(noteDataSection[noteDataSection.size() - 1])
+				var repeats = int(noteDataSection[noteDataSection.size() - 2])
+				
+				note["noteType"] = 3
+				
+				#god, please fix this.
+				match noteDataSection[4]:
+					"4": note["finisher"] = true
+					"6": note["finisher"] = true
+					"12": note["finisher"] = true
+					_: note["finisher"] = false
+				
+				note["length"] = (osupx * repeats) / 100
+			
 			_:   #normal
 				#is it d, k, finisher?
 				match noteDataSection[4]:	
@@ -94,20 +120,42 @@ func processChart(data):
 	mapSVMultiplier = float(mapBaseSV) * baseSVMultiplier
 	
 	var curSVData = getSV(0)
-	# current sv = 0, next change = 1
+	# current sv = 0, current bpm = 1, next change = 2
 	
 	for noteData in data:
 		#fix to use special notes...
-		
-		#change sv if needed
-		if (curSVData[1] != null):
-			if (noteData["time"] >= curSVData[1]):
+		# check sv
+		if (curSVData[2] != null): # if another bpm change exists...
+			if (noteData["time"] >= curSVData[2]): #if the current note time is above/equal to next bpm change
 				curSVData = getSV(noteData["time"])
-		#print("note made: t: " + str(noteData["time"]) + ", sv: " + str(curSVData[0]))
-		var note = noteObj.instance()
-		note.changeProperties(noteData["time"], curSVData[0] * mapSVMultiplier, noteData["noteType"], noteData["finisher"])
-		objContainer.add_child(note)
-		objContainer.move_child(note, 0)
+		
+		#figure out what kind of note it is
+		#normal note
+		if (noteData["noteType"] == 0 || noteData["noteType"] == 1):
+			var note = noteObj.instance()
+			note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier, noteData["noteType"], noteData["finisher"])
+			objContainer.get_node("NoteContainer").add_child(note)
+			objContainer.get_node("NoteContainer").move_child(note, 0)
+		
+		#fix me hookhat
+		#special note
+		else:
+			match(noteData["noteType"]):
+				2: #spinner
+					var note = spinWarnObj.instance()
+					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier, noteData["length"])
+					objContainer.get_node("EtcContainer").add_child(note)
+					objContainer.get_node("EtcContainer").move_child(note, 0)
+					
+				3: #roll
+					var note = rollObj.instance()
+					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier, noteData["finisher"], 
+															noteData["length"], curSVData[0])
+					objContainer.get_node("EtcContainer").add_child(note)
+					objContainer.get_node("EtcContainer").move_child(note, 0)
+					
+				_: #emergency
+					print("bad note at " + str(noteData["time"]) + "!")
 
 func getSV(time):
 	var bpm = null;
@@ -124,13 +172,15 @@ func getSV(time):
 	timingList = timingList.split("\n", false, 0)
 
 	for timing in timingList:
-		timing = timing.split(",")
+		timing = timing.split(",") #split it to array
+		
 		# check for if sv/bpm not found yet
-		if (sv == null && float(timing[1]) < 0):
+		if (sv == null && float(timing[1]) < 0): #replaces sv with first sv first
 			sv = (float(timing[1]) * -1) / 100
-		elif (bpm == null && float(timing[1]) >= 0):
+		elif (bpm == null && float(timing[1]) >= 0): #replaces bpm with first bpm first
 			bpm = 60000 / float(timing[1])
 		
+		#checking for last timing before being called
 		elif (float(timing[0]) / 1000 <= time):
 			#sv
 			if(float(timing[1]) < 0):
@@ -139,11 +189,12 @@ func getSV(time):
 			elif(float(timing[1]) >= 0):
 				bpm = 60000 / float(timing[1])
 				
-		else:
+		else: #once all gained, get the next change time and stop looping
 			nextChange = float(timing[0]) / 1000
 			break
-			
-	return [bpm * sv, nextChange]
+	
+	if (sv == null): sv = 1 #incase sv not found, set to 1
+	return [bpm, sv, nextChange]
 
 # returns song file of a chart
 func loadAndProcessSong(filePath) -> void:
@@ -203,13 +254,16 @@ func loadAndProcessBackground(filePath) -> void:
 func playChart() -> void:
 	hitManager.reset()
 	if (music.playing == false):
-		var allNotes = objContainer.get_children()
+		var allNotes = []
+		for subContainer in objContainer.get_children():
+			for note in subContainer.get_children():
+				allNotes.push_front(note)
 		for note in allNotes:
 			note.activate()
 		music.play()
 	else: music.stop()
 
 func wipePastChart() -> void:
-	for note in objContainer.get_children():
-		objContainer.remove_child(note)
-		note.queue_free()
+	for subContainer in objContainer.get_children():
+		for note in subContainer.get_children():
+			note.queue_free()

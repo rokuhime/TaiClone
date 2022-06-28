@@ -9,7 +9,7 @@ export var active = false
 
 func _process(_delta) -> void:
 	# move note if not hit yet
-	if(active == true): move_and_slide(Vector2((speed * -1), 0))
+	if active: move_and_slide(Vector2((speed * -1), 0))
 
 func changeProperties(newTiming, newSpeed, newIsKat, newFinisher):
 	timing = newTiming
