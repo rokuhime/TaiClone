@@ -70,6 +70,7 @@ func _input(_ev) -> void:
 				if(get_node("TickContainer").get_child_count() - 1 < currentTick): currentTick = get_node("TickContainer").get_child_count() - 1
 				if get_node("TickContainer").get_child(currentTick).visible:
 					get_node("TickContainer").get_child(currentTick).set_visible(false)
+					hitManager.addScore("roll")
 
 func _process(_delta):
 	if active: move_and_slide(Vector2((speed * -1), 0))

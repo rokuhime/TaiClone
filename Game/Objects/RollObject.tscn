@@ -69,7 +69,9 @@ expand = true
 
 [node name="Tick" type="TextureRect" parent="."]
 visible = false
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
 margin_top = -64.5
 margin_right = 13.0
@@ -77,10 +79,14 @@ margin_bottom = 64.5
 grow_horizontal = 2
 grow_vertical = 2
 rect_scale = Vector2( 0.56, 0.56 )
-rect_pivot_offset = Vector2( -8, 64.5 )
+rect_pivot_offset = Vector2( 6.5, 64.5 )
 texture = ExtResource( 4 )
 stretch_mode = 4
 
 [node name="TickContainer" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -6.5
+margin_right = -6.5

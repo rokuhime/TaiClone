@@ -3,6 +3,7 @@ extends Node
 onready var countText = get_node("Label")
 onready var spinCircRot = get_node("RotationObj")
 onready var tween = get_node("Tween")
+onready var hitManager = get_node("../../../../../HitManager")
 
 export var timing: float = 0
 export var length: float = 5
@@ -66,6 +67,7 @@ func hitSuccess():
 	curHitCount += 1;
 	nextHitIsKat = !nextHitIsKat;
 	countText.text = str(neededHits - curHitCount)
+	hitManager.addScore("spinner")
 	
 	tween.interpolate_property(self, "currentSpeed",
 	3, 0, 1,
@@ -73,16 +75,12 @@ func hitSuccess():
 	tween.start()
 
 func spinnerFinished():
-	var result: int = 0
 	if (neededHits <= curHitCount):
-		#give 300
-		result = 2
+		hitManager.addScore("accurate")
 	elif ((int(neededHits) / 2 ) <= curHitCount):
-		#give 100
-		result = 1
+		hitManager.addScore("inaccurate")
 	else:
-		#give miss
-		result = 0
+		hitManager.addScore("miss")
 	
 	#make spinner fade out
 	tween.interpolate_property(self, "modulate",
