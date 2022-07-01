@@ -13,20 +13,18 @@ onready var bg = get_node("../Background")
 var currentChartData;
 
 export var baseSVMultiplier : float = 1
-#only used for osu beatmaps rn cuz its stinky lo
 var mapSVMultiplier = 1
 
 #ive got to clean this sometime soon, gosh
 
-## finds origin of chart
-#func findChartOrigin(path):
-#	
-#	return null;
-
 # returns notes of a chart
 func loadChart():
 	#format it so that its just the notes
-	var parsedChart = currentChartData.substr(currentChartData.find("[HitObjects]") + 13, currentChartData.length() - currentChartData.find("[HitObjects]"))
+	var parsedChart = currentChartData.substr(currentChartData.find("[HitObjects]") + 13, 
+						currentChartData.length() - currentChartData.find("[HitObjects]"))
+	var mapBaseSV;
+	mapBaseSV = float(currentChartData.substr(currentChartData.find("SliderMultiplier:") + 17, 
+				currentChartData.length() - currentChartData.find("SliderTickRate:")))
 	#split by linebreak
 	var parsedNotes = parsedChart.split("\n", false, 0)
 	
@@ -34,79 +32,57 @@ func loadChart():
 	for noteData in parsedNotes:
 		#make note object
 		var note = {}
-
+		
 		#split up the line by commas
 		var noteDataSection = noteData.split(",")
 		#set timing
 		note["time"] = noteDataSection[2].to_float() / 1000
-
-		#all
-		#noteDataSection[2] = timing
-		#noteDataSection[3] = type
-		#noteDataSection[4] = hitsound
-
-		#roll
-		#noteDataSection[noteDataSection.size() - 1] = length (osupx)
-		#noteDataSection[noteDataSection.size() - 2] = repeats
-
-		#spinner
-		#noteDataSection[5] = length (time)
-
+		
 		#get note type
-		#please fix me. :(
 		#osu keeps type as an int that references bytes
-		match noteDataSection[3]:
-			"12": #spinner
-				note["noteType"] = 2
-				note["length"] = (float(noteDataSection[5]) / 1000) - note["time"]
-				pass
+		
+		if(1 << 3 & int(noteDataSection[3])): # spinner
+			note["noteType"] = 2
+			note["length"] = (float(noteDataSection[5]) / 1000) - note["time"]
 			
-			"2": #roll
-				# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
-				# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
-				# so the length = osupx * repeats * 100 to get it into seconds essentially
-				var osupx = float(noteDataSection[noteDataSection.size() - 1])
-				var repeats = int(noteDataSection[noteDataSection.size() - 2])
-				
-				note["noteType"] = 3
-				
-				#god, please fix this.
-				match noteDataSection[4]:
-					"4": note["finisher"] = true
-					"6": note["finisher"] = true
-					"12": note["finisher"] = true
-					_: note["finisher"] = false
-				
-				note["length"] = (osupx * repeats) / 100
+		elif(1 << 1 & int(noteDataSection[3])): # roll
+			# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
+			# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
+			# so the length = osupx * repeats * 100 to get it into seconds essentially
+			var osupx = float(noteDataSection[noteDataSection.size() - 1])
+			var repeats = int(noteDataSection[noteDataSection.size() - 2])
+			var svData = getSV(note["time"])
+			var beatLength = getBeatLength(note["time"])
 			
-			_:   #normal
-				#is it d, k, finisher?
-				match noteDataSection[4]:	
-					"0": # d
-						note["noteType"] = 0
-						note["finisher"] = false
-						pass 
-					"4": # D
-						note["noteType"] = 0
-						note["finisher"] = true
-						pass 
-
-					"2": # k (whistle)
-						note["noteType"] = 1
-						note["finisher"] = false
-						pass
-					"6": # K (whistle)
-						note["noteType"] = 1
-						note["finisher"] = true  
-						pass
-					"8": # k (clap)
-						note["noteType"] = 1
-						note["finisher"] = false
-						pass
-					"12": # K (clap)
-						note["noteType"] = 1
-						note["finisher"] = true  
-						pass 
+			note["noteType"] = 3
+			
+			#finisher check
+			if(1 << 2 & int(noteDataSection[4])): note["finisher"] = true
+			else: note["finisher"] = false
+			
+			#fix me hook hat
+			#its directly copied from the .osu file format from the osu wiki so i have 0 clue why this doesnt work :(
+			#also has had vigorous testing, half the time it works half the time it doesnt
+			#if anyone knows why id really really appreciate the help
+			note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
+			
+		else: #normal note
+			#finisher
+			if(1 << 2 & int(noteDataSection[4])):
+				note["finisher"] = true
+			else:
+				note["finisher"] = false
+			
+			#kat (whistle)
+			if(1 << 1 & int(noteDataSection[4])):
+				note["noteType"] = 1
+			#kat (clap)
+			elif(1 << 3 & int(noteDataSection[4])):
+				note["noteType"] = 1
+			#don
+			else:
+				note["noteType"] = 0
+			
 		noteCollection.push_back(note)
 	return noteCollection;
 
@@ -116,8 +92,9 @@ func processChart(data):
 	#var nextChange = null;
 	
 	var mapBaseSV;
-	mapBaseSV = currentChartData.substr(currentChartData.find("SliderMultiplier:") + 17, currentChartData.length() - currentChartData.find("SliderTickRate:"))
-	mapSVMultiplier = float(mapBaseSV) * baseSVMultiplier
+	mapBaseSV = currentChartData.substr(currentChartData.find("SliderMultiplier:") + 17, 
+				currentChartData.length() - currentChartData.find("SliderTickRate:"))
+	mapSVMultiplier = float(mapBaseSV)
 	
 	var curSVData = getSV(0)
 	# current sv = 0, current bpm = 1, next change = 2
@@ -133,24 +110,25 @@ func processChart(data):
 		#normal note
 		if (noteData["noteType"] == 0 || noteData["noteType"] == 1):
 			var note = noteObj.instance()
-			note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier, noteData["noteType"], noteData["finisher"])
+			note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, 
+													noteData["noteType"], noteData["finisher"])
 			objContainer.get_node("NoteContainer").add_child(note)
 			objContainer.get_node("NoteContainer").move_child(note, 0)
 		
-		#fix me hookhat
 		#special note
 		else:
 			match(noteData["noteType"]):
 				2: #spinner
 					var note = spinWarnObj.instance()
-					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier, noteData["length"])
+					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, 
+															noteData["length"])
 					objContainer.get_node("EtcContainer").add_child(note)
 					objContainer.get_node("EtcContainer").move_child(note, 0)
 					
 				3: #roll
 					var note = rollObj.instance()
-					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier, noteData["finisher"], 
-															noteData["length"], curSVData[0])
+					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, 
+															noteData["finisher"], noteData["length"], curSVData[0])
 					objContainer.get_node("EtcContainer").add_child(note)
 					objContainer.get_node("EtcContainer").move_child(note, 0)
 					
@@ -196,6 +174,34 @@ func getSV(time):
 	if (sv == null): sv = 1 #incase sv not found, set to 1
 	return [bpm, sv, nextChange]
 
+func getBeatLength(time):
+	var beatLength = null;
+	
+	var timingList = currentChartData.substr(currentChartData.find("[TimingPoints]") + 15)
+	
+	if (timingList.find("[Colours]") != -1):
+		timingList = timingList.substr(0,timingList.find("[Colours]") - 3)
+	else: 
+		timingList = timingList.substr(0,timingList.find("[HitObjects]") - 3)
+	
+	timingList = timingList.split("\n", false, 0)
+
+	for timing in timingList:
+		timing = timing.split(",") #split it to array
+		
+		# check for if beatLength not found yet
+		if (beatLength == null): #replaces beatLength with first beatLength first
+			beatLength = float(timing[1])
+		
+		#checking for last timing before being called
+		elif (float(timing[0]) / 1000 <= time):
+			#sv
+			beatLength = float(timing[1])
+				
+		else: #once all gained, get the next change time and stop looping
+			break
+	return beatLength
+
 # returns song file of a chart
 func loadAndProcessSong(filePath) -> void:
 	#this is ugly im sorry
@@ -218,7 +224,6 @@ func loadMetadata():
 		#print(data.find("[Metadata]"))
 		var metadataSection = currentChartData.substr(currentChartData.find("[Metadata]") + 11)
 		metadataSection = metadataSection.substr(0, metadataSection.find("[Difficulty]") - 2)
-		#fix me hook hat, its not working for some reason
 		metadataSection.split("\n", false, 0)
 		result = metadataSection
 

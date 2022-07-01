@@ -33,18 +33,23 @@ func changeProperties(newTiming, newSpeed, newFinisher, newLength, newBPM):
 	get_node("Scale/Body").rect_size = Vector2(speed * newLength, 129)
 	
 	#i. i dont know why this works?
-	tickDistance = newBPM / 60
-	totalTicks = floor((length / (tickDistance)) * 4)
+	#update: it doesnt work. fix me hookhat
+	tickDistance = newBPM / 60 #beats per second
+	totalTicks = floor(length / tickDistance * 4) #length of the roll divided by the distance between ticks
+	#and multiplied by the time signature (how frequent) plus the last one
+	print(totalTicks)
+	
 	#haha funny !!! idx like iidx as in funny beatmania silly game keys
 	# but its alos like INDEX!!!!!!!!!!!!!!!
 	#GET IT
 	for tickIdx in totalTicks:
-		var newTick = get_child(1).duplicate()
+		#duplicate base tick and put it on the tick container
+		var newTick = get_child(1).duplicate() 
 		get_node("TickContainer").add_child(newTick)
 		get_node("TickContainer").move_child(newTick, get_node("TickContainer").get_child_count())
 		
-		#FIX ME HOOKHAT ITS HORRENDOUS
 		newTick.rect_position = Vector2((tickIdx * (tickDistance * 4)) * (speed / 1000) * 40, -64.5)
+		#(the number of tick * (tick distance * time signature)) * (note speed / 1000) * (time signature * 10)
 
 func _input(_ev) -> void:
 	if (totalTicks > currentTick && active):
@@ -59,7 +64,7 @@ func _input(_ev) -> void:
 				#get current tick target
 				currentTick = round((curSongTime - timing) * (tickDistance * 4))
 				if currentTick < 0: currentTick = 0
-				#elif currentTick > totalTicks: currentTick = totalTicks
+				elif currentTick > totalTicks: currentTick = totalTicks
 				print(currentTick)
 				
 				if(get_node("TickContainer").get_child_count() - 1 < currentTick): currentTick = get_node("TickContainer").get_child_count() - 1

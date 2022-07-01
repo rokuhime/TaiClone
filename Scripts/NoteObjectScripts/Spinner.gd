@@ -93,6 +93,8 @@ func spinnerFinished():
 
 func deactivate():
 	deleteSelf(1, 1)
+func activate():
+	deleteSelf(1, 1)
 
 func deleteSelf(_a, _b):
 	queue_free()

@@ -19,24 +19,28 @@ onready var tween = get_node("DrumAnimationTween")
 func _input(_ev) -> void:
 	if Input.is_action_just_pressed("LeftDon"): 
 		keypressAnimation(1)
-		lDonAud.play()
 	if Input.is_action_just_pressed("RightDon"): 
 		keypressAnimation(2)
-		rDonAud.play()
 	if Input.is_action_just_pressed("LeftKat"): 
 		keypressAnimation(3)
-		lKatAud.play()
 	if Input.is_action_just_pressed("RightKat"): 
 		keypressAnimation(4)
-		rKatAud.play()
 
 func keypressAnimation(key) -> void:
 	var obj
 	match key:
-		1: obj = lDonObj
-		2: obj = rDonObj 
-		3: obj = lKatObj
-		4: obj = rKatObj
+		1: 
+			obj = lDonObj
+			lDonAud.play()
+		2: 
+			obj = rDonObj 
+			rDonAud.play()
+		3: 
+			obj = lKatObj
+			lKatAud.play()
+		4:
+			obj = rKatObj
+			rKatAud.play()
 	
 	tween.interpolate_property(obj, "self_modulate",
 		Color(1,1,1,1), Color(1,1,1,0), 0.2,

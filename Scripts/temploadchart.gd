@@ -1,6 +1,6 @@
 extends HBoxContainer
 
-onready var music = get_node("../Music")
+onready var music = get_node("../../Music")
 
 onready var input = get_node("LineEdit")
 onready var loadButt = get_node("LoadButton")
@@ -10,8 +10,8 @@ onready var rateButt = get_node("PlayButton")
 onready var rateInput = get_node("RateInput")
 onready var autoToggle = get_node("AutoToggle")
 
-onready var hitManager = get_node("../HitManager")
-onready var chartLoader = get_node("../ChartLoader")
+onready var hitManager = get_node("../../HitManager")
+onready var chartLoader = get_node("../../ChartLoader")
 onready var debugTextThing = get_node("../debugtext")
 onready var fpsText = get_node("../fpstext")
 
@@ -20,7 +20,7 @@ func _process(_delta):
 	
 func _ready():
 	loadButt.connect("pressed", self, "loadFunc")
-	playButt.connect("pressed", get_node("../ChartLoader"), "playChart")
+	playButt.connect("pressed", get_node("../../ChartLoader"), "playChart")
 	muteToggle.connect("pressed", self, "toggleMute")
 	autoToggle.connect("pressed", self, "autoThing")
 	rateButt.connect("pressed", self, "changeRate")
