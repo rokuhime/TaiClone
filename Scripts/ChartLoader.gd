@@ -11,6 +11,7 @@ onready var music = get_node("../Music")
 onready var bg = get_node("../Background")
 
 var currentChartData;
+var currentTimingData;
 
 export var baseSVMultiplier : float = 1
 var mapSVMultiplier = 1
@@ -27,6 +28,8 @@ func loadChart():
 				currentChartData.length() - currentChartData.find("SliderTickRate:")))
 	#split by linebreak
 	var parsedNotes = parsedChart.split("\n", false, 0)
+	#get timing points
+	loadTiming()
 	
 	var noteCollection = []
 	for noteData in parsedNotes:
@@ -51,7 +54,7 @@ func loadChart():
 			# so the length = osupx * repeats * 100 to get it into seconds essentially
 			var osupx = float(noteDataSection[noteDataSection.size() - 1])
 			var repeats = int(noteDataSection[noteDataSection.size() - 2])
-			var svData = getSV(note["time"])
+			var svData = findTiming(note["time"])
 			var beatLength = getBeatLength(note["time"])
 			
 			note["noteType"] = 3
@@ -96,7 +99,7 @@ func processChart(data):
 				currentChartData.length() - currentChartData.find("SliderTickRate:"))
 	mapSVMultiplier = float(mapBaseSV)
 	
-	var curSVData = getSV(0)
+	var curSVData = findTiming(0)
 	# current sv = 0, current bpm = 1, next change = 2
 	
 	for noteData in data:
@@ -104,7 +107,7 @@ func processChart(data):
 		# check sv
 		if (curSVData[2] != null): # if another bpm change exists...
 			if (noteData["time"] >= curSVData[2]): #if the current note time is above/equal to next bpm change
-				curSVData = getSV(noteData["time"])
+				curSVData = findTiming(noteData["time"])
 		
 		#figure out what kind of note it is
 		#normal note
@@ -135,11 +138,9 @@ func processChart(data):
 				_: #emergency
 					print("bad note at " + str(noteData["time"]) + "!")
 
-func getSV(time):
-	var bpm = null;
-	var sv = null;
-	var nextChange = null;
-	
+func loadTiming():
+	var timingArr = []
+	var curSV = 0
 	var timingList = currentChartData.substr(currentChartData.find("[TimingPoints]") + 15)
 	
 	if (timingList.find("[Colours]") != -1):
@@ -152,26 +153,39 @@ func getSV(time):
 	for timing in timingList:
 		timing = timing.split(",") #split it to array
 		
-		# check for if sv/bpm not found yet
-		if (sv == null && float(timing[1]) < 0): #replaces sv with first sv first
-			sv = (float(timing[1]) * -1) / 100
-		elif (bpm == null && float(timing[1]) >= 0): #replaces bpm with first bpm first
-			bpm = 60000 / float(timing[1])
-		
-		#checking for last timing before being called
-		elif (float(timing[0]) / 1000 <= time):
-			#sv
-			if(float(timing[1]) < 0):
-				sv = (1 / (float(timing[1]) / -100))
-			#bpm
-			elif(float(timing[1]) >= 0):
-				bpm = 60000 / float(timing[1])
-				
-		else: #once all gained, get the next change time and stop looping
-			nextChange = float(timing[0]) / 1000
+		#store timing points in svArr, 0 = timing 1 = type 2 = value
+		if (float(timing[1]) >= 0): #if bpm
+			timingArr.push_back([float(timing[0]) / 1000, 0, (60000 / float(timing[1]))])
+		else: #if sv
+			timingArr.push_back([float(timing[0]) / 1000, 1, (1 / (float(timing[1]) / -100))])	
+	currentTimingData = timingArr;
+
+func findTiming(time):
+	var bpm = null;
+	var sv = null;
+	var nextChange = null;
+	
+	#get the closest sv/bpm to the timing
+	for value in currentTimingData:
+		if (value[0] <= time):
+			match value[1]:
+				0: #bpm
+					bpm = value[2]
+				1: #sv
+					sv = value[2]
+		else:
+			nextChange = value[0]
 			break
 	
-	if (sv == null): sv = 1 #incase sv not found, set to 1
+	#make sure you get the first bpm for sure
+	if bpm == null:
+		for value in currentTimingData:
+			if (value[1] == 0):
+				bpm = value[2]
+				break
+	
+	if sv == null: sv = 1;
+	
 	return [bpm, sv, nextChange]
 
 func getBeatLength(time):
@@ -221,7 +235,6 @@ func loadMetadata():
 	var result = {};
 	#osu
 	if true:
-		#print(data.find("[Metadata]"))
 		var metadataSection = currentChartData.substr(currentChartData.find("[Metadata]") + 11)
 		metadataSection = metadataSection.substr(0, metadataSection.find("[Difficulty]") - 2)
 		metadataSection.split("\n", false, 0)

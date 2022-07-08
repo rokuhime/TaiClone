@@ -18,6 +18,7 @@ var bestCombo = 0;
 var score = 0;
 var scoreMultiplier = 1;
 
+var missTiming = -0.2
 var inaccTiming = 0.145
 var accTiming = 0.06
 
@@ -76,20 +77,27 @@ func checkInput(isKat, isRight) -> void:
 		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
 		var curTime = music.get_playback_position();
 		
-		#if the next note is in time to hit and right key pressed
-		if (abs(curTime - nextNote.timing) <= inaccTiming && nextNote.isKat == isKat):
-			#check if accurate
-			if (abs(curTime - nextNote.timing) <= accTiming):
+		if (abs(curTime - nextNote.timing) <= inaccTiming):
+			#check if accurate and right key pressed
+			if (abs(curTime - nextNote.timing) <= accTiming && nextNote.isKat == isKat):
 				addScore("accurate")
 				nextHittableNote += 1;
 				nextNote.deactivate()
-			else: 
+			#check if inaccurate and right key pressed
+			elif (nextNote.isKat == isKat): 
 				addScore("inaccurate")
 				nextHittableNote += 1;
 				nextNote.deactivate()
 			
+			#broken for some reason, not really sure whats wrong. ill look at it later
+#			#check if inaccurate and wrong key pressed
+#			else:
+#				print("bruh")
+#				addScore("miss")
+#				nextHittableNote += 1;
+			
 			if nextNote.finisher == true: lastNoteWasFinisher = true
-		
+			
 		lastSideUsedIsRight = isRight
 
 func addScore(type) -> void:

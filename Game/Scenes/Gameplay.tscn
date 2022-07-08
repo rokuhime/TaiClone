@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Skins/TestSkin/osu!_rwxudnxmU5.png" type="Texture" id=1]
 [ext_resource path="res://Skins/TestSkin/taiko-bar-right.png" type="Texture" id=2]
@@ -16,6 +16,7 @@
 [ext_resource path="res://Skins/TestSkin/taiko-hit300.png" type="Texture" id=14]
 [ext_resource path="res://Scripts/HitManager.gd" type="Script" id=15]
 [ext_resource path="res://Scripts/temploadchart.gd" type="Script" id=16]
+[ext_resource path="res://Scripts/KeybindChanger.gd" type="Script" id=17]
 [ext_resource path="res://Skins/TestSkin/taiko-hit100.png" type="Texture" id=18]
 [ext_resource path="res://Skins/TestSkin/taiko-hit0.png" type="Texture" id=19]
 
@@ -42,6 +43,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
+__meta__ = {
+"_edit_vertical_guides_": [ -119.0 ]
+}
 
 [node name="Background" type="TextureRect" parent="."]
 self_modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
@@ -314,40 +318,46 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 9.0
 margin_top = -46.0
-margin_right = 518.0
+margin_right = 642.0
 margin_bottom = -8.0
 script = ExtResource( 16 )
 
 [node name="LineEdit" type="LineEdit" parent="debug/temploadchart"]
-margin_right = 294.0
+margin_right = 242.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Chart Location"
 
 [node name="LoadButton" type="Button" parent="debug/temploadchart"]
-margin_left = 298.0
-margin_right = 340.0
+margin_left = 246.0
+margin_right = 288.0
 margin_bottom = 38.0
 text = "Load"
 
 [node name="PlayButton" type="Button" parent="debug/temploadchart"]
-margin_left = 344.0
-margin_right = 382.0
+margin_left = 292.0
+margin_right = 330.0
 margin_bottom = 38.0
 text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="debug/temploadchart"]
-margin_left = 386.0
-margin_right = 444.0
+margin_left = 334.0
+margin_right = 392.0
 margin_bottom = 38.0
 text = "Auto"
 
-[node name="MuteToggle" type="CheckBox" parent="debug/temploadchart"]
-margin_left = 448.0
-margin_right = 509.0
+[node name="MuteMToggle" type="CheckBox" parent="debug/temploadchart"]
+margin_left = 396.0
+margin_right = 499.0
 margin_bottom = 38.0
-text = "Mute"
+text = "Mute Music"
+
+[node name="MuteHToggle" type="CheckBox" parent="debug/temploadchart"]
+margin_left = 503.0
+margin_right = 633.0
+margin_bottom = 38.0
+text = "Mute Hitsounds"
 
 [node name="RateInput" type="LineEdit" parent="debug/temploadchart"]
 visible = false
@@ -365,7 +375,7 @@ margin_right = 632.0
 margin_bottom = 38.0
 text = "Change Rate"
 
-[node name="RateButton" type="Button" parent="debug"]
+[node name="SettingsButton" type="Button" parent="debug"]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -389,6 +399,7 @@ text = "v0.1 - IT WORKS edition"
 align = 2
 
 [node name="SettingsPanel" type="Panel" parent="debug"]
+visible = false
 self_modulate = Color( 1, 1, 1, 0.607843 )
 anchor_left = 1.0
 anchor_top = 1.0
@@ -402,7 +413,7 @@ size_flags_horizontal = 5
 size_flags_vertical = 5
 script = ExtResource( 11 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="debug/SettingsPanel"]
+[node name="Panel" type="HBoxContainer" parent="debug/SettingsPanel"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -416,29 +427,30 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Hotkeys" type="VBoxContainer" parent="debug/SettingsPanel/HBoxContainer"]
+[node name="Keybinds" type="VBoxContainer" parent="debug/SettingsPanel/Panel"]
 margin_right = 100.0
 margin_bottom = 110.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+script = ExtResource( 17 )
 
-[node name="Label" type="Label" parent="debug/SettingsPanel/HBoxContainer/Hotkeys"]
+[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds"]
 margin_right = 100.0
 margin_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Hotkeys"
+text = "Keybinds"
 align = 1
 valign = 1
 
-[node name="LeftKat" type="HBoxContainer" parent="debug/SettingsPanel/HBoxContainer/Hotkeys"]
+[node name="LeftKat" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
 margin_top = 18.0
 margin_right = 100.0
 margin_bottom = 38.0
 
-[node name="Label" type="Label" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/LeftKat"]
+[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/LeftKat"]
 margin_top = 3.0
 margin_right = 48.0
 margin_bottom = 17.0
@@ -446,18 +458,21 @@ text = "Left Kat"
 align = 1
 valign = 1
 
-[node name="Button" type="Button" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/LeftKat"]
+[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/LeftKat"]
 margin_left = 52.0
 margin_right = 86.0
 margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
 text = "KEY"
 
-[node name="LeftDon" type="HBoxContainer" parent="debug/SettingsPanel/HBoxContainer/Hotkeys"]
+[node name="LeftDon" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
 margin_top = 42.0
 margin_right = 100.0
 margin_bottom = 62.0
 
-[node name="Label" type="Label" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/LeftDon"]
+[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/LeftDon"]
 margin_top = 3.0
 margin_right = 54.0
 margin_bottom = 17.0
@@ -465,18 +480,21 @@ text = "Left Don"
 align = 1
 valign = 1
 
-[node name="Button" type="Button" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/LeftDon"]
+[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/LeftDon"]
 margin_left = 58.0
 margin_right = 92.0
 margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
 text = "KEY"
 
-[node name="RightDon" type="HBoxContainer" parent="debug/SettingsPanel/HBoxContainer/Hotkeys"]
+[node name="RightDon" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
 margin_top = 66.0
 margin_right = 100.0
 margin_bottom = 86.0
 
-[node name="Label" type="Label" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/RightDon"]
+[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/RightDon"]
 margin_top = 3.0
 margin_right = 62.0
 margin_bottom = 17.0
@@ -484,18 +502,21 @@ text = "Right Don"
 align = 1
 valign = 1
 
-[node name="Button" type="Button" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/RightDon"]
+[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/RightDon"]
 margin_left = 66.0
 margin_right = 100.0
 margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
 text = "KEY"
 
-[node name="RightKat" type="HBoxContainer" parent="debug/SettingsPanel/HBoxContainer/Hotkeys"]
+[node name="RightKat" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
 margin_top = 90.0
 margin_right = 100.0
 margin_bottom = 110.0
 
-[node name="Label" type="Label" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/RightKat"]
+[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/RightKat"]
 margin_top = 3.0
 margin_right = 56.0
 margin_bottom = 17.0
@@ -503,21 +524,25 @@ text = "Right Kat"
 align = 1
 valign = 1
 
-[node name="Button" type="Button" parent="debug/SettingsPanel/HBoxContainer/Hotkeys/RightKat"]
+[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/RightKat"]
 margin_left = 60.0
 margin_right = 94.0
 margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
 text = "KEY"
 
-[node name="Hotkeys2" type="VBoxContainer" parent="debug/SettingsPanel/HBoxContainer"]
-margin_left = 104.0
-margin_top = 55.0
-margin_right = 104.0
-margin_bottom = 55.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+[node name="SaveButton" type="Button" parent="debug/SettingsPanel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -24.0
+margin_top = -26.0
+margin_right = 24.0
+margin_bottom = -6.0
+text = "Save"
 
 [node name="DrumInteraction" type="Node" parent="."]
 script = ExtResource( 6 )
