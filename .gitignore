@@ -10,6 +10,8 @@ export_presets.cfg
 .mono/
 data_*/
 
-# Stuff made by me
+# VSCode specific ignores
+.vscode/
 
+# Stuff made by me
 config.ini
