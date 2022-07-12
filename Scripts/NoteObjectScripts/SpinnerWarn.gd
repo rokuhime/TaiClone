@@ -31,7 +31,7 @@ func deactivate() -> void:
 	#note to self; couldnt i just give the cur sv timing from the chart loader? seems redundant to do this and
 	#possibly more laggy honestly
 	var chartSV = get_node("../../../../../ChartLoader").findTiming(timing)
-	var hitsRequired = floor(length / ((chartSV[0] / 60)) * 8)
+	var hitsRequired = floor(length / ((chartSV[0] / 60)) * 16)
 	get_parent().add_child(spinner)
 	get_parent().move_child(spinner, 0)
 	spinner.changeProperties(timing, hitsRequired, length)

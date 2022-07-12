@@ -1,6 +1,7 @@
 extends Node
 
 onready var music = get_node("../Music")
+onready var chart = get_node("../ChartLoader")
 onready var drumInteraction = get_node("../DrumInteraction")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
 
@@ -8,24 +9,29 @@ onready var comboLabel = get_node("../BarLeft/DrumVisual/Combo")
 onready var scoreLabel = get_node("../UI/Score")
 onready var accuracyLabel = get_node("../UI/Accuracy")
 
+onready var fDonAud = get_node("../DrumInteraction/FinisherDonAudio")
+onready var fKatAud = get_node("../DrumInteraction/FinisherKatAudio")
+
 var auto = false;
 
-var accurateCount = 0;
-var inaccurateCount = 0;
-var missCount = 0;
-var combo = 0;
-var bestCombo = 0;
-var score = 0;
-var scoreMultiplier = 1;
+var accurateCount: int = 0;
+var inaccurateCount: int = 0;
+var missCount: int = 0;
+var combo: int = 0;
+var bestCombo: int = 0;
+var score: int = 0;
+var scoreMultiplier: float = 1;
 
-var missTiming = -0.2
-var inaccTiming = 0.145
-var accTiming = 0.06
+var missTiming: float = -0.2
+var inaccTiming: float = 0.145
+var accTiming: float = 0.06
 
-var nextHittableNote = 0;
+var nextHittableNote: int = 0;
 
-var lastSideUsedIsRight;
-var lastNoteWasFinisher = false;
+var lastSideUsedIsRight: bool;
+var lastNoteWasFinisher: bool = false;
+
+var curTime: float = 0
 
 func _input(_ev) -> void:
 	if !auto:
@@ -35,10 +41,12 @@ func _input(_ev) -> void:
 		if Input.is_action_just_pressed("RightKat"): checkInput(true, true)
 	
 func _process(_delta) -> void:
-	if (nextNoteExists()):
+	if (nextNoteExists() && chart.curPlaying):
+		curTime = chart.curTime;
+		
 		#temp auto
 		#doesnt support special note types currently
-		if (auto && (music.get_playback_position() - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
+		if (auto && (chart.curTime - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
 			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).isKat
 			
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
@@ -57,48 +65,50 @@ func _process(_delta) -> void:
 			lastSideUsedIsRight = !lastSideUsedIsRight
 		
 		#miss check
-		if (!auto && (music.get_playback_position() - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > inaccTiming):
+		if (!auto && (chart.curTime - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > inaccTiming):
 			addScore("miss")
 			nextHittableNote += 1;
 
 func checkInput(isKat, isRight) -> void:
 	#finisher check
-	if (lastNoteWasFinisher):
-		var curTime = music.get_playback_position();
-		var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
-		if (abs(curTime - lastNote.timing) <= accTiming && lastNote.isKat == isKat) && (lastSideUsedIsRight != isRight):
-			#swallow input, give more points
-			addScore("finisher")
-			lastNoteWasFinisher = false
+	if chart.curPlaying:
+		if (lastNoteWasFinisher):
+			var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
+			if (abs(curTime - lastNote.timing) <= accTiming && lastNote.isKat == isKat) && (lastSideUsedIsRight != isRight):
+				#swallow input, give more points
+				addScore("finisher")
+				if isKat: fKatAud.play()
+				else: fDonAud.play()
+				lastNoteWasFinisher = false
 
-	# make sure theres a note in the chart first so no errors are thrown
-	if (nextNoteExists()):
-		#get next hittable note and current playback position
-		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
-		var curTime = music.get_playback_position();
-		
-		if (abs(curTime - nextNote.timing) <= inaccTiming):
-			#check if accurate and right key pressed
-			if (abs(curTime - nextNote.timing) <= accTiming && nextNote.isKat == isKat):
-				addScore("accurate")
-				nextHittableNote += 1;
-				nextNote.deactivate()
-			#check if inaccurate and right key pressed
-			elif (nextNote.isKat == isKat): 
-				addScore("inaccurate")
-				nextHittableNote += 1;
-				nextNote.deactivate()
+		# make sure theres a note in the chart first so no errors are thrown
+		if (nextNoteExists()):
+			#get next hittable note and current playback position
+			var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
 			
-			#broken for some reason, not really sure whats wrong. ill look at it later
-#			#check if inaccurate and wrong key pressed
-#			else:
-#				print("bruh")
-#				addScore("miss")
-#				nextHittableNote += 1;
-			
-			if nextNote.finisher == true: lastNoteWasFinisher = true
-			
-		lastSideUsedIsRight = isRight
+			if (abs(curTime - nextNote.timing) <= inaccTiming):
+				#check if accurate and right key pressed
+				if (abs(curTime - nextNote.timing) <= accTiming && nextNote.isKat == isKat):
+					addScore("accurate")
+					nextHittableNote += 1;
+					nextNote.deactivate()
+				#check if inaccurate and right key pressed
+				elif (nextNote.isKat == isKat): 
+					addScore("inaccurate")
+					nextHittableNote += 1;
+					nextNote.deactivate()
+				
+				#broken for some reason, not really sure whats wrong. ill look at it later
+	#			#check if inaccurate and wrong key pressed
+	#			else:
+	#				print("bruh")
+	#				addScore("miss")
+	#				nextHittableNote += 1;
+				
+				if nextNote.finisher == true: 
+					lastNoteWasFinisher = true
+				
+			lastSideUsedIsRight = isRight
 
 func addScore(type) -> void:
 	match type:
@@ -138,6 +148,7 @@ func addScore(type) -> void:
 func nextNoteExists() -> bool:
 		for subContainer in objContainer.get_children():
 			if (subContainer.get_child_count() > 1):
+				#throws a bunch of errors, not mandatory to change but should look into
 				if (subContainer.get_child_count() - 1 >= nextHittableNote) && (objContainer.get_node("NoteContainer").get_child(nextHittableNote) != null):
 					return true;
 		return false;

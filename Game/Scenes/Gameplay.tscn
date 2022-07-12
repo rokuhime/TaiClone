@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://Skins/TestSkin/osu!_rwxudnxmU5.png" type="Texture" id=1]
 [ext_resource path="res://Skins/TestSkin/taiko-bar-right.png" type="Texture" id=2]
@@ -19,6 +19,10 @@
 [ext_resource path="res://Scripts/KeybindChanger.gd" type="Script" id=17]
 [ext_resource path="res://Skins/TestSkin/taiko-hit100.png" type="Texture" id=18]
 [ext_resource path="res://Skins/TestSkin/taiko-hit0.png" type="Texture" id=19]
+[ext_resource path="res://Skins/TestSkin/taiko-drum-hitwhistle.wav" type="AudioStream" id=20]
+[ext_resource path="res://Skins/TestSkin/taiko-drum-hitfinish.wav" type="AudioStream" id=21]
+[ext_resource path="res://Scripts/ResolutionChanger.gd" type="Script" id=22]
+[ext_resource path="res://Scripts/OffsetThingy.gd" type="Script" id=23]
 
 [sub_resource type="DynamicFont" id=1]
 size = 45
@@ -70,7 +74,7 @@ margin_top = -130.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 170 )
 size_flags_horizontal = 3
-size_flags_vertical = 4
+size_flags_vertical = 3
 texture = ExtResource( 2 )
 expand = true
 
@@ -112,6 +116,7 @@ margin_right = 40.0
 margin_bottom = 40.0
 
 [node name="EtcContainer" type="Control" parent="BarRight/HitPointOffset/ObjectContainers"]
+modulate = Color( 1, 1, 1, 0.380392 )
 margin_right = 40.0
 margin_bottom = 40.0
 
@@ -384,7 +389,7 @@ margin_left = -90.0
 margin_top = -38.0
 text = "Settings"
 
-[node name="Label" type="Label" parent="debug"]
+[node name="VersionText" type="Label" parent="debug"]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -395,18 +400,17 @@ margin_right = -101.0
 margin_bottom = -7.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "v0.1 - IT WORKS edition"
+text = "version"
 align = 2
 
 [node name="SettingsPanel" type="Panel" parent="debug"]
-visible = false
 self_modulate = Color( 1, 1, 1, 0.607843 )
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -251.0
-margin_top = -252.0
+margin_left = -321.0
+margin_top = -266.0
 margin_right = -13.0
 margin_bottom = -52.0
 size_flags_horizontal = 5
@@ -427,112 +431,6 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Keybinds" type="VBoxContainer" parent="debug/SettingsPanel/Panel"]
-margin_right = 100.0
-margin_bottom = 110.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-script = ExtResource( 17 )
-
-[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds"]
-margin_right = 100.0
-margin_bottom = 14.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Keybinds"
-align = 1
-valign = 1
-
-[node name="LeftKat" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
-margin_top = 18.0
-margin_right = 100.0
-margin_bottom = 38.0
-
-[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/LeftKat"]
-margin_top = 3.0
-margin_right = 48.0
-margin_bottom = 17.0
-text = "Left Kat"
-align = 1
-valign = 1
-
-[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/LeftKat"]
-margin_left = 52.0
-margin_right = 86.0
-margin_bottom = 20.0
-focus_mode = 0
-toggle_mode = true
-enabled_focus_mode = 0
-text = "KEY"
-
-[node name="LeftDon" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
-margin_top = 42.0
-margin_right = 100.0
-margin_bottom = 62.0
-
-[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/LeftDon"]
-margin_top = 3.0
-margin_right = 54.0
-margin_bottom = 17.0
-text = "Left Don"
-align = 1
-valign = 1
-
-[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/LeftDon"]
-margin_left = 58.0
-margin_right = 92.0
-margin_bottom = 20.0
-focus_mode = 0
-toggle_mode = true
-enabled_focus_mode = 0
-text = "KEY"
-
-[node name="RightDon" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
-margin_top = 66.0
-margin_right = 100.0
-margin_bottom = 86.0
-
-[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/RightDon"]
-margin_top = 3.0
-margin_right = 62.0
-margin_bottom = 17.0
-text = "Right Don"
-align = 1
-valign = 1
-
-[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/RightDon"]
-margin_left = 66.0
-margin_right = 100.0
-margin_bottom = 20.0
-focus_mode = 0
-toggle_mode = true
-enabled_focus_mode = 0
-text = "KEY"
-
-[node name="RightKat" type="HBoxContainer" parent="debug/SettingsPanel/Panel/Keybinds"]
-margin_top = 90.0
-margin_right = 100.0
-margin_bottom = 110.0
-
-[node name="Label" type="Label" parent="debug/SettingsPanel/Panel/Keybinds/RightKat"]
-margin_top = 3.0
-margin_right = 56.0
-margin_bottom = 17.0
-text = "Right Kat"
-align = 1
-valign = 1
-
-[node name="Button" type="Button" parent="debug/SettingsPanel/Panel/Keybinds/RightKat"]
-margin_left = 60.0
-margin_right = 94.0
-margin_bottom = 20.0
-focus_mode = 0
-toggle_mode = true
-enabled_focus_mode = 0
-text = "KEY"
-
 [node name="SaveButton" type="Button" parent="debug/SettingsPanel"]
 anchor_left = 0.5
 anchor_top = 1.0
@@ -543,6 +441,199 @@ margin_top = -26.0
 margin_right = 24.0
 margin_bottom = -6.0
 text = "Save"
+
+[node name="GridContainer" type="GridContainer" parent="debug/SettingsPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+
+[node name="Keybinds" type="VBoxContainer" parent="debug/SettingsPanel/GridContainer"]
+margin_left = 26.0
+margin_top = 29.0
+margin_right = 126.0
+margin_bottom = 139.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+script = ExtResource( 17 )
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Keybinds"]
+margin_right = 100.0
+margin_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Keybinds"
+align = 1
+valign = 1
+
+[node name="LeftKat" type="HBoxContainer" parent="debug/SettingsPanel/GridContainer/Keybinds"]
+margin_top = 18.0
+margin_right = 100.0
+margin_bottom = 38.0
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Keybinds/LeftKat"]
+margin_top = 3.0
+margin_right = 48.0
+margin_bottom = 17.0
+text = "Left Kat"
+align = 1
+valign = 1
+
+[node name="Button" type="Button" parent="debug/SettingsPanel/GridContainer/Keybinds/LeftKat"]
+margin_left = 52.0
+margin_right = 86.0
+margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
+text = "KEY"
+
+[node name="LeftDon" type="HBoxContainer" parent="debug/SettingsPanel/GridContainer/Keybinds"]
+margin_top = 42.0
+margin_right = 100.0
+margin_bottom = 62.0
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Keybinds/LeftDon"]
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 17.0
+text = "Left Don"
+align = 1
+valign = 1
+
+[node name="Button" type="Button" parent="debug/SettingsPanel/GridContainer/Keybinds/LeftDon"]
+margin_left = 58.0
+margin_right = 92.0
+margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
+text = "KEY"
+
+[node name="RightDon" type="HBoxContainer" parent="debug/SettingsPanel/GridContainer/Keybinds"]
+margin_top = 66.0
+margin_right = 100.0
+margin_bottom = 86.0
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Keybinds/RightDon"]
+margin_top = 3.0
+margin_right = 62.0
+margin_bottom = 17.0
+text = "Right Don"
+align = 1
+valign = 1
+
+[node name="Button" type="Button" parent="debug/SettingsPanel/GridContainer/Keybinds/RightDon"]
+margin_left = 66.0
+margin_right = 100.0
+margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
+text = "KEY"
+
+[node name="RightKat" type="HBoxContainer" parent="debug/SettingsPanel/GridContainer/Keybinds"]
+margin_top = 90.0
+margin_right = 100.0
+margin_bottom = 110.0
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Keybinds/RightKat"]
+margin_top = 3.0
+margin_right = 56.0
+margin_bottom = 17.0
+text = "Right Kat"
+align = 1
+valign = 1
+
+[node name="Button" type="Button" parent="debug/SettingsPanel/GridContainer/Keybinds/RightKat"]
+margin_left = 60.0
+margin_right = 94.0
+margin_bottom = 20.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
+text = "KEY"
+
+[node name="Resolution" type="VBoxContainer" parent="debug/SettingsPanel/GridContainer"]
+margin_left = 185.0
+margin_top = 51.0
+margin_right = 279.0
+margin_bottom = 117.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+script = ExtResource( 22 )
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Resolution"]
+margin_right = 94.0
+margin_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Resolution"
+align = 1
+valign = 1
+
+[node name="OptionButton" type="OptionButton" parent="debug/SettingsPanel/GridContainer/Resolution"]
+margin_top = 18.0
+margin_right = 94.0
+margin_bottom = 38.0
+
+[node name="Fullscreen" type="HBoxContainer" parent="debug/SettingsPanel/GridContainer/Resolution"]
+margin_top = 42.0
+margin_right = 94.0
+margin_bottom = 66.0
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Resolution/Fullscreen"]
+margin_top = 5.0
+margin_right = 66.0
+margin_bottom = 19.0
+text = "Fullscreen"
+
+[node name="Toggle" type="CheckBox" parent="debug/SettingsPanel/GridContainer/Resolution/Fullscreen"]
+margin_left = 70.0
+margin_right = 94.0
+margin_bottom = 24.0
+
+[node name="Audio" type="VBoxContainer" parent="debug/SettingsPanel/GridContainer"]
+margin_left = 25.0
+margin_top = 172.0
+margin_right = 126.0
+margin_bottom = 214.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Audio"]
+margin_right = 101.0
+margin_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Audio"
+align = 1
+valign = 1
+
+[node name="Offset" type="HBoxContainer" parent="debug/SettingsPanel/GridContainer/Audio"]
+margin_top = 18.0
+margin_right = 101.0
+margin_bottom = 42.0
+script = ExtResource( 23 )
+
+[node name="Label" type="Label" parent="debug/SettingsPanel/GridContainer/Audio/Offset"]
+margin_top = 5.0
+margin_right = 39.0
+margin_bottom = 19.0
+text = "Offset"
+
+[node name="LineEdit" type="LineEdit" parent="debug/SettingsPanel/GridContainer/Audio/Offset"]
+margin_left = 43.0
+margin_right = 101.0
+margin_bottom = 24.0
+placeholder_text = "0"
 
 [node name="DrumInteraction" type="Node" parent="."]
 script = ExtResource( 6 )
@@ -561,6 +652,12 @@ stream = ExtResource( 7 )
 
 [node name="DrumAnimationTween" type="Tween" parent="DrumInteraction"]
 
+[node name="FinisherDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 21 )
+
+[node name="FinisherKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 20 )
+
 [node name="HitManager" type="Node" parent="."]
 script = ExtResource( 15 )
 
@@ -569,3 +666,6 @@ script = ExtResource( 15 )
 [node name="ChartLoader" type="Node" parent="."]
 script = ExtResource( 13 )
 baseSVMultiplier = 3.0
+
+[node name="StartTimer" type="Timer" parent="ChartLoader"]
+one_shot = true

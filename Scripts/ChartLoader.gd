@@ -1,5 +1,7 @@
 extends Node
 
+#todo: fix offset. coded it like a stupid head
+
 onready var hitManager = get_node("../HitManager")
 
 onready var noteObj = preload("res://Game/Objects/NoteObject.tscn")
@@ -9,165 +11,160 @@ onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers
 
 onready var music = get_node("../Music")
 onready var bg = get_node("../Background")
+onready var timer = get_node("StartTimer")
 
 var currentChartData;
 var currentTimingData;
 
-export var baseSVMultiplier : float = 1
-var mapSVMultiplier = 1
+export var baseSVMultiplier: float = 1
+var mapSVMultiplier: float = 1
 
-#ive got to clean this sometime soon, gosh
+var curTime: float = 0
+var curPlaying: bool = false
 
-# returns notes of a chart
-func loadChart():
-	#format it so that its just the notes
-	var parsedChart = currentChartData.substr(currentChartData.find("[HitObjects]") + 13, 
-						currentChartData.length() - currentChartData.find("[HitObjects]"))
-	var mapBaseSV;
-	mapBaseSV = float(currentChartData.substr(currentChartData.find("SliderMultiplier:") + 17, 
-				currentChartData.length() - currentChartData.find("SliderTickRate:")))
-	#split by linebreak
-	var parsedNotes = parsedChart.split("\n", false, 0)
-	#get timing points
-	loadTiming()
+var totalOffset: float = 0
+
+func _process(delta) -> void:
+	if curPlaying: curTime += delta;
+
+func findValue(key, section):
+	for line in currentChartData[section]:
+		if(line.begins_with(key)):
+			return line.substr(key.length())
+
+func loadAndProcessAll(filePath) -> void:
+	#load chart file
+	#todo: make more adaptable between .osu and all file formats
+	var section = ""
+	currentChartData = {section: []}
+	for line in tools.loadText(filePath).split("\n",false):
+		if line.begins_with("[") && line.ends_with("]"):
+			section = line.substr(1, line.length() - 2)
+			currentChartData[section] = []
+		else:
+			currentChartData[section].push_back(line)
 	
-	var noteCollection = []
-	for noteData in parsedNotes:
-		#make note object
-		var note = {}
-		
-		#split up the line by commas
-		var noteDataSection = noteData.split(",")
-		#set timing
-		note["time"] = noteDataSection[2].to_float() / 1000
-		
-		#get note type
-		#osu keeps type as an int that references bytes
-		
-		if(1 << 3 & int(noteDataSection[3])): # spinner
-			note["noteType"] = 2
-			note["length"] = (float(noteDataSection[5]) / 1000) - note["time"]
-			
-		elif(1 << 1 & int(noteDataSection[3])): # roll
-			# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
-			# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
-			# so the length = osupx * repeats * 100 to get it into seconds essentially
-			var osupx = float(noteDataSection[noteDataSection.size() - 1])
-			var repeats = int(noteDataSection[noteDataSection.size() - 2])
-			var svData = findTiming(note["time"])
-			var beatLength = getBeatLength(note["time"])
-			
-			note["noteType"] = 3
-			
-			#finisher check
-			if(1 << 2 & int(noteDataSection[4])): note["finisher"] = true
-			else: note["finisher"] = false
-			
-			#fix me hook hat
-			#its directly copied from the .osu file format from the osu wiki so i have 0 clue why this doesnt work :(
-			#also has had vigorous testing, half the time it works half the time it doesnt
-			#if anyone knows why id really really appreciate the help
-			note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
-			
-		else: #normal note
-			#finisher
-			if(1 << 2 & int(noteDataSection[4])):
-				note["finisher"] = true
-			else:
-				note["finisher"] = false
-			
-			#kat (whistle)
-			if(1 << 1 & int(noteDataSection[4])):
-				note["noteType"] = 1
-			#kat (clap)
-			elif(1 << 3 & int(noteDataSection[4])):
-				note["noteType"] = 1
-			#don
-			else:
-				note["noteType"] = 0
-			
-		noteCollection.push_back(note)
-	return noteCollection;
+	#loadAndProcessBackground
+	var folderPath = filePath.get_base_dir()
+	var events = currentChartData["Events"]
+	var bgFileName = events[events.find("//Background and Video events") + 1]
+	bgFileName = bgFileName.split(",")
+	bgFileName = bgFileName[2].replace("\"", "")
+	var image = Image.new()
+	if image.load(folderPath + "/" + bgFileName) != OK:
+		# Failed
+		print("background failed to load at ", folderPath + "/" + bgFileName)
+		pass
+	else:
+		var newtexture = ImageTexture.new()
+		newtexture.create_from_image(image, 0)
+		bg.texture = newtexture
 
-func processChart(data):
+	#wipePastChart
+	for subContainer in objContainer.get_children():
+		for note in subContainer.get_children():
+			note.queue_free()
+	hitManager.reset()
+
+	#loadAndProcessChart
+	
+	#get timing points
+	currentTimingData = []
+	for timing in currentChartData["TimingPoints"]:
+		timing = timing.split(",") #split it to array
+		#store timing points in svArr, 0 = timing 1 = type 2 = value
+		if float(timing[1]) >= 0: #if bpm
+			currentTimingData.push_back([float(timing[0]) / 1000, 0, 60000 / float(timing[1])])
+		else: #if sv
+			currentTimingData.push_back([float(timing[0]) / 1000, 1, -100 / float(timing[1])])
+	
 	#note speed is bpm * sv
 	#var currentSV = 1;
 	#var nextChange = null;
-	
-	var mapBaseSV;
-	mapBaseSV = currentChartData.substr(currentChartData.find("SliderMultiplier:") + 17, 
-				currentChartData.length() - currentChartData.find("SliderTickRate:"))
-	mapSVMultiplier = float(mapBaseSV)
+	mapSVMultiplier = float(findValue("SliderMultiplier:", "Difficulty"))
 	
 	var curSVData = findTiming(0)
 	# current sv = 0, current bpm = 1, next change = 2
 	
-	for noteData in data:
-		#fix to use special notes...
+	#offset schenanigans
+	totalOffset += settings.globalOffset
+	var curNoteIdx = 0
+	
+	for noteData in currentChartData["HitObjects"]:
+		#make note object
+		var note = {}
+		#split up the line by commas
+		noteData = noteData.split(",")
+		
+		#set timing
+		note["time"] = (float(noteData[2]) / 1000) + totalOffset
+		#if first note and it comes earlier than 2 seconds into the song, add offset
+		if curNoteIdx == 0:
+			if note["time"] < 1:
+				totalOffset += 1 - note["time"]
+				#run this a second time to apply new offset
+				note["time"] = (float(noteData[2]) / 1000) + totalOffset
+		curNoteIdx += 1
+		
 		# check sv
-		if (curSVData[2] != null): # if another bpm change exists...
-			if (noteData["time"] >= curSVData[2]): #if the current note time is above/equal to next bpm change
-				curSVData = findTiming(noteData["time"])
+		if curSVData[2] != null && note["time"] >= curSVData[2]: 
+			# if another bpm change exists... and if the current note time is above/equal to next bpm change
+			curSVData = findTiming(note["time"] - totalOffset)
 		
 		#figure out what kind of note it is
-		#normal note
-		if (noteData["noteType"] == 0 || noteData["noteType"] == 1):
-			var note = noteObj.instance()
-			note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, 
-													noteData["noteType"], noteData["finisher"])
-			objContainer.get_node("NoteContainer").add_child(note)
-			objContainer.get_node("NoteContainer").move_child(note, 0)
+		#osu keeps type as an int that references bytes
+		if 1 << 3 & int(noteData[3]): # spinner
+			note["noteType"] = 2
+			note["length"] = float(noteData[5]) / 1000 - note["time"]
+			var noteObject = spinWarnObj.instance()
+			noteObject.changeProperties(note["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, note["length"])
+			objContainer.get_node("EtcContainer").add_child(noteObject)
+			objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 		
-		#special note
 		else:
-			match(noteData["noteType"]):
-				2: #spinner
-					var note = spinWarnObj.instance()
-					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, 
-															noteData["length"])
-					objContainer.get_node("EtcContainer").add_child(note)
-					objContainer.get_node("EtcContainer").move_child(note, 0)
-					
-				3: #roll
-					var note = rollObj.instance()
-					note.changeProperties(noteData["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, 
-															noteData["finisher"], noteData["length"], curSVData[0])
-					objContainer.get_node("EtcContainer").add_child(note)
-					objContainer.get_node("EtcContainer").move_child(note, 0)
-					
-				_: #emergency
-					print("bad note at " + str(noteData["time"]) + "!")
+			#finisher check
+			note["finisher"] = bool(1 << 2 & int(noteData[4]))
+			
+			if 1 << 1 & int(noteData[3]): # roll
+				# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
+				# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
+				# so the length = osupx * repeats * 100 to get it into seconds essentially
+				var osupx = float(noteData[noteData.size() - 1])
+				var repeats = int(noteData[noteData.size() - 2])
+				var svData = findTiming(note["time"] - totalOffset)
+				var beatLength = getBeatLength(note["time"])
+				note["noteType"] = 3
+				
+				#fix me hook hat
+				#its directly copied from the .osu file format from the osu wiki so i have 0 clue why this doesnt work :(
+				#also has had vigorous testing, half the time it works half the time it doesnt
+				#if anyone knows why id really really appreciate the help
+				note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
+				
+				var noteObject = rollObj.instance()
+				noteObject.changeProperties(note["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, note["finisher"], note["length"], curSVData[0])
+				objContainer.get_node("EtcContainer").add_child(noteObject)
+				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
+			
+			else: #normal note
+				note["noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
+				var noteObject = noteObj.instance()
+				noteObject.changeProperties(note["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, note["noteType"], note["finisher"])
+				objContainer.get_node("NoteContainer").add_child(noteObject)
+				objContainer.get_node("NoteContainer").move_child(noteObject, 0)
 
-func loadTiming():
-	var timingArr = []
-	var curSV = 0
-	var timingList = currentChartData.substr(currentChartData.find("[TimingPoints]") + 15)
-	
-	if (timingList.find("[Colours]") != -1):
-		timingList = timingList.substr(0,timingList.find("[Colours]") - 3)
-	else: 
-		timingList = timingList.substr(0,timingList.find("[HitObjects]") - 3)
-	
-	timingList = timingList.split("\n", false, 0)
-
-	for timing in timingList:
-		timing = timing.split(",") #split it to array
-		
-		#store timing points in svArr, 0 = timing 1 = type 2 = value
-		if (float(timing[1]) >= 0): #if bpm
-			timingArr.push_back([float(timing[0]) / 1000, 0, (60000 / float(timing[1]))])
-		else: #if sv
-			timingArr.push_back([float(timing[0]) / 1000, 1, (1 / (float(timing[1]) / -100))])	
-	currentTimingData = timingArr;
+	#loadAndProcessSong
+	#get audio file name and separate it in the file
+	#load audio file and apply to song player
+	music.set_stream(AudioLoader.new().loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
 
 func findTiming(time):
 	var bpm = null;
 	var sv = null;
 	var nextChange = null;
-	
 	#get the closest sv/bpm to the timing
 	for value in currentTimingData:
-		if (value[0] <= time):
+		if value[0] <= time:
 			match value[1]:
 				0: #bpm
 					bpm = value[2]
@@ -175,113 +172,57 @@ func findTiming(time):
 					sv = value[2]
 		else:
 			nextChange = value[0]
+			nextChange += totalOffset
+			# ^ maybe not best here
 			break
-	
 	#make sure you get the first bpm for sure
 	if bpm == null:
 		for value in currentTimingData:
-			if (value[1] == 0):
+			if value[1] == 0:
 				bpm = value[2]
 				break
-	
 	if sv == null: sv = 1;
-	
 	return [bpm, sv, nextChange]
 
 func getBeatLength(time):
 	var beatLength = null;
-	
-	var timingList = currentChartData.substr(currentChartData.find("[TimingPoints]") + 15)
-	
-	if (timingList.find("[Colours]") != -1):
-		timingList = timingList.substr(0,timingList.find("[Colours]") - 3)
-	else: 
-		timingList = timingList.substr(0,timingList.find("[HitObjects]") - 3)
-	
-	timingList = timingList.split("\n", false, 0)
-
+	var timingList = currentChartData["TimingPoints"]
 	for timing in timingList:
 		timing = timing.split(",") #split it to array
-		
 		# check for if beatLength not found yet
-		if (beatLength == null): #replaces beatLength with first beatLength first
+		if beatLength == null: #replaces beatLength with first beatLength first
 			beatLength = float(timing[1])
-		
 		#checking for last timing before being called
 		elif (float(timing[0]) / 1000 <= time):
 			#sv
 			beatLength = float(timing[1])
-				
 		else: #once all gained, get the next change time and stop looping
 			break
 	return beatLength
 
-# returns song file of a chart
-func loadAndProcessSong(filePath) -> void:
-	#this is ugly im sorry
-	#get audio file name and separate it in the file
-	var audioFileName = currentChartData.substr(currentChartData.find("AudioFilename: ") + 15)
-	audioFileName = audioFileName.substr(0, audioFileName.find("\n"))
-	
-	#load audio file and apply to song player
-	var audio_loader = AudioLoader.new()
-	var folderPath = filePath.substr(0, filePath.find_last("/"))
-	music.set_stream(audio_loader.loadfile(folderPath + "/" + audioFileName))
-
-# returns text info of a chart
-func loadMetadata():
-	# replace with origin check later
-	
-	var result = {};
-	#osu
-	if true:
-		var metadataSection = currentChartData.substr(currentChartData.find("[Metadata]") + 11)
-		metadataSection = metadataSection.substr(0, metadataSection.find("[Difficulty]") - 2)
-		metadataSection.split("\n", false, 0)
-		result = metadataSection
-
-	
-	return result[5];
-		
-func loadAndProcessAll(filePath) -> void:
-	currentChartData = tools.loadText(filePath)
-	var chartData = loadChart()
-	loadAndProcessBackground(filePath)
-	wipePastChart()
-	hitManager.reset()
-	processChart(chartData)
-	loadAndProcessSong(filePath)
-
-func loadAndProcessBackground(filePath) -> void:
-	var folderPath = filePath.substr(0, filePath.find_last("/"))
-	var temp = currentChartData.substr(currentChartData.find("//Background and Video events"), currentChartData.length() - currentChartData.find("//Background and Video events"))
-	temp = temp.substr(temp.find("\n") + 1, temp.length())
-	temp = temp.substr(0, temp.find("\n"))
-	temp = temp.substr(temp.find("\"") + 1, temp.find_last("\"") - (temp.find("\"") + 1))
-	
-	var image = Image.new()
-	var err = image.load(folderPath + "/" + temp)
-	if err != OK:
-		# Failed
-		pass
-	else:
-		var newtexture = ImageTexture.new()
-		newtexture.create_from_image(image, 0)
-		bg.texture = newtexture
-
 func playChart() -> void:
 	hitManager.reset()
-	if (music.playing == false):
+	if music.playing: 
+		music.stop()
+		curPlaying = false;
+	
+	else:
 		var allNotes = []
 		for subContainer in objContainer.get_children():
 			for note in subContainer.get_children():
 				allNotes.push_front(note)
 		for note in allNotes:
 			note.activate()
-		music.play()
-	else: music.stop()
-
-func wipePastChart() -> void:
-	for subContainer in objContainer.get_children():
-		for note in subContainer.get_children():
-			note.queue_free()
+		
+		#fuck fus, you have to fix this...
+		#currently would be ass for multiplayer
+		
+		curTime = 0
+		curPlaying = true;
+		if (totalOffset > 0):
+			timer.set_wait_time(totalOffset)
+			timer.start()
+			yield(timer, "timeout")
+			music.play(0)
+		elif (totalOffset < 0):
+			music.play(totalOffset)

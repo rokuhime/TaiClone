@@ -7,8 +7,8 @@ onready var rKatObj = get_node("../BarLeft/DrumVisual/RightKat")
 
 onready var lDonAud = get_node("LeftDonAudio")
 onready var rDonAud = get_node("RightDonAudio")
-onready var lKatAud = get_node("LeftKatAudio")
 onready var rKatAud = get_node("RightKatAudio")
+onready var lKatAud = get_node("LeftKatAudio")
 
 onready var accurateObj = get_node("../BarRight/HitPointOffset/Judgements/JudgeAccurate")
 onready var inaccurateObj = get_node("../BarRight/HitPointOffset/Judgements/JudgeInaccurate")

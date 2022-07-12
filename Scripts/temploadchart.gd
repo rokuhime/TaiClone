@@ -15,6 +15,7 @@ onready var hitManager = get_node("../../HitManager")
 onready var chartLoader = get_node("../../ChartLoader")
 onready var debugTextThing = get_node("../debugtext")
 onready var fpsText = get_node("../fpstext")
+onready var versionText = get_node("../VersionText")
 
 func _process(_delta):
 	fpsText.text = "FPS: " + str(Engine.get_frames_per_second())
@@ -27,6 +28,8 @@ func _ready():
 	autoToggle.connect("pressed", self, "autoThing")
 	rateButt.connect("pressed", self, "changeRate")
 	
+	versionText.text = settings.version
+
 func loadFunc():
 	debugTextThing.text = "Loading... [Checking File]"
 	var rawFile = tools.loadText(tools.fwdToBackSlash(input.text))
@@ -43,8 +46,12 @@ func autoThing():
 	hitManager.auto = autoToggle.pressed
 
 func changeRate():
+	#change to timer plz, currently throws errors
 	var rate = float(rateInput.text)
 	music.set_pitch_scale(rate)
+
+# todo: make all volume things use linear2db
+# see https://godotengine.org/qa/40911/best-way-to-create-a-volume-slider
 
 func toggleMMute():
 	if muteMToggle.pressed: music.volume_db = -100000

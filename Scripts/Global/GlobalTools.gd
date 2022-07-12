@@ -20,3 +20,7 @@ func loadText(path) -> String:
 func fwdToBackSlash(text) -> String:
 	var a = text.replace("\\", "/")
 	return a
+
+func getScreenRatio() -> float:
+	var res = OS.get_window_size()
+	return (res[0] / res[1]) / 1.777778
