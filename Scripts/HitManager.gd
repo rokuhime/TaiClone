@@ -46,7 +46,7 @@ func _process(_delta) -> void:
 		
 		#temp auto
 		#doesnt support special note types currently
-		if (auto && (chart.curTime - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
+		if (auto && ((chart.curTime + settings.globalOffset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
 			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).isKat
 			
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
@@ -65,7 +65,7 @@ func _process(_delta) -> void:
 			lastSideUsedIsRight = !lastSideUsedIsRight
 		
 		#miss check
-		if (!auto && (chart.curTime - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > inaccTiming):
+		if (!auto && ((chart.curTime + settings.globalOffset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > inaccTiming):
 			addScore("miss")
 			nextHittableNote += 1;
 
@@ -74,7 +74,7 @@ func checkInput(isKat, isRight) -> void:
 	if chart.curPlaying:
 		if (lastNoteWasFinisher):
 			var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
-			if (abs(curTime - lastNote.timing) <= accTiming && lastNote.isKat == isKat) && (lastSideUsedIsRight != isRight):
+			if (abs((curTime - lastNote.timing) + settings.globalOffset)  <= accTiming && lastNote.isKat == isKat) && (lastSideUsedIsRight != isRight):
 				#swallow input, give more points
 				addScore("finisher")
 				if isKat: fKatAud.play()
@@ -86,9 +86,9 @@ func checkInput(isKat, isRight) -> void:
 			#get next hittable note and current playback position
 			var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
 			
-			if (abs(curTime - nextNote.timing) <= inaccTiming):
+			if (abs((curTime - nextNote.timing) + settings.globalOffset) <= inaccTiming):
 				#check if accurate and right key pressed
-				if (abs(curTime - nextNote.timing) <= accTiming && nextNote.isKat == isKat):
+				if (abs((curTime - nextNote.timing) + settings.globalOffset) <= accTiming && nextNote.isKat == isKat):
 					addScore("accurate")
 					nextHittableNote += 1;
 					nextNote.deactivate()

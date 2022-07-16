@@ -22,7 +22,7 @@ var mapSVMultiplier: float = 1
 var curTime: float = 0
 var curPlaying: bool = false
 
-var totalOffset: float = 0
+var waitOffset: float = 0
 
 func _process(delta) -> void:
 	if curPlaying: curTime += delta;
@@ -86,8 +86,6 @@ func loadAndProcessAll(filePath) -> void:
 	var curSVData = findTiming(0)
 	# current sv = 0, current bpm = 1, next change = 2
 	
-	#offset schenanigans
-	totalOffset += settings.globalOffset
 	var curNoteIdx = 0
 	
 	for noteData in currentChartData["HitObjects"]:
@@ -97,19 +95,22 @@ func loadAndProcessAll(filePath) -> void:
 		noteData = noteData.split(",")
 		
 		#set timing
-		note["time"] = (float(noteData[2]) / 1000) + totalOffset
+		note["time"] = (float(noteData[2]) / 1000) + waitOffset
 		#if first note and it comes earlier than 2 seconds into the song, add offset
 		if curNoteIdx == 0:
 			if note["time"] < 1:
-				totalOffset += 1 - note["time"]
+				waitOffset += 1 - note["time"]
 				#run this a second time to apply new offset
-				note["time"] = (float(noteData[2]) / 1000) + totalOffset
+				note["time"] = (float(noteData[2]) / 1000) + waitOffset
 		curNoteIdx += 1
 		
 		# check sv
 		if curSVData[2] != null && note["time"] >= curSVData[2]: 
 			# if another bpm change exists... and if the current note time is above/equal to next bpm change
-			curSVData = findTiming(note["time"] - totalOffset)
+			curSVData = findTiming(note["time"] - waitOffset)
+		
+		#tee hee
+		var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * tools.getScreenRatio()
 		
 		#figure out what kind of note it is
 		#osu keeps type as an int that references bytes
@@ -117,7 +118,7 @@ func loadAndProcessAll(filePath) -> void:
 			note["noteType"] = 2
 			note["length"] = float(noteData[5]) / 1000 - note["time"]
 			var noteObject = spinWarnObj.instance()
-			noteObject.changeProperties(note["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, note["length"])
+			noteObject.changeProperties(note["time"], totalcurSV, note["length"])
 			objContainer.get_node("EtcContainer").add_child(noteObject)
 			objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 		
@@ -131,7 +132,7 @@ func loadAndProcessAll(filePath) -> void:
 				# so the length = osupx * repeats * 100 to get it into seconds essentially
 				var osupx = float(noteData[noteData.size() - 1])
 				var repeats = int(noteData[noteData.size() - 2])
-				var svData = findTiming(note["time"] - totalOffset)
+				var svData = findTiming(note["time"] - waitOffset)
 				var beatLength = getBeatLength(note["time"])
 				note["noteType"] = 3
 				
@@ -142,14 +143,14 @@ func loadAndProcessAll(filePath) -> void:
 				note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
 				
 				var noteObject = rollObj.instance()
-				noteObject.changeProperties(note["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, note["finisher"], note["length"], curSVData[0])
+				noteObject.changeProperties(note["time"], totalcurSV, note["finisher"], note["length"], curSVData[0])
 				objContainer.get_node("EtcContainer").add_child(noteObject)
 				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 			
 			else: #normal note
 				note["noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
 				var noteObject = noteObj.instance()
-				noteObject.changeProperties(note["time"], (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier, note["noteType"], note["finisher"])
+				noteObject.changeProperties(note["time"], totalcurSV, note["noteType"], note["finisher"])
 				objContainer.get_node("NoteContainer").add_child(noteObject)
 				objContainer.get_node("NoteContainer").move_child(noteObject, 0)
 
@@ -172,7 +173,7 @@ func findTiming(time):
 					sv = value[2]
 		else:
 			nextChange = value[0]
-			nextChange += totalOffset
+			nextChange += waitOffset
 			# ^ maybe not best here
 			break
 	#make sure you get the first bpm for sure
@@ -219,10 +220,10 @@ func playChart() -> void:
 		
 		curTime = 0
 		curPlaying = true;
-		if (totalOffset > 0):
-			timer.set_wait_time(totalOffset)
+		if (waitOffset > 0):
+			timer.set_wait_time(waitOffset)
 			timer.start()
 			yield(timer, "timeout")
 			music.play(0)
-		elif (totalOffset < 0):
-			music.play(totalOffset)
+		else:
+			music.play(waitOffset)
