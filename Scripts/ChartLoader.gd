@@ -114,7 +114,7 @@ func loadAndProcessAll(filePath) -> void:
 		#figure out what kind of note it is
 		#osu keeps type as an int that references bytes
 		if 1 << 3 & int(noteData[3]): # spinner
-			note["noteType"] = 2
+			note["_noteType"] = 2
 			note["length"] = float(noteData[5]) / 1000 - note["time"]
 			var noteObject = spinWarnObj.instance()
 			noteObject.changeProperties(note["time"], totalcurSV, note["length"])
@@ -133,7 +133,7 @@ func loadAndProcessAll(filePath) -> void:
 				var repeats = int(noteData[noteData.size() - 2])
 				var svData = findTiming(note["time"] - waitOffset)
 				var beatLength = getBeatLength(note["time"])
-				note["noteType"] = 3
+				note["_noteType"] = 3
 
 				#fix me hook hat
 				#its directly copied from the .osu file format from the osu wiki so i have 0 clue why this doesnt work :(
@@ -147,20 +147,25 @@ func loadAndProcessAll(filePath) -> void:
 				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 
 			else: #normal note
-				note["noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
+				note["_noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
 				var noteObject = noteObj.instance()
-				noteObject.changeProperties(note["time"], totalcurSV, note["noteType"], note["finisher"])
+				noteObject.changeProperties(note["time"], totalcurSV, note["_noteType"], note["finisher"])
 				objContainer.get_node("NoteContainer").add_child(noteObject)
 				objContainer.get_node("NoteContainer").move_child(noteObject, 0)
+
+		notes.push_back(note)
 
 	#loadAndProcessSong
 	#get audio file name and separate it in the file
 	#load audio file and apply to song player
 	music.set_stream(AudioLoader.new().loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
 
-	#export test v0.0.1 ~ ZMTT
+	#export test vDebug ~ ZMTT
 	var fusFile = File.new()
-	if fusFile.open("res://beatmap.fus", File.WRITE) == OK:
+	if fusFile.open("res://debug.fus", File.WRITE) == OK:
+		fusFile.store_line("== DEBUG ONLY ==")
+		for note in notes:
+			fusFile.store_line(String(note))
 		fusFile.close()
 
 func findTiming(time):
