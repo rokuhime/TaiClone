@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://Skins/TestSkin/osu!_rwxudnxmU5.png" type="Texture" id=1]
 [ext_resource path="res://Skins/TestSkin/taiko-bar-right.png" type="Texture" id=2]
@@ -23,15 +23,16 @@
 [ext_resource path="res://Skins/TestSkin/taiko-drum-hitfinish.wav" type="AudioStream" id=21]
 [ext_resource path="res://Scripts/ResolutionChanger.gd" type="Script" id=22]
 [ext_resource path="res://Scripts/OffsetThingy.gd" type="Script" id=23]
+[ext_resource path="res://Skins/TestSkin/Untitled.png" type="Texture" id=24]
 
 [sub_resource type="DynamicFont" id=1]
-size = 45
+size = 75
 outline_size = 2
 outline_color = Color( 0, 0, 0, 0.313726 )
 font_data = ExtResource( 9 )
 
 [sub_resource type="DynamicFont" id=2]
-size = 41
+size = 65
 outline_size = 2
 outline_color = Color( 0, 0, 0, 0.313726 )
 font_data = ExtResource( 9 )
@@ -60,18 +61,26 @@ stretch_mode = 7
 
 [node name="ref" type="TextureRect" parent="."]
 visible = false
-modulate = Color( 1, 1, 1, 0.176471 )
+modulate = Color( 1, 1, 1, 0.878431 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 texture = ExtResource( 1 )
+expand = true
+
+[node name="ref2" type="TextureRect" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.878431 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 24 )
 expand = true
 
 [node name="BarRight" type="TextureRect" parent="."]
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-margin_top = -130.0
-margin_bottom = 40.0
+margin_top = -240.0
+margin_bottom = 88.0
 rect_min_size = Vector2( 0, 170 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -81,10 +90,11 @@ expand = true
 [node name="HitPointOffset" type="Control" parent="BarRight"]
 anchor_top = 0.5
 anchor_bottom = 0.5
-margin_left = 191.25
-margin_top = -10.0
-margin_right = 191.25
-margin_bottom = -10.0
+margin_left = 360.0
+margin_top = -21.0
+margin_right = 360.0
+margin_bottom = -21.0
+rect_scale = Vector2( 1.9, 1.9 )
 
 [node name="HitPoint" type="TextureRect" parent="BarRight/HitPointOffset"]
 self_modulate = Color( 1, 1, 1, 0.435294 )
@@ -177,11 +187,10 @@ texture = ExtResource( 19 )
 stretch_mode = 4
 
 [node name="BarLeft" type="TextureRect" parent="."]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_top = -125.0
-margin_right = 130.0
-margin_bottom = 19.9999
+anchor_bottom = 1.0
+margin_top = 304.0
+margin_right = 254.0
+margin_bottom = -498.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
 texture = ExtResource( 3 )
@@ -194,19 +203,15 @@ anchor_bottom = 1.0
 [node name="LeftDon" type="TextureRect" parent="BarLeft/DrumVisual"]
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_bottom = 1.0
-margin_right = 65.0
+margin_right = 127.0
 texture = ExtResource( 5 )
 expand = true
 
 [node name="RightDon" type="TextureRect" parent="BarLeft/DrumVisual"]
 self_modulate = Color( 1, 1, 1, 0 )
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_left = -65.0
-margin_top = -72.5
-margin_bottom = 72.5
+anchor_bottom = 1.0
+margin_left = 127.0
+margin_right = 254.0
 texture = ExtResource( 5 )
 expand = true
 flip_h = true
@@ -214,20 +219,16 @@ flip_h = true
 [node name="LeftKat" type="TextureRect" parent="BarLeft/DrumVisual"]
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_bottom = 1.0
-margin_right = 65.0
+margin_right = 127.0
 texture = ExtResource( 4 )
 expand = true
 flip_h = true
 
 [node name="RightKat" type="TextureRect" parent="BarLeft/DrumVisual"]
 self_modulate = Color( 1, 1, 1, 0 )
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_left = -65.0
-margin_top = -72.5
-margin_bottom = 72.5
+anchor_bottom = 1.0
+margin_left = 127.0
+margin_right = 254.0
 texture = ExtResource( 4 )
 expand = true
 
@@ -254,9 +255,12 @@ anchor_bottom = 1.0
 [node name="Score" type="Label" parent="UI"]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -246.0
-margin_right = -6.0
-margin_bottom = 60.0
+margin_left = -391.0
+margin_top = -11.0
+margin_right = -11.0
+margin_bottom = 84.0
+grow_horizontal = 0
+size_flags_vertical = 1
 custom_fonts/font = SubResource( 2 )
 text = "0000000000"
 align = 2
@@ -264,10 +268,10 @@ align = 2
 [node name="Accuracy" type="Label" parent="UI"]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -115.0
-margin_top = 44.0
-margin_right = -30.0
-margin_bottom = 104.0
+margin_left = -166.0
+margin_top = 57.0
+margin_right = -31.0
+margin_bottom = 152.0
 grow_horizontal = 0
 grow_vertical = 0
 custom_fonts/font = SubResource( 2 )
@@ -277,10 +281,10 @@ align = 2
 [node name="AccPercent" type="Label" parent="UI/Accuracy"]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -11.0
-margin_top = 2.0
-margin_right = 27.0
-margin_bottom = 56.0
+margin_left = -12.0
+margin_top = 29.0
+margin_right = 26.0
+margin_bottom = 83.0
 grow_horizontal = 0
 grow_vertical = 0
 custom_fonts/font = SubResource( 3 )
@@ -295,11 +299,12 @@ anchor_bottom = 1.0
 [node name="debugtext" type="Label" parent="debug"]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 9.0
-margin_top = -115.0
-margin_right = 149.0
-margin_bottom = -50.0
+margin_left = 12.0
+margin_top = -209.0
+margin_right = 152.0
+margin_bottom = -144.0
 grow_vertical = 0
+rect_scale = Vector2( 1.9, 1.9 )
 text = "Welcome to TaiClone!"
 valign = 2
 
@@ -308,12 +313,13 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -157.0
-margin_top = -38.0
-margin_right = -103.0
-margin_bottom = -24.0
+margin_left = -303.0
+margin_top = -75.9999
+margin_right = -249.0
+margin_bottom = -61.9999
 grow_horizontal = 0
 grow_vertical = 0
+rect_scale = Vector2( 1.9, 1.9 )
 text = "FPS: XXX"
 align = 2
 valign = 2
@@ -321,10 +327,11 @@ valign = 2
 [node name="temploadchart" type="HBoxContainer" parent="debug"]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 9.0
-margin_top = -46.0
-margin_right = 642.0
-margin_bottom = -8.0
+margin_left = 10.0
+margin_top = -82.0
+margin_right = 643.0
+margin_bottom = -44.0
+rect_scale = Vector2( 1.9, 1.9 )
 script = ExtResource( 16 )
 
 [node name="LineEdit" type="LineEdit" parent="debug/temploadchart"]
@@ -385,8 +392,11 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -90.0
-margin_top = -38.0
+margin_left = -180.0
+margin_top = -82.0
+margin_right = -90.0
+margin_bottom = -44.0
+rect_scale = Vector2( 1.9, 1.9 )
 text = "Settings"
 
 [node name="VersionText" type="Label" parent="debug"]
@@ -394,12 +404,13 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -253.0
-margin_top = -21.0
-margin_right = -101.0
-margin_bottom = -7.0
+margin_left = -485.0
+margin_top = -45.0
+margin_right = -333.0
+margin_bottom = -31.0
 grow_horizontal = 0
 grow_vertical = 0
+rect_scale = Vector2( 1.9, 1.9 )
 text = "version"
 align = 2
 
@@ -409,10 +420,11 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -321.0
-margin_top = -266.0
-margin_right = -13.0
-margin_bottom = -52.0
+margin_left = -600.0
+margin_top = -501.0
+margin_right = -292.0
+margin_bottom = -287.0
+rect_scale = Vector2( 1.9, 1.9 )
 size_flags_horizontal = 5
 size_flags_vertical = 5
 script = ExtResource( 11 )

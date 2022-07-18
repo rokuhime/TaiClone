@@ -15,7 +15,12 @@ var resolutions = [
 	["5:4 | 1025x820", Vector2(1025,820)]
 	]
 
-# Called when the node enters the scene tree for the first time.
+# hey incase youre looking at the source code to see if you can help
+# the way taiclone currently gets 4:3 and lower resolutions working is honestly insane
+# the games resolution starts at 0x720 so it forcefully can take in any resolution
+# but obviously this is horrible because it means in the editor its squished super badly
+# if anyone can come up with a better fix, id REALLY appreciate it much love bbgurl kissing emoji
+
 func _ready():
 	addDropdownOptions();
 	dropdown.connect("item_selected", self, "changeRes")

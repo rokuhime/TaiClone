@@ -4,7 +4,6 @@ onready var music = get_node("../Music")
 onready var chart = get_node("../ChartLoader")
 onready var drumInteraction = get_node("../DrumInteraction")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
-
 onready var comboLabel = get_node("../BarLeft/DrumVisual/Combo")
 onready var scoreLabel = get_node("../UI/Score")
 onready var accuracyLabel = get_node("../UI/Accuracy")
