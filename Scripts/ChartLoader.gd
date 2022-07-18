@@ -13,8 +13,8 @@ onready var music = get_node("../Music")
 onready var bg = get_node("../Background")
 onready var timer = get_node("StartTimer")
 
-var currentChartData;
-var currentTimingData;
+var currentChartData
+var currentTimingData
 
 export var baseSVMultiplier: float = 1
 var mapSVMultiplier: float = 1
@@ -25,7 +25,7 @@ var curPlaying: bool = false
 var waitOffset: float = 0
 
 func _process(delta) -> void:
-	if curPlaying: curTime += delta;
+	if curPlaying: curTime += delta
 
 func findValue(key, section):
 	for line in currentChartData[section]:
@@ -43,7 +43,7 @@ func loadAndProcessAll(filePath) -> void:
 			currentChartData[section] = []
 		else:
 			currentChartData[section].push_back(line)
-	
+
 	#loadAndProcessBackground
 	var folderPath = filePath.get_base_dir()
 	var events = currentChartData["Events"]
@@ -67,7 +67,7 @@ func loadAndProcessAll(filePath) -> void:
 	hitManager.reset()
 
 	#loadAndProcessChart
-	
+
 	#get timing points
 	currentTimingData = []
 	for timing in currentChartData["TimingPoints"]:
@@ -77,55 +77,54 @@ func loadAndProcessAll(filePath) -> void:
 			currentTimingData.push_back([float(timing[0]) / 1000, 0, 60000 / float(timing[1])])
 		else: #if sv
 			currentTimingData.push_back([float(timing[0]) / 1000, 1, -100 / float(timing[1])])
-	
+
 	#note speed is bpm * sv
-	#var currentSV = 1;
-	#var nextChange = null;
+	#var currentSV = 1
+	#var nextChange = null
 	mapSVMultiplier = float(findValue("SliderMultiplier:", "Difficulty"))
-	
+
 	var curSVData = findTiming(0)
 	# current sv = 0, current bpm = 1, next change = 2
-	
-	var curNoteIdx = 0
-	
+
+	var notes = []
+
 	for noteData in currentChartData["HitObjects"]:
 		#make note object
 		var note = {}
 		#split up the line by commas
 		noteData = noteData.split(",")
-		
+
 		#set timing
 		note["time"] = (float(noteData[2]) / 1000) + waitOffset
 		#if first note and it comes earlier than 2 seconds into the song, add offset
-		if curNoteIdx == 0:
+		if !notes.empty():
 			if note["time"] < 1:
 				waitOffset += 1 - note["time"]
 				#run this a second time to apply new offset
 				note["time"] = (float(noteData[2]) / 1000) + waitOffset
-		curNoteIdx += 1
-		
+
 		# check sv
-		if curSVData[2] != null && note["time"] >= curSVData[2]: 
+		if curSVData[2] != null && note["time"] >= curSVData[2]:
 			# if another bpm change exists... and if the current note time is above/equal to next bpm change
 			curSVData = findTiming(note["time"] - waitOffset)
-		
+
 		#tee hee
 		var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * tools.getScreenRatio()
-		
+
 		#figure out what kind of note it is
 		#osu keeps type as an int that references bytes
 		if 1 << 3 & int(noteData[3]): # spinner
-			note["noteType"] = 2
+			note["_noteType"] = 2
 			note["length"] = float(noteData[5]) / 1000 - note["time"]
 			var noteObject = spinWarnObj.instance()
 			noteObject.changeProperties(note["time"], totalcurSV, note["length"])
 			objContainer.get_node("EtcContainer").add_child(noteObject)
 			objContainer.get_node("EtcContainer").move_child(noteObject, 0)
-		
+
 		else:
 			#finisher check
 			note["finisher"] = bool(1 << 2 & int(noteData[4]))
-			
+
 			if 1 << 1 & int(noteData[3]): # roll
 				# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
 				# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
@@ -134,35 +133,45 @@ func loadAndProcessAll(filePath) -> void:
 				var repeats = int(noteData[noteData.size() - 2])
 				var svData = findTiming(note["time"] - waitOffset)
 				var beatLength = getBeatLength(note["time"])
-				note["noteType"] = 3
-				
+				note["_noteType"] = 3
+
 				#fix me hook hat
 				#its directly copied from the .osu file format from the osu wiki so i have 0 clue why this doesnt work :(
 				#also has had vigorous testing, half the time it works half the time it doesnt
 				#if anyone knows why id really really appreciate the help
 				note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
-				
+
 				var noteObject = rollObj.instance()
 				noteObject.changeProperties(note["time"], totalcurSV, note["finisher"], note["length"], curSVData[0])
 				objContainer.get_node("EtcContainer").add_child(noteObject)
 				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
-			
+
 			else: #normal note
-				note["noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
+				note["_noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
 				var noteObject = noteObj.instance()
-				noteObject.changeProperties(note["time"], totalcurSV, note["noteType"], note["finisher"])
+				noteObject.changeProperties(note["time"], totalcurSV, note["_noteType"], note["finisher"])
 				objContainer.get_node("NoteContainer").add_child(noteObject)
 				objContainer.get_node("NoteContainer").move_child(noteObject, 0)
+
+		notes.push_back(note)
 
 	#loadAndProcessSong
 	#get audio file name and separate it in the file
 	#load audio file and apply to song player
 	music.set_stream(AudioLoader.new().loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
 
+	#export test vDebug ~ ZMTT
+	var fusFile = File.new()
+	if fusFile.open("res://debug.fus", File.WRITE) == OK:
+		fusFile.store_line("== DEBUG ONLY ==")
+		for note in notes:
+			fusFile.store_line(String(note))
+		fusFile.close()
+
 func findTiming(time):
-	var bpm = null;
-	var sv = null;
-	var nextChange = null;
+	var bpm = null
+	var sv = null
+	var nextChange = null
 	#get the closest sv/bpm to the timing
 	for value in currentTimingData:
 		if value[0] <= time:
@@ -182,11 +191,11 @@ func findTiming(time):
 			if value[1] == 0:
 				bpm = value[2]
 				break
-	if sv == null: sv = 1;
+	if sv == null: sv = 1
 	return [bpm, sv, nextChange]
 
 func getBeatLength(time):
-	var beatLength = null;
+	var beatLength = null
 	var timingList = currentChartData["TimingPoints"]
 	for timing in timingList:
 		timing = timing.split(",") #split it to array
@@ -203,10 +212,10 @@ func getBeatLength(time):
 
 func playChart() -> void:
 	hitManager.reset()
-	if music.playing: 
+	if music.playing:
 		music.stop()
-		curPlaying = false;
-	
+		curPlaying = false
+
 	else:
 		var allNotes = []
 		for subContainer in objContainer.get_children():
@@ -214,12 +223,12 @@ func playChart() -> void:
 				allNotes.push_front(note)
 		for note in allNotes:
 			note.activate()
-		
+
 		#fuck fus, you have to fix this...
 		#currently would be ass for multiplayer
-		
+
 		curTime = 0
-		curPlaying = true;
+		curPlaying = true
 		if (waitOffset > 0):
 			timer.set_wait_time(waitOffset)
 			timer.start()
