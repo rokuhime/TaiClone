@@ -158,6 +158,11 @@ func loadAndProcessAll(filePath) -> void:
 	#load audio file and apply to song player
 	music.set_stream(AudioLoader.new().loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
 
+	#export test v0.0.1 ~ ZMTT
+	var fusFile = File.new()
+	if fusFile.open("res://beatmap.fus", File.WRITE) == OK:
+		fusFile.close()
+
 func findTiming(time):
 	var bpm = null
 	var sv = null
