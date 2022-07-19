@@ -5,8 +5,6 @@ onready var music = get_node("../../Music")
 onready var input = get_node("LineEdit")
 onready var loadButt = get_node("LoadButton")
 onready var playButt = get_node("PlayButton")
-onready var muteMToggle = get_node("MuteMToggle")
-onready var muteHToggle = get_node("MuteHToggle")
 onready var rateButt = get_node("PlayButton")
 onready var rateInput = get_node("RateInput")
 onready var autoToggle = get_node("AutoToggle")
@@ -23,8 +21,6 @@ func _process(_delta):
 func _ready():
 	loadButt.connect("pressed", self, "loadFunc")
 	playButt.connect("pressed", get_node("../../ChartLoader"), "playChart")
-	muteMToggle.connect("pressed", self, "toggleMMute")
-	muteHToggle.connect("pressed", self, "toggleHMute")
 	autoToggle.connect("pressed", self, "autoThing")
 	rateButt.connect("pressed", self, "changeRate")
 	
@@ -51,18 +47,4 @@ func changeRate():
 	music.set_pitch_scale(rate)
 
 # todo: make all volume things use linear2db
-# see https://godotengine.org/qa/40911/best-way-to-create-a-volume-slider
-
-func toggleMMute():
-	if muteMToggle.pressed: music.volume_db = -100000
-	else: music.volume_db = 0
-	pass
-
-func toggleHMute():
-	var vol = 0;
-	if muteHToggle.pressed: vol = -100000
-	get_node("../../DrumInteraction/LeftDonAudio").volume_db = vol
-	get_node("../../DrumInteraction/LeftKatAudio").volume_db = vol
-	get_node("../../DrumInteraction/RightDonAudio").volume_db = vol
-	get_node("../../DrumInteraction/RightKatAudio").volume_db = vol
-	pass
+# see https://godotengine.org/qa/40911/best-way-to-create-a-volume-slider	
