@@ -3,7 +3,7 @@ extends Node
 var configPath = "res://config.ini"
 var configFile
 
-var version = "v0.2"
+var version = "v0.2 - volume slider go brrr"
 var globalOffset: float = 0
 
 var keybinds = {}

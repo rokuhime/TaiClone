@@ -11,7 +11,7 @@ var vel: Vector2
 
 func _process(_delta) -> void:
 	# move note if not hit yet
-	if active: vel = move_and_slide(Vector2((speed * -1), 0))
+	if active: vel = move_and_slide(Vector2((speed * -1.9), 0))
 
 func changeProperties(newTiming, newSpeed, newIsKat, newFinisher):
 	timing = newTiming
