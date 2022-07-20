@@ -363,63 +363,35 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
 margin_top = -82.0
-margin_right = 643.0
+margin_right = 401.0
 margin_bottom = -44.0
 rect_scale = Vector2( 1.9, 1.9 )
 script = ExtResource( 16 )
 
 [node name="LineEdit" type="LineEdit" parent="debug/temploadchart"]
-margin_right = 242.0
+margin_right = 241.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Chart Location"
 
 [node name="LoadButton" type="Button" parent="debug/temploadchart"]
-margin_left = 246.0
-margin_right = 288.0
+margin_left = 245.0
+margin_right = 287.0
 margin_bottom = 38.0
 text = "Load"
 
 [node name="PlayButton" type="Button" parent="debug/temploadchart"]
-margin_left = 292.0
-margin_right = 330.0
+margin_left = 291.0
+margin_right = 329.0
 margin_bottom = 38.0
 text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="debug/temploadchart"]
-margin_left = 334.0
-margin_right = 392.0
+margin_left = 333.0
+margin_right = 391.0
 margin_bottom = 38.0
 text = "Auto"
-
-[node name="MuteMToggle" type="CheckBox" parent="debug/temploadchart"]
-margin_left = 396.0
-margin_right = 499.0
-margin_bottom = 38.0
-text = "Mute Music"
-
-[node name="MuteHToggle" type="CheckBox" parent="debug/temploadchart"]
-margin_left = 503.0
-margin_right = 633.0
-margin_bottom = 38.0
-text = "Mute Hitsounds"
-
-[node name="RateInput" type="LineEdit" parent="debug/temploadchart"]
-visible = false
-margin_left = 425.0
-margin_right = 632.0
-margin_bottom = 38.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-placeholder_text = "Target Rate (dont work yet)"
-
-[node name="RateButton" type="Button" parent="debug/temploadchart"]
-visible = false
-margin_left = 542.0
-margin_right = 632.0
-margin_bottom = 38.0
-text = "Change Rate"
 
 [node name="SettingsButton" type="Button" parent="debug"]
 anchor_left = 1.0

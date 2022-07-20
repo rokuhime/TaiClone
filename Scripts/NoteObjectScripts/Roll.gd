@@ -15,6 +15,8 @@ var tickDistance: float = 0
 
 var curSongTime: float = 0
 
+var vel: Vector2
+
 #will need to be cleaned, some values arent used other than this func so i should get rid
 #of the "new" part of it
 func changeProperties(newTiming, newSpeed, newFinisher, newLength, beatlength):
@@ -34,7 +36,7 @@ func changeProperties(newTiming, newSpeed, newFinisher, newLength, beatlength):
 	
 	tickDistance = beatlength / 100
 	
-	totalTicks = floor(length / (tickDistance) * 48)
+	totalTicks = floor(length / tickDistance * 48.0)
 	#length of the roll divided by the distance between ticks
 	#and multiplied by the frequency
 	
@@ -60,6 +62,7 @@ func _input(_ev) -> void:
 				active = false
 			elif curSongTime < timing - hitManager.inaccTiming: #if before slider is hittable
 				pass
+			
 			else:
 				#get current tick target
 				currentTick = floor((curSongTime - timing) * (tickDistance * 4))
@@ -73,7 +76,7 @@ func _input(_ev) -> void:
 					hitManager.addScore("roll")
 
 func _process(_delta):
-	if active: move_and_slide(Vector2((speed * -1), 0))
+	if active: vel = move_and_slide(Vector2((speed * -1), 0))
 	#this feels dumb too idk...
 	curSongTime = get_node("../../../../../Music").get_playback_position()
 

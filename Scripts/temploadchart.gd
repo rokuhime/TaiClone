@@ -6,7 +6,6 @@ onready var input = get_node("LineEdit")
 onready var loadButt = get_node("LoadButton")
 onready var playButt = get_node("PlayButton")
 onready var rateButt = get_node("PlayButton")
-onready var rateInput = get_node("RateInput")
 onready var autoToggle = get_node("AutoToggle")
 
 onready var hitManager = get_node("../../HitManager")
@@ -22,7 +21,6 @@ func _ready():
 	loadButt.connect("pressed", self, "loadFunc")
 	playButt.connect("pressed", get_node("../../ChartLoader"), "playChart")
 	autoToggle.connect("pressed", self, "autoThing")
-	rateButt.connect("pressed", self, "changeRate")
 	
 	versionText.text = settings.version
 
@@ -40,11 +38,6 @@ func loadFunc():
 
 func autoThing():
 	hitManager.auto = autoToggle.pressed
-
-func changeRate():
-	#change to timer plz, currently throws errors
-	var rate = float(rateInput.text)
-	music.set_pitch_scale(rate)
 
 # todo: make all volume things use linear2db
 # see https://godotengine.org/qa/40911/best-way-to-create-a-volume-slider	

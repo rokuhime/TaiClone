@@ -16,6 +16,16 @@ var sfxVol: float = 1
 
 var precise = false
 
+onready var allSFX = [
+	get_node("../../DrumInteraction/LeftDonAudio"),
+	get_node("../../DrumInteraction/LeftKatAudio"),
+	get_node("../../DrumInteraction/RightDonAudio"),
+	get_node("../../DrumInteraction/RightKatAudio"),
+	get_node("../../DrumInteraction/FinisherDonAudio"),
+	get_node("../../DrumInteraction/FinisherKatAudio"),
+	get_node("ChangeSound")
+]
+
 func _input(ev):
 	var changed = false
 
@@ -70,6 +80,9 @@ func changeVolume(type):
 	match(type):
 		"master":
 			music.volume_db = musicdb
+			
+			for sfx in allSFX:
+				sfx.volume_db = sfxdb
 
 func appearanceTimeout():
 	if self.modulate == Color(1,1,1,0):

@@ -112,12 +112,12 @@ func checkInput(isKat, isRight) -> void:
 func addScore(type) -> void:
 	match type:
 		"accurate":
-			score += 300 * scoreMultiplier
+			score += int(300.0 * scoreMultiplier)
 			accurateCount += 1
 			combo += 1
 			drumInteraction.hitNotifyAnimation("accurate");
 		"inaccurate":
-			score += 150 * scoreMultiplier
+			score += int(150.0 * scoreMultiplier)
 			inaccurateCount += 1
 			combo += 1
 			drumInteraction.hitNotifyAnimation("inaccurate");
@@ -126,16 +126,16 @@ func addScore(type) -> void:
 			combo = 0
 			drumInteraction.hitNotifyAnimation("miss");
 		"finisher":
-			score += 300 * scoreMultiplier
+			score += int(300.0 * scoreMultiplier)
 		"spinner":
-			score += 600 * scoreMultiplier
+			score += int(600.0 * scoreMultiplier)
 		"roll":
-			score += 300 * scoreMultiplier
+			score += int(300.0 * scoreMultiplier)
 		_:
 			pass;
 	
 	var accuracy: float = 0;
-	if accurateCount + (inaccurateCount / 2) != 0:
+	if accurateCount + (float(inaccurateCount) / 2) != 0:
 		var hitCount = accurateCount + (float(inaccurateCount) / 2)
 		var totalCount = accurateCount + inaccurateCount + missCount
 		accuracy = float(hitCount / totalCount) * 100

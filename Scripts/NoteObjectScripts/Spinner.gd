@@ -77,7 +77,9 @@ func hitSuccess():
 func spinnerFinished():
 	if (neededHits <= curHitCount):
 		hitManager.addScore("accurate")
-	elif ((int(neededHits) / 2 ) <= curHitCount):
+		
+		#ik its silly but gets rid of errors
+	elif (int(float(neededHits) / 2 ) <= curHitCount):
 		hitManager.addScore("inaccurate")
 	else:
 		hitManager.addScore("miss")
