@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://Skins/TestSkin/osu!_rwxudnxmU5.png" type="Texture" id=1]
 [ext_resource path="res://Skins/TestSkin/taiko-bar-right.png" type="Texture" id=2]
@@ -28,6 +28,7 @@
 [ext_resource path="res://Fonts/NotoSansJP-Black.otf" type="DynamicFontData" id=26]
 [ext_resource path="res://Scripts/Global/VolumeControl.gd" type="Script" id=27]
 [ext_resource path="res://Game/Sounds/waw.wav" type="AudioStream" id=28]
+[ext_resource path="res://Scripts/Gameplay/HitError.gd" type="Script" id=29]
 
 [sub_resource type="DynamicFont" id=1]
 size = 75
@@ -46,6 +47,25 @@ size = 26
 outline_size = 2
 outline_color = Color( 0, 0, 0, 0.313726 )
 font_data = ExtResource( 9 )
+
+[sub_resource type="GDScript" id=12]
+script/source = "extends Control
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+"
 
 [sub_resource type="Gradient" id=4]
 colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 1 )
@@ -326,6 +346,95 @@ text = "%"
 align = 2
 valign = 2
 
+[node name="HitError" type="Control" parent="UI"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -207.0
+margin_top = -40.0
+margin_right = 207.0
+script = ExtResource( 29 )
+
+[node name="Back" type="ColorRect" parent="UI/HitError"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.392157 )
+
+[node name="Colors" type="HBoxContainer" parent="UI/HitError"]
+modulate = Color( 1, 1, 1, 0.784314 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 13.0
+margin_bottom = -13.0
+custom_constants/separation = 0
+
+[node name="MissLate" type="ColorRect" parent="UI/HitError/Colors"]
+margin_right = 12.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+color = Color( 0.78125, 0.296021, 0.296021, 1 )
+
+[node name="InaccurateLate" type="ColorRect" parent="UI/HitError/Colors"]
+margin_left = 12.0
+margin_right = 142.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.47451, 0.854902, 0.368627, 1 )
+
+[node name="Accurate" type="ColorRect" parent="UI/HitError/Colors"]
+margin_left = 142.0
+margin_right = 271.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.321569, 0.65098, 1, 1 )
+
+[node name="InaccurateEarly" type="ColorRect" parent="UI/HitError/Colors"]
+margin_left = 271.0
+margin_right = 401.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.47451, 0.854902, 0.368627, 1 )
+
+[node name="MissEarly" type="ColorRect" parent="UI/HitError/Colors"]
+margin_left = 401.0
+margin_right = 414.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+color = Color( 0.780392, 0.294118, 0.294118, 1 )
+
+[node name="MiddleMarker" type="ColorRect" parent="UI/HitError"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -1.0
+margin_right = 1.0
+
+[node name="HitPoints" type="Control" parent="UI/HitError"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 12 )
+
+[node name="AverageHit" type="ColorRect" parent="UI/HitError"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -2.0
+margin_right = -5.0
+margin_bottom = 13.0
+rect_rotation = 45.0
+rect_pivot_offset = Vector2( 20, 20 )
+color = Color( 1, 1, 1, 0.8 )
+
 [node name="debug" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -363,33 +472,33 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
 margin_top = -82.0
-margin_right = 401.0
+margin_right = 355.0
 margin_bottom = -44.0
 rect_scale = Vector2( 1.9, 1.9 )
 script = ExtResource( 16 )
 
 [node name="LineEdit" type="LineEdit" parent="debug/temploadchart"]
-margin_right = 241.0
+margin_right = 195.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Chart Location"
 
 [node name="LoadButton" type="Button" parent="debug/temploadchart"]
-margin_left = 245.0
-margin_right = 287.0
+margin_left = 199.0
+margin_right = 241.0
 margin_bottom = 38.0
 text = "Load"
 
 [node name="PlayButton" type="Button" parent="debug/temploadchart"]
-margin_left = 291.0
-margin_right = 329.0
+margin_left = 245.0
+margin_right = 283.0
 margin_bottom = 38.0
 text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="debug/temploadchart"]
-margin_left = 333.0
-margin_right = 391.0
+margin_left = 287.0
+margin_right = 345.0
 margin_bottom = 38.0
 text = "Auto"
 

@@ -4,6 +4,8 @@ onready var music = get_node("../Music")
 onready var chart = get_node("../ChartLoader")
 onready var drumInteraction = get_node("../DrumInteraction")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
+onready var hitError = get_node("../UI/HitError")
+
 onready var comboLabel = get_node("../BarLeft/DrumVisual/Combo")
 onready var scoreLabel = get_node("../UI/Score")
 onready var accuracyLabel = get_node("../UI/Accuracy")
@@ -64,7 +66,9 @@ func _process(_delta) -> void:
 			lastSideUsedIsRight = !lastSideUsedIsRight
 		
 		#miss check
-		if (!auto && ((chart.curTime + settings.globalOffset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > inaccTiming):
+		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1)
+		if (!auto && ((chart.curTime + settings.globalOffset) - nextNote.timing) > inaccTiming):
+			hitError.newMarker("miss", curTime - nextNote.timing)
 			addScore("miss")
 			nextHittableNote += 1;
 
@@ -84,18 +88,15 @@ func checkInput(isKat, isRight) -> void:
 		if (nextNoteExists()):
 			#get next hittable note and current playback position
 			var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
+			var hitType: String
 			
 			if (abs((curTime - nextNote.timing) + settings.globalOffset) <= inaccTiming):
 				#check if accurate and right key pressed
 				if (abs((curTime - nextNote.timing) + settings.globalOffset) <= accTiming && nextNote.isKat == isKat):
-					addScore("accurate")
-					nextHittableNote += 1;
-					nextNote.deactivate()
+					hitType = "accurate"
 				#check if inaccurate and right key pressed
 				elif (nextNote.isKat == isKat): 
-					addScore("inaccurate")
-					nextHittableNote += 1;
-					nextNote.deactivate()
+					hitType = "inaccurate"
 				
 				#broken for some reason, not really sure whats wrong. ill look at it later
 	#			#check if inaccurate and wrong key pressed
@@ -103,10 +104,16 @@ func checkInput(isKat, isRight) -> void:
 	#				print("bruh")
 	#				addScore("miss")
 	#				nextHittableNote += 1;
+				else: return
+				
+				addScore(hitType)
+				nextHittableNote += 1;
+				if hitType != "miss": nextNote.deactivate()
 				
 				if nextNote.finisher == true: 
 					lastNoteWasFinisher = true
 				
+				hitError.newMarker(hitType, curTime - nextNote.timing)
 			lastSideUsedIsRight = isRight
 
 func addScore(type) -> void:
