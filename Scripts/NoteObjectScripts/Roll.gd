@@ -76,7 +76,7 @@ func _input(_ev) -> void:
 					hitManager.addScore("roll")
 
 func _process(_delta):
-	if active: vel = move_and_slide(Vector2((speed * -1), 0))
+	if active: vel = move_and_slide(Vector2((speed * -1.9), 0))
 	#this feels dumb too idk...
 	curSongTime = get_node("../../../../../Music").get_playback_position()
 

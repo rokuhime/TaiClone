@@ -113,9 +113,10 @@ func loadAndProcessAll(filePath) -> void:
 
 		#figure out what kind of note it is
 		#osu keeps type as an int that references bytes
+		
 		if 1 << 3 & int(noteData[3]): # spinner
 			note["_noteType"] = 2
-			note["length"] = float(noteData[5]) / 1000 - note["time"]
+			note["length"] = float(noteData[5]) / 1000 - (note["time"] - waitOffset)
 			var noteObject = spinWarnObj.instance()
 			noteObject.changeProperties(note["time"], totalcurSV, note["length"])
 			objContainer.get_node("EtcContainer").add_child(noteObject)

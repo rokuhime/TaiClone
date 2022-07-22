@@ -13,7 +13,7 @@ var vel: Vector2
 func _process(_delta) -> void:
 	# move note if not hit yet
 	if(active == true): 
-		vel = move_and_slide(Vector2((speed * -1), 0))
+		vel = move_and_slide(Vector2((speed * -1.9), 0))
 		if (get_node("../../../../../Music").get_playback_position() >= timing):
 			deactivate()
 

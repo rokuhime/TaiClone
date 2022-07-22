@@ -3,15 +3,18 @@ extends Control
 onready var avgHit = get_node("AverageHit")
 onready var middleMarker = get_node("MiddleMarker")
 onready var hitPoints = get_node("HitPoints")
+onready var timingIndicator = get_node("../../BarLeft/TimingIndicator")
+onready var tween = get_node("../../BarLeft/TimingIndicator/Tween")
 
 var hitPositions = []
+
+var lateearlySimpleDisplay: bool = true
 
 func newMarker(type, timing):
 	var newMarker = middleMarker.duplicate()
 	hitPoints.add_child(newMarker)
 	
 	var markerColour: Color;
-	print(type)
 	match type:
 		"accurate": markerColour = skin.AccurateColour
 		"inaccurate": markerColour = skin.InaccurateColour
@@ -25,6 +28,8 @@ func newMarker(type, timing):
 	
 	fadeOutMarkers()
 	changeAvgHitPos()
+	
+	if type == "inaccurate": changeIndicator(type, timing)
 
 func fadeOutMarkers():
 	#print(hitPoints.get_child_count(), " markers")
@@ -44,3 +49,26 @@ func changeAvgHitPos():
 	avg = avg / hitPositions.size()
 	
 	avgHit.rect_position = Vector2(avg, 18)
+
+func changeIndicator(type, timing):
+	var val: String
+	var colour: Color
+	var num: int
+	
+	num = round(timing * 1000)
+	if timing > 0:
+		if lateearlySimpleDisplay: val = "LATE"
+		else: val = "+" + str(num)
+		colour = Color("5A5AFF")
+	else:
+		if lateearlySimpleDisplay: val = "EARLY"
+		else: val = str(num)
+		colour = Color("FF5A5A")
+	
+	timingIndicator.text = val
+	timingIndicator.modulate = colour
+	
+	tween.interpolate_property(timingIndicator, "self_modulate",
+		Color(1,1,1,1), Color(1,1,1,0), 0.5,
+		Tween.TRANS_QUART, Tween.EASE_IN)
+	tween.start()
