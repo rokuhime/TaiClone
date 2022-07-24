@@ -55,14 +55,14 @@ func _process(_delta) -> void:
 			
 			if !nextNoteIsKat:
 				if lastSideUsedIsRight: #kDdk
-					drumInteraction.keypressAnimation(1)
+					drumInteraction.keypress_animation(1)
 				else: #kdDk
-					drumInteraction.keypressAnimation(2)
+					drumInteraction.keypress_animation(2)
 			else:
 				if lastSideUsedIsRight: #Kddk
-					drumInteraction.keypressAnimation(3)
+					drumInteraction.keypress_animation(3)
 				else: #kddK
-					drumInteraction.keypressAnimation(4)
+					drumInteraction.keypress_animation(4)
 			lastSideUsedIsRight = !lastSideUsedIsRight
 		
 		#miss check
@@ -122,16 +122,16 @@ func addScore(type) -> void:
 			score += int(300.0 * scoreMultiplier)
 			accurateCount += 1
 			combo += 1
-			drumInteraction.hitNotifyAnimation("accurate");
+			drumInteraction.hit_notify_animation("accurate");
 		"inaccurate":
 			score += int(150.0 * scoreMultiplier)
 			inaccurateCount += 1
 			combo += 1
-			drumInteraction.hitNotifyAnimation("inaccurate");
+			drumInteraction.hit_notify_animation("inaccurate");
 		"miss":
 			missCount += 1
 			combo = 0
-			drumInteraction.hitNotifyAnimation("miss");
+			drumInteraction.hit_notify_animation("miss");
 		"finisher":
 			score += int(300.0 * scoreMultiplier)
 		"spinner":

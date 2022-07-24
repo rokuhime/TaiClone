@@ -13,9 +13,15 @@ _global_script_classes=[ {
 "class": "AudioLoader",
 "language": "GDScript",
 "path": "res://scripts/gd_script_audio_import.gd"
+}, {
+"base": "Node",
+"class": "DrumInteraction",
+"language": "GDScript",
+"path": "res://scripts/gameplay/drum_interaction.gd"
 } ]
 _global_script_class_icons={
-"AudioLoader": ""
+"AudioLoader": "",
+"DrumInteraction": ""
 }
 
 [application]
