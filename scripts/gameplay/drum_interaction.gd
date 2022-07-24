@@ -8,14 +8,7 @@ onready var l_kat_aud := $"LeftKatAudio" as AudioStreamPlayer
 onready var r_don_aud := $"RightDonAudio" as AudioStreamPlayer
 onready var r_kat_aud := $"RightKatAudio" as AudioStreamPlayer
 
-onready var _l_don_obj := $"../BarLeft/DrumVisual/LeftDon" as CanvasItem
-onready var _l_kat_obj := $"../BarLeft/DrumVisual/LeftKat" as CanvasItem
-onready var _r_don_obj := $"../BarLeft/DrumVisual/RightDon" as CanvasItem
-onready var _r_kat_obj := $"../BarLeft/DrumVisual/RightKat" as CanvasItem
-
-onready var _accurate_obj := $"../BarRight/HitPointOffset/Judgements/JudgeAccurate" as CanvasItem
-onready var _inaccurate_obj := $"../BarRight/HitPointOffset/Judgements/JudgeInccurate" as CanvasItem
-onready var _miss_obj := $"../BarRight/HitPointOffset/Judgements/JudgeMiss" as CanvasItem
+onready var _gameplay := self.get_parent() as Gameplay
 
 onready var _tween := $"DrumAnimationTween" as Tween
 
@@ -35,11 +28,11 @@ func hit_notify_animation(type: String) -> void:
 	var obj: CanvasItem
 	match type:
 		"accurate":
-			obj = _accurate_obj
+			obj = _gameplay.accurate_obj
 		"innacurate":
-			obj = _inaccurate_obj
+			obj = _gameplay.inaccurate_obj
 		"miss":
-			obj = _miss_obj
+			obj = _gameplay.miss_obj
 		_:
 			push_warning("Unknown hit animation")
 			return
@@ -54,16 +47,16 @@ func keypress_animation(key: int) -> void:
 	var obj: CanvasItem
 	match key:
 		1:
-			obj = _l_don_obj
+			obj = _gameplay.l_don_obj
 			l_don_aud.play()
 		2:
-			obj = _r_don_obj
+			obj = _gameplay.r_don_obj
 			r_don_aud.play()
 		3:
-			obj = _l_kat_obj
+			obj = _gameplay.l_kat_obj
 			l_kat_aud.play()
 		4:
-			obj = _r_kat_obj
+			obj = _gameplay.r_kat_obj
 			r_kat_aud.play()
 		_:
 			push_warning("Unknown keypress animation.")
