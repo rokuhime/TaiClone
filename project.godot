@@ -13,9 +13,51 @@ _global_script_classes=[ {
 "class": "AudioLoader",
 "language": "GDScript",
 "path": "res://scripts/gd_script_audio_import.gd"
+}, {
+"base": "Node",
+"class": "DrumInteraction",
+"language": "GDScript",
+"path": "res://scripts/gameplay/drum_interaction.gd"
+}, {
+"base": "Node",
+"class": "Gameplay",
+"language": "GDScript",
+"path": "res://scripts/gameplay.gd"
+}, {
+"base": "Node",
+"class": "HitManager",
+"language": "GDScript",
+"path": "res://scripts/gameplay/hit_manager.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Note",
+"language": "GDScript",
+"path": "res://scripts/note_objects/note.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Roll",
+"language": "GDScript",
+"path": "res://scripts/note_objects/roll.gd"
+}, {
+"base": "Reference",
+"class": "SkinManager",
+"language": "GDScript",
+"path": "res://scripts/global/skin_manager.gd"
+}, {
+"base": "CanvasItem",
+"class": "Spinner",
+"language": "GDScript",
+"path": "res://scripts/note_objects/spinner.gd"
 } ]
 _global_script_class_icons={
-"AudioLoader": ""
+"AudioLoader": "",
+"DrumInteraction": "",
+"Gameplay": "",
+"HitManager": "",
+"Note": "",
+"Roll": "",
+"SkinManager": "",
+"Spinner": ""
 }
 
 [application]
@@ -28,7 +70,6 @@ config/icon="res://icon.png"
 
 settings="*res://scripts/global/global_settings.gd"
 tools="*res://scripts/global/global_tools.gd"
-skin="*res://scripts/global/skin_manager.gd"
 
 [display]
 

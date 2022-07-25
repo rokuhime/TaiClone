@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://scripts/gameplay/chart_loader.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
@@ -29,6 +29,7 @@
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=27]
 [ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=28]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
+[ext_resource path="res://scripts/gameplay.gd" type="Script" id=30]
 
 [sub_resource type="DynamicFont" id=1]
 size = 75
@@ -106,6 +107,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
+script = ExtResource( 30 )
 __meta__ = {
 "_edit_vertical_guides_": [ -119.0 ]
 }

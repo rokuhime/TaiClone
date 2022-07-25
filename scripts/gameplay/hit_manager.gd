@@ -1,3 +1,4 @@
+class_name HitManager
 extends Node
 
 onready var music = get_node("../Music")
@@ -48,21 +49,21 @@ func _process(_delta) -> void:
 		#temp auto
 		#doesnt support special note types currently
 		if (auto && ((chart.curTime + settings.globalOffset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
-			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).isKat
+			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).is_kat
 			
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
 			checkInput(nextNoteIsKat, lastSideUsedIsRight)
 			
 			if !nextNoteIsKat:
 				if lastSideUsedIsRight: #kDdk
-					drumInteraction.keypressAnimation(1)
+					drumInteraction.keypress_animation(1)
 				else: #kdDk
-					drumInteraction.keypressAnimation(2)
+					drumInteraction.keypress_animation(2)
 			else:
 				if lastSideUsedIsRight: #Kddk
-					drumInteraction.keypressAnimation(3)
+					drumInteraction.keypress_animation(3)
 				else: #kddK
-					drumInteraction.keypressAnimation(4)
+					drumInteraction.keypress_animation(4)
 			lastSideUsedIsRight = !lastSideUsedIsRight
 		
 		#miss check
@@ -77,7 +78,7 @@ func checkInput(isKat, isRight) -> void:
 	if chart.curPlaying:
 		if (lastNoteWasFinisher):
 			var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
-			if (abs((curTime - lastNote.timing) + settings.globalOffset)  <= accTiming && lastNote.isKat == isKat) && (lastSideUsedIsRight != isRight):
+			if (abs((curTime - lastNote.timing) + settings.globalOffset)  <= accTiming && lastNote.is_kat == isKat) && (lastSideUsedIsRight != isRight):
 				#swallow input, give more points
 				addScore("finisher")
 				if isKat: fKatAud.play()
@@ -92,10 +93,10 @@ func checkInput(isKat, isRight) -> void:
 			
 			if (abs((curTime - nextNote.timing) + settings.globalOffset) <= inaccTiming):
 				#check if accurate and right key pressed
-				if (abs((curTime - nextNote.timing) + settings.globalOffset) <= accTiming && nextNote.isKat == isKat):
+				if (abs((curTime - nextNote.timing) + settings.globalOffset) <= accTiming && nextNote.is_kat == isKat):
 					hitType = "accurate"
 				#check if inaccurate and right key pressed
-				elif (nextNote.isKat == isKat): 
+				elif (nextNote.is_kat == isKat): 
 					hitType = "inaccurate"
 				
 				#broken for some reason, not really sure whats wrong. ill look at it later
@@ -122,16 +123,16 @@ func addScore(type) -> void:
 			score += int(300.0 * scoreMultiplier)
 			accurateCount += 1
 			combo += 1
-			drumInteraction.hitNotifyAnimation("accurate");
+			drumInteraction.hit_notify_animation("accurate");
 		"inaccurate":
 			score += int(150.0 * scoreMultiplier)
 			inaccurateCount += 1
 			combo += 1
-			drumInteraction.hitNotifyAnimation("inaccurate");
+			drumInteraction.hit_notify_animation("inaccurate");
 		"miss":
 			missCount += 1
 			combo = 0
-			drumInteraction.hitNotifyAnimation("miss");
+			drumInteraction.hit_notify_animation("miss");
 		"finisher":
 			score += int(300.0 * scoreMultiplier)
 		"spinner":
