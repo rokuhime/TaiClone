@@ -48,7 +48,7 @@ func _process(_delta) -> void:
 		#temp auto
 		#doesnt support special note types currently
 		if (auto && ((chart.curTime + settings.globalOffset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
-			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).isKat
+			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).is_kat
 			
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
 			checkInput(nextNoteIsKat, lastSideUsedIsRight)
@@ -77,7 +77,7 @@ func checkInput(isKat, isRight) -> void:
 	if chart.curPlaying:
 		if (lastNoteWasFinisher):
 			var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
-			if (abs((curTime - lastNote.timing) + settings.globalOffset)  <= accTiming && lastNote.isKat == isKat) && (lastSideUsedIsRight != isRight):
+			if (abs((curTime - lastNote.timing) + settings.globalOffset)  <= accTiming && lastNote.is_kat == isKat) && (lastSideUsedIsRight != isRight):
 				#swallow input, give more points
 				addScore("finisher")
 				if isKat: fKatAud.play()
@@ -92,10 +92,10 @@ func checkInput(isKat, isRight) -> void:
 			
 			if (abs((curTime - nextNote.timing) + settings.globalOffset) <= inaccTiming):
 				#check if accurate and right key pressed
-				if (abs((curTime - nextNote.timing) + settings.globalOffset) <= accTiming && nextNote.isKat == isKat):
+				if (abs((curTime - nextNote.timing) + settings.globalOffset) <= accTiming && nextNote.is_kat == isKat):
 					hitType = "accurate"
 				#check if inaccurate and right key pressed
-				elif (nextNote.isKat == isKat): 
+				elif (nextNote.is_kat == isKat): 
 					hitType = "inaccurate"
 				
 				#broken for some reason, not really sure whats wrong. ill look at it later
