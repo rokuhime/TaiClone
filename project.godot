@@ -23,11 +23,17 @@ _global_script_classes=[ {
 "class": "Gameplay",
 "language": "GDScript",
 "path": "res://scripts/gameplay.gd"
+}, {
+"base": "Reference",
+"class": "SkinManager",
+"language": "GDScript",
+"path": "res://scripts/global/skin_manager.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
 "DrumInteraction": "",
-"Gameplay": ""
+"Gameplay": "",
+"SkinManager": ""
 }
 
 [application]
@@ -40,7 +46,6 @@ config/icon="res://icon.png"
 
 settings="*res://scripts/global/global_settings.gd"
 tools="*res://scripts/global/global_tools.gd"
-skin="*res://scripts/global/skin_manager.gd"
 
 [display]
 

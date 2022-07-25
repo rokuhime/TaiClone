@@ -13,7 +13,7 @@ func _process(_delta) -> void:
 	# move note if not hit yet
 	if active: vel = move_and_slide(Vector2((speed * -1.9), 0))
 
-func changeProperties(newTiming, newSpeed, newIsKat, newFinisher):
+func changeProperties(newTiming, newSpeed, newIsKat, newFinisher, skin):
 	timing = newTiming
 	speed = newSpeed
 	
@@ -24,8 +24,8 @@ func changeProperties(newTiming, newSpeed, newIsKat, newFinisher):
 	#note colour
 	if (newIsKat == 1): isKat = true
 	else: isKat = false
-	if(isKat): get_child(0).self_modulate = skin.KatColour
-	else:      get_child(0).self_modulate = skin.DonColour
+	if(isKat): get_child(0).self_modulate = skin.kat_colour
+	else:      get_child(0).self_modulate = skin.don_colour
 
 func activate() -> void:
 	modulate = Color(1,1,1,1)

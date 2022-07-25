@@ -19,7 +19,7 @@ var vel: Vector2
 
 #will need to be cleaned, some values arent used other than this func so i should get rid
 #of the "new" part of it
-func changeProperties(newTiming, newSpeed, newFinisher, newLength, beatlength):
+func changeProperties(newTiming, newSpeed, newFinisher, newLength, beatlength, skin):
 	timing = newTiming
 	speed = newSpeed
 	length = newLength
@@ -29,8 +29,8 @@ func changeProperties(newTiming, newSpeed, newFinisher, newLength, beatlength):
 	if(finisher): get_child(0).rect_scale = Vector2(0.9,0.9)
 	
 	#note colour
-	get_node("Scale/Head").self_modulate = skin.RollColour
-	get_node("Scale/Body").modulate = skin.RollColour
+	get_node("Scale/Head").self_modulate = skin.roll_colour
+	get_node("Scale/Body").modulate = skin.roll_colour
 	
 	get_node("Scale/Body").rect_size = Vector2(speed * length, 129)
 	

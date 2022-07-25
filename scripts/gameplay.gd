@@ -1,6 +1,8 @@
 class_name Gameplay
 extends Node
 
+var skin := SkinManager.new()
+
 onready var _drum_visual := $"BarLeft/DrumVisual" as Node
 onready var l_don_obj := _drum_visual.get_node("LeftDon") as CanvasItem
 onready var l_kat_obj := _drum_visual.get_node("LeftKat") as CanvasItem

@@ -8,7 +8,7 @@ onready var l_kat_aud := $"LeftKatAudio" as AudioStreamPlayer
 onready var r_don_aud := $"RightDonAudio" as AudioStreamPlayer
 onready var r_kat_aud := $"RightKatAudio" as AudioStreamPlayer
 
-onready var _gameplay := self.get_parent() as Gameplay
+onready var _gameplay := $".." as Gameplay
 
 onready var _tween := $"DrumAnimationTween" as Tween
 
