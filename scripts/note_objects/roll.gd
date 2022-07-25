@@ -97,8 +97,7 @@ func activate() -> void:
 		return
 	position = Vector2(_speed * timing, 0)
 	for tick_idx in range(_tick_container.get_child_count()):
-		var tick := _tick_container.get_child(tick_idx) as CanvasItem
-		tick.show()
+		(_tick_container.get_child(tick_idx) as CanvasItem).show()
 	_active = true
 
 

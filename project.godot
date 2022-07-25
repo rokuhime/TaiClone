@@ -43,6 +43,11 @@ _global_script_classes=[ {
 "class": "SkinManager",
 "language": "GDScript",
 "path": "res://scripts/global/skin_manager.gd"
+}, {
+"base": "CanvasItem",
+"class": "Spinner",
+"language": "GDScript",
+"path": "res://scripts/note_objects/spinner.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -51,7 +56,8 @@ _global_script_class_icons={
 "HitManager": "",
 "Note": "",
 "Roll": "",
-"SkinManager": ""
+"SkinManager": "",
+"Spinner": ""
 }
 
 [application]

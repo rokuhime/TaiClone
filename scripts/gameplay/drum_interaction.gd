@@ -29,7 +29,7 @@ func hit_notify_animation(type: String) -> void:
 	match type:
 		"accurate":
 			obj = _gameplay.accurate_obj
-		"innacurate":
+		"inaccurate":
 			obj = _gameplay.inaccurate_obj
 		"miss":
 			obj = _gameplay.miss_obj

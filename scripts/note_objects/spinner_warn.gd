@@ -34,9 +34,9 @@ func deactivate() -> void:
 	#possibly more laggy honestly
 	var chartSV = get_node("../../../../../ChartLoader").findTiming(timing)
 	var hitsRequired = floor(length / ((chartSV[0] / 60)) * 16)
+	spinner.change_properties(timing, length, hitsRequired)
 	get_parent().add_child(spinner)
 	get_parent().move_child(spinner, 0)
-	spinner.changeProperties(timing, hitsRequired, length)
 	
 	#make self deactive (duh!)
 	modulate = Color(0,0,0,0)

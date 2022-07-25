@@ -1,100 +1,96 @@
-extends Node
+class_name Spinner
+extends CanvasItem
 
-onready var countText = get_node("Label")
-onready var spinCircRot = get_node("RotationObj")
-onready var tween = get_node("Tween")
-onready var hitManager = get_node("../../../../../HitManager")
+var timing := 0.0
 
-export var timing: float = 0
-export var length: float = 5
+var _cur_hit_count := 0
+var _current_speed := 0.0
+var _finished := false
+var _first_hit_is_kat := false
+var _length := 1.0
+var _loaded := false
+var _needed_hits := 0
 
-export var neededHits: int = 0
-var curHitCount: int = 0
-var nextHitIsKat: bool = false
+onready var _count_text := $"Label" as Label
+onready var _gameplay := $"../../../../.." as Gameplay
+onready var _spin_circ_rot := $"RotationObj" as Node2D
+onready var _tween := $"Tween" as Tween
 
-var currentSpeed: float = 0
-var finished: bool = false
-var loaded:bool = false
 
-onready var approach = get_node("Approach")
-
-func changeProperties(newTiming, newHits, newLength):
-	timing = newTiming
-	neededHits = newHits
-	length = newLength
-	
-	#set counter text to say how many hits are needed
-	countText.text = str(neededHits)
-	
-	#make approach circle shrink
-	tween.interpolate_property(approach, "rect_scale",
-		Vector2(1,1), Vector2(0.1,0.1), length,
-		Tween.TRANS_LINEAR, Tween.EASE_OUT)
-	tween.start()
-	
-	#make spinner fade in
-	tween.interpolate_property(self, "modulate",
-		Color(1,1,1,0), Color(1,1,1,1), 0.25,
-		Tween.TRANS_EXPO, Tween.EASE_OUT)
-	tween.start()
-	loaded = true
-
-func _process(_delta) -> void:
-	if(loaded):
-		if (curHitCount == neededHits && !finished): 
-			finished = true
-			spinnerFinished()
-		if (get_node("../../../../../Music").get_playback_position() > (length + timing) && !finished):
-			finished = true
-			spinnerFinished()
-		spinCircRot.rotation_degrees += currentSpeed
-
-#this feels dumb.
-func _input(_ev) -> void:
-	if (neededHits > curHitCount):
-		var thisHit = null;
-		if Input.is_action_just_pressed("LeftDon") || Input.is_action_just_pressed("RightDon"): thisHit = false
-		if Input.is_action_just_pressed("LeftKat") || Input.is_action_just_pressed("RightKat"): thisHit = true
-		
-		match thisHit:
-			false:
-				if (!nextHitIsKat): hitSuccess();
-			true:
-				if (nextHitIsKat): hitSuccess();
-			_: return;
-
-func hitSuccess():
-	curHitCount += 1;
-	nextHitIsKat = !nextHitIsKat;
-	countText.text = str(neededHits - curHitCount)
-	hitManager.addScore("spinner")
-	
-	tween.interpolate_property(self, "currentSpeed",
-	3, 0, 1,
-	Tween.TRANS_CIRC, Tween.EASE_OUT)
-	tween.start()
-
-func spinnerFinished():
-	if (neededHits <= curHitCount):
-		hitManager.addScore("accurate")
-		
-		#ik its silly but gets rid of errors
-	elif (int(float(neededHits) / 2 ) <= curHitCount):
-		hitManager.addScore("inaccurate")
+func _input(event: InputEvent) -> void:
+	if _needed_hits <= _cur_hit_count or not _loaded:
+		return
+	var is_kat := event.is_action_pressed("LeftKat") or event.is_action_pressed("RightKat")
+	if _cur_hit_count == 0:
+		_first_hit_is_kat = is_kat
 	else:
-		hitManager.addScore("miss")
-	
-	#make spinner fade out
-	tween.interpolate_property(self, "modulate",
-		Color(1,1,1,1), Color(1,1,1,0), 0.25,
-		Tween.TRANS_EXPO, Tween.EASE_OUT)
-	tween.connect("tween_completed", self, "deleteSelf")
-	tween.start()
+		var next_hit_is_kat := _cur_hit_count % 2 != int(_first_hit_is_kat)
+		if (not next_hit_is_kat and not (event.is_action_pressed("LeftDon") or event.is_action_pressed("RightDon"))) or (next_hit_is_kat and not is_kat):
+			return
 
-func deactivate():
-	deleteSelf(1, 1)
-func activate():
-	deleteSelf(1, 1)
+	# hit_success function
+	_cur_hit_count += 1
+	_count_text.text = str(_needed_hits - _cur_hit_count)
+	_gameplay.hit_manager.addScore("spinner")
 
-func deleteSelf(_a, _b):
+	if not _tween.interpolate_property(self, "_current_speed", 3, 0, 1, Tween.TRANS_CIRC, Tween.EASE_OUT):
+		push_warning("Attempted to tween spinner speed.")
+	if not _tween.start():
+		push_warning("Attempted to start spinner speed tween.")
+
+
+func _ready() -> void:
+	# set counter text to say how many hits are needed
+	_count_text.text = str(_needed_hits)
+
+	# make approach circle shrink
+	if not _tween.interpolate_property($"Approach" as Control, "rect_scale", Vector2(1, 1), Vector2(0.1, 0.1), _length, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+		push_warning("Attempted to tween spinner approach.")
+
+	# make spinner fade in
+	if not _tween.interpolate_property(self, "modulate", Color.transparent, Color.white, 0.25, Tween.TRANS_EXPO, Tween.EASE_OUT):
+		push_warning("Attempted to tween spinner fade in.")
+
+	if not _tween.start():
+		push_warning("Attempted to start spinner tweens.")
+	_loaded = true
+
+
+func _process(_delta: float) -> void:
+	if not _loaded:
+		return
+	_spin_circ_rot.rotation_degrees += _current_speed
+	if _finished or (_cur_hit_count < _needed_hits and _gameplay.music.get_playback_position() <= (timing + _length)):
+		return
+	_finished = true
+
+	# spinner_finished function
+	_gameplay.hit_manager.addScore("accurate" if _needed_hits <= _cur_hit_count else "inaccurate" if _needed_hits / 2.0 <= _cur_hit_count else "miss")
+
+	# make spinner fade out
+	if not _tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 0.25, Tween.TRANS_EXPO, Tween.EASE_OUT):
+		push_warning("Attempted to tween spinner fade out.")
+	var _connect := _tween.connect("tween_completed", self, "delete_self")
+	if not _tween.start():
+		push_warning("Attempted to start spinner fade out tween.")
+
+
+func change_properties(new_timing: float, new_length: float, new_hits: int) -> void:
+	if _loaded:
+		push_warning("Attempted to change spinner properties after loaded.")
+		return
+	timing = new_timing
+	_length = new_length
+	_needed_hits = new_hits
+
+
+func activate() -> void:
+	delete_self()
+
+
+func deactivate() -> void:
+	delete_self()
+
+
+func delete_self() -> void:
 	queue_free()
