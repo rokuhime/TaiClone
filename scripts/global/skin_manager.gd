@@ -1,4 +1,5 @@
 class_name SkinManager
+extends Node
 
 var don_colour := Color("eb452c");
 var kat_colour := Color("438eac");

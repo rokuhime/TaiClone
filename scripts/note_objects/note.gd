@@ -16,7 +16,7 @@ func _ready() -> void:
 
 	# finisher scale
 	if finisher:
-		sprite.rect_scale = Vector2(0.9, 0.9)
+		sprite.rect_scale = Vector2 (0.9, 0.9)
 
 	# note colour
 	sprite.self_modulate = _gameplay.skin.kat_colour if is_kat else _gameplay.skin.don_colour
