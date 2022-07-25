@@ -118,7 +118,7 @@ func loadAndProcessAll(filePath) -> void:
 			note["_noteType"] = 2
 			note["length"] = float(noteData[5]) / 1000 - (note["time"] - waitOffset)
 			var noteObject = spinWarnObj.instance()
-			noteObject.changeProperties(note["time"], totalcurSV, note["length"])
+			noteObject.change_properties(note["time"], totalcurSV, note["length"], curSVData[0])
 			objContainer.get_node("EtcContainer").add_child(noteObject)
 			objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 

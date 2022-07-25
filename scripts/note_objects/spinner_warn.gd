@@ -1,43 +1,28 @@
-extends KinematicBody2D
+class_name SpinnerWarn
+extends HitObject
 
-onready var spinnerObj = preload("res://game/objects/spinner_object.tscn")
+var _bpm := 1.0
 
-export var timing = 0
-export var speed = 1
-export var length = 1
+onready var _spinner_obj := preload("res://game/objects/spinner_object.tscn")
 
-export var active = false
 
-var vel: Vector2
+func _process(_delta: float) -> void:
+	if _active and _gameplay.music.get_playback_position() >= timing:
+		deactivate()
 
-func _process(_delta) -> void:
-	# move note if not hit yet
-	if(active == true): 
-		vel = move_and_slide(Vector2((speed * -1.9), 0))
-		if (get_node("../../../../../Music").get_playback_position() >= timing):
-			deactivate()
 
-func changeProperties(newTiming, newSpeed, newLength):
-	timing = newTiming
-	speed = newSpeed
-	length = newLength
+func change_properties(new_timing: float, new_speed: float, new_length: float, new_bpm: float) -> void:
+	.ini(new_timing, new_speed, new_length)
+	if not _loaded:
+		_bpm = new_bpm
 
-func activate() -> void:
-	modulate = Color(1,1,1,1)
-	position = Vector2(timing * speed, 0)
-	active = true
 
 func deactivate() -> void:
-	#make spinner obj first
-	var spinner = spinnerObj.instance()
-	#note to self; couldnt i just give the cur sv timing from the chart loader? seems redundant to do this and
-	#possibly more laggy honestly
-	var chartSV = get_node("../../../../../ChartLoader").findTiming(timing)
-	var hitsRequired = floor(length / ((chartSV[0] / 60)) * 16)
-	spinner.change_properties(timing, length, hitsRequired)
+	# make spinner obj first
+	var spinner := _spinner_obj.instance() as Spinner
+	spinner.change_properties(timing, _length, int(_length * 960 / _bpm))
 	get_parent().add_child(spinner)
 	get_parent().move_child(spinner, 0)
-	
-	#make self deactive (duh!)
-	modulate = Color(0,0,0,0)
-	active = false
+
+	# make self deactive (duh!)
+	.deactivate()
