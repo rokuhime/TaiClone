@@ -48,6 +48,11 @@ _global_script_classes=[ {
 "class": "Spinner",
 "language": "GDScript",
 "path": "res://scripts/note_objects/spinner.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "SpinnerWarn",
+"language": "GDScript",
+"path": "res://scripts/note_objects/spinner_warn.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -57,7 +62,8 @@ _global_script_class_icons={
 "Note": "",
 "Roll": "",
 "SkinManager": "",
-"Spinner": ""
+"Spinner": "",
+"SpinnerWarn": ""
 }
 
 [application]
