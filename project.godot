@@ -24,10 +24,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/gameplay.gd"
 }, {
+"base": "Node",
+"class": "HitManager",
+"language": "GDScript",
+"path": "res://scripts/gameplay/hit_manager.gd"
+}, {
 "base": "KinematicBody2D",
 "class": "Note",
 "language": "GDScript",
 "path": "res://scripts/note_objects/note.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Roll",
+"language": "GDScript",
+"path": "res://scripts/note_objects/roll.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
@@ -38,7 +48,9 @@ _global_script_class_icons={
 "AudioLoader": "",
 "DrumInteraction": "",
 "Gameplay": "",
+"HitManager": "",
 "Note": "",
+"Roll": "",
 "SkinManager": ""
 }
 

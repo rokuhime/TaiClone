@@ -13,3 +13,6 @@ onready var _judgements := $"BarRight/HitPointOffset/Judgements" as Node
 onready var accurate_obj := _judgements.get_node("JudgeAccurate") as CanvasItem
 onready var inaccurate_obj := _judgements.get_node("JudgeInaccurate") as CanvasItem
 onready var miss_obj := _judgements.get_node("JudgeMiss") as CanvasItem
+
+onready var hit_manager := $"HitManager" as HitManager
+onready var music := $"Music" as AudioStreamPlayer

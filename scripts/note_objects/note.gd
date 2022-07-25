@@ -40,7 +40,7 @@ func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, ne
 
 func activate() -> void:
 	if _active:
-		push_warning("Attempted to activate after active.")
+		push_warning("Attempted to activate note after active.")
 		return
 	modulate = Color.white
 	position = Vector2(_speed * timing, 0)
@@ -49,7 +49,7 @@ func activate() -> void:
 
 func deactivate() -> void:
 	if not _active:
-		push_warning("Attempted to deactivate before active.")
+		push_warning("Attempted to deactivate note before active.")
 		return
 	modulate = Color.transparent
 	_active = false

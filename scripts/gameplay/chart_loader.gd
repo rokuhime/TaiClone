@@ -113,7 +113,6 @@ func loadAndProcessAll(filePath) -> void:
 
 		#figure out what kind of note it is
 		#osu keeps type as an int that references bytes
-		var gameplay := $".." as Gameplay
 		
 		if 1 << 3 & int(noteData[3]): # spinner
 			note["_noteType"] = 2
@@ -144,7 +143,7 @@ func loadAndProcessAll(filePath) -> void:
 				note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
 
 				var noteObject = rollObj.instance()
-				noteObject.changeProperties(note["time"], totalcurSV, note["finisher"], note["length"], curSVData[0], gameplay.skin)
+				noteObject.change_properties(note["time"], totalcurSV, note["length"], note["finisher"], curSVData[0])
 				objContainer.get_node("EtcContainer").add_child(noteObject)
 				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 

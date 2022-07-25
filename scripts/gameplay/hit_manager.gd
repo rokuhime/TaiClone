@@ -1,3 +1,4 @@
+class_name HitManager
 extends Node
 
 onready var music = get_node("../Music")
