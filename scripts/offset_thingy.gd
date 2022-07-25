@@ -2,10 +2,10 @@ extends HBoxContainer
 
 # this script stinks. gonna become obsolete when i get actual good settings going w
 
-onready var chartLoader = get_node("../../../../../ChartLoader")
+onready var chartLoader = get_node("../../../../../../ChartLoader")
 
 onready var offsetText = get_node("LineEdit")
-onready var objectContainer = get_node("../../../../../BarRight/HitPointOffset/ObjectContainers")
+onready var objectContainer = get_node("../../../../../../BarRight/HitPointOffset/ObjectContainers")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
