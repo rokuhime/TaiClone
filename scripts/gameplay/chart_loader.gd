@@ -151,7 +151,7 @@ func loadAndProcessAll(filePath) -> void:
 			else: #normal note
 				note["_noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
 				var noteObject = noteObj.instance()
-				noteObject.change_properties(note["time"], totalcurSV, gameplay.skin, note["_noteType"], note["finisher"])
+				noteObject.change_properties(note["time"], totalcurSV, note["_noteType"], note["finisher"])
 				objContainer.get_node("NoteContainer").add_child(noteObject)
 				objContainer.get_node("NoteContainer").move_child(noteObject, 0)
 
