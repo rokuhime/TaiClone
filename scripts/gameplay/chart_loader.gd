@@ -143,14 +143,14 @@ func loadAndProcessAll(filePath) -> void:
 				note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
 
 				var noteObject = rollObj.instance()
-				noteObject.changeProperties(note["time"], totalcurSV, note["finisher"], note["length"], curSVData[0])
+				noteObject.change_properties(note["time"], totalcurSV, note["length"], note["finisher"], curSVData[0])
 				objContainer.get_node("EtcContainer").add_child(noteObject)
 				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 
 			else: #normal note
 				note["_noteType"] = int(bool(((1 << 1) + (1 << 3)) & int(noteData[4])))
 				var noteObject = noteObj.instance()
-				noteObject.changeProperties(note["time"], totalcurSV, note["_noteType"], note["finisher"])
+				noteObject.change_properties(note["time"], totalcurSV, note["_noteType"], note["finisher"])
 				objContainer.get_node("NoteContainer").add_child(noteObject)
 				objContainer.get_node("NoteContainer").move_child(noteObject, 0)
 

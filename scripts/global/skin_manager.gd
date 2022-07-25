@@ -1,9 +1,9 @@
-extends Node
+class_name SkinManager
 
-var DonColour = Color("EB452C");
-var KatColour = Color("438EAC");
-var RollColour = Color("FCB806");
+var don_colour := Color("eb452c");
+var kat_colour := Color("438eac");
+var roll_colour := Color("fcb806");
 
-var AccurateColour = Color("52A6FF");
-var InaccurateColour = Color("79DA5E");
-var MissColour = Color("C74B4B");
+var accurate_colour := Color("52a6ff");
+var inaccurate_colour := Color("79da5e");
+var miss_colour := Color("c74b4b");
