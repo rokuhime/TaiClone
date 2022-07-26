@@ -1,32 +1,17 @@
 class_name Roll
-extends KinematicBody2D
-
-var finisher := true
-var timing := 0.0
-
-var _active := false
-var _length := 1.0
-var _speed := 1.0
+extends HitObject
 
 var _current_tick := 0
 var _tick_distance := 0.0
 var _total_ticks := 0
 
-onready var _gameplay := $"../../../../.." as Gameplay
 onready var _tick_container := $"TickContainer"
 
 
 func _ready() -> void:
-	var scale := $"Scale" as Control
-
-	# finisher scale
-	if finisher:
-		scale.rect_scale = Vector2(0.9, 0.9)
-
 	# note colour
-	(scale.get_node("Head") as CanvasItem).self_modulate = _gameplay.skin.roll_colour
-
-	var body := scale.get_node("Body") as Control
+	($"Scale/Head" as CanvasItem).self_modulate = _gameplay.skin.roll_colour
+	var body := $"Scale/Body" as Control
 	body.modulate = _gameplay.skin.roll_colour
 	body.rect_size = Vector2(_speed * _length, 129)
 
@@ -46,7 +31,7 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	# lol
-	if _total_ticks <= _current_tick or not _active or not not (event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftKat") or event.is_action_pressed("RightDon") or event.is_action_pressed("RightKat")):
+	if _total_ticks <= _current_tick or not _active or not _loaded or not not (event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftKat") or event.is_action_pressed("RightDon") or event.is_action_pressed("RightKat")):
 		return
 
 	var cur_song_time := _gameplay.music.get_playback_position()
@@ -69,20 +54,10 @@ func _input(event: InputEvent) -> void:
 		_gameplay.hit_manager.addScore("roll")
 
 
-func _process(_delta: float) -> void:
-	if _active:
-		var _vel := move_and_slide(Vector2(_speed * -1.9, 0))
-
-
-
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, beat_length: float) -> void:
-	if _active:
-		push_warning("Attempted to change roll properties after active.")
+	.ini(new_timing, new_speed, new_length, new_finisher)
+	if _loaded:
 		return
-	finisher = new_finisher
-	timing = new_timing
-	_length = new_length
-	_speed = new_speed
 
 	_tick_distance = beat_length / 100
 
@@ -92,17 +67,6 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 
 
 func activate() -> void:
-	if _active:
-		push_warning("Attempted to activate roll after active.")
-		return
-	position = Vector2(_speed * timing, 0)
 	for tick_idx in range(_tick_container.get_child_count()):
 		(_tick_container.get_child(tick_idx) as CanvasItem).show()
-	_active = true
-
-
-func deactivate() -> void:
-	if not _active:
-		push_warning("Attempted to deactivate roll before active.")
-		return
-	_active = false
+	.activate()

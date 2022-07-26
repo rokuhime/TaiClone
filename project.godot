@@ -30,11 +30,16 @@ _global_script_classes=[ {
 "path": "res://scripts/gameplay/hit_manager.gd"
 }, {
 "base": "KinematicBody2D",
+"class": "HitObject",
+"language": "GDScript",
+"path": "res://scripts/note_objects/hit_object.gd"
+}, {
+"base": "HitObject",
 "class": "Note",
 "language": "GDScript",
 "path": "res://scripts/note_objects/note.gd"
 }, {
-"base": "KinematicBody2D",
+"base": "HitObject",
 "class": "Roll",
 "language": "GDScript",
 "path": "res://scripts/note_objects/roll.gd"
@@ -44,20 +49,27 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/global/skin_manager.gd"
 }, {
-"base": "CanvasItem",
+"base": "HitObject",
 "class": "Spinner",
 "language": "GDScript",
 "path": "res://scripts/note_objects/spinner.gd"
+}, {
+"base": "HitObject",
+"class": "SpinnerWarn",
+"language": "GDScript",
+"path": "res://scripts/note_objects/spinner_warn.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
 "DrumInteraction": "",
 "Gameplay": "",
 "HitManager": "",
+"HitObject": "",
 "Note": "",
 "Roll": "",
 "SkinManager": "",
-"Spinner": ""
+"Spinner": "",
+"SpinnerWarn": ""
 }
 
 [application]
