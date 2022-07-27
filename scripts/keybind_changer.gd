@@ -58,4 +58,4 @@ func changeKey(button, key):
 	var newKey = InputEventKey.new()
 	newKey.set_scancode(key)
 	InputMap.action_add_event(button, newKey)
-	settings.keybinds[button] = key
+	$"root/Gameplay".keybinds[button] = key

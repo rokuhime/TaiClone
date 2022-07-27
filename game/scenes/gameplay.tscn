@@ -1103,3 +1103,5 @@ stream = ExtResource( 26 )
 volume_db = 10.0
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
+
+[connection signal="pressed" from="debug/SettingsPanel/SaveButton" to="." method="save_config"]

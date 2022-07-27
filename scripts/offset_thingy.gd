@@ -10,14 +10,14 @@ onready var objectContainer = get_node("../../../../../BarRight/HitPointOffset/O
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	offsetText.connect("text_entered", self, "changeOffset")
-	offsetText.text = str(settings.globalOffset)
+	offsetText.text = str($"/root/Gameplay".global_offset)
 
 func changeOffset(text):
 	var offset = float(text);
 	if (offset != null):
 		offset /= 1000
-		settings.globalOffset = offset
-	print(settings.globalOffset)
+		$"/root/Gameplay".global_offset = offset
+	print($"/root/Gameplay".global_offset)
 	
 	#i dont know. it just works
-	objectContainer.rect_position = Vector2(settings.globalOffset * -775, 0)
+	objectContainer.rect_position = Vector2($"/root/Gameplay".global_offset * -775, 0)

@@ -22,7 +22,7 @@ func _ready():
 	playButt.connect("pressed", get_node("../../ChartLoader"), "playChart")
 	autoToggle.connect("pressed", self, "autoThing")
 	
-	versionText.text = settings.version
+	versionText.text = $"/root/Gameplay".version
 
 func loadFunc():
 	debugTextThing.text = "Loading... [Checking File]"

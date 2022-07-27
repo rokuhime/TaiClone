@@ -8,7 +8,6 @@ onready var hiterrToggle = get_node("ScrollContainer/VBoxContainer/ExtraDisplays
 
 func _ready():
 	settingsButt.connect("pressed", self, "toggleSettings")
-	saveButt.connect("pressed", self, "saveSettings")
 	
 	lateearlyDrop.connect("item_selected", self, "enableDisplay", ["lateearly"])
 	lateearlyDrop.add_item("Off")
@@ -23,10 +22,6 @@ func _ready():
 func toggleSettings():
 	self.visible = !self.visible
 
-func saveSettings():
-	settings.saveConfig()
-	
-			
 func enableDisplay(input, display):
 	match display:
 		"lateearly":

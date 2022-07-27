@@ -80,7 +80,6 @@ config/icon="res://icon.png"
 
 [autoload]
 
-settings="*res://scripts/global/global_settings.gd"
 tools="*res://scripts/global/global_tools.gd"
 
 [display]
