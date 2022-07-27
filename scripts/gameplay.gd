@@ -2,7 +2,6 @@ class_name Gameplay
 extends Node
 
 var global_offset := 0.0
-var keybinds := {}
 var skin := SkinManager.new()
 var version := "v0.2 - volume slider go brrr"
 
@@ -21,6 +20,8 @@ onready var accurate_obj := _judgements.get_node("JudgeAccurate") as CanvasItem
 onready var inaccurate_obj := _judgements.get_node("JudgeInaccurate") as CanvasItem
 onready var miss_obj := _judgements.get_node("JudgeMiss") as CanvasItem
 
+onready var keybind_changer := $"debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds" as KeybindChanger
+
 onready var hit_manager := $"HitManager" as HitManager
 onready var music := $"Music" as AudioStreamPlayer
 
@@ -33,12 +34,7 @@ func _ready() -> void:
 		save_config()
 		return
 	for key in config_file.get_section_keys("Keybinds"):
-		var key_value := config_file.get_value("Keybinds", str(key)) as InputEvent
-		keybinds[key] = key_value
-
-		# load_keybinds function
-		InputMap.action_erase_events(str(key))
-		InputMap.action_add_event(str(key), key_value)
+		keybind_changer.change_key(str(key), config_file.get_value("Keybinds", str(key)))
 
 	var sections := config_file.get_sections()
 
@@ -53,8 +49,8 @@ func save_config() -> void:
 	var config_file := ConfigFile.new()
 
 	print_debug("Saving keybinds config...")
-	for key in keybinds:
-		config_file.set_value("Keybinds", str(key), keybinds[key])
+	for key in keybind_changer.KEYBINDS:
+		config_file.set_value("Keybinds", str(key), keybind_changer.KEYBINDS[key])
 
 	print_debug("Saving resolution config...")
 	var res := _root.size

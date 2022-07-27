@@ -1105,3 +1105,7 @@ volume_db = 10.0
 [node name="Music" type="AudioStreamPlayer" parent="."]
 
 [connection signal="pressed" from="debug/SettingsPanel/SaveButton" to="." method="save_config"]
+[connection signal="pressed" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds/LeftKat/Button" to="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds" method="button_pressed" binds= [ "LeftKat" ]]
+[connection signal="pressed" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds/LeftDon/Button" to="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds" method="button_pressed" binds= [ "LeftDon" ]]
+[connection signal="pressed" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds/RightDon/Button" to="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds" method="button_pressed" binds= [ "RightDon" ]]
+[connection signal="pressed" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds/RightKat/Button" to="debug/SettingsPanel/ScrollContainer/VBoxContainer/Keybinds" method="button_pressed" binds= [ "RightKat" ]]
