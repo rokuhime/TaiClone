@@ -42,7 +42,7 @@ func _input(event: InputEvent) -> void:
 	# hit_success function
 	_cur_hit_count += 1
 	_count_text.text = str(_needed_hits - _cur_hit_count)
-	_gameplay.hit_manager.addScore("spinner")
+	_g.hit_manager.addScore("spinner")
 
 	if not _tween.interpolate_property(self, "_current_speed", 3, 0, 1, Tween.TRANS_CIRC, Tween.EASE_OUT):
 		push_warning("Attempted to tween spinner speed.")
@@ -54,12 +54,12 @@ func _process(_delta: float) -> void:
 	if not _loaded:
 		return
 	_spin_circ_rot.rotation_degrees += _current_speed
-	if _finished or (_cur_hit_count < _needed_hits and _gameplay.music.get_playback_position() <= (timing + _length)):
+	if _finished or (_cur_hit_count < _needed_hits and _g.music.get_playback_position() <= (timing + _length)):
 		return
 	_finished = true
 
 	# spinner_finished function
-	_gameplay.hit_manager.addScore("accurate" if _needed_hits <= _cur_hit_count else "inaccurate" if _needed_hits / 2.0 <= _cur_hit_count else "miss")
+	_g.hit_manager.addScore("accurate" if _needed_hits <= _cur_hit_count else "inaccurate" if _needed_hits / 2.0 <= _cur_hit_count else "miss")
 
 	# make spinner fade out
 	if not _tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 0.25, Tween.TRANS_EXPO, Tween.EASE_OUT):

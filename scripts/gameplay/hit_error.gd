@@ -15,11 +15,11 @@ func newMarker(type, timing):
 	hitPoints.add_child(newMarker)
 	
 	var markerColour: Color;
-	var gameplay := $"../.." as Gameplay
+	var g := $"../.." as Gameplay
 	match type:
-		"accurate": markerColour = gameplay.skin.accurate_colour
-		"inaccurate": markerColour = gameplay.skin.inaccurate_colour
-		"miss": markerColour = gameplay.skin.miss_colour
+		"accurate": markerColour = g.skin.accurate_colour
+		"inaccurate": markerColour = g.skin.inaccurate_colour
+		"miss": markerColour = g.skin.miss_colour
 	newMarker.modulate = markerColour;
 	
 	newMarker.rect_position = Vector2(timing * self.rect_size.x * 3.2 + (self.rect_size.x / 2), 0)

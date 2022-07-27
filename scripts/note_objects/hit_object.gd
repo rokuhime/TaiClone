@@ -9,7 +9,7 @@ var _length := 1.0
 var _loaded := false
 var _speed := 1.0
 
-onready var _gameplay := $"../../../../.." as Gameplay
+onready var _g := $"/root/Gameplay" as Gameplay
 
 
 func _ready() -> void:

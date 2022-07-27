@@ -10,9 +10,9 @@ onready var _tick_container := $"TickContainer"
 
 func _ready() -> void:
 	# note colour
-	($"Scale/Head" as CanvasItem).self_modulate = _gameplay.skin.roll_colour
+	($"Scale/Head" as CanvasItem).self_modulate = _g.skin.roll_colour
 	var body := $"Scale/Body" as Control
-	body.modulate = _gameplay.skin.roll_colour
+	body.modulate = _g.skin.roll_colour
 	body.rect_size = Vector2(_speed * _length, 129)
 
 	# haha funny!!! idx like iidx as in funny beatmania silly game keys
@@ -34,13 +34,13 @@ func _input(event: InputEvent) -> void:
 	if _total_ticks <= _current_tick or not _active or not _loaded or not not (event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftKat") or event.is_action_pressed("RightDon") or event.is_action_pressed("RightKat")):
 		return
 
-	var cur_song_time := _gameplay.music.get_playback_position()
+	var cur_song_time := _g.music.get_playback_position()
 	# if after slider is hittable
-	if cur_song_time > timing + _length + _gameplay.hit_manager.inaccTiming:
+	if cur_song_time > timing + _length + _g.hit_manager.inaccTiming:
 		deactivate()
 		return
 	# if before slider is hittable
-	if cur_song_time < timing - _gameplay.hit_manager.inaccTiming:
+	if cur_song_time < timing - _g.hit_manager.inaccTiming:
 		return
 
 	# get current tick target
@@ -51,7 +51,7 @@ func _input(event: InputEvent) -> void:
 	if tick.visible:
 		print(_current_tick)
 		tick.hide()
-		_gameplay.hit_manager.addScore("roll")
+		_g.hit_manager.addScore("roll")
 
 
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, beat_length: float) -> void:

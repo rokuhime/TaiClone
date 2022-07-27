@@ -8,7 +8,7 @@ onready var l_kat_aud := $"LeftKatAudio" as AudioStreamPlayer
 onready var r_don_aud := $"RightDonAudio" as AudioStreamPlayer
 onready var r_kat_aud := $"RightKatAudio" as AudioStreamPlayer
 
-onready var _gameplay := $".." as Gameplay
+onready var _g := $".." as Gameplay
 
 onready var _tween := $"DrumAnimationTween" as Tween
 
@@ -28,11 +28,11 @@ func hit_notify_animation(type: String) -> void:
 	var obj: CanvasItem
 	match type:
 		"accurate":
-			obj = _gameplay.accurate_obj
+			obj = _g.accurate_obj
 		"inaccurate":
-			obj = _gameplay.inaccurate_obj
+			obj = _g.inaccurate_obj
 		"miss":
-			obj = _gameplay.miss_obj
+			obj = _g.miss_obj
 		_:
 			push_warning("Unknown hit animation")
 			return
@@ -47,16 +47,16 @@ func keypress_animation(key: int) -> void:
 	var obj: CanvasItem
 	match key:
 		1:
-			obj = _gameplay.l_don_obj
+			obj = _g.l_don_obj
 			l_don_aud.play()
 		2:
-			obj = _gameplay.r_don_obj
+			obj = _g.r_don_obj
 			r_don_aud.play()
 		3:
-			obj = _gameplay.l_kat_obj
+			obj = _g.l_kat_obj
 			l_kat_aud.play()
 		4:
-			obj = _gameplay.r_kat_obj
+			obj = _g.r_kat_obj
 			r_kat_aud.play()
 		_:
 			push_warning("Unknown keypress animation.")
