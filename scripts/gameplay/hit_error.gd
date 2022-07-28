@@ -1,3 +1,4 @@
+class_name HitError
 extends Control
 
 onready var avgHit = get_node("AverageHit")
@@ -15,11 +16,11 @@ func newMarker(type, timing):
 	hitPoints.add_child(newMarker)
 	
 	var markerColour: Color;
-	var gameplay := $"../.." as Gameplay
+	#var gameplay := $"../.." as Gameplay
 	match type:
-		"accurate": markerColour = gameplay.skin.accurate_colour
-		"inaccurate": markerColour = gameplay.skin.inaccurate_colour
-		"miss": markerColour = gameplay.skin.miss_colour
+		"accurate": markerColour = $"../..".skin.accurate_colour
+		"inaccurate": markerColour = $"../..".skin.inaccurate_colour
+		"miss": markerColour = $"../..".skin.miss_colour
 	newMarker.modulate = markerColour;
 	
 	newMarker.rect_position = Vector2(timing * self.rect_size.x * 3.2 + (self.rect_size.x / 2), 0)

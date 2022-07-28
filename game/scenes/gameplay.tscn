@@ -791,6 +791,7 @@ text = "Hit Error Bar"
 margin_left = 102.0
 margin_right = 126.0
 margin_bottom = 24.0
+pressed = true
 
 [node name="Resolution" type="VBoxContainer" parent="debug/SettingsPanel/ScrollContainer/VBoxContainer"]
 margin_left = 95.0
@@ -1103,3 +1104,10 @@ stream = ExtResource( 26 )
 volume_db = 10.0
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
+
+[connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
+[connection signal="hit_error_toggled" from="debug/SettingsPanel" to="." method="hit_error_toggled"]
+[connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
+[connection signal="pressed" from="debug/SettingsPanel/SaveButton" to="debug/SettingsPanel" method="save_settings"]
+[connection signal="item_selected" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/ExtraDisplays/LateEarly/OptionButton" to="debug/SettingsPanel" method="late_early"]
+[connection signal="toggled" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/ExtraDisplays/HitError/Toggle" to="debug/SettingsPanel" method="hit_error"]

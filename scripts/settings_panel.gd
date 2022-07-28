@@ -1,44 +1,27 @@
-extends Panel
+extends CanvasItem
 
-onready var settingsButt = get_node("../SettingsButton")
-onready var saveButt = get_node("SaveButton")
+signal hit_error_toggled(new_visible)
+signal late_early_changed(new_value)
 
-onready var lateearlyDrop = get_node("ScrollContainer/VBoxContainer/ExtraDisplays/LateEarly/OptionButton")
-onready var hiterrToggle = get_node("ScrollContainer/VBoxContainer/ExtraDisplays/HitError/Toggle")
 
-func _ready():
-	settingsButt.connect("pressed", self, "toggleSettings")
-	saveButt.connect("pressed", self, "saveSettings")
-	
-	lateearlyDrop.connect("item_selected", self, "enableDisplay", ["lateearly"])
-	lateearlyDrop.add_item("Off")
-	lateearlyDrop.add_item("Simple")
-	lateearlyDrop.add_item("Advanced")
-	
-	hiterrToggle.connect("toggled", self, "enableDisplay", ["hiterr"])
-	
-	hiterrToggle.pressed = true
-	pass # Replace with function body.
+func _ready() -> void:
+	var late_early_drop := $"ScrollContainer/VBoxContainer/ExtraDisplays/LateEarly/OptionButton" as OptionButton
+	late_early_drop.add_item("Off")
+	late_early_drop.add_item("Simple")
+	late_early_drop.add_item("Advanced")
 
-func toggleSettings():
-	self.visible = !self.visible
 
-func saveSettings():
+func hit_error(new_visible: bool) -> void:
+	emit_signal("hit_error_toggled", new_visible)
+
+
+func late_early(new_value: int) -> void:
+	emit_signal("late_early_changed", new_value)
+
+
+func save_settings() -> void:
 	settings.saveConfig()
-	
-			
-func enableDisplay(input, display):
-	match display:
-		"lateearly":
-			match input:
-				1:
-					get_node("../../BarLeft/TimingIndicator").visible = true
-					get_node("../../UI/HitError").lateearlySimpleDisplay = true
-				2:
-					get_node("../../BarLeft/TimingIndicator").visible = true
-					get_node("../../UI/HitError").lateearlySimpleDisplay = false
-				_:
-					get_node("../../BarLeft/TimingIndicator").visible = false
-			
-		"hiterr":
-			get_node("../../UI/HitError").visible = input
+
+
+func toggle_settings() -> void:
+	visible = !visible
