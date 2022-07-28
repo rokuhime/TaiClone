@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=43 format=2]
 
 [ext_resource path="res://scripts/gameplay/chart_loader.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
@@ -6,7 +6,6 @@
 [ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=4]
 [ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
-[ext_resource path="res://scripts/offset_thingy.gd" type="Script" id=7]
 [ext_resource path="res://scripts/global/volume_control.gd" type="Script" id=8]
 [ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://scripts/resolution_changer.gd" type="Script" id=10]
@@ -889,7 +888,6 @@ margin_top = 18.0
 margin_right = 101.0
 margin_bottom = 42.0
 alignment = 2
-script = ExtResource( 7 )
 
 [node name="Label" type="Label" parent="debug/SettingsPanel/ScrollContainer/VBoxContainer/Audio/Offset"]
 margin_top = 5.0
@@ -1108,6 +1106,8 @@ volume_db = 10.0
 [connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
 [connection signal="hit_error_toggled" from="debug/SettingsPanel" to="." method="hit_error_toggled"]
 [connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
+[connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
 [connection signal="pressed" from="debug/SettingsPanel/SaveButton" to="debug/SettingsPanel" method="save_settings"]
 [connection signal="item_selected" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/ExtraDisplays/LateEarly/OptionButton" to="debug/SettingsPanel" method="late_early"]
 [connection signal="toggled" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/ExtraDisplays/HitError/Toggle" to="debug/SettingsPanel" method="hit_error"]
+[connection signal="text_entered" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Audio/Offset/LineEdit" to="debug/SettingsPanel" method="change_offset"]
