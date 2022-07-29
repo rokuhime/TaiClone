@@ -89,10 +89,6 @@ _global_script_class_icons={
 config/name="TaiClone"
 run/main_scene="res://game/scenes/gameplay.tscn"
 
-[autoload]
-
-tools="*res://scripts/global/global_tools.gd"
-
 [debug]
 
 gdscript/warnings/unsafe_method_access=true
