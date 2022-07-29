@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://scripts/gameplay/chart_loader.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
@@ -8,7 +8,6 @@
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
 [ext_resource path="res://scripts/global/volume_control.gd" type="Script" id=8]
 [ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
-[ext_resource path="res://scripts/resolution_changer.gd" type="Script" id=10]
 [ext_resource path="res://scripts/gameplay/drum_interaction.gd" type="Script" id=11]
 [ext_resource path="res://scripts/keybind_changer.gd" type="Script" id=12]
 [ext_resource path="res://scripts/settings_panel.gd" type="Script" id=13]
@@ -801,7 +800,6 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
-script = ExtResource( 10 )
 
 [node name="Label" type="Label" parent="debug/SettingsPanel/ScrollContainer/VBoxContainer/Resolution"]
 margin_right = 106.0
@@ -1110,4 +1108,6 @@ volume_db = 10.0
 [connection signal="pressed" from="debug/SettingsPanel/SaveButton" to="debug/SettingsPanel" method="save_settings"]
 [connection signal="item_selected" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/ExtraDisplays/LateEarly/OptionButton" to="debug/SettingsPanel" method="late_early"]
 [connection signal="toggled" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/ExtraDisplays/HitError/Toggle" to="debug/SettingsPanel" method="hit_error"]
+[connection signal="item_selected" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Resolution/OptionButton" to="debug/SettingsPanel" method="change_res"]
+[connection signal="toggled" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Resolution/Fullscreen/Toggle" to="debug/SettingsPanel" method="toggle_fullscreen"]
 [connection signal="text_entered" from="debug/SettingsPanel/ScrollContainer/VBoxContainer/Audio/Offset/LineEdit" to="debug/SettingsPanel" method="change_offset"]
