@@ -12,17 +12,11 @@ var global_offset := 0.0
 var _config_path := "user://config.ini"
 var _currently_changing := ""
 
-onready var _root := $"/root" as Viewport
-onready var _v := $"V/Scroll/V"
-
-onready var _dropdown := _v.get_node("Resolution/Options") as OptionButton
-onready var _keybinds := _v.get_node("Keybinds")
-
-onready var _left_don_butt := _keybinds.get_node("LeftDon/Button") as Button
-onready var _left_kat_butt := _keybinds.get_node("LeftKat/Button") as Button
-onready var _right_don_butt := _keybinds.get_node("RightDon/Button") as Button
-onready var _right_kat_butt := _keybinds.get_node("RightKat/Button") as Button
-
+onready var _dropdown := $"V/Scroll/V/Resolution/Options" as OptionButton
+onready var _left_don_butt := $"V/Scroll/V/Keybinds/LeftDon/Button" as Button
+onready var _left_kat_butt := $"V/Scroll/V/Keybinds/LeftKat/Button" as Button
+onready var _right_don_butt := $"V/Scroll/V/Keybinds/RightDon/Button" as Button
+onready var _right_kat_butt := $"V/Scroll/V/Keybinds/RightKat/Button" as Button
 
 
 func _ready() -> void:
@@ -44,17 +38,17 @@ func _ready() -> void:
 	var sections := config_file.get_sections()
 
 	if "Display" in sections:
-		change_res(Vector2(config_file.get_value("Display", "ResolutionX"), config_file.get_value("Display", "ResolutionY")))
+		OS.window_size = Vector2(config_file.get_value("Display", "ResolutionX"), config_file.get_value("Display", "ResolutionY"))
 
 	if "Gameplay" in sections:
 		change_offset(str(config_file.get_value("Gameplay", "GlobalOffset")))
 
-	var late_early_drop := _v.get_node("ExtraDisplays/LateEarly/Options") as OptionButton
+	var late_early_drop := $"V/Scroll/V/ExtraDisplays/LateEarly/Options" as OptionButton
 	late_early_drop.add_item("Off")
 	late_early_drop.add_item("Simple")
 	late_early_drop.add_item("Advanced")
 
-	var offset_text := _v.get_node("Offset/LineEdit") as LineEdit
+	var offset_text := $"V/Scroll/V/Offset/LineEdit" as LineEdit
 	if global_offset != 0:
 		offset_text.text = str(global_offset)
 
@@ -111,9 +105,10 @@ func change_offset(new_value: String) -> void:
 	emit_signal("offset_changed")
 
 
-func change_res(new_size: Vector2) -> void:
+func change_res(index: int) -> void:
+	print_debug("Resolution changed to %s." % _dropdown.get_item_text(index))
+	var new_size := _dropdown.get_item_metadata(index) as Vector2 # UNSAFE Variant
 	OS.window_size = new_size
-	_root.size = new_size
 
 
 func change_text(button: String, event: InputEvent, pressed := false) -> void:
@@ -147,12 +142,6 @@ func late_early(new_value: int) -> void:
 	emit_signal("late_early_changed", new_value)
 
 
-func res_changed(index: int) -> void:
-	print_debug("Resolution changed to %s." % _dropdown.get_item_text(index))
-	var new_size := _dropdown.get_item_metadata(index) as Vector2 # UNSAFE Variant
-	change_res(new_size)
-
-
 func save_settings() -> void:
 	var config_file := ConfigFile.new()
 
@@ -162,7 +151,7 @@ func save_settings() -> void:
 		config_file.set_value("Keybinds", str(key), event)
 
 	print_debug("Saving resolution config...")
-	var res := _root.size
+	var res := OS.window_size
 	config_file.set_value("Display", "ResolutionX", res.x)
 	config_file.set_value("Display", "ResolutionY", res.y)
 
