@@ -2,7 +2,7 @@
 
 [ext_resource path="res://scripts/settings_panel.gd" type="Script" id=1]
 
-[node name="SettingsPanel" type="PopupPanel"]
+[node name="SettingsPanel" type="Panel"]
 self_modulate = Color( 1, 1, 1, 0.607843 )
 anchor_left = 1.0
 anchor_top = 1.0
@@ -30,7 +30,7 @@ size_flags_vertical = 3
 scroll_horizontal_enabled = false
 
 [node name="V" type="VBoxContainer" parent="V/Scroll"]
-margin_right = 308.0
+margin_right = 296.0
 margin_bottom = 406.0
 size_flags_horizontal = 3
 
@@ -276,7 +276,7 @@ text = "Save"
 [connection signal="pressed" from="V/Scroll/V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
 [connection signal="item_selected" from="V/Scroll/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
 [connection signal="toggled" from="V/Scroll/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error"]
-[connection signal="item_selected" from="V/Scroll/V/Resolution/Options" to="." method="res_changed"]
+[connection signal="item_selected" from="V/Scroll/V/Resolution/Options" to="." method="change_res"]
 [connection signal="toggled" from="V/Scroll/V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
 [connection signal="text_changed" from="V/Scroll/V/Offset/LineEdit" to="." method="change_offset"]
 [connection signal="pressed" from="V/SaveButton" to="." method="save_settings"]
