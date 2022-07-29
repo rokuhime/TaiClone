@@ -64,7 +64,7 @@ func _process(_delta: float) -> void:
 	# make spinner fade out
 	if not _tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 0.25, Tween.TRANS_EXPO, Tween.EASE_OUT):
 		push_warning("Attempted to tween spinner fade out.")
-	var _connect := _tween.connect("tween_completed", self, "delete_self")
+	var _connect := _tween.connect("tween_completed", self, "deactivate")
 	if not _tween.start():
 		push_warning("Attempted to start spinner fade out tween.")
 
@@ -76,8 +76,4 @@ func change_properties(new_timing: float, new_length: float, new_hits: int) -> v
 
 
 func deactivate() -> void:
-	delete_self()
-
-
-func delete_self() -> void:
 	queue_free()

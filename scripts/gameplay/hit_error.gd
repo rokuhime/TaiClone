@@ -57,7 +57,7 @@ func changeIndicator(type, timing):
 	var colour: Color
 	var num: int
 	
-	num = round(timing * 1000)
+	num = int(timing * 1000)
 	if timing > 0:
 		if lateearlySimpleDisplay: val = "LATE"
 		else: val = "+" + str(num)
