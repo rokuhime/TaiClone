@@ -1,0 +1,282 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/settings_panel.gd" type="Script" id=1]
+
+[node name="SettingsPanel" type="PopupPanel"]
+self_modulate = Color( 1, 1, 1, 0.607843 )
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -323.0
+margin_top = -308.0
+margin_right = -15.0
+margin_bottom = -94.0
+grow_horizontal = 0
+rect_scale = Vector2( 1.9, 1.9 )
+rect_pivot_offset = Vector2( 308, 214 )
+script = ExtResource( 1 )
+
+[node name="V" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = -6.0
+custom_constants/separation = 6
+
+[node name="Scroll" type="ScrollContainer" parent="V"]
+margin_right = 308.0
+margin_bottom = 182.0
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+
+[node name="V" type="VBoxContainer" parent="V/Scroll"]
+margin_right = 308.0
+margin_bottom = 406.0
+size_flags_horizontal = 3
+
+[node name="Buffer1" type="HSeparator" parent="V/Scroll/V"]
+self_modulate = Color( 1, 1, 1, 0 )
+margin_right = 296.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 0, 16 )
+
+[node name="Keybinds" type="VBoxContainer" parent="V/Scroll/V"]
+margin_left = 109.0
+margin_top = 20.0
+margin_right = 187.0
+margin_bottom = 130.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="V/Scroll/V/Keybinds"]
+margin_left = 10.0
+margin_right = 68.0
+margin_bottom = 14.0
+size_flags_horizontal = 4
+text = "Keybinds"
+
+[node name="LeftKat" type="HBoxContainer" parent="V/Scroll/V/Keybinds"]
+margin_top = 18.0
+margin_right = 78.0
+margin_bottom = 38.0
+
+[node name="Label" type="Label" parent="V/Scroll/V/Keybinds/LeftKat"]
+margin_top = 3.0
+margin_right = 62.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Left Kat"
+
+[node name="Button" type="Button" parent="V/Scroll/V/Keybinds/LeftKat"]
+margin_left = 66.0
+margin_right = 78.0
+margin_bottom = 20.0
+
+[node name="LeftDon" type="HBoxContainer" parent="V/Scroll/V/Keybinds"]
+margin_top = 42.0
+margin_right = 78.0
+margin_bottom = 62.0
+
+[node name="Label" type="Label" parent="V/Scroll/V/Keybinds/LeftDon"]
+margin_top = 3.0
+margin_right = 62.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Left Don"
+
+[node name="Button" type="Button" parent="V/Scroll/V/Keybinds/LeftDon"]
+margin_left = 66.0
+margin_right = 78.0
+margin_bottom = 20.0
+
+[node name="RightDon" type="HBoxContainer" parent="V/Scroll/V/Keybinds"]
+margin_top = 66.0
+margin_right = 78.0
+margin_bottom = 86.0
+
+[node name="Label" type="Label" parent="V/Scroll/V/Keybinds/RightDon"]
+margin_top = 3.0
+margin_right = 62.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Right Don"
+
+[node name="Button" type="Button" parent="V/Scroll/V/Keybinds/RightDon"]
+margin_left = 66.0
+margin_right = 78.0
+margin_bottom = 20.0
+
+[node name="RightKat" type="HBoxContainer" parent="V/Scroll/V/Keybinds"]
+margin_top = 90.0
+margin_right = 78.0
+margin_bottom = 110.0
+
+[node name="Label" type="Label" parent="V/Scroll/V/Keybinds/RightKat"]
+margin_top = 3.0
+margin_right = 62.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Right Kat"
+
+[node name="Button" type="Button" parent="V/Scroll/V/Keybinds/RightKat"]
+margin_left = 66.0
+margin_right = 78.0
+margin_bottom = 20.0
+
+[node name="Buffer2" type="HSeparator" parent="V/Scroll/V"]
+margin_left = 73.0
+margin_top = 134.0
+margin_right = 223.0
+margin_bottom = 167.0
+rect_min_size = Vector2( 150, 33 )
+size_flags_horizontal = 4
+
+[node name="ExtraDisplays" type="VBoxContainer" parent="V/Scroll/V"]
+margin_left = 85.0
+margin_top = 171.0
+margin_right = 211.0
+margin_bottom = 237.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="V/Scroll/V/ExtraDisplays"]
+margin_left = 18.0
+margin_right = 107.0
+margin_bottom = 14.0
+size_flags_horizontal = 4
+text = "Extra Displays"
+
+[node name="LateEarly" type="HBoxContainer" parent="V/Scroll/V/ExtraDisplays"]
+margin_top = 18.0
+margin_right = 126.0
+margin_bottom = 38.0
+
+[node name="Label" type="Label" parent="V/Scroll/V/ExtraDisplays/LateEarly"]
+margin_top = 3.0
+margin_right = 93.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Late/Early Text"
+
+[node name="Options" type="OptionButton" parent="V/Scroll/V/ExtraDisplays/LateEarly"]
+margin_left = 97.0
+margin_right = 126.0
+margin_bottom = 20.0
+
+[node name="HitError" type="HBoxContainer" parent="V/Scroll/V/ExtraDisplays"]
+margin_top = 42.0
+margin_right = 126.0
+margin_bottom = 66.0
+
+[node name="Label" type="Label" parent="V/Scroll/V/ExtraDisplays/HitError"]
+margin_top = 5.0
+margin_right = 98.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "Hit Error Bar"
+
+[node name="Toggle" type="CheckBox" parent="V/Scroll/V/ExtraDisplays/HitError"]
+margin_left = 102.0
+margin_right = 126.0
+margin_bottom = 24.0
+pressed = true
+
+[node name="Buffer3" type="HSeparator" parent="V/Scroll/V"]
+self_modulate = Color( 1, 1, 1, 0 )
+margin_top = 241.0
+margin_right = 296.0
+margin_bottom = 253.0
+rect_min_size = Vector2( 0, 12 )
+
+[node name="Resolution" type="VBoxContainer" parent="V/Scroll/V"]
+margin_left = 95.0
+margin_top = 257.0
+margin_right = 201.0
+margin_bottom = 323.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="V/Scroll/V/Resolution"]
+margin_right = 106.0
+margin_bottom = 14.0
+size_flags_horizontal = 4
+text = "Resolution (WIP)"
+
+[node name="Options" type="OptionButton" parent="V/Scroll/V/Resolution"]
+margin_left = 38.0
+margin_top = 18.0
+margin_right = 67.0
+margin_bottom = 38.0
+size_flags_horizontal = 4
+
+[node name="Fullscreen" type="HBoxContainer" parent="V/Scroll/V/Resolution"]
+margin_top = 42.0
+margin_right = 106.0
+margin_bottom = 66.0
+
+[node name="Label" type="Label" parent="V/Scroll/V/Resolution/Fullscreen"]
+margin_top = 5.0
+margin_right = 78.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "Fullscreen"
+
+[node name="Toggle" type="CheckBox" parent="V/Scroll/V/Resolution/Fullscreen"]
+margin_left = 82.0
+margin_right = 106.0
+margin_bottom = 24.0
+
+[node name="Buffer4" type="HSeparator" parent="V/Scroll/V"]
+margin_left = 73.0
+margin_top = 327.0
+margin_right = 223.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 150, 33 )
+size_flags_horizontal = 4
+
+[node name="AudioLabel" type="Label" parent="V/Scroll/V"]
+margin_left = 129.0
+margin_top = 364.0
+margin_right = 166.0
+margin_bottom = 378.0
+size_flags_horizontal = 4
+text = "Audio"
+
+[node name="Offset" type="HBoxContainer" parent="V/Scroll/V"]
+margin_left = 97.0
+margin_top = 382.0
+margin_right = 198.0
+margin_bottom = 406.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="V/Scroll/V/Offset"]
+margin_top = 5.0
+margin_right = 39.0
+margin_bottom = 19.0
+text = "Offset"
+
+[node name="LineEdit" type="LineEdit" parent="V/Scroll/V/Offset"]
+margin_left = 43.0
+margin_right = 101.0
+margin_bottom = 24.0
+align = 2
+placeholder_text = "0"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="SaveButton" type="Button" parent="V"]
+margin_left = 130.0
+margin_top = 188.0
+margin_right = 178.0
+margin_bottom = 208.0
+rect_min_size = Vector2( 48, 0 )
+size_flags_horizontal = 4
+text = "Save"
+
+[connection signal="pressed" from="V/Scroll/V/Keybinds/LeftKat/Button" to="." method="button_pressed" binds= [ "LeftKat" ]]
+[connection signal="pressed" from="V/Scroll/V/Keybinds/LeftDon/Button" to="." method="button_pressed" binds= [ "LeftDon" ]]
+[connection signal="pressed" from="V/Scroll/V/Keybinds/RightDon/Button" to="." method="button_pressed" binds= [ "RightDon" ]]
+[connection signal="pressed" from="V/Scroll/V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
+[connection signal="item_selected" from="V/Scroll/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
+[connection signal="toggled" from="V/Scroll/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error"]
+[connection signal="item_selected" from="V/Scroll/V/Resolution/Options" to="." method="res_changed"]
+[connection signal="toggled" from="V/Scroll/V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
+[connection signal="text_changed" from="V/Scroll/V/Offset/LineEdit" to="." method="change_offset"]
+[connection signal="pressed" from="V/SaveButton" to="." method="save_settings"]

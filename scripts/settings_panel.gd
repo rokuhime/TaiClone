@@ -13,9 +13,9 @@ var _config_path := "user://config.ini"
 var _currently_changing := ""
 
 onready var _root := $"/root" as Viewport
-onready var _v := $"ScrollContainer/VBoxContainer"
+onready var _v := $"V/Scroll/V"
 
-onready var _dropdown := _v.get_node("Resolution/OptionButton") as OptionButton
+onready var _dropdown := _v.get_node("Resolution/Options") as OptionButton
 onready var _keybinds := _v.get_node("Keybinds")
 
 onready var _left_don_butt := _keybinds.get_node("LeftDon/Button") as Button
@@ -49,12 +49,12 @@ func _ready() -> void:
 	if "Gameplay" in sections:
 		change_offset(str(config_file.get_value("Gameplay", "GlobalOffset")))
 
-	var late_early_drop := _v.get_node("ExtraDisplays/LateEarly/OptionButton") as OptionButton
+	var late_early_drop := _v.get_node("ExtraDisplays/LateEarly/Options") as OptionButton
 	late_early_drop.add_item("Off")
 	late_early_drop.add_item("Simple")
 	late_early_drop.add_item("Advanced")
 
-	var offset_text := _v.get_node("Audio/Offset/LineEdit") as LineEdit
+	var offset_text := _v.get_node("Offset/LineEdit") as LineEdit
 	if global_offset != 0:
 		offset_text.text = str(global_offset)
 
