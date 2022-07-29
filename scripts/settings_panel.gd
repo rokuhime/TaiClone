@@ -8,6 +8,7 @@ onready var _root := $"/root" as Viewport
 onready var _v := $"ScrollContainer/VBoxContainer"
 
 onready var _dropdown := _v.get_node("Resolution/OptionButton") as OptionButton
+onready var _g := _root.get_node("Gameplay") as Gameplay
 
 
 func _ready() -> void:
@@ -17,8 +18,8 @@ func _ready() -> void:
 	late_early_drop.add_item("Advanced")
 
 	var offset_text := _v.get_node("Audio/Offset/LineEdit") as LineEdit
-	if settings.globalOffset != 0:
-		offset_text.text = str(settings.globalOffset)
+	if _g.global_offset != 0:
+		offset_text.text = str(_g.global_offset)
 
 	_dropdown.add_item("16:9 | 1920x1080")
 	_dropdown.set_item_metadata(0, Vector2(1920, 1080))
@@ -45,8 +46,8 @@ func change_res(index: int) -> void:
 
 # this script stinks. gonna become obsolete when i get actual good settings going w
 func change_offset(new_value: String) -> void:
-	settings.globalOffset = float(new_value) / 1000
-	print_debug("Offset set to %s." % settings.globalOffset)
+	_g.global_offset = float(new_value) / 1000
+	print_debug("Offset set to %s." % _g.global_offset)
 	emit_signal("offset_changed")
 
 
@@ -56,10 +57,6 @@ func hit_error(new_visible: bool) -> void:
 
 func late_early(new_value: int) -> void:
 	emit_signal("late_early_changed", new_value)
-
-
-func save_settings() -> void:
-	settings.saveConfig()
 
 
 func toggle_fullscreen(new_visible: bool) -> void:

@@ -22,7 +22,7 @@ func _ready():
 	playButt.connect("pressed", get_node("../../ChartLoader"), "playChart")
 	autoToggle.connect("pressed", self, "autoThing")
 	
-	versionText.text = settings.version
+	versionText.text = "v0.2 - volume slider go brrr"
 
 func loadFunc():
 	debugTextThing.text = "Loading... [Checking File]"

@@ -1,61 +1,69 @@
+class_name KeybindChanger
 extends Node
 
-onready var LeftKatButt = get_node("LeftKat/Button")
-onready var RightKatButt = get_node("RightKat/Button")
-onready var LeftDonButt = get_node("LeftDon/Button")
-onready var RightDonButt = get_node("RightDon/Button")
+const KEYBINDS := {}
 
-var currentlyChanging = null
+var _currently_changing := ""
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	LeftKatButt.connect("pressed", self, "buttonPressed", ["LeftKat"])
-	RightKatButt.connect("pressed", self, "buttonPressed", ["RightKat"])
-	LeftDonButt.connect("pressed", self, "buttonPressed", ["LeftDon"])
-	RightDonButt.connect("pressed", self, "buttonPressed", ["RightDon"])
-	
-	changeText("LeftKat", OS.get_scancode_string(InputMap.get_action_list("LeftKat")[0].scancode))
-	changeText("RightKat", OS.get_scancode_string(InputMap.get_action_list("RightKat")[0].scancode))
-	changeText("LeftDon", OS.get_scancode_string(InputMap.get_action_list("LeftDon")[0].scancode))
-	changeText("RightDon", OS.get_scancode_string(InputMap.get_action_list("RightDon")[0].scancode))
-	pass # Replace with function body.
+onready var _left_don_butt := $"LeftDon/Button" as Button
+onready var _left_kat_butt := $"LeftKat/Button" as Button
+onready var _right_don_butt := $"RightDon/Button" as Button
+onready var _right_kat_butt := $"RightKat/Button" as Button
 
-func _input(ev):
-	if currentlyChanging != null:
-		if (ev is InputEventKey) || (ev is InputEventJoypadButton):
-			changeKey(currentlyChanging, ev.scancode)
-			buttonPressed(currentlyChanging)
 
-func buttonPressed(type):
-	if currentlyChanging == null:
-		currentlyChanging = type
-		changeText(currentlyChanging, "...")
+func _ready() -> void:
+	for button in ["LeftDon", "LeftKat", "RightDon", "RightKat"]:
+		var action_list := InputMap.get_action_list(str(button))
+		change_text(str(button), action_list[0])
+
+
+func _input(event: InputEvent) -> void:
+	if _currently_changing != "":
+		if event is InputEventJoypadButton or event is InputEventKey:
+			change_key(_currently_changing, event)
+			button_pressed(_currently_changing)
+		else:
+			push_warning("Unsupported InputEvent type.")
+
+
+func button_pressed(type: String) -> void:
+	if _currently_changing == "":
+		_currently_changing = type
+		change_text(_currently_changing, InputEvent.new(), true)
 	else:
-		LeftKatButt.pressed = false
-		RightKatButt.pressed = false
-		LeftDonButt.pressed = false
-		RightDonButt.pressed = false
-		
-		changeText(currentlyChanging, 
-					OS.get_scancode_string(InputMap.get_action_list(currentlyChanging)[0].scancode))
-		currentlyChanging = null
+		var action_list := InputMap.get_action_list(_currently_changing)
+		change_text(_currently_changing, action_list[0])
+		_currently_changing = ""
 
-func changeText(button, text):
+
+func change_key(button: String, event: InputEvent) -> void:
+	# load_keybinds function
+	InputMap.action_erase_events(str(button))
+	InputMap.action_add_event(str(button), event)
+
+	_currently_changing = ""
+	KEYBINDS[button] = event
+	change_text(button, event)
+
+
+func change_text(button: String, event: InputEvent, pressed := false) -> void:
+	var button_object: Button
 	match button:
-			"LeftKat":
-				LeftKatButt.text = text
-			"RightKat":
-				RightKatButt.text = text
-			"LeftDon":
-				LeftDonButt.text = text
-			"RightDon":
-				RightDonButt.text = text
-
-func changeKey(button, key):
-	var actionList = InputMap.get_action_list(button)
-	if !actionList.empty():
-		InputMap.action_erase_event(button, actionList[0])
-	var newKey = InputEventKey.new()
-	newKey.set_scancode(key)
-	InputMap.action_add_event(button, newKey)
-	settings.keybinds[button] = key
+		"LeftDon":
+			button_object = _left_don_butt
+		"LeftKat":
+			button_object = _left_kat_butt
+		"RightDon":
+			button_object = _right_don_butt
+		"RightKat":
+			button_object = _right_kat_butt
+		_:
+			push_warning("Unknown input.")
+			return
+	if event is InputEventJoypadButton:
+		button_object.text = "Joystick Button %s" % (event as InputEventJoypadButton).button_index
+	elif event is InputEventKey:
+		button_object.text = OS.get_scancode_string((event as InputEventKey).scancode)
+	else:
+		button_object.text = "..."
+	button_object.pressed = pressed
