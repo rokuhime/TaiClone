@@ -34,10 +34,12 @@ func _ready() -> void:
 		return
 
 	for key in config_file.get_section_keys("Keybinds"):
-		change_key(str(key), config_file.get_value("Keybinds", str(key)))
+		var event := config_file.get_value("Keybinds", str(key)) as InputEvent # UNSAFE Variant
+		change_key(str(key), event)
 	for button in ["LeftDon", "LeftKat", "RightDon", "RightKat"]:
 		var action_list := InputMap.get_action_list(str(button))
-		change_text(str(button), action_list[0])
+		var event := action_list[0] as InputEvent # UNSAFE ArrayItem
+		change_text(str(button), event)
 
 	var sections := config_file.get_sections()
 
@@ -87,7 +89,8 @@ func button_pressed(type: String) -> void:
 		change_text(_currently_changing, InputEvent.new(), true)
 	else:
 		var action_list := InputMap.get_action_list(_currently_changing)
-		change_text(_currently_changing, action_list[0])
+		var event := action_list[0] as InputEvent # UNSAFE ArrayItem
+		change_text(_currently_changing, event)
 		_currently_changing = ""
 
 
@@ -97,7 +100,7 @@ func change_key(button: String, event: InputEvent) -> void:
 	InputMap.action_add_event(str(button), event)
 
 	_currently_changing = ""
-	KEYBINDS[button] = event
+	KEYBINDS[button] = event # UNSAFE DictionaryEntry
 	change_text(button, event)
 
 
@@ -146,7 +149,8 @@ func late_early(new_value: int) -> void:
 
 func res_changed(index: int) -> void:
 	print_debug("Resolution changed to %s." % _dropdown.get_item_text(index))
-	change_res(_dropdown.get_item_metadata(index))
+	var new_size := _dropdown.get_item_metadata(index) as Vector2 # UNSAFE Variant
+	change_res(new_size)
 
 
 func save_settings() -> void:
@@ -154,7 +158,8 @@ func save_settings() -> void:
 
 	print_debug("Saving keybinds config...")
 	for key in KEYBINDS:
-		config_file.set_value("Keybinds", str(key), KEYBINDS[key])
+		var event := KEYBINDS[key] as InputEvent # UNSAFE DictionaryEntry
+		config_file.set_value("Keybinds", str(key), event)
 
 	print_debug("Saving resolution config...")
 	var res := _root.size
