@@ -9,13 +9,13 @@
 [ext_resource path="res://game/scenes/settings_panel.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scripts/global/volume_control.gd" type="Script" id=8]
 [ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
+[ext_resource path="res://scripts/temploadchart.gd" type="Script" id=10]
 [ext_resource path="res://scripts/gameplay/drum_interaction.gd" type="Script" id=11]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
 [ext_resource path="res://scripts/gameplay/hit_manager.gd" type="Script" id=15]
 [ext_resource path="res://skins/test_skin/taiko-hit300.png" type="Texture" id=16]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
 [ext_resource path="res://scripts/gameplay/hit_error.gd" type="Script" id=18]
-[ext_resource path="res://scripts/temploadchart.gd" type="Script" id=19]
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
 [ext_resource path="res://skins/test_skin/taiko-hit100.png" type="Texture" id=21]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
@@ -457,6 +457,7 @@ color = Color( 1, 1, 1, 0.8 )
 [node name="debug" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 10 )
 
 [node name="debugtext" type="Label" parent="debug"]
 anchor_top = 1.0
@@ -494,7 +495,6 @@ margin_top = -82.0
 margin_right = 355.0
 margin_bottom = -44.0
 rect_scale = Vector2( 1.9, 1.9 )
-script = ExtResource( 19 )
 
 [node name="LineEdit" type="LineEdit" parent="debug/temploadchart"]
 margin_right = 195.0
@@ -545,7 +545,7 @@ margin_bottom = -29.9999
 grow_horizontal = 0
 grow_vertical = 0
 rect_scale = Vector2( 1.9, 1.9 )
-text = "version"
+text = "v0.2 - volume slider go brrr"
 align = 2
 
 [node name="SettingsPanel" parent="debug" instance=ExtResource( 7 )]
@@ -751,6 +751,10 @@ volume_db = 10.0
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 
+[connection signal="load_chart" from="debug" to="ChartLoader" method="loadAndProcessAll"]
+[connection signal="pressed" from="debug/temploadchart/LoadButton" to="debug" method="load_func"]
+[connection signal="pressed" from="debug/temploadchart/PlayButton" to="ChartLoader" method="playChart"]
+[connection signal="toggled" from="debug/temploadchart/AutoToggle" to="HitManager" method="auto_toggled"]
 [connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
 [connection signal="hit_error_toggled" from="debug/SettingsPanel" to="." method="hit_error_toggled"]
 [connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]

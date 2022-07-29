@@ -170,3 +170,7 @@ func reset() -> void:
 	score = 0;
 	scoreMultiplier = 1;
 	addScore("")
+
+
+func auto_toggled(new_auto: bool) -> void:
+	auto = new_auto

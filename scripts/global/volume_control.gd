@@ -1,5 +1,8 @@
 extends Panel
 
+# todo: make all volume things use linear2db
+# see https://godotengine.org/qa/40911/best-way-to-create-a-volume-slider
+
 onready var volViews = [
 	get_node("Bars/Master/TextureProgress"),
 	get_node("Bars/Spesifics/Music/TextureProgress"),
