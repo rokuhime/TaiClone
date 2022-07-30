@@ -1,165 +1,102 @@
-extends Panel
+extends CanvasItem
 
-# todo: make all volume things use linear2db
-# see https://godotengine.org/qa/40911/best-way-to-create-a-volume-slider
+var _cur_changing := 0
 
-onready var volViews = [
-	get_node("Bars/Master/TextureProgress"),
-	get_node("Bars/Spesifics/Music/TextureProgress"),
-	get_node("Bars/Spesifics/SFX/TextureProgress")
-]
+onready var _master := $"Bars/Master" as CanvasItem
+onready var _music := $"Bars/Specifics/Music" as CanvasItem
+onready var _sfx := $"Bars/Specifics/SFX" as CanvasItem
 
-onready var changeSound = get_node("ChangeSound")
+onready var _change_sound := $"ChangeSound" as AudioStreamPlayer
+onready var _timer := $"Timer" as Timer
+onready var _tween := $"VolumeIncreaseTween" as Tween
 
-onready var tween = get_node("VolumeIncreaseTween")
-onready var timer = get_node("Timer")
-onready var music = get_node("../../Music")
 
-var vols = [
-	1,
-	1,
-	1
-]
+func _input(event: InputEvent) -> void:
+	if not (event is InputEventWithModifiers and event.is_pressed()):
+		return
+	var m_event := event as InputEventWithModifiers
+	if not m_event.alt:
+		return
 
-var curChanging: int = 0
+	if modulate.a == 0:
+		_cur_changing = 0
 
-var precise = false
+	var vol_difference := 0.01 if m_event.control else 0.05
 
-onready var allSFX = [
-	get_node("../../DrumInteraction/LeftDonAudio"),
-	get_node("../../DrumInteraction/LeftKatAudio"),
-	get_node("../../DrumInteraction/RightDonAudio"),
-	get_node("../../DrumInteraction/RightKatAudio"),
-	get_node("../../DrumInteraction/FinisherDonAudio"),
-	get_node("../../DrumInteraction/FinisherKatAudio"),
-	get_node("ChangeSound")
-]
+	if event.is_action("VolumeUp"):
+		change_volume(vol_difference)
 
-func _ready() -> void:
-	volViews[0].get_parent().connect("mouse_entered", self, "changeChannelViaMouseover", [0])
-	volViews[1].get_parent().connect("mouse_entered", self, "changeChannelViaMouseover", [1])
-	volViews[2].get_parent().connect("mouse_entered", self, "changeChannelViaMouseover", [2])
+	if event.is_action("VolumeDown"):
+		change_volume(-vol_difference)
 
-func _process(_delta) -> void:
-	if self.modulate.a == 0 and curChanging != 0: 
-		curChanging = 0
-		changeChannel()
+	if event.is_action("VolumeNext"):
+		change_channel(_cur_changing + 1, false)
 
-func _input(ev) -> void:
-	var changed = false
+	if event.is_action("VolumePrevious"):
+		change_channel(_cur_changing + 2, false)
 
-	if ev is InputEventKey:
-		if ev.pressed and ev.scancode == 16777238:
-			precise = true
-		elif !ev.pressed and ev.scancode == 16777238:
-			precise = false
 
-	var volDifference = 0.05
-	if precise: volDifference = 0.01
-	
-	if Input.is_action_just_pressed("VolumeUp"):
-		changed = changeVolume(volDifference)
+func change_channel(channel: int, needs_visible := true) -> void:
+	if needs_visible and modulate.a == 0:
+		return
+	_cur_changing = channel % 3
 
-	elif Input.is_action_just_pressed("VolumeDown"):
-		changed = changeVolume(volDifference * -1)
-		
-	elif Input.is_action_just_pressed("VolumeNext"):
-		if curChanging != 2: curChanging += 1
-		else: curChanging = 0
-		changeChannel()
-		
-	elif Input.is_action_just_pressed("VolumePrevious"):
-		if curChanging != 0: curChanging -= 1
-		else: curChanging = 2
-		changeChannel()
-		appearanceTimeout()
-	
-	if changed:
-		volViews[curChanging].get_node("../Percentage").text = str(vols[curChanging] * 100)
-		
-		tween.interpolate_property(volViews[curChanging], "value",
-			volViews[curChanging].value, vols[curChanging], 0.2,
-			Tween.TRANS_QUART, Tween.EASE_OUT)
-		tween.start()
+	for i in range(3):
+		var colour := Color.white if i == _cur_changing else Color(1, 1, 1, 0.5)
+		var vol := vol_view(i)
 
-func changeVolume(amount) -> bool:
-	var changed = false
-	var channelVol = 0;
-	
-	match curChanging:
-		1: channelVol = vols[1]
-		2: channelVol = vols[2]
-		_: channelVol = vols[0]
-	
-	if amount > 0:
-		channelVol = min(1, channelVol + amount)
-		changed = true
-	else:
-		channelVol = max(0, channelVol + amount)
-		changed = true
-	
-	match curChanging:
-		1: vols[1] = channelVol
-		2: vols[2] = channelVol
-		_: vols[0] = channelVol
-		
-	if changed == false: return false
-	
-	else:
-		changeSound.pitch_scale = vols[curChanging] / 2 + 1
-		changeSound.play()
-		var masterdb = linear2db(vols[0])
-		var musicdb = linear2db((vols[1] * vols[0]) / 2)
-		var sfxdb = linear2db((vols[2] * vols[0]) / 2)
-		
-		appearanceTimeout()
-		
-		match(curChanging):
-			_: #master
-				music.volume_db = musicdb
-				
-				for sfx in allSFX:
-					sfx.volume_db = sfxdb
-			
-			1: #music
-				music.volume_db = musicdb
-			
-			2: #sfx
-				for sfx in allSFX:
-					sfx.volume_db = sfxdb
-		return true
+		if vol.modulate == colour:
+			continue
+		if not _tween.remove(vol, "modulate"):
+			push_warning("Attempted to remove volume fade tween.")
+		if not _tween.interpolate_property(vol, "modulate", null, colour, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
+			push_warning("Attempted to tween volume fade.")
+		if not _tween.start():
+			push_warning("Attempted to start volume fade tween.")
 
-func changeChannel() -> void:
-	appearanceTimeout()
-	var i = 0;
-	for meter in volViews:
-		var colour: Color = Color(1,1,1,0.5)
-		if i == curChanging: 
-			colour = Color(1,1,1,1)
-		
-		tween.interpolate_property(meter.get_parent(), "modulate",
-			volViews[i].get_parent().modulate, colour, 0.2,
-			Tween.TRANS_QUART, Tween.EASE_OUT)
-		tween.start()
-		i += 1
+	# appearance_timeout function
+	if modulate.a < 1:
+		if not _tween.remove(self, "modulate"):
+			push_warning("Attempted to remove volume control fade tween.")
+		if not _tween.interpolate_property(self, "modulate", null, Color.white, 0.25, Tween.TRANS_QUART, Tween.EASE_OUT):
+			push_warning("Attempted to tween volume control fade in.")
+		if not _tween.start():
+			push_warning("Attempted to start volume control fade in tween.")
 
-func changeChannelViaMouseover(channel) -> void:
-	if self.modulate.a > 0:
-		curChanging = channel
-		changeChannel()
+	_timer.start()
 
-func appearanceTimeout() -> void:
-	if self.modulate == Color(1,1,1,0):
-		tween.interpolate_property(self, "modulate",
-			Color(1,1,1,0), Color(1,1,1,1), 0.25,
-			Tween.TRANS_QUART, Tween.EASE_OUT)
-		tween.start()
-	
-	timer.start()
-	yield(timer, "timeout")
-	curChanging = 0
 
-	tween.interpolate_property(self, "modulate",
-			Color(1,1,1,1), Color(1,1,1,0), 1,
-			Tween.TRANS_QUART, Tween.EASE_OUT)
-	tween.start()
+func change_volume(amount: float) -> void:
+	change_channel(_cur_changing, false)
+
+	var channel_volume := clamp(db2linear(AudioServer.get_bus_volume_db(_cur_changing)) + amount, 0, 1)
+
+	AudioServer.set_bus_volume_db(_cur_changing, linear2db(channel_volume))
+
+	_change_sound.pitch_scale = channel_volume / 2 + 1
+	_change_sound.play()
+
+	var vol := vol_view(_cur_changing)
+	(vol.get_node("Percentage") as Label).text = str(channel_volume * 100)
+
+	if not _tween.interpolate_property(vol.get_node("TextureProgress"), "value", null, channel_volume, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
+		push_warning("Attempted to tween volume progress.")
+	if not _tween.start():
+		push_warning("Attempted to start volume progress tween.")
+
+
+func timeout() -> void:
+	if not _tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 1, Tween.TRANS_QUART, Tween.EASE_OUT):
+		push_warning("Attempted to tween volume control fade out.")
+	if not _tween.start():
+		push_warning("Attempted to start volume control fade out tween.")
+
+
+func vol_view(channel: int) -> CanvasItem:
+	match channel:
+		1:
+			return _music
+		2:
+			return _sfx
+		_:
+			return _master

@@ -555,21 +555,27 @@ script = ExtResource( 11 )
 
 [node name="LeftDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 14 )
+bus = "SFX"
 
 [node name="LeftKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 17 )
+bus = "SFX"
 
 [node name="RightDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 14 )
+bus = "SFX"
 
 [node name="RightKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 17 )
+bus = "SFX"
 
 [node name="FinisherDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 25 )
+bus = "SFX"
 
 [node name="FinisherKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 22 )
+bus = "SFX"
 
 [node name="DrumAnimationTween" type="Tween" parent="DrumInteraction"]
 
@@ -603,13 +609,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 9.0
 
-[node name="Spesifics" type="HBoxContainer" parent="Global/VolumeControl/Bars"]
+[node name="Specifics" type="HBoxContainer" parent="Global/VolumeControl/Bars"]
 margin_right = 278.0
 margin_bottom = 138.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.6
 
-[node name="Music" type="VBoxContainer" parent="Global/VolumeControl/Bars/Spesifics"]
+[node name="Music" type="VBoxContainer" parent="Global/VolumeControl/Bars/Specifics"]
 modulate = Color( 1, 1, 1, 0.501961 )
 margin_right = 137.0
 margin_bottom = 138.0
@@ -617,7 +623,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = -3
 
-[node name="TextureProgress" type="TextureProgress" parent="Global/VolumeControl/Bars/Spesifics/Music"]
+[node name="TextureProgress" type="TextureProgress" parent="Global/VolumeControl/Bars/Specifics/Music"]
 margin_left = 43.0
 margin_right = 93.0
 margin_bottom = 91.0
@@ -635,7 +641,7 @@ tint_over = Color( 1, 1, 1, 0 )
 tint_progress = Color( 0, 0.505882, 1, 1 )
 nine_patch_stretch = true
 
-[node name="Percentage" type="Label" parent="Global/VolumeControl/Bars/Spesifics/Music"]
+[node name="Percentage" type="Label" parent="Global/VolumeControl/Bars/Specifics/Music"]
 margin_top = 88.0
 margin_right = 137.0
 margin_bottom = 111.0
@@ -643,7 +649,7 @@ custom_fonts/font = SubResource( 10 )
 text = "100"
 align = 1
 
-[node name="Label" type="Label" parent="Global/VolumeControl/Bars/Spesifics/Music"]
+[node name="Label" type="Label" parent="Global/VolumeControl/Bars/Specifics/Music"]
 margin_top = 108.0
 margin_right = 137.0
 margin_bottom = 138.0
@@ -652,7 +658,7 @@ text = "MUSIC"
 align = 1
 valign = 1
 
-[node name="SFX" type="VBoxContainer" parent="Global/VolumeControl/Bars/Spesifics"]
+[node name="SFX" type="VBoxContainer" parent="Global/VolumeControl/Bars/Specifics"]
 modulate = Color( 1, 1, 1, 0.501961 )
 margin_left = 141.0
 margin_right = 278.0
@@ -661,7 +667,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = -3
 
-[node name="TextureProgress" type="TextureProgress" parent="Global/VolumeControl/Bars/Spesifics/SFX"]
+[node name="TextureProgress" type="TextureProgress" parent="Global/VolumeControl/Bars/Specifics/SFX"]
 margin_left = 43.0
 margin_right = 93.0
 margin_bottom = 91.0
@@ -679,7 +685,7 @@ tint_over = Color( 1, 1, 1, 0 )
 tint_progress = Color( 0, 0.505882, 1, 1 )
 nine_patch_stretch = true
 
-[node name="Percentage" type="Label" parent="Global/VolumeControl/Bars/Spesifics/SFX"]
+[node name="Percentage" type="Label" parent="Global/VolumeControl/Bars/Specifics/SFX"]
 margin_top = 88.0
 margin_right = 137.0
 margin_bottom = 111.0
@@ -687,7 +693,7 @@ custom_fonts/font = SubResource( 10 )
 text = "100"
 align = 1
 
-[node name="Label" type="Label" parent="Global/VolumeControl/Bars/Spesifics/SFX"]
+[node name="Label" type="Label" parent="Global/VolumeControl/Bars/Specifics/SFX"]
 margin_top = 108.0
 margin_right = 137.0
 margin_bottom = 138.0
@@ -748,8 +754,10 @@ one_shot = true
 [node name="ChangeSound" type="AudioStreamPlayer" parent="Global/VolumeControl"]
 stream = ExtResource( 26 )
 volume_db = 10.0
+bus = "SFX"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
+bus = "Music"
 
 [connection signal="load_chart" from="debug" to="ChartLoader" method="loadAndProcessAll"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="debug" method="load_func"]
@@ -759,3 +767,7 @@ volume_db = 10.0
 [connection signal="hit_error_toggled" from="debug/SettingsPanel" to="." method="hit_error_toggled"]
 [connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
 [connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
+[connection signal="mouse_entered" from="Global/VolumeControl/Bars/Specifics/Music" to="Global/VolumeControl" method="change_channel" binds= [ 1 ]]
+[connection signal="mouse_entered" from="Global/VolumeControl/Bars/Specifics/SFX" to="Global/VolumeControl" method="change_channel" binds= [ 2 ]]
+[connection signal="mouse_entered" from="Global/VolumeControl/Bars/Master" to="Global/VolumeControl" method="change_channel" binds= [ 0 ]]
+[connection signal="timeout" from="Global/VolumeControl/Timer" to="Global/VolumeControl" method="timeout"]
