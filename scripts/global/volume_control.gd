@@ -76,8 +76,9 @@ func change_volume(amount: float) -> void:
 	_change_sound.pitch_scale = channel_volume / 2 + 1
 	_change_sound.play()
 
+	channel_volume = round(channel_volume * 100)
 	var vol := vol_view(_cur_changing)
-	(vol.get_node("Percentage") as Label).text = str(channel_volume * 100)
+	(vol.get_node("Percentage") as Label).text = str(channel_volume)
 
 	if not _tween.interpolate_property(vol.get_node("TextureProgress"), "value", null, channel_volume, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
 		push_warning("Attempted to tween volume progress.")
