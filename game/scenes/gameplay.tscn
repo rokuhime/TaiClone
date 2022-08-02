@@ -548,4 +548,4 @@ bus = "Music"
 [connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
 [connection signal="hit_error_toggled" from="debug/SettingsPanel" to="." method="hit_error_toggled"]
 [connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
-[connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
+[connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed" flags=3]
