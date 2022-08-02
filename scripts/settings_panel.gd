@@ -4,6 +4,7 @@ extends CanvasItem
 signal hit_error_toggled(new_visible)
 signal late_early_changed(new_value)
 signal offset_changed
+signal volume_set(channel, amount)
 
 const KEYBINDS := {}
 
@@ -38,13 +39,11 @@ func _ready() -> void:
 			continue
 		change_text(str(button), event)
 
-	var sections := config_file.get_sections()
+	OS.window_size = Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080))
 
-	if "Display" in sections:
-		OS.window_size = Vector2(config_file.get_value("Display", "ResolutionX"), config_file.get_value("Display", "ResolutionY"))
-
-	if "Gameplay" in sections:
-		change_offset(str(config_file.get_value("Gameplay", "GlobalOffset")))
+	change_offset(str(config_file.get_value("Audio", "GlobalOffset", 0)))
+	for i in range(3):
+		emit_signal("volume_set", i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
 	var late_early_drop := $"V/Scroll/V/ExtraDisplays/LateEarly/Options" as OptionButton
 	late_early_drop.add_item("Off")
@@ -154,12 +153,15 @@ func save_settings() -> void:
 			continue
 		config_file.set_value("Keybinds", str(key), event)
 
-	print_debug("Saving resolution config...")
+	print_debug("Saving display config...")
 	var res := OS.window_size
 	config_file.set_value("Display", "ResolutionX", res.x)
 	config_file.set_value("Display", "ResolutionY", res.y)
 
-	config_file.set_value("Gameplay", "GlobalOffset", global_offset)
+	print_debug("Saving audio config...")
+	config_file.set_value("Audio", "GlobalOffset", global_offset)
+	for i in range(3):
+		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
 	if config_file.save(_config_path) == OK:
 		print_debug("Saved configuration file.")

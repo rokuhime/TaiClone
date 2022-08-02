@@ -49,6 +49,9 @@ func change_channel(channel: int, needs_visible := true) -> void:
 			continue
 		if not _tween.remove(vol, "modulate"):
 			push_warning("Attempted to remove volume fade tween.")
+		if modulate.a == 0:
+			vol.modulate = colour
+			continue
 		if not _tween.interpolate_property(vol, "modulate", null, colour, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
 			push_warning("Attempted to tween volume fade.")
 		if not _tween.start():
@@ -71,16 +74,25 @@ func change_volume(amount: float) -> void:
 
 	var channel_volume := clamp(db2linear(AudioServer.get_bus_volume_db(_cur_changing)) + amount, 0, 1)
 
-	AudioServer.set_bus_volume_db(_cur_changing, linear2db(channel_volume))
+	set_volume(_cur_changing, channel_volume, true)
 
 	_change_sound.pitch_scale = channel_volume / 2 + 1
 	_change_sound.play()
 
-	channel_volume = round(channel_volume * 100)
-	var vol := vol_view(_cur_changing)
-	(vol.get_node("Percentage") as Label).text = str(channel_volume)
 
-	if not _tween.interpolate_property(vol.get_node("TextureProgress"), "value", null, channel_volume, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
+func set_volume(channel: int, amount: float, tween := false) -> void:
+	AudioServer.set_bus_volume_db(channel, linear2db(amount))
+
+	amount = round(amount * 100)
+	var vol := vol_view(channel)
+	(vol.get_node("Percentage") as Label).text = str(amount)
+
+	var progress := vol.get_node("TextureProgress") as TextureProgress
+	if not tween:
+		progress.value = amount
+		return
+
+	if not _tween.interpolate_property(progress, "value", null, amount, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
 		push_warning("Attempted to tween volume progress.")
 	if not _tween.start():
 		push_warning("Attempted to start volume progress tween.")
