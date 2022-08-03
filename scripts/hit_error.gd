@@ -1,4 +1,3 @@
-class_name HitError
 extends Control
 
 onready var avgHit = get_node("AverageHit")
@@ -10,6 +9,16 @@ onready var tween = get_node("../../BarLeft/TimingIndicator/Tween")
 var hitPositions = []
 
 var lateearlySimpleDisplay: bool = true
+
+
+func hit_error_toggled(new_visible: bool) -> void:
+	visible = new_visible
+
+
+func late_early_changed(new_value: int) -> void:
+	lateearlySimpleDisplay = new_value < 2
+	timingIndicator.visible = new_value > 0
+
 
 func newMarker(type, timing):
 	var newMarker = middleMarker.duplicate()

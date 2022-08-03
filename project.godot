@@ -24,11 +24,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/scenes/gameplay.gd"
 }, {
-"base": "Control",
-"class": "HitError",
-"language": "GDScript",
-"path": "res://scripts/hit_error.gd"
-}, {
 "base": "Node",
 "class": "HitManager",
 "language": "GDScript",
@@ -73,7 +68,6 @@ _global_script_class_icons={
 "AudioLoader": "",
 "DrumInteraction": "",
 "Gameplay": "",
-"HitError": "",
 "HitManager": "",
 "HitObject": "",
 "Note": "",
