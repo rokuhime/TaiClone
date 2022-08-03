@@ -25,7 +25,8 @@ var curPlaying: bool = false
 var waitOffset: float = 0
 
 func _process(delta) -> void:
-	if curPlaying: curTime += delta
+	if curPlaying: 
+		curTime += delta
 
 func findValue(key, section):
 	for line in currentChartData[section]:
@@ -138,7 +139,7 @@ func loadAndProcessAll(filePath) -> void:
 			if 1 << 1 & int(noteData[3]): # roll
 				# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
 				# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
-				# so the length = osupx * repeats * 100 to get it into seconds essentially
+
 				var osupx = float(noteData[noteData.size() - 1])
 				var repeats = int(noteData[noteData.size() - 2])
 				var svData = findTiming(note["time"] - waitOffset)
@@ -150,9 +151,17 @@ func loadAndProcessAll(filePath) -> void:
 				#also has had vigorous testing, half the time it works half the time it doesnt
 				#if anyone knows why id really really appreciate the help
 				note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
-
+				
+				#note["length"] = (osupx / (svData[1] * 100.0) * (beatLength) * repeats) / 1000
+				#print(note["length"])
+				
 				var noteObject = rollObj.instance()
 				noteObject.change_properties(note["time"], totalcurSV, note["length"], note["finisher"], curSVData[0])
+				
+				print(note["length"] / ((curSVData[0] / 60) / 4))
+				var sbl = note["length"] / ((curSVData[0] / 60) * 4)
+				var ticks = 1 + sbl
+				noteObject._total_ticks = ticks
 				objContainer.get_node("EtcContainer").add_child(noteObject)
 				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 
@@ -215,7 +224,8 @@ func getBeatLength(time):
 		#checking for last timing before being called
 		elif (float(timing[0]) / 1000 <= time):
 			#sv
-			beatLength = float(timing[1])
+			pass
+			#beatLength = float(timing[1])
 		else: #once all gained, get the next change time and stop looping
 			break
 	return beatLength

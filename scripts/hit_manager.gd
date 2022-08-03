@@ -153,11 +153,11 @@ func addScore(type) -> void:
 	accuracyLabel.text = "%2.2f" % accuracy
 
 func nextNoteExists() -> bool:
-		for subContainer in objContainer.get_children():
-			if (subContainer.get_child_count() > 1):
+		#for subContainer in objContainer.get_children():
+			#if (subContainer.get_child_count() > 1):
 				#throws a bunch of errors, not mandatory to change but should look into
-				if (subContainer.get_child_count() - 1 >= nextHittableNote) && (objContainer.get_node("NoteContainer").get_child(nextHittableNote) != null):
-					return true;
+				#if (subContainer.get_child_count() - 1 >= nextHittableNote) && (objContainer.get_node("NoteContainer").get_child(nextHittableNote) != null):
+					#return true;
 		return false;
 
 func reset() -> void:
