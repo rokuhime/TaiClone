@@ -2,8 +2,8 @@
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=2]
-[ext_resource path="res://game/sounds/waw.wav" type="AudioStream" id=3]
-[ext_resource path="res://scripts/global/volume_control.gd" type="Script" id=4]
+[ext_resource path="res://scripts/scenes/volume_control.gd" type="Script" id=3]
+[ext_resource path="res://sounds/waw.wav" type="AudioStream" id=4]
 
 [sub_resource type="Gradient" id=1]
 offsets = PoolRealArray( 0 )
@@ -43,10 +43,10 @@ margin_left = -139.0
 margin_top = -461.0
 margin_right = 139.0
 margin_bottom = -79.0
-script = ExtResource( 4 )
+script = ExtResource( 3 )
 
 [node name="ChangeSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 3 )
+stream = ExtResource( 4 )
 volume_db = 10.0
 bus = "SFX"
 

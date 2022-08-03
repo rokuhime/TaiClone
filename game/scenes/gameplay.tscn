@@ -1,6 +1,6 @@
 [gd_scene load_steps=29 format=2]
 
-[ext_resource path="res://scripts/gameplay/chart_loader.gd" type="Script" id=1]
+[ext_resource path="res://scripts/chart_loader.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=3]
 [ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=4]
@@ -10,12 +10,12 @@
 [ext_resource path="res://game/scenes/volume_control.tscn" type="PackedScene" id=8]
 [ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://scripts/temploadchart.gd" type="Script" id=10]
-[ext_resource path="res://scripts/gameplay/drum_interaction.gd" type="Script" id=11]
+[ext_resource path="res://scripts/drum_interaction.gd" type="Script" id=11]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
-[ext_resource path="res://scripts/gameplay/hit_manager.gd" type="Script" id=15]
+[ext_resource path="res://scripts/hit_manager.gd" type="Script" id=15]
 [ext_resource path="res://skins/test_skin/taiko-hit300.png" type="Texture" id=16]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
-[ext_resource path="res://scripts/gameplay/hit_error.gd" type="Script" id=18]
+[ext_resource path="res://scripts/hit_error.gd" type="Script" id=18]
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
 [ext_resource path="res://skins/test_skin/taiko-hit100.png" type="Texture" id=21]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
@@ -23,7 +23,7 @@
 [ext_resource path="res://skins/test_skin/taiko-hit0.png" type="Texture" id=24]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
-[ext_resource path="res://scripts/gameplay.gd" type="Script" id=30]
+[ext_resource path="res://scripts/scenes/gameplay.gd" type="Script" id=30]
 
 [sub_resource type="DynamicFont" id=1]
 size = 75
