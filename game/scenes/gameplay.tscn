@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://scripts/chart_loader.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
@@ -9,7 +9,6 @@
 [ext_resource path="res://game/scenes/settings_panel.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/scenes/volume_control.tscn" type="PackedScene" id=8]
 [ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
-[ext_resource path="res://scripts/temploadchart.gd" type="Script" id=10]
 [ext_resource path="res://scripts/drum_interaction.gd" type="Script" id=11]
 [ext_resource path="res://game/scenes/hit_error.tscn" type="PackedScene" id=12]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
@@ -318,7 +317,6 @@ valign = 2
 [node name="debug" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 10 )
 
 [node name="debugtext" type="Label" parent="debug"]
 anchor_top = 1.0
@@ -455,9 +453,9 @@ one_shot = true
 [node name="Music" type="AudioStreamPlayer" parent="."]
 bus = "Music"
 
+[connection signal="load_chart" from="." to="ChartLoader" method="loadAndProcessAll"]
 [connection signal="ready" from="." to="UI/HitError" method="gameplay_ready"]
-[connection signal="load_chart" from="debug" to="ChartLoader" method="loadAndProcessAll"]
-[connection signal="pressed" from="debug/temploadchart/LoadButton" to="debug" method="load_func"]
+[connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="ChartLoader" method="playChart"]
 [connection signal="toggled" from="debug/temploadchart/AutoToggle" to="HitManager" method="auto_toggled"]
 [connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
