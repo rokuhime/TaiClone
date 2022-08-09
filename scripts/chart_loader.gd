@@ -7,6 +7,7 @@ onready var hitManager = get_node("../HitManager")
 onready var noteObj = preload("res://game/objects/note_object.tscn")
 onready var spinWarnObj = preload("res://game/objects/spinner_warn_object.tscn")
 onready var rollObj = preload("res://game/objects/roll_object.tscn")
+onready var barlineObj = preload("res://game/objects/bar_line.tscn")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
 
 onready var music = get_node("../Music")
@@ -25,7 +26,8 @@ var curPlaying: bool = false
 var waitOffset: float = 0
 
 func _process(delta) -> void:
-	if curPlaying: curTime += delta
+	if curPlaying: 
+		curTime += delta
 
 func findValue(key, section):
 	for line in currentChartData[section]:
@@ -94,6 +96,7 @@ func loadAndProcessAll(filePath) -> void:
 	var curSVData = findTiming(0)
 	# current sv = 0, current bpm = 1, next change = 2
 
+	# spawn notes
 	var notes = []
 
 	for noteData in currentChartData["HitObjects"]:
@@ -138,7 +141,7 @@ func loadAndProcessAll(filePath) -> void:
 			if 1 << 1 & int(noteData[3]): # roll
 				# osu makes rolls/sliders really bloody stinky so this weird conversion is mandatory
 				# essentially its a sliders pixel length (osupx), and the repeats of it (repeats, obvs)
-				# so the length = osupx * repeats * 100 to get it into seconds essentially
+
 				var osupx = float(noteData[noteData.size() - 1])
 				var repeats = int(noteData[noteData.size() - 2])
 				var svData = findTiming(note["time"] - waitOffset)
@@ -150,9 +153,17 @@ func loadAndProcessAll(filePath) -> void:
 				#also has had vigorous testing, half the time it works half the time it doesnt
 				#if anyone knows why id really really appreciate the help
 				note["length"] = (((osupx * repeats) / (140 * svData[1]) * abs(beatLength)) / 1000)
-
+				
+				#note["length"] = (osupx / (svData[1] * 100.0) * (beatLength) * repeats) / 1000
+				#print(note["length"])
+				
 				var noteObject = rollObj.instance()
 				noteObject.change_properties(note["time"], totalcurSV, note["length"], note["finisher"], curSVData[0])
+				
+				print(note["length"] / ((curSVData[0] / 60) / 4))
+				var sbl = note["length"] / ((curSVData[0] / 60) * 4)
+				var ticks = 1 + sbl
+				noteObject._total_ticks = ticks
 				objContainer.get_node("EtcContainer").add_child(noteObject)
 				objContainer.get_node("EtcContainer").move_child(noteObject, 0)
 
@@ -170,6 +181,47 @@ func loadAndProcessAll(filePath) -> void:
 	#load audio file and apply to song player
 	music.set_stream(AudioLoader.new().loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
 
+
+	# spawn barlines
+
+	#this is stinky, overthrow the current way sv is done with what im doing here soon ok?
+	#you can do it fus i trust u :D
+	var sploinky = getAllTiming()[0]
+
+	var musicLength = music.stream.get_length()
+
+	curSVData = findTiming(0)
+
+	var i: int = 0
+	for bpm in sploinky:
+		#get length of time with this current bpm
+		#if other bpm changes exist, get their timing
+		#if not, work off of song start/end
+		var startTime: float = bpm[1];
+		var endTime: float = musicLength;
+		if (sploinky.size() < i + 1): 
+			print(sploinky[i + 1])
+			endTime = sploinky[i + 1][1]
+
+		var length: float = endTime - startTime
+
+		var barlineCount: int = int(floor(length / ((60 * 4) / bpm[0])))
+
+		for n in barlineCount:
+			var time = startTime + ((60 * 4) / bpm[0]  * n) + waitOffset
+			# check sv
+			if curSVData[2] != null && time >= curSVData[2]:
+				# if another bpm change exists... and if the current note time is above/equal to next bpm change
+				curSVData = findTiming(time - waitOffset)
+
+			#disgusting
+			var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * OS.window_size.x / OS.window_size.y * 9 / 16
+
+			var noteObject = barlineObj.instance()
+			noteObject.change_properties(time, totalcurSV)
+			objContainer.get_node("EtcContainer").add_child(noteObject)
+			objContainer.get_node("EtcContainer").move_child(noteObject, 0)
+
 	#export test vDebug ~ ZMTT
 	var fusFile = File.new()
 	if fusFile.open("res://debug.fus", File.WRITE) == OK:
@@ -177,6 +229,19 @@ func loadAndProcessAll(filePath) -> void:
 		for note in notes:
 			fusFile.store_line(String(note))
 		fusFile.close()
+
+#temporary?
+func getAllTiming():
+	var bpm = []
+	var sv = []
+	#get the closest sv/bpm to the timing
+	for value in currentTimingData:
+		match value[1]:
+			0: #bpm
+				bpm.push_back([value[2], value[0]])
+			1: #sv
+				sv.push_back([value[2], value[0]])
+	return [bpm, sv]
 
 func findTiming(time):
 	var bpm = null
@@ -215,7 +280,8 @@ func getBeatLength(time):
 		#checking for last timing before being called
 		elif (float(timing[0]) / 1000 <= time):
 			#sv
-			beatLength = float(timing[1])
+			pass
+			#beatLength = float(timing[1])
 		else: #once all gained, get the next change time and stop looping
 			break
 	return beatLength

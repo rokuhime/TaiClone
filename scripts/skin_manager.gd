@@ -1,5 +1,6 @@
 class_name SkinManager
 
+var barline_colour := Color("ffffff");
 var don_colour := Color("eb452c");
 var kat_colour := Color("438eac");
 var roll_colour := Color("fcb806");
