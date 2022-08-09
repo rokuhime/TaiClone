@@ -42,7 +42,7 @@ func activate() -> void:
 	_active = true
 
 
-func deactivate() -> void:
+func deactivate(_object := null, _key := "") -> void:
 	if not _active or not _loaded:
 		push_warning("Attempted to deactivate hitobject.")
 	modulate = Color.transparent

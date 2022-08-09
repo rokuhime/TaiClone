@@ -75,5 +75,5 @@ func change_properties(new_timing: float, new_length: float, new_hits: int) -> v
 		_needed_hits = new_hits
 
 
-func deactivate() -> void:
+func deactivate(_object := null, _key := "") -> void:
 	queue_free()

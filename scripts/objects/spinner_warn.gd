@@ -17,7 +17,7 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 		_bpm = new_bpm
 
 
-func deactivate() -> void:
+func deactivate(_object := null, _key := "") -> void:
 	# make spinner obj first
 	var spinner := _spinner_obj.instance() as Spinner
 	spinner.change_properties(timing, _length, int(_length * 960 / _bpm))

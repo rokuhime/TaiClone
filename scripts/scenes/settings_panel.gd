@@ -126,9 +126,6 @@ func change_text(button: String, event: InputEvent, pressed := false) -> void:
 			button_object = _right_don_butt
 		"RightKat":
 			button_object = _right_kat_butt
-		_:
-			push_warning("Unknown input.")
-			return
 	if event is InputEventJoypadButton:
 		button_object.text = "Joystick Button %s" % (event as InputEventJoypadButton).button_index
 	elif event is InputEventKey:

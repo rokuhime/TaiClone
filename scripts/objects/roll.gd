@@ -11,9 +11,9 @@ onready var _tick_container := $"TickContainer"
 
 func _ready() -> void:
 	# note colour
-	($"Scale/Head" as CanvasItem).self_modulate = skin.roll_colour
+	($"Scale/Head" as CanvasItem).self_modulate = skin.ROLL_COLOUR
 	var body := $"Scale/Body" as Control
-	body.modulate = skin.roll_colour
+	body.modulate = skin.ROLL_COLOUR
 	body.rect_size = Vector2(_speed * _length * 1.9, 129)
 
 	# haha funny!!! idx like iidx as in funny beatmania silly game keys

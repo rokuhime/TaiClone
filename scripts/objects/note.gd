@@ -6,7 +6,7 @@ var is_kat := false
 
 func _ready() -> void:
 	# note colour
-	($"Sprite" as CanvasItem).self_modulate = skin.kat_colour if is_kat else skin.don_colour
+	($"Sprite" as CanvasItem).self_modulate = skin.KAT_COLOUR if is_kat else skin.DON_COLOUR
 
 
 func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, new_finisher: bool) -> void:
