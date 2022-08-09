@@ -15,7 +15,7 @@ func _ready() -> void:
 	($"Scale/Head" as CanvasItem).self_modulate = _g.skin.roll_colour
 	var body := $"Scale/Body" as Control
 	body.modulate = _g.skin.roll_colour
-	body.rect_size = Vector2(_length * _speed * 1.9, 129)
+	body.rect_size = Vector2(_speed * _length * 1.9, 129)
 
 	# haha funny!!! idx like iidx as in funny beatmania silly game keys
 	# but its a lot like INDEX!!!!!!!!!!!!!!!
@@ -39,7 +39,7 @@ func _update(_delta):
 #	# lol
 #	if _total_ticks <= _current_tick or not _active or not _loaded or not not (event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftKat") or event.is_action_pressed("RightDon") or event.is_action_pressed("RightKat")):
 #		return
-
+#	#print(charload.curTime)
 #	var cur_song_time := _g.music.get_playback_position()
 #	# if after slider is hittable
 #	if cur_song_time > timing + _length + _g.hit_manager.inaccTiming:

@@ -17,57 +17,57 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "DrumInteraction",
 "language": "GDScript",
-"path": "res://scripts/gameplay/drum_interaction.gd"
+"path": "res://scripts/drum_interaction.gd"
 }, {
 "base": "Node",
 "class": "Gameplay",
 "language": "GDScript",
-"path": "res://scripts/gameplay.gd"
+"path": "res://scripts/scenes/gameplay.gd"
 }, {
 "base": "Control",
 "class": "HitError",
 "language": "GDScript",
-"path": "res://scripts/gameplay/hit_error.gd"
+"path": "res://scripts/hit_error.gd"
 }, {
 "base": "Node",
 "class": "HitManager",
 "language": "GDScript",
-"path": "res://scripts/gameplay/hit_manager.gd"
+"path": "res://scripts/hit_manager.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "HitObject",
 "language": "GDScript",
-"path": "res://scripts/note_objects/hit_object.gd"
+"path": "res://scripts/objects/hit_object.gd"
 }, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
-"path": "res://scripts/note_objects/note.gd"
+"path": "res://scripts/objects/note.gd"
 }, {
 "base": "HitObject",
 "class": "Roll",
 "language": "GDScript",
-"path": "res://scripts/note_objects/roll.gd"
+"path": "res://scripts/objects/roll.gd"
 }, {
 "base": "CanvasItem",
 "class": "SettingsPanel",
 "language": "GDScript",
-"path": "res://scripts/settings_panel.gd"
+"path": "res://scripts/scenes/settings_panel.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
 "language": "GDScript",
-"path": "res://scripts/global/skin_manager.gd"
+"path": "res://scripts/skin_manager.gd"
 }, {
 "base": "HitObject",
 "class": "Spinner",
 "language": "GDScript",
-"path": "res://scripts/note_objects/spinner.gd"
+"path": "res://scripts/objects/spinner.gd"
 }, {
 "base": "HitObject",
 "class": "SpinnerWarn",
 "language": "GDScript",
-"path": "res://scripts/note_objects/spinner_warn.gd"
+"path": "res://scripts/objects/spinner_warn.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -89,9 +89,12 @@ _global_script_class_icons={
 config/name="TaiClone"
 run/main_scene="res://game/scenes/gameplay.tscn"
 
-[autoload]
+[debug]
 
-tools="*res://scripts/global/global_tools.gd"
+gdscript/warnings/unsafe_property_access=true
+gdscript/warnings/unsafe_method_access=true
+gdscript/warnings/unsafe_cast=true
+gdscript/warnings/unsafe_call_argument=true
 
 [debug]
 

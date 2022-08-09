@@ -38,7 +38,15 @@ func loadAndProcessAll(filePath) -> void:
 	#todo: make more adaptable between .osu and all file formats
 	var section = ""
 	currentChartData = {section: []}
-	for line in tools.loadText(filePath).split("\n",false):
+	var f = File.new()
+	var fileInText = ""
+	if f.file_exists(filePath):
+		f.open(filePath, File.READ)
+		while not f.eof_reached(): # iterate through all lines until the end of file is reached
+			var line = f.get_line()
+			fileInText += line + "\n"
+		f.close()
+	for line in fileInText.split("\n",false):
 		if line.begins_with("[") && line.ends_with("]"):
 			section = line.substr(1, line.length() - 2)
 			currentChartData[section] = []
@@ -110,7 +118,8 @@ func loadAndProcessAll(filePath) -> void:
 			curSVData = findTiming(note["time"] - waitOffset)
 
 		#tee hee
-		var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * tools.getScreenRatio()
+		var res := OS.window_size
+		var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * res.x / res.y * 9 / 16
 
 		#figure out what kind of note it is
 		#osu keeps type as an int that references bytes

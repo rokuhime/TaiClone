@@ -1,32 +1,29 @@
-[gd_scene load_steps=41 format=2]
+[gd_scene load_steps=29 format=2]
 
-[ext_resource path="res://scripts/gameplay/chart_loader.gd" type="Script" id=1]
+[ext_resource path="res://scripts/chart_loader.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=3]
 [ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=4]
 [ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
 [ext_resource path="res://game/scenes/settings_panel.tscn" type="PackedScene" id=7]
-[ext_resource path="res://scripts/global/volume_control.gd" type="Script" id=8]
+[ext_resource path="res://game/scenes/volume_control.tscn" type="PackedScene" id=8]
 [ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
-[ext_resource path="res://scripts/gameplay/drum_interaction.gd" type="Script" id=11]
+[ext_resource path="res://scripts/temploadchart.gd" type="Script" id=10]
+[ext_resource path="res://scripts/drum_interaction.gd" type="Script" id=11]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
-[ext_resource path="res://scripts/gameplay/hit_manager.gd" type="Script" id=15]
+[ext_resource path="res://scripts/hit_manager.gd" type="Script" id=15]
 [ext_resource path="res://skins/test_skin/taiko-hit300.png" type="Texture" id=16]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
-[ext_resource path="res://scripts/gameplay/hit_error.gd" type="Script" id=18]
-[ext_resource path="res://scripts/temploadchart.gd" type="Script" id=19]
+[ext_resource path="res://scripts/hit_error.gd" type="Script" id=18]
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
 [ext_resource path="res://skins/test_skin/taiko-hit100.png" type="Texture" id=21]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
 [ext_resource path="res://skins/test_skin/untitled.png" type="Texture" id=23]
 [ext_resource path="res://skins/test_skin/taiko-hit0.png" type="Texture" id=24]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
-[ext_resource path="res://game/sounds/waw.wav" type="AudioStream" id=26]
-[ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=27]
-[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=28]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
-[ext_resource path="res://scripts/gameplay.gd" type="Script" id=30]
+[ext_resource path="res://scripts/scenes/gameplay.gd" type="Script" id=30]
 
 [sub_resource type="DynamicFont" id=1]
 size = 75
@@ -49,55 +46,6 @@ size = 26
 outline_size = 2
 outline_color = Color( 0, 0, 0, 0.313726 )
 font_data = ExtResource( 29 )
-
-[sub_resource type="GDScript" id=12]
-script/source = "extends Control
-
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = \"text\"
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-"
-
-[sub_resource type="Gradient" id=4]
-colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 1 )
-
-[sub_resource type="GradientTexture" id=5]
-gradient = SubResource( 4 )
-width = 1
-
-[sub_resource type="Gradient" id=6]
-colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 1 )
-
-[sub_resource type="GradientTexture" id=7]
-gradient = SubResource( 6 )
-width = 256
-
-[sub_resource type="DynamicFont" id=10]
-size = 15
-font_data = ExtResource( 28 )
-
-[sub_resource type="DynamicFont" id=11]
-size = 20
-font_data = ExtResource( 27 )
-
-[sub_resource type="DynamicFont" id=8]
-size = 22
-font_data = ExtResource( 28 )
-
-[sub_resource type="DynamicFont" id=9]
-size = 28
-font_data = ExtResource( 27 )
 
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
@@ -440,7 +388,6 @@ margin_right = 1.0
 [node name="HitPoints" type="Control" parent="UI/HitError"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = SubResource( 12 )
 
 [node name="AverageHit" type="ColorRect" parent="UI/HitError"]
 anchor_left = 0.5
@@ -458,6 +405,7 @@ color = Color( 1, 1, 1, 0.8 )
 [node name="debug" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 10 )
 
 [node name="debugtext" type="Label" parent="debug"]
 anchor_top = 1.0
@@ -495,7 +443,6 @@ margin_top = -82.0
 margin_right = 355.0
 margin_bottom = -44.0
 rect_scale = Vector2( 1.9, 1.9 )
-script = ExtResource( 19 )
 
 [node name="LineEdit" type="LineEdit" parent="debug/temploadchart"]
 margin_right = 195.0
@@ -546,7 +493,7 @@ margin_bottom = -29.9999
 grow_horizontal = 0
 grow_vertical = 0
 rect_scale = Vector2( 1.9, 1.9 )
-text = "version"
+text = "v0.2 - volume slider go brrr"
 align = 2
 
 [node name="SettingsPanel" parent="debug" instance=ExtResource( 7 )]
@@ -556,21 +503,27 @@ script = ExtResource( 11 )
 
 [node name="LeftDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 14 )
+bus = "SFX"
 
 [node name="LeftKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 17 )
+bus = "SFX"
 
 [node name="RightDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 14 )
+bus = "SFX"
 
 [node name="RightKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 17 )
+bus = "SFX"
 
 [node name="FinisherDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 25 )
+bus = "SFX"
 
 [node name="FinisherKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 22 )
+bus = "SFX"
 
 [node name="DrumAnimationTween" type="Tween" parent="DrumInteraction"]
 
@@ -584,175 +537,17 @@ baseSVMultiplier = 3.0
 [node name="StartTimer" type="Timer" parent="ChartLoader"]
 one_shot = true
 
-[node name="Global" type="Node" parent="."]
-
-[node name="VolumeControl" type="Panel" parent="Global"]
-modulate = Color( 1, 1, 1, 0 )
-self_modulate = Color( 1, 1, 1, 0.784314 )
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -139.0
-margin_top = -461.0
-margin_right = 139.0
-margin_bottom = -79.0
-script = ExtResource( 8 )
-
-[node name="Bars" type="VBoxContainer" parent="Global/VolumeControl"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 9.0
-
-[node name="Spesifics" type="HBoxContainer" parent="Global/VolumeControl/Bars"]
-margin_right = 278.0
-margin_bottom = 138.0
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.6
-
-[node name="Music" type="VBoxContainer" parent="Global/VolumeControl/Bars/Spesifics"]
-modulate = Color( 1, 1, 1, 0.501961 )
-margin_right = 137.0
-margin_bottom = 138.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/separation = -3
-
-[node name="TextureProgress" type="TextureProgress" parent="Global/VolumeControl/Bars/Spesifics/Music"]
-margin_left = 43.0
-margin_right = 93.0
-margin_bottom = 91.0
-rect_min_size = Vector2( 50, 0 )
-size_flags_horizontal = 4
-size_flags_vertical = 3
-max_value = 1.0
-step = 0.001
-value = 1.0
-texture_under = SubResource( 5 )
-texture_progress = SubResource( 7 )
-fill_mode = 3
-tint_under = Color( 0.0352941, 0.0352941, 0.0352941, 0.490196 )
-tint_over = Color( 1, 1, 1, 0 )
-tint_progress = Color( 0, 0.505882, 1, 1 )
-nine_patch_stretch = true
-
-[node name="Percentage" type="Label" parent="Global/VolumeControl/Bars/Spesifics/Music"]
-margin_top = 88.0
-margin_right = 137.0
-margin_bottom = 111.0
-custom_fonts/font = SubResource( 10 )
-text = "100"
-align = 1
-
-[node name="Label" type="Label" parent="Global/VolumeControl/Bars/Spesifics/Music"]
-margin_top = 108.0
-margin_right = 137.0
-margin_bottom = 138.0
-custom_fonts/font = SubResource( 11 )
-text = "MUSIC"
-align = 1
-valign = 1
-
-[node name="SFX" type="VBoxContainer" parent="Global/VolumeControl/Bars/Spesifics"]
-modulate = Color( 1, 1, 1, 0.501961 )
-margin_left = 141.0
-margin_right = 278.0
-margin_bottom = 138.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/separation = -3
-
-[node name="TextureProgress" type="TextureProgress" parent="Global/VolumeControl/Bars/Spesifics/SFX"]
-margin_left = 43.0
-margin_right = 93.0
-margin_bottom = 91.0
-rect_min_size = Vector2( 50, 0 )
-size_flags_horizontal = 4
-size_flags_vertical = 3
-max_value = 1.0
-step = 0.001
-value = 1.0
-texture_under = SubResource( 5 )
-texture_progress = SubResource( 7 )
-fill_mode = 3
-tint_under = Color( 0.0352941, 0.0352941, 0.0352941, 0.490196 )
-tint_over = Color( 1, 1, 1, 0 )
-tint_progress = Color( 0, 0.505882, 1, 1 )
-nine_patch_stretch = true
-
-[node name="Percentage" type="Label" parent="Global/VolumeControl/Bars/Spesifics/SFX"]
-margin_top = 88.0
-margin_right = 137.0
-margin_bottom = 111.0
-custom_fonts/font = SubResource( 10 )
-text = "100"
-align = 1
-
-[node name="Label" type="Label" parent="Global/VolumeControl/Bars/Spesifics/SFX"]
-margin_top = 108.0
-margin_right = 137.0
-margin_bottom = 138.0
-custom_fonts/font = SubResource( 11 )
-text = "SFX"
-align = 1
-valign = 1
-
-[node name="Master" type="VBoxContainer" parent="Global/VolumeControl/Bars"]
-margin_top = 142.0
-margin_right = 278.0
-margin_bottom = 373.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/separation = -3
-
-[node name="TextureProgress" type="TextureProgress" parent="Global/VolumeControl/Bars/Master"]
-margin_left = 101.0
-margin_right = 176.0
-margin_bottom = 162.0
-rect_min_size = Vector2( 75, 0 )
-size_flags_horizontal = 4
-size_flags_vertical = 3
-max_value = 1.0
-step = 0.001
-value = 1.0
-texture_under = SubResource( 5 )
-texture_progress = SubResource( 7 )
-fill_mode = 3
-tint_under = Color( 0.0352941, 0.0352941, 0.0352941, 0.490196 )
-tint_over = Color( 1, 1, 1, 0 )
-tint_progress = Color( 0, 0.505882, 1, 1 )
-nine_patch_stretch = true
-
-[node name="Percentage" type="Label" parent="Global/VolumeControl/Bars/Master"]
-margin_top = 159.0
-margin_right = 278.0
-margin_bottom = 192.0
-custom_fonts/font = SubResource( 8 )
-text = "100"
-align = 1
-
-[node name="Label" type="Label" parent="Global/VolumeControl/Bars/Master"]
-margin_top = 189.0
-margin_right = 278.0
-margin_bottom = 231.0
-custom_fonts/font = SubResource( 9 )
-text = "MASTER"
-align = 1
-valign = 1
-
-[node name="VolumeIncreaseTween" type="Tween" parent="Global/VolumeControl"]
-
-[node name="Timer" type="Timer" parent="Global/VolumeControl"]
-wait_time = 2.0
-one_shot = true
-
-[node name="ChangeSound" type="AudioStreamPlayer" parent="Global/VolumeControl"]
-stream = ExtResource( 26 )
-volume_db = 10.0
+[node name="VolumeControl" parent="." instance=ExtResource( 8 )]
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
+bus = "Music"
 
+[connection signal="load_chart" from="debug" to="ChartLoader" method="loadAndProcessAll"]
+[connection signal="pressed" from="debug/temploadchart/LoadButton" to="debug" method="load_func"]
+[connection signal="pressed" from="debug/temploadchart/PlayButton" to="ChartLoader" method="playChart"]
+[connection signal="toggled" from="debug/temploadchart/AutoToggle" to="HitManager" method="auto_toggled"]
 [connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
 [connection signal="hit_error_toggled" from="debug/SettingsPanel" to="." method="hit_error_toggled"]
 [connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
-[connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
+[connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed" flags=3]
+[connection signal="volume_set" from="debug/SettingsPanel" to="VolumeControl" method="set_volume" flags=3]
