@@ -14,6 +14,8 @@ onready var accuracyLabel = get_node("../UI/Accuracy")
 onready var fDonAud = get_node("../DrumInteraction/FinisherDonAudio")
 onready var fKatAud = get_node("../DrumInteraction/FinisherKatAudio")
 
+onready var _g = $".."
+
 var auto = false;
 
 var accurateCount: int = 0;
@@ -23,10 +25,6 @@ var combo: int = 0;
 var bestCombo: int = 0;
 var score: int = 0;
 var scoreMultiplier: float = 1;
-
-var missTiming: float = -0.2
-var inaccTiming: float = 0.145
-var accTiming: float = 0.06
 
 var nextHittableNote: int = 0;
 
@@ -48,7 +46,7 @@ func _process(_delta) -> void:
 		
 		#temp auto
 		#doesnt support special note types currently
-		if (auto && ((chart.curTime + $"/root/Gameplay".settings.global_offset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
+		if (auto && ((chart.curTime + _g.settings.global_offset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
 			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).is_kat
 			
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
@@ -68,7 +66,7 @@ func _process(_delta) -> void:
 		
 		#miss check
 		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1)
-		if (!auto && ((chart.curTime + $"/root/Gameplay".settings.global_offset) - nextNote.timing) > inaccTiming):
+		if (!auto && ((chart.curTime + _g.settings.global_offset) - nextNote.timing) > _g.inacc_timing):
 			hitError.new_marker("miss", curTime - nextNote.timing)
 			addScore("miss")
 			nextHittableNote += 1;
@@ -78,7 +76,7 @@ func checkInput(isKat, isRight) -> void:
 	if chart.curPlaying:
 		if (lastNoteWasFinisher):
 			var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
-			if (abs((curTime - lastNote.timing) + $"/root/Gameplay".settings.global_offset)  <= accTiming && lastNote.is_kat == isKat) && (lastSideUsedIsRight != isRight):
+			if (abs((curTime - lastNote.timing) + _g.settings.global_offset)  <= _g.acc_timing && lastNote.is_kat == isKat) && (lastSideUsedIsRight != isRight):
 				#swallow input, give more points
 				addScore("finisher")
 				if isKat: fKatAud.play()
@@ -91,9 +89,9 @@ func checkInput(isKat, isRight) -> void:
 			var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
 			var hitType: String
 			
-			if (abs((curTime - nextNote.timing) + $"/root/Gameplay".settings.global_offset) <= inaccTiming):
+			if (abs((curTime - nextNote.timing) + _g.settings.global_offset) <= _g.inacc_timing):
 				#check if accurate and right key pressed
-				if (abs((curTime - nextNote.timing) + $"/root/Gameplay".settings.global_offset) <= accTiming && nextNote.is_kat == isKat):
+				if (abs((curTime - nextNote.timing) + _g.settings.global_offset) <= _g.acc_timing && nextNote.is_kat == isKat):
 					hitType = "accurate"
 				#check if inaccurate and right key pressed
 				elif (nextNote.is_kat == isKat): 

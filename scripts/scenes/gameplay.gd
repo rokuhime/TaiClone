@@ -1,6 +1,10 @@
 class_name Gameplay
 extends Node
 
+var acc_timing := 0.06
+var inacc_timing := 0.145
+var miss_timing := 0.2
+
 var skin := SkinManager.new()
 
 onready var _hit_point_offset := $"BarRight/HitPointOffset"

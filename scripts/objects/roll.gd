@@ -36,11 +36,11 @@ func _input(event: InputEvent) -> void:
 
 	var cur_song_time := _g.music.get_playback_position()
 	# if after slider is hittable
-	if cur_song_time > timing + _length + _g.hit_manager.inaccTiming:
+	if cur_song_time > timing + _length + _g.inacc_timing:
 		deactivate()
 		return
 	# if before slider is hittable
-	if cur_song_time < timing - _g.hit_manager.inaccTiming:
+	if cur_song_time < timing - _g.inacc_timing:
 		return
 
 	# get current tick target
