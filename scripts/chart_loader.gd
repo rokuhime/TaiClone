@@ -183,15 +183,15 @@ func loadAndProcessAll(filePath) -> void:
 
 
 	# spawn barlines
-	
+
 	#this is stinky, overthrow the current way sv is done with what im doing here soon ok?
 	#you can do it fus i trust u :D
 	var sploinky = getAllTiming()[0]
-	
+
 	var musicLength = music.stream.get_length()
-	
+
 	curSVData = findTiming(0)
-	
+
 	var i: int = 0
 	for bpm in sploinky:
 		#get length of time with this current bpm
@@ -202,21 +202,21 @@ func loadAndProcessAll(filePath) -> void:
 		if (sploinky.size() < i + 1): 
 			print(sploinky[i + 1])
 			endTime = sploinky[i + 1][1]
-		
+
 		var length: float = endTime - startTime
-		
+
 		var barlineCount: int = int(floor(length / ((60 * 4) / bpm[0])))
-		
+
 		for n in barlineCount:
 			var time = startTime + ((60 * 4) / bpm[0]  * n) + waitOffset
 			# check sv
 			if curSVData[2] != null && time >= curSVData[2]:
 				# if another bpm change exists... and if the current note time is above/equal to next bpm change
 				curSVData = findTiming(time - waitOffset)
-			
+
 			#disgusting
 			var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * OS.window_size.x / OS.window_size.y * 9 / 16
-			
+
 			var noteObject = barlineObj.instance()
 			noteObject.change_properties(time, totalcurSV)
 			objContainer.get_node("EtcContainer").add_child(noteObject)

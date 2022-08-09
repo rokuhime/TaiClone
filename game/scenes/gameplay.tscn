@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://scripts/chart_loader.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
@@ -11,8 +11,6 @@
 [ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://scripts/temploadchart.gd" type="Script" id=10]
 [ext_resource path="res://scripts/drum_interaction.gd" type="Script" id=11]
-[ext_resource path="res://game/objects/bar_line.tscn" type="PackedScene" id=12]
-[ext_resource path="res://game/objects/note_object.tscn" type="PackedScene" id=13]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
 [ext_resource path="res://scripts/hit_manager.gd" type="Script" id=15]
 [ext_resource path="res://skins/test_skin/taiko-hit300.png" type="Texture" id=16]
@@ -135,11 +133,6 @@ margin_bottom = 40.0
 [node name="NoteContainer" type="Control" parent="BarRight/HitPointOffset/ObjectContainers"]
 margin_right = 40.0
 margin_bottom = 40.0
-
-[node name="NoteObject" parent="BarRight/HitPointOffset/ObjectContainers/NoteContainer" instance=ExtResource( 13 )]
-
-[node name="BarLine" parent="BarRight/HitPointOffset/ObjectContainers/NoteContainer" instance=ExtResource( 12 )]
-position = Vector2( 43.793, 0 )
 
 [node name="Judgements" type="Control" parent="BarRight/HitPointOffset"]
 anchor_top = 0.5
