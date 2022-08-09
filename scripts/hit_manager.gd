@@ -69,7 +69,7 @@ func _process(_delta) -> void:
 		#miss check
 		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1)
 		if (!auto && ((chart.curTime + $"/root/Gameplay".settings.global_offset) - nextNote.timing) > inaccTiming):
-			hitError.newMarker("miss", curTime - nextNote.timing)
+			hitError.new_marker("miss", curTime - nextNote.timing)
 			addScore("miss")
 			nextHittableNote += 1;
 
@@ -114,7 +114,7 @@ func checkInput(isKat, isRight) -> void:
 				if nextNote.finisher == true: 
 					lastNoteWasFinisher = true
 				
-				hitError.newMarker(hitType, curTime - nextNote.timing)
+				hitError.new_marker(hitType, curTime - nextNote.timing)
 			lastSideUsedIsRight = isRight
 
 func addScore(type) -> void:

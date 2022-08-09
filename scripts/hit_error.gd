@@ -1,14 +1,15 @@
-extends Control
+extends CanvasItem
 
-onready var avgHit = get_node("AverageHit")
-onready var middleMarker = get_node("MiddleMarker")
-onready var hitPoints = get_node("HitPoints")
-onready var timingIndicator = get_node("../../BarLeft/TimingIndicator")
-onready var tween = get_node("../../BarLeft/TimingIndicator/Tween")
+const HIT_POSITIONS := []
 
-var hitPositions = []
+var _late_early_simple_display := true
 
-var lateearlySimpleDisplay: bool = true
+onready var _avg_hit := $"AverageHit" as Control
+onready var _g := $"../.." as Gameplay
+onready var _hit_points := $"HitPoints"
+onready var _middle_marker := $"MiddleMarker"
+onready var _timing_indicator := $"../../BarLeft/TimingIndicator" as Label
+onready var _tween := $"../../BarLeft/TimingIndicator/Tween" as Tween
 
 
 func hit_error_toggled(new_visible: bool) -> void:
@@ -16,70 +17,63 @@ func hit_error_toggled(new_visible: bool) -> void:
 
 
 func late_early_changed(new_value: int) -> void:
-	lateearlySimpleDisplay = new_value < 2
-	timingIndicator.visible = new_value > 0
+	_late_early_simple_display = new_value < 2
+	_timing_indicator.visible = new_value > 0
 
 
-func newMarker(type, timing):
-	var newMarker = middleMarker.duplicate()
-	hitPoints.add_child(newMarker)
-	
-	var markerColour: Color;
-	#var gameplay := $"../.." as Gameplay
+func new_marker(type: String, timing: float) -> void:
+	var marker := _middle_marker.duplicate() as ColorRect
+	_hit_points.add_child(marker)
+	_hit_points.move_child(marker, 0)
+
+	var skin := _g.skin
 	match type:
-		"accurate": markerColour = $"../..".skin.accurate_colour
-		"inaccurate": markerColour = $"../..".skin.inaccurate_colour
-		"miss": markerColour = $"../..".skin.miss_colour
-	newMarker.modulate = markerColour;
-	
-	newMarker.rect_position = Vector2(timing * self.rect_size.x * 3.2 + (self.rect_size.x / 2), 0)
-	
-	hitPositions.push_back(newMarker.rect_position.x)
-	if(hitPositions.size() > 25): hitPositions.remove(0)
-	
-	fadeOutMarkers()
-	changeAvgHitPos()
-	
-	if type == "inaccurate": changeIndicator(type, timing)
+		"accurate":
+			marker.modulate = skin.accurate_colour
+		"inaccurate":
+			marker.modulate = skin.inaccurate_colour
+		"miss":
+			marker.modulate = skin.miss_colour
+		_:
+			push_warning("Unknown marker type.")
+			return
 
-func fadeOutMarkers():
-	#print(hitPoints.get_child_count(), " markers")
-	var i: int = 0
-	for marker in hitPoints.get_children():
-		if i >= 25: 
-			hitPoints.get_child(0).queue_free()
+	marker.rect_position = Vector2(timing * 1325 + 212, 0)
+
+	HIT_POSITIONS.append(timing)
+
+	# fade_out_markers function
+	for i in range(_hit_points.get_child_count()):
+		marker = _hit_points.get_child(i) as ColorRect
+		if i < 25:
+			marker.self_modulate = Color(1, 1, 1, 1 - i / 25.0)
 		else:
-			var markerAlpha: float = float(i) / 25
-			hitPoints.get_child(i).self_modulate = Color(1,1,1,markerAlpha)
-		i += 1
+			marker.queue_free()
+			HIT_POSITIONS.remove(0)
 
-func changeAvgHitPos():
-	var avg: float = 0
-	for hp in hitPositions:
-		avg += hp - (self.rect_size.x / 2) + 187
-	avg = avg / hitPositions.size()
-	
-	avgHit.rect_position = Vector2(avg, 18)
+	# change_avg_hit_pos function
+	var avg := 0.0
+	for hp in HIT_POSITIONS:
+		avg += float(hp)
 
-func changeIndicator(type, timing):
-	var val: String
-	var colour: Color
-	var num: int
-	
-	num = int(timing * 1000)
+	_avg_hit.rect_position = Vector2(avg * 1325 / HIT_POSITIONS.size() + 212, 18)
+
+
+	if type != "inaccurate":
+		return
+
+	# change_indicator function
+	var num := int(timing * 1000)
 	if timing > 0:
-		if lateearlySimpleDisplay: val = "LATE"
-		else: val = "+" + str(num)
-		colour = Color("5A5AFF")
+		_timing_indicator.text = "LATE" if _late_early_simple_display else "+%s" % num
+		_timing_indicator.modulate = Color("5a5aff")
 	else:
-		if lateearlySimpleDisplay: val = "EARLY"
-		else: val = str(num)
-		colour = Color("FF5A5A")
-	
-	timingIndicator.text = val
-	timingIndicator.modulate = colour
-	
-	tween.interpolate_property(timingIndicator, "self_modulate",
-		Color(1,1,1,1), Color(1,1,1,0), 0.5,
-		Tween.TRANS_QUART, Tween.EASE_IN)
-	tween.start()
+		_timing_indicator.text = "EARLY" if _late_early_simple_display else str(num)
+		_timing_indicator.modulate = Color("ff5a5a")
+
+	if not _tween.remove(_timing_indicator, "self_modulate"):
+		push_warning("Attempted to remove timing indicator tween.")
+	if not _tween.interpolate_property(_timing_indicator, "self_modulate", Color.white, Color.transparent, 0.5, Tween.TRANS_QUART):
+		push_warning("Attempted to tween timing indicator.")
+	if not _tween.start():
+		push_warning("Attempted to start timing indicator tween.")
