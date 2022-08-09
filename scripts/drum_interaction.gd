@@ -1,14 +1,21 @@
 class_name DrumInteraction
 extends Node
 
-onready var f_don_aud := $"FinisherDonAudio" as AudioStreamPlayer
-onready var f_kat_aud := $"FinisherKatAudio" as AudioStreamPlayer
+var _g: Gameplay
+
+var _accurate_obj: CanvasItem
+var _inaccurate_obj: CanvasItem
+var _miss_obj: CanvasItem
+
+var _l_don_obj: CanvasItem
+var _l_kat_obj: CanvasItem
+var _r_don_obj: CanvasItem
+var _r_kat_obj: CanvasItem
+
 onready var l_don_aud := $"LeftDonAudio" as AudioStreamPlayer
 onready var l_kat_aud := $"LeftKatAudio" as AudioStreamPlayer
 onready var r_don_aud := $"RightDonAudio" as AudioStreamPlayer
 onready var r_kat_aud := $"RightKatAudio" as AudioStreamPlayer
-
-onready var _g := $".." as Gameplay
 
 onready var _tween := $"DrumAnimationTween" as Tween
 
@@ -24,15 +31,30 @@ func _input(event: InputEvent) -> void:
 		keypress_animation(4)
 
 
+func gameplay_ready() -> void:
+	_g = $"/root/Gameplay" as Gameplay
+
+	var judgements := _g.get_node("BarRight/HitPointOffset/Judgements")
+	_accurate_obj = judgements.get_node("JudgeAccurate") as CanvasItem
+	_inaccurate_obj = judgements.get_node("JudgeInaccurate") as CanvasItem
+	_miss_obj = judgements.get_node("JudgeMiss") as CanvasItem
+
+	_l_don_obj = _g.get_node("BarLeft/DrumVisual/LeftDon") as CanvasItem
+	_l_kat_obj = _g.get_node("BarLeft/DrumVisual/LeftKat") as CanvasItem
+	_r_don_obj = _g.get_node("BarLeft/DrumVisual/RightDon") as CanvasItem
+	_r_kat_obj = _g.get_node("BarLeft/DrumVisual/RightKat") as CanvasItem
+
+
+
 func hit_notify_animation(type: String) -> void:
 	var obj: CanvasItem
 	match type:
 		"accurate":
-			obj = _g.accurate_obj
+			obj = _accurate_obj
 		"inaccurate":
-			obj = _g.inaccurate_obj
+			obj = _inaccurate_obj
 		"miss":
-			obj = _g.miss_obj
+			obj = _miss_obj
 		_:
 			push_warning("Unknown hit animation")
 			return
@@ -47,16 +69,16 @@ func keypress_animation(key: int) -> void:
 	var obj: CanvasItem
 	match key:
 		1:
-			obj = _g.l_don_obj
+			obj = _l_don_obj
 			l_don_aud.play()
 		2:
-			obj = _g.r_don_obj
+			obj = _r_don_obj
 			r_don_aud.play()
 		3:
-			obj = _g.l_kat_obj
+			obj = _l_kat_obj
 			l_kat_aud.play()
 		4:
-			obj = _g.r_kat_obj
+			obj = _r_kat_obj
 			r_kat_aud.play()
 		_:
 			push_warning("Unknown keypress animation.")

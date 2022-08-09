@@ -455,6 +455,7 @@ bus = "Music"
 
 [connection signal="load_chart" from="." to="ChartLoader" method="loadAndProcessAll"]
 [connection signal="ready" from="." to="UI/HitError" method="gameplay_ready"]
+[connection signal="ready" from="." to="DrumInteraction" method="gameplay_ready"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="ChartLoader" method="playChart"]
 [connection signal="toggled" from="debug/temploadchart/AutoToggle" to="HitManager" method="auto_toggled"]

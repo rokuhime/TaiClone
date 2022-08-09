@@ -8,19 +8,7 @@ var inacc_timing := 0.145
 
 var skin := SkinManager.new()
 
-onready var accurate_obj := $"BarRight/HitPointOffset/Judgements/JudgeAccurate" as CanvasItem
-onready var inaccurate_obj := $"BarRight/HitPointOffset/Judgements/JudgeInaccurate" as CanvasItem
-onready var miss_obj := $"BarRight/HitPointOffset/Judgements/JudgeMiss" as CanvasItem
-
-onready var l_don_obj := $"BarLeft/DrumVisual/LeftDon" as CanvasItem
-onready var l_kat_obj := $"BarLeft/DrumVisual/LeftKat" as CanvasItem
-onready var r_don_obj := $"BarLeft/DrumVisual/RightDon" as CanvasItem
-onready var r_kat_obj := $"BarLeft/DrumVisual/RightKat" as CanvasItem
-
 onready var settings := $"debug/SettingsPanel" as SettingsPanel
-
-onready var hit_manager := $"HitManager" as HitManager
-onready var music := $"Music" as AudioStreamPlayer
 
 onready var _object_container := $"BarRight/HitPointOffset/ObjectContainers" as Control
 

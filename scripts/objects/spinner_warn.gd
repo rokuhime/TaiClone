@@ -7,7 +7,7 @@ onready var _spinner_obj := preload("res://game/objects/spinner_object.tscn")
 
 
 func _process(_delta: float) -> void:
-	if _active and _g.music.get_playback_position() >= timing:
+	if _active and music.get_playback_position() >= timing:
 		deactivate()
 
 

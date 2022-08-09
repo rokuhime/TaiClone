@@ -4,15 +4,23 @@ extends KinematicBody2D
 var finisher := false
 var timing := 0.0
 
+var hit_manager: HitManager
+var music: AudioStreamPlayer
+var skin: SkinManager
+
 var _active := false
 var _length := 1.0
 var _loaded := false
 var _speed := 1.0
 
-onready var _g := $"/root/Gameplay" as Gameplay
+onready var g := $"/root/Gameplay" as Gameplay
 
 
 func _ready() -> void:
+	hit_manager = g.get_node("HitManager") as HitManager
+	music = g.get_node("Music") as AudioStreamPlayer
+	skin = g.skin
+
 	# finisher scale
 	if finisher:
 		(get_child(0) as Control).rect_scale = Vector2(0.9, 0.9)

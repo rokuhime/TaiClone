@@ -1,20 +1,19 @@
 class_name Roll
 extends HitObject
 
-var _current_tick := 0
+#var _current_tick := 0
 var _tick_distance := 0.0
 var _total_ticks := 0
 
 onready var _tick_container := $"TickContainer"
 
-onready var charload = get_node("../../../../../ChartLoader")
-var balls:bool = true
+#onready var charload = get_node("../../../../../ChartLoader")
 
 func _ready() -> void:
 	# note colour
-	($"Scale/Head" as CanvasItem).self_modulate = _g.skin.roll_colour
+	($"Scale/Head" as CanvasItem).self_modulate = skin.roll_colour
 	var body := $"Scale/Body" as Control
-	body.modulate = _g.skin.roll_colour
+	body.modulate = skin.roll_colour
 	body.rect_size = Vector2(_speed * _length * 1.9, 129)
 
 	# haha funny!!! idx like iidx as in funny beatmania silly game keys
@@ -40,13 +39,13 @@ func _ready() -> void:
 #	if _total_ticks <= _current_tick or not _active or not _loaded or not not (event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftKat") or event.is_action_pressed("RightDon") or event.is_action_pressed("RightKat")):
 #		return
 #	#print(charload.curTime)
-#	var cur_song_time := _g.music.get_playback_position()
+#	var cur_song_time := music.get_playback_position()
 #	# if after slider is hittable
-#	if cur_song_time > timing + _length + _g.hit_manager.inaccTiming:
+#	if cur_song_time > timing + _length + g.inacc_timing:
 #		deactivate()
 #		return
 #	# if before slider is hittable
-#	if cur_song_time < timing - _g.hit_manager.inaccTiming:
+#	if cur_song_time < timing - g.inacc_timing:
 #		return
 
 #	# get current tick target
@@ -57,7 +56,7 @@ func _ready() -> void:
 #	if tick.visible:
 #		print(_current_tick)
 #		tick.hide()
-#		_g.hit_manager.addScore("roll")
+#		hit_manager.addScore("roll")
 
 
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, beat_length: float) -> void:

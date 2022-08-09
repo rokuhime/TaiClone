@@ -31,11 +31,12 @@ func _ready() -> void:
 		save_settings()
 		return
 
-	for key in config_file.get_section_keys("Keybinds"):
-		var event = config_file.get_value("Keybinds", str(key))
-		if not event is InputEvent:
-			continue
-		change_key(str(key), event)
+	if config_file.has_section("Keybinds"):
+		for key in config_file.get_section_keys("Keybinds"):
+			var event = config_file.get_value("Keybinds", str(key))
+			if not event is InputEvent:
+				continue
+			change_key(str(key), event)
 	for button in ["LeftDon", "LeftKat", "RightDon", "RightKat"]:
 		var event = InputMap.get_action_list(str(button)).front()
 		if not event is InputEvent:
@@ -84,7 +85,7 @@ func _input(event: InputEvent) -> void:
 func button_pressed(type: String) -> void:
 	if _currently_changing == "":
 		_currently_changing = type
-		change_text(_currently_changing, InputEvent.new(), true)
+		change_text(_currently_changing, null, true)
 	else:
 		var event = InputMap.get_action_list(_currently_changing).front()
 		change_text(_currently_changing, event) # UNSAFE ArrayItem

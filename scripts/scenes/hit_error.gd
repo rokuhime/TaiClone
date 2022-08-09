@@ -3,6 +3,7 @@ extends Control
 var _late_early_simple_display := true
 
 var _g: Gameplay
+var _skin: SkinManager
 var _timing_indicator: Label
 var _tween: Tween
 
@@ -14,8 +15,9 @@ onready var _middle_marker := $"MiddleMarker"
 
 func gameplay_ready() -> void:
 	_g = $"/root/Gameplay" as Gameplay
-	_timing_indicator = $"../../BarLeft/TimingIndicator" as Label
-	_tween = $"../../BarLeft/TimingIndicator/Tween" as Tween
+	_skin = _g.skin
+	_timing_indicator = _g.get_node("BarLeft/TimingIndicator") as Label
+	_tween = _timing_indicator.get_node("Tween") as Tween
 
 	var anchor := _g.acc_timing / _g.inacc_timing / 2
 	_accurate.anchor_left = 0.5 - anchor
@@ -36,14 +38,13 @@ func new_marker(type: String, timing: float) -> void:
 	_hit_points.add_child(marker)
 	_hit_points.move_child(marker, 1)
 
-	var skin := _g.skin
 	match type:
 		"accurate":
-			marker.modulate = skin.accurate_colour
+			marker.modulate = _skin.accurate_colour
 		"inaccurate":
-			marker.modulate = skin.inaccurate_colour
+			marker.modulate = _skin.inaccurate_colour
 		"miss":
-			marker.modulate = skin.miss_colour
+			marker.modulate = _skin.miss_colour
 		_:
 			push_warning("Unknown marker type.")
 			return
@@ -61,7 +62,7 @@ func new_marker(type: String, timing: float) -> void:
 			marker.self_modulate = Color(1, 1, 1, 1 - i / 25.0)
 		else:
 			marker.queue_free()
-		if marker.modulate == skin.miss_colour:
+		if marker.modulate == _skin.miss_colour:
 			misses += 1
 		else:
 			avg += marker.anchor_left
@@ -76,12 +77,12 @@ func new_marker(type: String, timing: float) -> void:
 		return
 
 	# change_indicator function
-	var num := int(timing * 1000)
+	var num := str(int(timing * 1000))
 	if timing > 0:
-		_timing_indicator.text = "LATE" if _late_early_simple_display else "+%s" % num
+		_timing_indicator.text = "LATE" if _late_early_simple_display else "+" + num
 		_timing_indicator.modulate = Color("5a5aff")
 	else:
-		_timing_indicator.text = "EARLY" if _late_early_simple_display else str(num)
+		_timing_indicator.text = "EARLY" if _late_early_simple_display else num
 		_timing_indicator.modulate = Color("ff5a5a")
 
 	if not _tween.remove(_timing_indicator, "self_modulate"):
