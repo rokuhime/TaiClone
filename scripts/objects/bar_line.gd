@@ -1,6 +1,7 @@
 class_name BarLine
 extends HitObject
 
+
 func _ready() -> void:
 	# note colour
 	($"ColorRect" as CanvasItem).self_modulate = _g.skin.barline_colour

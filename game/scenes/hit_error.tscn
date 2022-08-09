@@ -34,8 +34,6 @@ anchor_bottom = 0.675
 color = Color( 0.47451, 0.854902, 0.368627, 1 )
 
 [node name="Accurate" type="ColorRect" parent="HitPoints/Inaccurate"]
-anchor_left = 0.293
-anchor_right = 0.707
 anchor_bottom = 1.0
 color = Color( 0.321569, 0.65098, 1, 1 )
 

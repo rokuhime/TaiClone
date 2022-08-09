@@ -2,12 +2,24 @@ extends Control
 
 var _late_early_simple_display := true
 
+var _g: Gameplay
+var _timing_indicator: Label
+var _tween: Tween
+
+onready var _accurate := $"HitPoints/Inaccurate/Accurate" as Control
 onready var _avg_hit := $"AverageHit" as Control
-onready var _g := $"../.." as Gameplay
 onready var _hit_points := $"HitPoints" as Control
 onready var _middle_marker := $"MiddleMarker"
-onready var _timing_indicator := $"../../BarLeft/TimingIndicator" as Label
-onready var _tween := $"../../BarLeft/TimingIndicator/Tween" as Tween
+
+
+func gameplay_ready() -> void:
+	_g = $"/root/Gameplay" as Gameplay
+	_timing_indicator = $"../../BarLeft/TimingIndicator" as Label
+	_tween = $"../../BarLeft/TimingIndicator/Tween" as Tween
+
+	var anchor := _g.acc_timing / _g.inacc_timing / 2
+	_accurate.anchor_left = 0.5 - anchor
+	_accurate.anchor_right = 0.5 + anchor
 
 
 func hit_error_toggled(new_visible: bool) -> void:

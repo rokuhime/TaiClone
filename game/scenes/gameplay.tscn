@@ -455,6 +455,7 @@ one_shot = true
 [node name="Music" type="AudioStreamPlayer" parent="."]
 bus = "Music"
 
+[connection signal="ready" from="." to="UI/HitError" method="gameplay_ready"]
 [connection signal="load_chart" from="debug" to="ChartLoader" method="loadAndProcessAll"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="debug" method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="ChartLoader" method="playChart"]
