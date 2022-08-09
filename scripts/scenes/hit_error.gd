@@ -54,15 +54,20 @@ func new_marker(type: String, timing: float) -> void:
 
 	# fade_out_markers and change_avg_hit_pos functions
 	var avg := 0.0
+	var misses := 0
 	for i in range(_hit_points.get_child_count() - 1):
 		marker = _hit_points.get_child(i + 1) as ColorRect
 		if i < 25:
 			marker.self_modulate = Color(1, 1, 1, 1 - i / 25.0)
 		else:
 			marker.queue_free()
-		avg += marker.anchor_left
+		if marker.modulate == skin.miss_colour:
+			misses += 1
+		else:
+			avg += marker.anchor_left
 
-	anchor = avg / (_hit_points.get_child_count() - 1)
+	var children := _hit_points.get_child_count() - misses - 1
+	anchor = 0.5 if children == 0 else avg / children
 	_avg_hit.anchor_left = anchor
 	_avg_hit.anchor_right = anchor
 
