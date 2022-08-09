@@ -1,0 +1,193 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
+[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://scripts/scenes/volume_control.gd" type="Script" id=3]
+[ext_resource path="res://sounds/waw.wav" type="AudioStream" id=4]
+
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0 )
+colors = PoolColorArray( 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 15
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 20
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 22
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 28
+use_filter = true
+font_data = ExtResource( 1 )
+
+[node name="VolumeControl" type="Panel"]
+modulate = Color( 1, 1, 1, 0 )
+self_modulate = Color( 1, 1, 1, 0.784314 )
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -139.0
+margin_top = -461.0
+margin_right = 139.0
+margin_bottom = -79.0
+script = ExtResource( 3 )
+
+[node name="ChangeSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+volume_db = -5.0
+bus = "SFX"
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="VolumeIncreaseTween" type="Tween" parent="."]
+
+[node name="Bars" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 9.0
+
+[node name="Specifics" type="HBoxContainer" parent="Bars"]
+margin_right = 278.0
+margin_bottom = 138.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="Music" type="VBoxContainer" parent="Bars/Specifics"]
+margin_right = 137.0
+margin_bottom = 138.0
+size_flags_horizontal = 3
+custom_constants/separation = -3
+
+[node name="TextureProgress" type="TextureProgress" parent="Bars/Specifics/Music"]
+margin_left = 43.0
+margin_right = 93.0
+margin_bottom = 91.0
+rect_min_size = Vector2( 50, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+value = 100.0
+texture_under = SubResource( 2 )
+texture_progress = SubResource( 2 )
+fill_mode = 3
+tint_under = Color( 0.0352941, 0.0352941, 0.0352941, 0.490196 )
+tint_progress = Color( 0, 0.505882, 1, 1 )
+nine_patch_stretch = true
+
+[node name="Percentage" type="Label" parent="Bars/Specifics/Music"]
+margin_left = 56.0
+margin_top = 88.0
+margin_right = 80.0
+margin_bottom = 111.0
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 3 )
+text = "100"
+
+[node name="Label" type="Label" parent="Bars/Specifics/Music"]
+margin_left = 35.0
+margin_top = 108.0
+margin_right = 101.0
+margin_bottom = 138.0
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 4 )
+text = "MUSIC"
+
+[node name="SFX" type="VBoxContainer" parent="Bars/Specifics"]
+margin_left = 141.0
+margin_right = 278.0
+margin_bottom = 138.0
+size_flags_horizontal = 3
+custom_constants/separation = -3
+
+[node name="TextureProgress" type="TextureProgress" parent="Bars/Specifics/SFX"]
+margin_left = 43.0
+margin_right = 93.0
+margin_bottom = 91.0
+rect_min_size = Vector2( 50, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+value = 100.0
+texture_under = SubResource( 2 )
+texture_progress = SubResource( 2 )
+fill_mode = 3
+tint_under = Color( 0.0352941, 0.0352941, 0.0352941, 0.490196 )
+tint_progress = Color( 0, 0.505882, 1, 1 )
+nine_patch_stretch = true
+
+[node name="Percentage" type="Label" parent="Bars/Specifics/SFX"]
+margin_left = 56.0
+margin_top = 88.0
+margin_right = 80.0
+margin_bottom = 111.0
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 3 )
+text = "100"
+
+[node name="Label" type="Label" parent="Bars/Specifics/SFX"]
+margin_left = 49.0
+margin_top = 108.0
+margin_right = 87.0
+margin_bottom = 138.0
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 4 )
+text = "SFX"
+
+[node name="Master" type="VBoxContainer" parent="Bars"]
+margin_top = 142.0
+margin_right = 278.0
+margin_bottom = 373.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.0
+custom_constants/separation = -3
+
+[node name="TextureProgress" type="TextureProgress" parent="Bars/Master"]
+margin_left = 101.0
+margin_right = 176.0
+margin_bottom = 162.0
+rect_min_size = Vector2( 75, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+value = 100.0
+texture_under = SubResource( 2 )
+texture_progress = SubResource( 2 )
+fill_mode = 3
+tint_under = Color( 0.0352941, 0.0352941, 0.0352941, 0.490196 )
+tint_progress = Color( 0, 0.505882, 1, 1 )
+nine_patch_stretch = true
+
+[node name="Percentage" type="Label" parent="Bars/Master"]
+margin_left = 121.0
+margin_top = 159.0
+margin_right = 157.0
+margin_bottom = 192.0
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 5 )
+text = "100"
+
+[node name="Label" type="Label" parent="Bars/Master"]
+margin_left = 80.0
+margin_top = 189.0
+margin_right = 197.0
+margin_bottom = 231.0
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 6 )
+text = "MASTER"
+
+[connection signal="timeout" from="Timer" to="." method="timeout"]
+[connection signal="mouse_entered" from="Bars/Specifics/Music" to="." method="change_channel" binds= [ 1 ]]
+[connection signal="mouse_entered" from="Bars/Specifics/SFX" to="." method="change_channel" binds= [ 2 ]]
+[connection signal="mouse_entered" from="Bars/Master" to="." method="change_channel" binds= [ 0 ]]

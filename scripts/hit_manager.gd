@@ -48,7 +48,7 @@ func _process(_delta) -> void:
 		
 		#temp auto
 		#doesnt support special note types currently
-		if (auto && ((chart.curTime + settings.globalOffset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
+		if (auto && ((chart.curTime + $"/root/Gameplay".settings.global_offset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
 			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).is_kat
 			
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
@@ -68,7 +68,7 @@ func _process(_delta) -> void:
 		
 		#miss check
 		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1)
-		if (!auto && ((chart.curTime + settings.globalOffset) - nextNote.timing) > inaccTiming):
+		if (!auto && ((chart.curTime + $"/root/Gameplay".settings.global_offset) - nextNote.timing) > inaccTiming):
 			hitError.newMarker("miss", curTime - nextNote.timing)
 			addScore("miss")
 			nextHittableNote += 1;
@@ -78,7 +78,7 @@ func checkInput(isKat, isRight) -> void:
 	if chart.curPlaying:
 		if (lastNoteWasFinisher):
 			var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
-			if (abs((curTime - lastNote.timing) + settings.globalOffset)  <= accTiming && lastNote.is_kat == isKat) && (lastSideUsedIsRight != isRight):
+			if (abs((curTime - lastNote.timing) + $"/root/Gameplay".settings.global_offset)  <= accTiming && lastNote.is_kat == isKat) && (lastSideUsedIsRight != isRight):
 				#swallow input, give more points
 				addScore("finisher")
 				if isKat: fKatAud.play()
@@ -91,9 +91,9 @@ func checkInput(isKat, isRight) -> void:
 			var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
 			var hitType: String
 			
-			if (abs((curTime - nextNote.timing) + settings.globalOffset) <= inaccTiming):
+			if (abs((curTime - nextNote.timing) + $"/root/Gameplay".settings.global_offset) <= inaccTiming):
 				#check if accurate and right key pressed
-				if (abs((curTime - nextNote.timing) + settings.globalOffset) <= accTiming && nextNote.is_kat == isKat):
+				if (abs((curTime - nextNote.timing) + $"/root/Gameplay".settings.global_offset) <= accTiming && nextNote.is_kat == isKat):
 					hitType = "accurate"
 				#check if inaccurate and right key pressed
 				elif (nextNote.is_kat == isKat): 
@@ -153,11 +153,11 @@ func addScore(type) -> void:
 	accuracyLabel.text = "%2.2f" % accuracy
 
 func nextNoteExists() -> bool:
-		#for subContainer in objContainer.get_children():
-			#if (subContainer.get_child_count() > 1):
+		for subContainer in objContainer.get_children():
+			if (subContainer.get_child_count() > 1):
 				#throws a bunch of errors, not mandatory to change but should look into
-				#if (subContainer.get_child_count() - 1 >= nextHittableNote) && (objContainer.get_node("NoteContainer").get_child(nextHittableNote) != null):
-					#return true;
+				if (subContainer.get_child_count() - 1 >= nextHittableNote) && (objContainer.get_node("NoteContainer").get_child(nextHittableNote) != null):
+					return true;
 		return false;
 
 func reset() -> void:
@@ -170,3 +170,7 @@ func reset() -> void:
 	score = 0;
 	scoreMultiplier = 1;
 	addScore("")
+
+
+func auto_toggled(new_auto: bool) -> void:
+	auto = new_auto

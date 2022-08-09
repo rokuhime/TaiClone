@@ -7,6 +7,7 @@ onready var hitManager = get_node("../HitManager")
 onready var noteObj = preload("res://game/objects/note_object.tscn")
 onready var spinWarnObj = preload("res://game/objects/spinner_warn_object.tscn")
 onready var rollObj = preload("res://game/objects/roll_object.tscn")
+onready var barlineObj = preload("res://game/objects/bar_line.tscn")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
 
 onready var music = get_node("../Music")
@@ -38,7 +39,15 @@ func loadAndProcessAll(filePath) -> void:
 	#todo: make more adaptable between .osu and all file formats
 	var section = ""
 	currentChartData = {section: []}
-	for line in tools.loadText(filePath).split("\n",false):
+	var f = File.new()
+	var fileInText = ""
+	if f.file_exists(filePath):
+		f.open(filePath, File.READ)
+		while not f.eof_reached(): # iterate through all lines until the end of file is reached
+			var line = f.get_line()
+			fileInText += line + "\n"
+		f.close()
+	for line in fileInText.split("\n",false):
 		if line.begins_with("[") && line.ends_with("]"):
 			section = line.substr(1, line.length() - 2)
 			currentChartData[section] = []
@@ -87,6 +96,7 @@ func loadAndProcessAll(filePath) -> void:
 	var curSVData = findTiming(0)
 	# current sv = 0, current bpm = 1, next change = 2
 
+	# spawn notes
 	var notes = []
 
 	for noteData in currentChartData["HitObjects"]:
@@ -110,7 +120,8 @@ func loadAndProcessAll(filePath) -> void:
 			curSVData = findTiming(note["time"] - waitOffset)
 
 		#tee hee
-		var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * tools.getScreenRatio()
+		var res := OS.window_size
+		var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * res.x / res.y * 9 / 16
 
 		#figure out what kind of note it is
 		#osu keeps type as an int that references bytes
@@ -170,6 +181,47 @@ func loadAndProcessAll(filePath) -> void:
 	#load audio file and apply to song player
 	music.set_stream(AudioLoader.new().loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
 
+
+	# spawn barlines
+	
+	#this is stinky, overthrow the current way sv is done with what im doing here soon ok?
+	#you can do it fus i trust u :D
+	var sploinky = getAllTiming()[0]
+	
+	var musicLength = music.stream.get_length()
+	
+	curSVData = findTiming(0)
+	
+	var i: int = 0
+	for bpm in sploinky:
+		#get length of time with this current bpm
+		#if other bpm changes exist, get their timing
+		#if not, work off of song start/end
+		var startTime: float = bpm[1];
+		var endTime: float = musicLength;
+		if (sploinky.size() < i + 1): 
+			print(sploinky[i + 1])
+			endTime = sploinky[i + 1][1]
+		
+		var length: float = endTime - startTime
+		
+		var barlineCount: int = int(floor(length / ((60 * 4) / bpm[0])))
+		
+		for n in barlineCount:
+			var time = startTime + ((60 * 4) / bpm[0]  * n) + waitOffset
+			# check sv
+			if curSVData[2] != null && time >= curSVData[2]:
+				# if another bpm change exists... and if the current note time is above/equal to next bpm change
+				curSVData = findTiming(time - waitOffset)
+			
+			#disgusting
+			var totalcurSV = (curSVData[0] * curSVData[1]) * mapSVMultiplier * baseSVMultiplier * OS.window_size.x / OS.window_size.y * 9 / 16
+			
+			var noteObject = barlineObj.instance()
+			noteObject.change_properties(time, totalcurSV)
+			objContainer.get_node("EtcContainer").add_child(noteObject)
+			objContainer.get_node("EtcContainer").move_child(noteObject, 0)
+
 	#export test vDebug ~ ZMTT
 	var fusFile = File.new()
 	if fusFile.open("res://debug.fus", File.WRITE) == OK:
@@ -177,6 +229,19 @@ func loadAndProcessAll(filePath) -> void:
 		for note in notes:
 			fusFile.store_line(String(note))
 		fusFile.close()
+
+#temporary?
+func getAllTiming():
+	var bpm = []
+	var sv = []
+	#get the closest sv/bpm to the timing
+	for value in currentTimingData:
+		match value[1]:
+			0: #bpm
+				bpm.push_back([value[2], value[0]])
+			1: #sv
+				sv.push_back([value[2], value[0]])
+	return [bpm, sv]
 
 func findTiming(time):
 	var bpm = null
