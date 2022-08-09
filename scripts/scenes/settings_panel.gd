@@ -76,12 +76,9 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if _currently_changing != "":
-		if event is InputEventJoypadButton or event is InputEventKey:
-			change_key(_currently_changing, event)
-			button_pressed(_currently_changing)
-#		else:
-#			push_warning("Unsupported InputEvent type.")
+	if _currently_changing != "" and (event is InputEventJoypadButton or event is InputEventKey):
+		change_key(_currently_changing, event)
+		button_pressed(_currently_changing)
 
 
 func button_pressed(type: String) -> void:

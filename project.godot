@@ -15,7 +15,7 @@ _global_script_classes=[ {
 "path": "res://scripts/gd_script_audio_import.gd"
 }, {
 "base": "HitObject",
-"class": "Bar_Line",
+"class": "BarLine",
 "language": "GDScript",
 "path": "res://scripts/objects/bar_line.gd"
 }, {
@@ -28,16 +28,6 @@ _global_script_classes=[ {
 "class": "Gameplay",
 "language": "GDScript",
 "path": "res://scripts/scenes/gameplay.gd"
-}, {
-"base": "EditorVCSInterface",
-"class": "GitAPI",
-"language": "NativeScript",
-"path": "res://addons/godot-git-plugin/git_api.gdns"
-}, {
-"base": "Control",
-"class": "HitError",
-"language": "GDScript",
-"path": "res://scripts/hit_error.gd"
 }, {
 "base": "Node",
 "class": "HitManager",
@@ -81,11 +71,9 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
-"Bar_Line": "",
+"BarLine": "",
 "DrumInteraction": "",
 "Gameplay": "",
-"GitAPI": "",
-"HitError": "",
 "HitManager": "",
 "HitObject": "",
 "Note": "",
@@ -112,27 +100,9 @@ gdscript/warnings/unsafe_call_argument=true
 
 window/size/width=1920
 window/size/height=1080
-window/size/test_width=1080
-window/size/test_height=720
 window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
-
-[editor]
-
-version_control_autoload_on_startup=true
-version_control_plugin_name="GitAPI"
-
-[gdnative]
-
-singletons=[ "res://addons/godot-git-plugin/git_api.gdnlib" ]
-
-[global]
-
-FRAME=false
-stretch=false
-resolution=false
-pointint=false
 
 [input]
 
