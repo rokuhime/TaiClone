@@ -56,7 +56,7 @@ func hit_notify_animation(type: String) -> void:
 		"miss":
 			obj = _miss_obj
 		_:
-			push_warning("Unknown hit animation")
+			push_warning("Unknown hit animation.")
 			return
 
 	if not _tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT):

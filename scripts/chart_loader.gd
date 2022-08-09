@@ -179,7 +179,7 @@ func loadAndProcessAll(filePath) -> void:
 	#loadAndProcessSong
 	#get audio file name and separate it in the file
 	#load audio file and apply to song player
-	music.set_stream(AudioLoader.new().loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
+	music.set_stream(AudioLoader.loadfile(folderPath + "/" + findValue("AudioFilename: ","General")))
 
 
 	# spawn barlines
