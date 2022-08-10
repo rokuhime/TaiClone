@@ -1,8 +1,6 @@
 class_name HitManager
 extends Node
 
-onready var music = get_node("../Music")
-onready var chart = get_node("../ChartLoader")
 onready var drumInteraction = get_node("../DrumInteraction")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
 onready var hitError = get_node("../UI/HitError")
@@ -41,12 +39,12 @@ func _input(_ev) -> void:
 		if Input.is_action_just_pressed("RightKat"): checkInput(true, true)
 	
 func _process(_delta) -> void:
-	if (nextNoteExists() && chart.curPlaying):
-		curTime = chart.curTime;
+	if (nextNoteExists() && _g.cur_playing):
+		curTime = _g.cur_time;
 		
 		#temp auto
 		#doesnt support special note types currently
-		if (auto && ((chart.curTime + _g.settings.global_offset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
+		if (auto && ((curTime + _g.settings.global_offset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
 			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).is_kat
 			
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
@@ -66,14 +64,14 @@ func _process(_delta) -> void:
 		
 		#miss check
 		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1)
-		if (!auto && ((chart.curTime + _g.settings.global_offset) - nextNote.timing) > _g.inacc_timing):
+		if (!auto && ((curTime + _g.settings.global_offset) - nextNote.timing) > _g.inacc_timing):
 			hitError.new_marker("miss", curTime - nextNote.timing)
 			addScore("miss")
 			nextHittableNote += 1;
 
 func checkInput(isKat, isRight) -> void:
 	#finisher check
-	if chart.curPlaying:
+	if _g.cur_playing:
 		if (lastNoteWasFinisher):
 			var lastNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote);
 			if (abs((curTime - lastNote.timing) + _g.settings.global_offset)  <= _g.acc_timing && lastNote.is_kat == isKat) && (lastSideUsedIsRight != isRight):

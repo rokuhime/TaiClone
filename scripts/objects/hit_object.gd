@@ -13,12 +13,12 @@ var _length := 1.0
 var _loaded := false
 var _speed := 1.0
 
-onready var g := $"/root/Gameplay" as Gameplay
+onready var g := $"/root/Gameplay"
 
 
 func _ready() -> void:
 	hit_manager = g.get_node("HitManager") as HitManager
-	music = g.get_node("Music") as AudioStreamPlayer
+	music = g.music
 	skin = g.skin
 
 	# finisher scale
