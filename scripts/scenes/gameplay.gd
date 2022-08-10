@@ -13,6 +13,11 @@ var inacc_timing: float
 
 var skin: SkinManager
 
+var _cur_bpm := -1.0
+var _f := File.new()
+var _next_barline := -1.0
+var _total_cur_sv := -1.0
+
 onready var settings := $"debug/SettingsPanel" as SettingsPanel
 
 onready var music := $"Music" as AudioStreamPlayer
@@ -45,7 +50,17 @@ func _process(delta: float) -> void:
 	_fps_text.text = "FPS: %s" % Engine.get_frames_per_second()
 
 
-func find_value(key: String, section: String) -> String:
+func barline(time: float, equal := false) -> void:
+	while _next_barline < time or (equal and _next_barline == time):
+		var note_object := _barline_obj.instance() as BarLine
+		note_object.change_properties(_next_barline, _total_cur_sv)
+		_etc_container.add_child(note_object)
+		note_object.add_to_group("HitObjects")
+		_f.store_csv_line([str(_next_barline), str(_total_cur_sv), "1"])
+		_next_barline += 240 / _cur_bpm
+
+
+func find_value(section: String, key: String) -> String:
 	for line in CURRENT_CHART_DATA[section]: # UNSAFE ArrayItem
 		if str(line).begins_with(key):
 			return str(line).substr(key.length())
@@ -55,16 +70,15 @@ func find_value(key: String, section: String) -> String:
 func load_func() -> void:
 	_debug_text.text = "Loading... [Checking File]"
 	var file_path := _file_input.text.replace("\\", "/")
-	var f := File.new()
-	if f.open(file_path, File.READ) == OK:
+	if _f.open(file_path, File.READ) == OK:
 		_debug_text.text = "Loading... [Reading File]"
 
 		# load_and_process_all function
 		# todo: make more adaptable between .osu and all file formats
 		if file_path.ends_with(".osu"):
 			# load chart file
-			var file_in_text := f.get_as_text()
-			f.close()
+			var file_in_text := _f.get_as_text()
+			_f.close()
 			CURRENT_CHART_DATA.clear()
 			var section := ""
 			CURRENT_CHART_DATA[section] = [] # UNSAFE ArrayItem
@@ -99,8 +113,6 @@ func load_func() -> void:
 
 			# load_and_process_chart function
 
-			var cur_bpm := -1.0
-			var next_barline := -1.0
 			# get timing points
 			var current_timing_data := []
 			for timing in CURRENT_CHART_DATA["TimingPoints"]:
@@ -108,28 +120,24 @@ func load_func() -> void:
 				var uninherited := bool(int(timing_array[6]))
 				var time := float(timing_array[0]) / 1000
 				var timing_value := (60000 if uninherited else -100) / float(timing_array[1])
-				if uninherited and cur_bpm < 0:
-					cur_bpm = timing_value
-					next_barline = time
+				if uninherited and _cur_bpm < 0:
+					_cur_bpm = timing_value
+					_next_barline = time
 				# store timing points in svArr, 0 = timing 1 = type 2 = value
 				current_timing_data.append([time, int(timing_array[2]) if uninherited else 0, timing_value])
 
 			# note speed is bpm * sv
-			var map_sv_multiplier := float(find_value("SliderMultiplier:", "Difficulty"))
+			var map_sv_multiplier := float(find_value("Difficulty", "SliderMultiplier:"))
 
 			var cur_sv := 1.0
 
-			var fus_file := File.new()
-			var no_error := fus_file.open("user://debug.fus", File.WRITE) == OK
-			if no_error:
-				fus_file.store_line("v0.0.1")
-
-			# tee hee
-			var total_cur_sv := cur_bpm * cur_sv * map_sv_multiplier * 3
+			if _f.open("user://debug.fus", File.WRITE) != OK:
+				_f.close()
+				_debug_text.text = "Unable to create temporary .fus file."
+				return
+			_f.store_line("v0.0.1")
 
 			# spawn notes
-			var notes := []
-
 			for note_data in CURRENT_CHART_DATA["HitObjects"]:
 				# split up the line by commas
 				var note_array := str(note_data).split(",")
@@ -141,87 +149,69 @@ func load_func() -> void:
 				if not current_timing_data.empty():
 					var next_timing := float(current_timing_data[0][0]) # UNSAFE ArrayItem
 					while next_timing <= time:
-						while next_barline < next_timing:
-							var note_object := _barline_obj.instance() as BarLine
-							note_object.change_properties(next_barline, total_cur_sv)
-							_etc_container.add_child(note_object)
-							note_object.add_to_group("HitObjects")
-							if no_error:
-								fus_file.store_csv_line([str(next_barline), str(total_cur_sv), "1"])
-							next_barline += 240 / cur_bpm
+						barline(next_timing)
 						var timing = current_timing_data.pop_front()
 						if timing[1] == 0: # UNSAFE ArrayItem
 							cur_sv = float(timing[2]) # UNSAFE ArrayItem
 						else:
-							cur_bpm = float(timing[2]) # UNSAFE ArrayItem
-							if no_error:
-								fus_file.store_csv_line([str(timing[0]), str(cur_bpm), "0"]) # UNSAFE ArrayItem
-						total_cur_sv = cur_bpm * cur_sv * map_sv_multiplier * 3
+							_cur_bpm = float(timing[2]) # UNSAFE ArrayItem
+							_f.store_csv_line([str(timing[0]), str(_cur_bpm), "0"]) # UNSAFE ArrayItem
 						if current_timing_data.empty():
 							break
 						next_timing = float(current_timing_data[0][0])
 
-				while next_barline <= time:
-					var note_object := _barline_obj.instance() as BarLine
-					note_object.change_properties(next_barline, total_cur_sv)
-					_etc_container.add_child(note_object)
-					note_object.add_to_group("HitObjects")
-					if no_error:
-						fus_file.store_csv_line([str(next_barline), str(total_cur_sv), "1"])
-					next_barline += 240 / cur_bpm
+				# tee hee
+				_total_cur_sv = _cur_bpm * cur_sv * map_sv_multiplier * 3
+
+				barline(time, true)
 
 				# figure out what kind of note it is
 				# osu keeps type as an int that references bytes
 				if 1 << 3 & int(note_array[3]): # spinner
 					var length := float(note_array[5]) / 1000 - time
 					var note_object := _spin_warn_obj.instance() as SpinnerWarn
-					note_object.change_properties(time, total_cur_sv, length, cur_bpm)
+					note_object.change_properties(time, _total_cur_sv, length, _cur_bpm)
 					_etc_container.add_child(note_object)
 					note_object.add_to_group("HitObjects")
-					if no_error:
-						fus_file.store_csv_line([str(time), str(total_cur_sv), "5", str(length)])
-					notes.append({"length": length, "noteType": 5, "time": time})
+					_f.store_csv_line([str(time), str(_total_cur_sv), "5", str(length)])
 					continue
 
 				# finisher check
 				var finisher := bool(1 << 2 & int(note_array[4]))
 
 				if 1 << 1 & int(note_array[3]): # roll
-					var length := float(note_array[7]) * int(note_array[6]) * 600 / total_cur_sv
+					var length := float(note_array[7]) * int(note_array[6]) * 600 / _total_cur_sv
 
 					var note_object := _roll_obj.instance() as Roll
-					note_object.change_properties(time, total_cur_sv, length, finisher, cur_bpm)
+					note_object.change_properties(time, _total_cur_sv, length, finisher, _cur_bpm)
 					_etc_container.add_child(note_object)
 					note_object.add_to_group("HitObjects")
-					if no_error:
-						fus_file.store_csv_line([str(time), str(total_cur_sv), "4", str(length), str(finisher)])
-					notes.append({"finisher": finisher, "length": length, "noteType": 4, "time": time})
+					_f.store_csv_line([str(time), str(_total_cur_sv), "4", str(length), str(finisher)])
 					continue
 
 				# normal note
 				var note_type := int(bool(((1 << 1) + (1 << 3)) & int(note_array[4]))) + 2
 				var note_object := _note_obj.instance() as Note
-				note_object.change_properties(time, total_cur_sv, note_type, finisher)
+				note_object.change_properties(time, _total_cur_sv, note_type, finisher)
 				_note_container.add_child(note_object)
 				note_object.add_to_group("HitObjects")
-				if no_error:
-					fus_file.store_csv_line([str(time), str(total_cur_sv), str(note_type), str(finisher)])
-				notes.append({"finisher": finisher, "noteType": note_type, "time": time})
-			fus_file.close()
+				_f.store_csv_line([str(time), str(_total_cur_sv), str(note_type), str(finisher)])
+			_f.close()
+			get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", skin)
 
 			# load_and_process_song function
 			# get audio file name and separate it in the file
 			# load audio file and apply to song player
-			music.stream = AudioLoader.loadfile(folder_path.plus_file(find_value("AudioFilename: ", "General")))
+			music.stream = AudioLoader.loadfile(folder_path.plus_file(find_value("General", "AudioFilename: ")))
 
 		else:
-			f.close()
+			_f.close()
 			_debug_text.text = "Invalid file!"
 			return
 
 		_debug_text.text = "Done!"
 	else:
-		f.close()
+		_f.close()
 		_debug_text.text = "Invalid file!"
 
 

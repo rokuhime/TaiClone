@@ -5,8 +5,6 @@ var finisher := false
 var timing := 0.0
 
 var hit_manager: HitManager
-var music: AudioStreamPlayer
-var skin: SkinManager
 
 var _active := false
 var _length := 1.0
@@ -18,8 +16,6 @@ onready var g := $"/root/Gameplay"
 
 func _ready() -> void:
 	hit_manager = g.get_node("HitManager") as HitManager
-	music = g.music
-	skin = g.skin
 
 	# finisher scale
 	if finisher:
@@ -57,3 +53,7 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 	timing = new_timing
 	_length = new_length
 	_speed = new_speed
+
+
+func skin(_new_skin: SkinManager) -> void:
+	pass

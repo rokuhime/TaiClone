@@ -5,16 +5,13 @@ extends HitObject
 var _tick_distance := 0.0
 var _total_ticks := 0
 
+onready var _body := $"Scale/Body" as Control
 onready var _tick_container := $"TickContainer"
 
 #onready var charload = get_node("../../../../../ChartLoader")
 
 func _ready() -> void:
-	# note colour
-	($"Scale/Head" as CanvasItem).self_modulate = skin.ROLL_COLOUR
-	var body := $"Scale/Body" as Control
-	body.modulate = skin.ROLL_COLOUR
-	body.rect_size = Vector2(_speed * _length * 1.9, 129)
+	_body.rect_size = Vector2(_speed * _length * 1.9, 129)
 
 	# haha funny!!! idx like iidx as in funny beatmania silly game keys
 	# but its a lot like INDEX!!!!!!!!!!!!!!!
@@ -39,7 +36,7 @@ func _ready() -> void:
 #	if _total_ticks <= _current_tick or not _active or not _loaded or not not (event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftKat") or event.is_action_pressed("RightDon") or event.is_action_pressed("RightKat")):
 #		return
 #	#print(charload.curTime)
-#	var cur_song_time := music.get_playback_position()
+#	var cur_song_time := g.cur_time
 #	# if after slider is hittable
 #	if cur_song_time > timing + _length + g.inacc_timing:
 #		deactivate()
@@ -59,6 +56,12 @@ func _ready() -> void:
 #		hit_manager.addScore("roll")
 
 
+func activate() -> void:
+	for tick_idx in range(_tick_container.get_child_count()):
+		(_tick_container.get_child(tick_idx) as CanvasItem).show()
+	.activate()
+
+
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, beat_length: float) -> void:
 	.ini(new_timing, new_speed, new_length, new_finisher)
 	if _loaded:
@@ -71,7 +74,7 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 	_total_ticks = int(_length / _tick_distance * 48)
 
 
-func activate() -> void:
-	for tick_idx in range(_tick_container.get_child_count()):
-		(_tick_container.get_child(tick_idx) as CanvasItem).show()
-	.activate()
+func skin(new_skin: SkinManager) -> void:
+	# note colour
+	($"Scale/Head" as CanvasItem).self_modulate = new_skin.ROLL_COLOUR
+	_body.modulate = new_skin.ROLL_COLOUR

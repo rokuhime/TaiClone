@@ -54,7 +54,7 @@ func _process(_delta: float) -> void:
 	if not _loaded:
 		return
 	_spin_circ_rot.rotation_degrees += _current_speed
-	if _finished or (_cur_hit_count < _needed_hits and music.get_playback_position() <= (timing + _length)):
+	if _finished or (_cur_hit_count < _needed_hits and g.cur_time <= (timing + _length)):
 		return
 	_finished = true
 
