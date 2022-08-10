@@ -33,15 +33,42 @@ onready var _obj_container := $"BarRight/HitPointOffset/ObjectContainers" as Con
 onready var _etc_container := _obj_container.get_node("EtcContainer")
 onready var _note_container := _obj_container.get_node("NoteContainer")
 
+onready var _accurate_obj := $"BarRight/HitPointOffset/Judgements/JudgeAccurate" as CanvasItem
+onready var _inaccurate_obj := $"BarRight/HitPointOffset/Judgements/JudgeInaccurate" as CanvasItem
+onready var _miss_obj := $"BarRight/HitPointOffset/Judgements/JudgeMiss" as CanvasItem
+
+onready var _l_don_obj := $"BarLeft/DrumVisual/LeftDon" as CanvasItem
+onready var _l_kat_obj := $"BarLeft/DrumVisual/LeftKat" as CanvasItem
+onready var _r_don_obj := $"BarLeft/DrumVisual/RightDon" as CanvasItem
+onready var _r_kat_obj := $"BarLeft/DrumVisual/RightKat" as CanvasItem
+
 onready var _debug_text := $"debug/debugtext" as Label
 onready var _file_input := $"debug/temploadchart/LineEdit" as LineEdit
 onready var _fps_text := $"debug/fpstext" as Label
+
+onready var _l_don_aud := $"DrumInteraction/LeftDonAudio" as AudioStreamPlayer
+onready var _l_kat_aud := $"DrumInteraction/LeftKatAudio" as AudioStreamPlayer
+onready var _r_don_aud := $"DrumInteraction/RightDonAudio" as AudioStreamPlayer
+onready var _r_kat_aud := $"DrumInteraction/RightKatAudio" as AudioStreamPlayer
+
+onready var _tween := $"DrumInteraction/DrumAnimationTween" as Tween
 
 
 func _ready() -> void:
 	acc_timing = 0.06
 	inacc_timing = 0.145
 	skin = SkinManager.new()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("LeftDon"):
+		keypress_animation(1)
+	if event.is_action_pressed("RightDon"):
+		keypress_animation(2)
+	if event.is_action_pressed("LeftKat"):
+		keypress_animation(3)
+	if event.is_action_pressed("RightKat"):
+		keypress_animation(4)
 
 
 func _process(delta: float) -> void:
@@ -65,6 +92,50 @@ func find_value(section: String, key: String) -> String:
 		if str(line).begins_with(key):
 			return str(line).substr(key.length())
 	return ""
+
+
+func hit_notify_animation(type: String) -> void:
+	var obj: CanvasItem
+	match type:
+		"accurate":
+			obj = _accurate_obj
+		"inaccurate":
+			obj = _inaccurate_obj
+		"miss":
+			obj = _miss_obj
+		_:
+			push_warning("Unknown hit animation.")
+			return
+
+	if not _tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+		push_warning("Attempted to tween hit animation.")
+	if not _tween.start():
+		push_warning("Attempted to start hit animation tween.")
+
+
+func keypress_animation(key: int) -> void:
+	var obj: CanvasItem
+	match key:
+		1:
+			obj = _l_don_obj
+			_l_don_aud.play()
+		2:
+			obj = _r_don_obj
+			_r_don_aud.play()
+		3:
+			obj = _l_kat_obj
+			_l_kat_aud.play()
+		4:
+			obj = _r_kat_obj
+			_r_kat_aud.play()
+		_:
+			push_warning("Unknown keypress animation.")
+			return
+
+	if not _tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.2, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+		push_warning("Attempted to tween keypress animation.")
+	if not _tween.start():
+		push_warning("Attempted to start keypress animation tween.")
 
 
 func load_func() -> void:

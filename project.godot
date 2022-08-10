@@ -20,11 +20,6 @@ _global_script_classes=[ {
 "path": "res://scripts/objects/bar_line.gd"
 }, {
 "base": "Node",
-"class": "DrumInteraction",
-"language": "GDScript",
-"path": "res://scripts/drum_interaction.gd"
-}, {
-"base": "Node",
 "class": "Gameplay",
 "language": "GDScript",
 "path": "res://scripts/scenes/gameplay.gd"
@@ -72,7 +67,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AudioLoader": "",
 "BarLine": "",
-"DrumInteraction": "",
 "Gameplay": "",
 "HitManager": "",
 "HitObject": "",

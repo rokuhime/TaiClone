@@ -1,7 +1,6 @@
 class_name HitManager
 extends Node
 
-onready var drumInteraction = get_node("../DrumInteraction")
 onready var objContainer = get_node("../BarRight/HitPointOffset/ObjectContainers")
 onready var hitError = get_node("../UI/HitError")
 
@@ -37,31 +36,31 @@ func _input(_ev) -> void:
 		if Input.is_action_just_pressed("RightDon"): checkInput(false, true)
 		if Input.is_action_just_pressed("LeftKat"): checkInput(true, false)
 		if Input.is_action_just_pressed("RightKat"): checkInput(true, true)
-	
+
 func _process(_delta) -> void:
 	if (nextNoteExists() && _g.cur_playing):
 		curTime = _g.cur_time;
-		
+
 		#temp auto
 		#doesnt support special note types currently
 		if (auto && ((curTime + _g.settings.global_offset) - objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).timing) > 0):
 			var nextNoteIsKat = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1).is_kat
-			
+
 			if lastSideUsedIsRight == null: lastSideUsedIsRight = true
 			checkInput(nextNoteIsKat, lastSideUsedIsRight)
-			
+
 			if !nextNoteIsKat:
 				if lastSideUsedIsRight: #kDdk
-					drumInteraction.keypress_animation(1)
+					_g.keypress_animation(1)
 				else: #kdDk
-					drumInteraction.keypress_animation(2)
+					_g.keypress_animation(2)
 			else:
 				if lastSideUsedIsRight: #Kddk
-					drumInteraction.keypress_animation(3)
+					_g.keypress_animation(3)
 				else: #kddK
-					drumInteraction.keypress_animation(4)
+					_g.keypress_animation(4)
 			lastSideUsedIsRight = !lastSideUsedIsRight
-		
+
 		#miss check
 		var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1)
 		if (!auto && ((curTime + _g.settings.global_offset) - nextNote.timing) > _g.inacc_timing):
@@ -86,15 +85,15 @@ func checkInput(isKat, isRight) -> void:
 			#get next hittable note and current playback position
 			var nextNote = objContainer.get_node("NoteContainer").get_child(objContainer.get_node("NoteContainer").get_child_count() - nextHittableNote - 1);
 			var hitType: String
-			
+
 			if (abs((curTime - nextNote.timing) + _g.settings.global_offset) <= _g.inacc_timing):
 				#check if accurate and right key pressed
 				if (abs((curTime - nextNote.timing) + _g.settings.global_offset) <= _g.acc_timing && nextNote.is_kat == isKat):
 					hitType = "accurate"
 				#check if inaccurate and right key pressed
-				elif (nextNote.is_kat == isKat): 
+				elif (nextNote.is_kat == isKat):
 					hitType = "inaccurate"
-				
+
 				#broken for some reason, not really sure whats wrong. ill look at it later
 	#			#check if inaccurate and wrong key pressed
 	#			else:
@@ -102,14 +101,14 @@ func checkInput(isKat, isRight) -> void:
 	#				addScore("miss")
 	#				nextHittableNote += 1;
 				else: return
-				
+
 				addScore(hitType)
 				nextHittableNote += 1;
 				if hitType != "miss": nextNote.deactivate()
-				
-				if nextNote.finisher == true: 
+
+				if nextNote.finisher == true:
 					lastNoteWasFinisher = true
-				
+
 				hitError.new_marker(hitType, curTime - nextNote.timing)
 			lastSideUsedIsRight = isRight
 
@@ -119,16 +118,16 @@ func addScore(type) -> void:
 			score += int(300.0 * scoreMultiplier)
 			accurateCount += 1
 			combo += 1
-			drumInteraction.hit_notify_animation("accurate");
+			_g.hit_notify_animation("accurate");
 		"inaccurate":
 			score += int(150.0 * scoreMultiplier)
 			inaccurateCount += 1
 			combo += 1
-			drumInteraction.hit_notify_animation("inaccurate");
+			_g.hit_notify_animation("inaccurate");
 		"miss":
 			missCount += 1
 			combo = 0
-			drumInteraction.hit_notify_animation("miss");
+			_g.hit_notify_animation("miss");
 		"finisher":
 			score += int(300.0 * scoreMultiplier)
 		"spinner":
@@ -137,13 +136,13 @@ func addScore(type) -> void:
 			score += int(300.0 * scoreMultiplier)
 		_:
 			pass;
-	
+
 	var accuracy: float = 0;
 	if accurateCount + (float(inaccurateCount) / 2) != 0:
 		var hitCount = accurateCount + (float(inaccurateCount) / 2)
 		var totalCount = accurateCount + inaccurateCount + missCount
 		accuracy = float(hitCount / totalCount) * 100
-		
+
 	comboLabel.text = str(combo)
 	scoreLabel.text = "%010d" % score
 	accuracyLabel.text = "%2.2f" % accuracy
