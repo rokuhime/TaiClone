@@ -36,12 +36,12 @@ func _ready() -> void:
 			var event = config_file.get_value("Keybinds", str(key))
 			if not event is InputEvent:
 				continue
-			change_key(str(key), event)
+			change_key(event, str(key))
 	for button in ["LeftDon", "LeftKat", "RightDon", "RightKat"]:
 		var event = InputMap.get_action_list(str(button)).front()
 		if not event is InputEvent:
 			continue
-		change_text(str(button), event)
+		change_text(event, str(button))
 
 	_late_early_drop.add_item("Off")
 	_late_early_drop.add_item("Simple")
@@ -52,6 +52,7 @@ func _ready() -> void:
 
 	var resolution := Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080))
 	OS.window_size = resolution
+	OS.window_resizable = true
 
 	var resolutions := [["16:9 | 1920x1080", Vector2(1920, 1080)], ["16:9 | 1280x720", Vector2(1280, 720)], ["16:9 | 1024x576", Vector2(1024, 576)], [], ["4:3 | 1280x1024", Vector2(1280, 1024)], ["4:3 | 1024x768", Vector2(1024, 768)], [], ["5:4 | 1025x820", Vector2(1025, 820)]]
 	for i in resolutions.size():
@@ -78,28 +79,28 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if _currently_changing != "" and (event is InputEventJoypadButton or event is InputEventKey):
-		change_key(_currently_changing, event)
+		change_key(event, _currently_changing)
 		button_pressed(_currently_changing)
 
 
 func button_pressed(type: String) -> void:
 	if _currently_changing == "":
 		_currently_changing = type
-		change_text(_currently_changing, null, true)
+		change_text(null, _currently_changing, true)
 	else:
 		var event = InputMap.get_action_list(_currently_changing).front()
-		change_text(_currently_changing, event) # UNSAFE ArrayItem
+		change_text(event, _currently_changing) # UNSAFE ArrayItem
 		_currently_changing = ""
 
 
-func change_key(button: String, event: InputEvent) -> void:
+func change_key(event: InputEvent, button: String) -> void:
 	# load_keybinds function
 	InputMap.action_erase_events(str(button))
 	InputMap.action_add_event(str(button), event)
 
 	_currently_changing = ""
 	KEYBINDS[button] = event # UNSAFE DictionaryEntry
-	change_text(button, event)
+	change_text(event, button)
 
 
 # this script stinks. gonna become obsolete when i get actual good settings going w
@@ -115,7 +116,7 @@ func change_res(index: int) -> void:
 	OS.window_size = new_size # UNSAFE Variant
 
 
-func change_text(button: String, event: InputEvent, pressed := false) -> void:
+func change_text(event: InputEvent, button: String, pressed := false) -> void:
 	var button_object: Button
 	match button:
 		"LeftDon":
