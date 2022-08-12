@@ -1,24 +1,24 @@
 class_name Note
 extends HitObject
 
-var is_kat := false
+var _is_kat := false
 
 
 func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, new_finisher: bool) -> void:
 	.ini(new_timing, new_speed, 0, new_finisher)
 	if not _loaded:
-		is_kat = new_is_kat
+		_is_kat = new_is_kat
 
 
 func hit(inputs: Array, hit_time: float) -> Array:
 	if _finished:
 		inputs.append("finished")
 		return inputs
-	var hit_timing := hit_time - timing
+	var hit_timing := hit_time - _timing
 	if hit_timing < 0:
 		return inputs
 	_finished = true
-	if is_kat:
+	if _is_kat:
 		if inputs.has("LeftKat"):
 			inputs.remove(inputs.find("LeftKat"))
 			inputs.append(hit_timing)
@@ -42,4 +42,4 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 func skin(new_skin: SkinManager) -> void:
 	# note colour
-	($"Sprite" as CanvasItem).self_modulate = new_skin.KAT_COLOUR if is_kat else new_skin.DON_COLOUR
+	($"Sprite" as CanvasItem).self_modulate = new_skin.KAT_COLOUR if _is_kat else new_skin.DON_COLOUR

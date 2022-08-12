@@ -16,20 +16,19 @@ var _cur_bpm := -1.0
 var _cur_time := 0.0
 var _f := File.new()
 var _inaccurate_count := 0
+var _late_early_simple_display := true
 var _miss_count := 0
 var _next_barline := -1.0
 var _score := 0
 var _score_multiplier := 1.0
 var _total_cur_sv := -1.0
 
-onready var settings := $"debug/SettingsPanel" as SettingsPanel
-
-onready var music := $"Music" as AudioStreamPlayer
-
 onready var _barline_obj := preload("res://game/objects/bar_line.tscn")
 onready var _note_obj := preload("res://game/objects/note_object.tscn")
 onready var _roll_obj := preload("res://game/objects/roll_object.tscn")
 onready var _spin_warn_obj := preload("res://game/objects/spinner_warn_object.tscn")
+
+onready var _music := $"Music" as AudioStreamPlayer
 
 onready var _bg := $"Background" as TextureRect
 
@@ -45,19 +44,23 @@ onready var _r_don_obj := $"BarLeft/DrumVisual/RightDon" as CanvasItem
 onready var _r_kat_obj := $"BarLeft/DrumVisual/RightKat" as CanvasItem
 onready var _combo_label := $"BarLeft/DrumVisual/Combo" as Label
 
+onready var _timing_indicator := $"BarLeft/TimingIndicator" as Label
+onready var _timing_indicator_tween := $"BarLeft/TimingIndicator/Tween" as Tween
+
 onready var _score_label := $"UI/Score" as Label
 onready var _accuracy_label := $"UI/Accuracy" as Label
 
 onready var _debug_text := $"debug/debugtext" as Label
 onready var _file_input := $"debug/temploadchart/LineEdit" as LineEdit
 onready var _fps_text := $"debug/fpstext" as Label
+onready var _settings := $"debug/SettingsPanel" as SettingsPanel
 
 onready var _l_don_aud := $"DrumInteraction/LeftDonAudio" as AudioStreamPlayer
 onready var _l_kat_aud := $"DrumInteraction/LeftKatAudio" as AudioStreamPlayer
 onready var _r_don_aud := $"DrumInteraction/RightDonAudio" as AudioStreamPlayer
 onready var _r_kat_aud := $"DrumInteraction/RightKatAudio" as AudioStreamPlayer
 
-onready var _tween := $"DrumInteraction/DrumAnimationTween" as Tween
+onready var _drum_animation_tween := $"DrumInteraction/DrumAnimationTween" as Tween
 
 
 func _input(event: InputEvent) -> void:
@@ -94,11 +97,11 @@ func _input(event: InputEvent) -> void:
 				push_warning("Unknown keypress animation.")
 				return
 
-		if not _tween.remove(obj, "self_modulate"):
+		if not _drum_animation_tween.remove(obj, "self_modulate"):
 			push_warning("Attempted to remove keypress animation tween.")
-		if not _tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.2, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+		if not _drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.2, Tween.TRANS_LINEAR, Tween.EASE_OUT):
 			push_warning("Attempted to tween keypress animation.")
-		if not _tween.start():
+		if not _drum_animation_tween.start():
 			push_warning("Attempted to start keypress animation tween.")
 
 	# check_input function
@@ -121,7 +124,7 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	_fps_text.text = "FPS: %s" % Engine.get_frames_per_second()
 
-	if not music.playing:
+	if not _music.playing:
 		return
 	_cur_time += delta
 
@@ -175,11 +178,11 @@ func add_score(type: String) -> void:
 	if obj == null:
 		return
 
-	if not _tween.remove(obj, "self_modulate"):
+	if not _drum_animation_tween.remove(obj, "self_modulate"):
 		push_warning("Attempted to remove hit animation tween.")
-	if not _tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+	if not _drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT):
 		push_warning("Attempted to tween hit animation.")
-	if not _tween.start():
+	if not _drum_animation_tween.start():
 		push_warning("Attempted to start hit animation tween.")
 
 
@@ -201,11 +204,33 @@ func barline(time: float, equal := false) -> void:
 			return
 
 
+func change_indicator(timing: float) -> void:
+	var num := str(int(timing * 1000))
+	if timing > 0:
+		_timing_indicator.text = "LATE" if _late_early_simple_display else "+" + num
+		_timing_indicator.modulate = Color("5a5aff")
+	else:
+		_timing_indicator.text = "EARLY" if _late_early_simple_display else num
+		_timing_indicator.modulate = Color("ff5a5a")
+
+	if not _timing_indicator_tween.remove(_timing_indicator, "self_modulate"):
+		push_warning("Attempted to remove timing indicator tween.")
+	if not _timing_indicator_tween.interpolate_property(_timing_indicator, "self_modulate", Color.white, Color.transparent, 0.5, Tween.TRANS_QUART):
+		push_warning("Attempted to tween timing indicator.")
+	if not _timing_indicator_tween.start():
+		push_warning("Attempted to start timing indicator tween.")
+
+
 func find_value(section: String, key: String) -> String:
 	for line in CURRENT_CHART_DATA[section]: # UNSAFE DictionaryItem
 		if str(line).begins_with(key):
 			return str(line).substr(key.length())
 	return ""
+
+
+func late_early_changed(new_value: int) -> void:
+	_late_early_simple_display = new_value < 2
+	_timing_indicator.visible = new_value > 0
 
 
 func load_func() -> void:
@@ -340,7 +365,7 @@ func load_func() -> void:
 			# load_and_process_song function
 			# get audio file name and separate it in the file
 			# load audio file and apply to song player
-			music.stream = AudioLoader.loadfile(folder_path.plus_file(find_value("General", "AudioFilename: ")))
+			_music.stream = AudioLoader.loadfile(folder_path.plus_file(find_value("General", "AudioFilename: ")))
 
 		else:
 			_f.close()
@@ -356,15 +381,15 @@ func load_func() -> void:
 func offset_changed() -> void:
 	# this is fundamentally flawed due to everything being scaled by 1.9
 	# it's a close approximation but should be fixed once scaling is removed
-	_obj_container.rect_position = Vector2(settings.global_offset * -775, 0)
+	_obj_container.rect_position = Vector2(_settings.global_offset * -775, 0)
 
 
 func play_chart() -> void:
 	reset()
-	if music.playing:
-		music.stop()
+	if _music.playing:
+		_music.stop()
 	else:
-		music.play()
+		_music.play()
 
 
 func reset() -> void:
@@ -377,5 +402,5 @@ func reset() -> void:
 	_score_multiplier = 1
 	add_score("")
 
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if music.playing else "activate")
-	_cur_time = settings.global_offset
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if _music.playing else "activate")
+	_cur_time = _settings.global_offset

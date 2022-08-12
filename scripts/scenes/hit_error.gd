@@ -1,11 +1,9 @@
 extends Control
 
-var _late_early_simple_display := true
+signal change_indicator(timing)
 
 var _g: Gameplay
 var _skin: SkinManager
-var _timing_indicator: Label
-var _tween: Tween
 
 onready var _accurate := $"HitPoints/Inaccurate/Accurate" as Control
 onready var _avg_hit := $"AverageHit" as Control
@@ -16,8 +14,6 @@ onready var _middle_marker := $"MiddleMarker"
 func gameplay_ready() -> void:
 	_g = $"/root/Gameplay" as Gameplay
 	_skin = _g.skin
-	_timing_indicator = _g.get_node("BarLeft/TimingIndicator") as Label
-	_tween = _timing_indicator.get_node("Tween") as Tween
 
 	var anchor := _g.acc_timing / _g.inacc_timing / 2
 	_accurate.anchor_left = 0.5 - anchor
@@ -26,11 +22,6 @@ func gameplay_ready() -> void:
 
 func hit_error_toggled(new_visible: bool) -> void:
 	visible = new_visible
-
-
-func late_early_changed(new_value: int) -> void:
-	_late_early_simple_display = new_value < 2
-	_timing_indicator.visible = new_value > 0
 
 
 func new_marker(type: String, timing: float) -> void:
@@ -73,21 +64,5 @@ func new_marker(type: String, timing: float) -> void:
 	_avg_hit.anchor_right = anchor
 
 
-	if type != "inaccurate":
-		return
-
-	# change_indicator function
-	var num := str(int(timing * 1000))
-	if timing > 0:
-		_timing_indicator.text = "LATE" if _late_early_simple_display else "+" + num
-		_timing_indicator.modulate = Color("5a5aff")
-	else:
-		_timing_indicator.text = "EARLY" if _late_early_simple_display else num
-		_timing_indicator.modulate = Color("ff5a5a")
-
-	if not _tween.remove(_timing_indicator, "self_modulate"):
-		push_warning("Attempted to remove timing indicator tween.")
-	if not _tween.interpolate_property(_timing_indicator, "self_modulate", Color.white, Color.transparent, 0.5, Tween.TRANS_QUART):
-		push_warning("Attempted to tween timing indicator.")
-	if not _tween.start():
-		push_warning("Attempted to start timing indicator tween.")
+	if type == "inaccurate":
+		emit_signal("change_indicator", timing)

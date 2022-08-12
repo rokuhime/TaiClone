@@ -1,14 +1,13 @@
 class_name HitObject
 extends KinematicBody2D
 
-var _finisher := false
-var timing := 0.0
-
 var _active := false
 var _finished := false
+var _finisher := false
 var _length := 1.0
 var _loaded := false
 var _speed := 1.0
+var _timing := 0.0
 
 
 func _ready() -> void:
@@ -29,7 +28,7 @@ func activate() -> void:
 		push_warning("Attempted to activate hitobject.")
 		return
 	modulate = Color.white
-	position = Vector2(_speed * timing, 0)
+	position = Vector2(_speed * _timing, 0)
 	_active = true
 
 
@@ -42,15 +41,15 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 		push_warning("Attempted to change hitobject properties after loaded.")
 		return
 	_finisher = new_finisher
-	timing = new_timing
 	_length = new_length
 	_speed = new_speed
+	_timing = new_timing
 
 
 func miss_check(hit_time: float) -> String:
 	if _finished:
 		return "finished"
-	if hit_time > timing:
+	if hit_time > _timing:
 		queue_free()
 		return "miss"
 	return ""

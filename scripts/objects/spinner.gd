@@ -52,7 +52,7 @@ func hit(inputs: Array, hit_time: float) -> Array:
 	if _finished:
 		inputs.append("finished")
 		return inputs
-	if hit_time < timing:
+	if hit_time < _timing:
 		return inputs
 
 	if _cur_hit_count == 0:
@@ -98,7 +98,7 @@ func hit(inputs: Array, hit_time: float) -> Array:
 func miss_check(hit_time: float) -> String:
 	if _finished:
 		return "finished"
-	if hit_time - _length > timing:
+	if hit_time - _length > _timing:
 		spinner_finished()
 		return "inaccurate" if _needed_hits / 2.0 <= _cur_hit_count else "miss"
 	return ""
