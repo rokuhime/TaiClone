@@ -19,45 +19,11 @@ var _score_multiplier := 1.0
 var _skin := SkinManager.new()
 var _total_cur_sv := -1.0
 
-onready var _barline_obj := preload("res://game/objects/bar_line.tscn")
-onready var _note_obj := preload("res://game/objects/note_object.tscn")
-onready var _roll_obj := preload("res://game/objects/roll_object.tscn")
-onready var _spin_warn_obj := preload("res://game/objects/spinner_warn_object.tscn")
-
-onready var _music := $"Music" as AudioStreamPlayer
-
-onready var _bg := $"Background" as TextureRect
-
-onready var _obj_container := $"BarRight/HitPointOffset/ObjectContainer" as Control
-
-onready var _accurate_obj := $"BarRight/HitPointOffset/Judgements/JudgeAccurate" as CanvasItem
-onready var _inaccurate_obj := $"BarRight/HitPointOffset/Judgements/JudgeInaccurate" as CanvasItem
-onready var _miss_obj := $"BarRight/HitPointOffset/Judgements/JudgeMiss" as CanvasItem
-
-onready var _l_don_obj := $"BarLeft/DrumVisual/LeftDon" as CanvasItem
-onready var _l_kat_obj := $"BarLeft/DrumVisual/LeftKat" as CanvasItem
-onready var _r_don_obj := $"BarLeft/DrumVisual/RightDon" as CanvasItem
-onready var _r_kat_obj := $"BarLeft/DrumVisual/RightKat" as CanvasItem
-onready var _combo_label := $"BarLeft/DrumVisual/Combo" as Label
-
-onready var _timing_indicator := $"BarLeft/TimingIndicator" as Label
-onready var _timing_indicator_tween := $"BarLeft/TimingIndicator/Tween" as Tween
-
-onready var _score_label := $"UI/Score" as Label
-onready var _accuracy_label := $"UI/Accuracy" as Label
-onready var _hit_error := $"UI/HitError" as HitError
-
-onready var _debug_text := $"debug/debugtext" as Label
-onready var _fps_text := $"debug/fpstext" as Label
-onready var _file_input := $"debug/temploadchart/LineEdit" as LineEdit
-onready var _settings := $"debug/SettingsPanel" as SettingsPanel
-
-onready var _l_don_aud := $"DrumInteraction/LeftDonAudio" as AudioStreamPlayer
-onready var _l_kat_aud := $"DrumInteraction/LeftKatAudio" as AudioStreamPlayer
-onready var _r_don_aud := $"DrumInteraction/RightDonAudio" as AudioStreamPlayer
-onready var _r_kat_aud := $"DrumInteraction/RightKatAudio" as AudioStreamPlayer
-
-onready var _drum_animation_tween := $"DrumInteraction/DrumAnimationTween" as Tween
+onready var music := $Music as AudioStreamPlayer
+onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
+onready var timing_indicator := $BarLeft/TimingIndicator as Label
+onready var hit_error := $UI/HitError as HitError
+onready var drum_animation_tween := $DrumInteraction/DrumAnimationTween as Tween
 
 
 func _input(event: InputEvent) -> void:
@@ -76,37 +42,22 @@ func _input(event: InputEvent) -> void:
 
 	# keypress_animation function
 	for input_action in inputs:
-		var obj: CanvasItem
-		match str(input_action):
-			"LeftDon":
-				obj = _l_don_obj
-				_l_don_aud.play()
-			"LeftKat":
-				obj = _l_kat_obj
-				_l_kat_aud.play()
-			"RightDon":
-				obj = _r_don_obj
-				_r_don_aud.play()
-			"RightKat":
-				obj = _r_kat_obj
-				_r_kat_aud.play()
-			_:
-				push_warning("Unknown keypress animation.")
-				return
+		(get_node("DrumInteraction/%sAudio" % str(input_action)) as AudioStreamPlayer).play()
+		var obj := get_node("BarLeft/DrumVisual/" + str(input_action))
 
-		if not _drum_animation_tween.remove(obj, "self_modulate"):
+		if not drum_animation_tween.remove(obj, "self_modulate"):
 			push_warning("Attempted to remove keypress animation tween.")
-		if not _drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.2, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+		if not drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.2, Tween.TRANS_LINEAR, Tween.EASE_OUT):
 			push_warning("Attempted to tween keypress animation.")
-		if not _drum_animation_tween.start():
+		if not drum_animation_tween.start():
 			push_warning("Attempted to start keypress animation tween.")
 
 	# check_input function
-	for i in range(_obj_container.get_child_count()):
-		var note = _obj_container.get_child(i)
+	for i in range(obj_container.get_child_count()):
+		var note = obj_container.get_child(i)
 		if note is BarLine or not note is HitObject:
 			continue
-		var new_inputs = note.hit(inputs.duplicate(), _cur_time + (_hit_error.inacc_timing if note is Note else 0.0))
+		var new_inputs = note.hit(inputs.duplicate(), _cur_time + (hit_error.inacc_timing if note is Note else 0.0))
 		if str(inputs) == str(new_inputs):
 			break
 		var score := str(new_inputs.pop_back())
@@ -119,18 +70,18 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	_fps_text.text = "FPS: %s" % Engine.get_frames_per_second()
+	($debug/fpstext as Label).text = "FPS: %s" % Engine.get_frames_per_second()
 
-	if not _music.playing:
+	if not music.playing:
 		return
 	_cur_time += delta
 
 	# miss check
-	for i in range(_obj_container.get_child_count()):
-		var note = _obj_container.get_child(i)
+	for i in range(obj_container.get_child_count()):
+		var note = obj_container.get_child(i)
 		if not note is HitObject:
 			continue
-		var score := str(note.miss_check(_cur_time - (_hit_error.inacc_timing if note is Note else 0.0)))
+		var score := str(note.miss_check(_cur_time - (hit_error.inacc_timing if note is Note else 0.0)))
 		if note is BarLine or note is SpinnerWarn:
 			continue
 		if score == "":
@@ -139,47 +90,46 @@ func _process(delta: float) -> void:
 			continue
 		add_score(score)
 		if score == "miss":
-			emit_signal("new_marker", score, _hit_error.inacc_timing, _skin)
+			emit_signal("new_marker", score, hit_error.inacc_timing, _skin)
 
 
 func add_score(type: String) -> void:
 	if type.is_valid_float():
-		var timing := float(type) - _hit_error.inacc_timing
-		type = "accurate" if timing < _hit_error.acc_timing else "inaccurate" if timing < _hit_error.inacc_timing else "miss"
+		var timing := float(type) - hit_error.inacc_timing
+		type = "accurate" if timing < hit_error.acc_timing else "inaccurate" if timing < hit_error.inacc_timing else "miss"
 		emit_signal("new_marker", type, timing, _skin)
 
 	_score += int((150 if type == "inaccurate" else 300 if ["accurate", "finisher", "roll"].has(type) else 600 if type == "spinner" else 0) * _score_multiplier)
 
-	var obj: CanvasItem
 	match type:
 		"accurate":
 			_accurate_count += 1
 			_combo += 1
-			obj = _accurate_obj
 		"inaccurate":
 			_inaccurate_count += 1
 			_combo += 1
-			obj = _inaccurate_obj
 		"miss":
 			_miss_count += 1
 			_combo = 0
-			obj = _miss_obj
 
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
 
-	_combo_label.text = str(_combo)
-	_score_label.text = "%010d" % _score
-	_accuracy_label.text = "%2.2f" % (0.0 if hit_count == 0 else (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count)))
+	($BarLeft/DrumVisual/Combo as Label).text = str(_combo)
+	($UI/Score as Label).text = "%010d" % _score
+	($UI/Accuracy as Label).text = "%2.2f" % (0.0 if hit_count == 0 else (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count)))
 
 	# hit_notify_animation function
-	if obj == null:
+	type = "BarRight/HitPointOffset/Judgements/Judge" + type.capitalize()
+	if not has_node(type):
 		return
 
-	if not _drum_animation_tween.remove(obj, "self_modulate"):
+	var obj := get_node(type) as CanvasItem
+
+	if not drum_animation_tween.remove(obj, "self_modulate"):
 		push_warning("Attempted to remove hit animation tween.")
-	if not _drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+	if not drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT):
 		push_warning("Attempted to tween hit animation.")
-	if not _drum_animation_tween.start():
+	if not drum_animation_tween.start():
 		push_warning("Attempted to start hit animation tween.")
 
 
@@ -191,9 +141,9 @@ func barline(time: float, equal := false) -> void:
 	while true:
 		var next_barline := int(_next_barline * 1000) / 1000.0
 		if next_barline < time or (equal and next_barline == time):
-			var note_object := _barline_obj.instance() as BarLine
+			var note_object := preload("res://game/objects/bar_line.tscn").instance() as BarLine
 			note_object.change_properties(next_barline, _total_cur_sv)
-			_obj_container.add_child(note_object)
+			obj_container.add_child(note_object)
 			note_object.add_to_group("HitObjects")
 			_f.store_csv_line([str(next_barline), str(_total_cur_sv), "1"])
 			_next_barline += 240 / _cur_bpm
@@ -204,17 +154,18 @@ func barline(time: float, equal := false) -> void:
 func change_indicator(timing: float) -> void:
 	var num := str(int(timing * 1000))
 	if timing > 0:
-		_timing_indicator.text = "LATE" if _late_early_simple_display else "+" + num
-		_timing_indicator.modulate = Color("5a5aff")
+		timing_indicator.text = "LATE" if _late_early_simple_display else "+" + num
+		timing_indicator.modulate = Color("5a5aff")
 	else:
-		_timing_indicator.text = "EARLY" if _late_early_simple_display else num
-		_timing_indicator.modulate = Color("ff5a5a")
+		timing_indicator.text = "EARLY" if _late_early_simple_display else num
+		timing_indicator.modulate = Color("ff5a5a")
 
-	if not _timing_indicator_tween.remove(_timing_indicator, "self_modulate"):
+	var timing_indicator_tween := $BarLeft/TimingIndicator/Tween as Tween
+	if not timing_indicator_tween.remove(timing_indicator, "self_modulate"):
 		push_warning("Attempted to remove timing indicator tween.")
-	if not _timing_indicator_tween.interpolate_property(_timing_indicator, "self_modulate", Color.white, Color.transparent, 0.5, Tween.TRANS_QUART):
+	if not timing_indicator_tween.interpolate_property(timing_indicator, "self_modulate", Color.white, Color.transparent, 0.5, Tween.TRANS_QUART):
 		push_warning("Attempted to tween timing indicator.")
-	if not _timing_indicator_tween.start():
+	if not timing_indicator_tween.start():
 		push_warning("Attempted to start timing indicator tween.")
 
 
@@ -227,14 +178,15 @@ func find_value(section: String, key: String) -> String:
 
 func late_early_changed(new_value: int) -> void:
 	_late_early_simple_display = new_value < 2
-	_timing_indicator.visible = new_value > 0
+	timing_indicator.visible = new_value > 0
 
 
 func load_func() -> void:
-	_debug_text.text = "Loading... [Checking File]"
-	var file_path := _file_input.text.replace("\\", "/")
+	var debug_text := $debug/debugtext as Label
+	debug_text.text = "Loading... [Checking File]"
+	var file_path := ($debug/temploadchart/LineEdit as LineEdit).text.replace("\\", "/")
 	if _f.open(file_path, File.READ) == OK:
-		_debug_text.text = "Loading... [Reading File]"
+		debug_text.text = "Loading... [Reading File]"
 
 		# load_and_process_all function
 		# todo: make more adaptable between .osu and all file formats
@@ -262,7 +214,7 @@ func load_func() -> void:
 			if image.load(bg_file_path) == OK:
 				var newtexture := ImageTexture.new()
 				newtexture.create_from_image(image, 0)
-				_bg.texture = newtexture
+				($Background as TextureRect).texture = newtexture
 			else:
 				# Failed
 				push_warning("Background failed to load: %s." % bg_file_path)
@@ -292,7 +244,7 @@ func load_func() -> void:
 
 			if _f.open("user://debug.fus", File.WRITE) != OK:
 				_f.close()
-				_debug_text.text = "Unable to create temporary .fus file."
+				debug_text.text = "Unable to create temporary .fus file."
 				return
 			_f.store_line("v0.0.1")
 
@@ -329,9 +281,9 @@ func load_func() -> void:
 				# osu keeps type as an int that references bytes
 				if 1 << 3 & int(note_array[3]): # spinner
 					var length := float(note_array[5]) / 1000 - time
-					var note_object := _spin_warn_obj.instance() as SpinnerWarn
+					var note_object := preload("res://game/objects/spinner_warn_object.tscn").instance() as SpinnerWarn
 					note_object.change_properties(time, _total_cur_sv, length, _cur_bpm)
-					_obj_container.add_child(note_object)
+					obj_container.add_child(note_object)
 					note_object.add_to_group("HitObjects")
 					_f.store_csv_line([str(time), str(_total_cur_sv), "5", str(length)])
 					continue
@@ -342,18 +294,18 @@ func load_func() -> void:
 				if 1 << 1 & int(note_array[3]): # roll
 					var length := float(note_array[7]) * int(note_array[6]) * 600 / _total_cur_sv
 
-					var note_object := _roll_obj.instance() as Roll
+					var note_object := preload("res://game/objects/roll_object.tscn").instance() as Roll
 					note_object.change_properties(time, _total_cur_sv, length, finisher, _cur_bpm)
-					_obj_container.add_child(note_object)
+					obj_container.add_child(note_object)
 					note_object.add_to_group("HitObjects")
 					_f.store_csv_line([str(time), str(_total_cur_sv), "4", str(length), str(finisher)])
 					continue
 
 				# normal note
 				var note_type := int(bool(((1 << 1) + (1 << 3)) & int(note_array[4])))
-				var note_object := _note_obj.instance() as Note
+				var note_object := preload("res://game/objects/note_object.tscn").instance() as Note
 				note_object.change_properties(time, _total_cur_sv, note_type, finisher)
-				_obj_container.add_child(note_object)
+				obj_container.add_child(note_object)
 				note_object.add_to_group("HitObjects")
 				_f.store_csv_line([str(time), str(_total_cur_sv), str(note_type + 2), str(finisher)])
 			_f.close()
@@ -362,31 +314,31 @@ func load_func() -> void:
 			# load_and_process_song function
 			# get audio file name and separate it in the file
 			# load audio file and apply to song player
-			_music.stream = AudioLoader.loadfile(folder_path.plus_file(find_value("General", "AudioFilename: ")))
+			music.stream = AudioLoader.loadfile(folder_path.plus_file(find_value("General", "AudioFilename: ")))
 
 		else:
 			_f.close()
-			_debug_text.text = "Invalid file!"
+			debug_text.text = "Invalid file!"
 			return
 
-		_debug_text.text = "Done!"
+		debug_text.text = "Done!"
 	else:
 		_f.close()
-		_debug_text.text = "Invalid file!"
+		debug_text.text = "Invalid file!"
 
 
-func offset_changed() -> void:
+func offset_changed(new_value: float) -> void:
 	# this is fundamentally flawed due to everything being scaled by 1.9
 	# it's a close approximation but should be fixed once scaling is removed
-	_obj_container.rect_position = Vector2(_settings.global_offset * -775, 0)
+	obj_container.rect_position = Vector2(new_value * -775, 0)
 
 
 func play_chart() -> void:
 	reset()
-	if _music.playing:
-		_music.stop()
+	if music.playing:
+		music.stop()
 	else:
-		_music.play()
+		music.play()
 
 
 func reset() -> void:
@@ -399,5 +351,5 @@ func reset() -> void:
 	_score_multiplier = 1
 	add_score("")
 
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if _music.playing else "activate")
-	_cur_time = _settings.global_offset
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if music.playing else "activate")
+	_cur_time = ($debug/SettingsPanel as SettingsPanel).global_offset

@@ -5,8 +5,8 @@ extends HitObject
 var _tick_distance := 0.0
 var _total_ticks := 0
 
-onready var _body := $"Scale/Body" as Control
-onready var _tick_container := $"TickContainer"
+onready var body := $Scale/Body as Control
+onready var tick_container := $TickContainer
 
 #onready var charload = get_node("../../../../../ChartLoader")
 
@@ -18,7 +18,7 @@ onready var _tick_container := $"TickContainer"
 #	# GET IT
 #	for tick_idx in range(_total_ticks):
 #		# duplicate base tick and put it in the tick container
-#		var new_tick := $"Tick".duplicate() as TextureRect
+#		var new_tick := $Tick.duplicate() as TextureRect
 #		_tick_container.add_child(new_tick)
 #		_tick_container.move_child(new_tick, _tick_container.get_child_count())
 
@@ -57,8 +57,8 @@ onready var _tick_container := $"TickContainer"
 
 
 func activate() -> void:
-	for tick_idx in range(_tick_container.get_child_count()):
-		(_tick_container.get_child(tick_idx) as CanvasItem).show()
+	for tick_idx in range(tick_container.get_child_count()):
+		(tick_container.get_child(tick_idx) as CanvasItem).show()
 	.activate()
 
 
@@ -76,5 +76,5 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 
 func skin(new_skin: SkinManager) -> void:
 	# note colour
-	($"Scale/Head" as CanvasItem).self_modulate = new_skin.ROLL_COLOUR
-	_body.modulate = new_skin.ROLL_COLOUR
+	($Scale/Head as CanvasItem).self_modulate = new_skin.ROLL_COLOUR
+	body.modulate = new_skin.ROLL_COLOUR

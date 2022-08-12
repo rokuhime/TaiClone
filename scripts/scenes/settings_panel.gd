@@ -3,7 +3,7 @@ extends CanvasItem
 
 signal hit_error_toggled(new_visible)
 signal late_early_changed(new_value)
-signal offset_changed
+signal offset_changed(new_value)
 signal volume_set(channel, amount)
 
 const KEYBINDS := {}
@@ -13,14 +13,10 @@ var global_offset := 0.0
 var _config_path := "user://config.ini"
 var _currently_changing := ""
 
-onready var _dropdown := $"V/Scroll/V/Resolution/Options" as OptionButton
-onready var _fullscreen_toggle := $"V/Scroll/V/Resolution/Fullscreen/Toggle" as CheckBox
-onready var _hit_error_toggle := $"V/Scroll/V/ExtraDisplays/HitError/Toggle" as CheckBox
-onready var _late_early_drop := $"V/Scroll/V/ExtraDisplays/LateEarly/Options" as OptionButton
-onready var _left_don_butt := $"V/Scroll/V/Keybinds/LeftDon/Button" as Button
-onready var _left_kat_butt := $"V/Scroll/V/Keybinds/LeftKat/Button" as Button
-onready var _right_don_butt := $"V/Scroll/V/Keybinds/RightDon/Button" as Button
-onready var _right_kat_butt := $"V/Scroll/V/Keybinds/RightKat/Button" as Button
+onready var dropdown := $V/Scroll/V/Resolution/Options as OptionButton
+onready var fullscreen_toggle := $V/Scroll/V/Resolution/Fullscreen/Toggle as CheckBox
+onready var hit_error_toggle := $V/Scroll/V/ExtraDisplays/HitError/Toggle as CheckBox
+onready var late_early_drop := $V/Scroll/V/ExtraDisplays/LateEarly/Options as OptionButton
 
 
 func _ready() -> void:
@@ -43,9 +39,9 @@ func _ready() -> void:
 			continue
 		change_text(event, str(button))
 
-	_late_early_drop.add_item("Off")
-	_late_early_drop.add_item("Simple")
-	_late_early_drop.add_item("Advanced")
+	late_early_drop.add_item("Off")
+	late_early_drop.add_item("Simple")
+	late_early_drop.add_item("Advanced")
 	call_deferred("late_early", int(config_file.get_value("Display", "LateEarly", 1)))
 
 	call_deferred("hit_error", bool(config_file.get_value("Display", "HitError", 1)))
@@ -60,17 +56,17 @@ func _ready() -> void:
 		if not item is Array:
 			continue
 		if item.empty():
-			_dropdown.add_separator()
+			dropdown.add_separator()
 		else:
-			_dropdown.add_item(str(item.front())) # UNSAFE ArrayItem
-			_dropdown.set_item_metadata(int(i), item.back()) # UNSAFE ArrayItem
+			dropdown.add_item(str(item.front())) # UNSAFE ArrayItem
+			dropdown.set_item_metadata(int(i), item.back()) # UNSAFE ArrayItem
 			if item.back() == resolution: # UNSAFE ArrayItem
-				_dropdown.select(int(i))
+				dropdown.select(int(i))
 
 	toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
 
 	call_deferred("change_offset", str(config_file.get_value("Audio", "GlobalOffset", 0)))
-	var offset_text := $"V/Scroll/V/Offset/LineEdit" as LineEdit
+	var offset_text := $V/Scroll/V/Offset/LineEdit as LineEdit
 	if global_offset != 0:
 		offset_text.text = str(global_offset)
 	for i in range(3):
@@ -107,26 +103,17 @@ func change_key(event: InputEvent, button: String) -> void:
 func change_offset(new_value: String) -> void:
 	global_offset = float(new_value) / 1000
 	print_debug("Offset set to %s." % global_offset)
-	emit_signal("offset_changed")
+	emit_signal("offset_changed", global_offset)
 
 
 func change_res(index: int) -> void:
-	print_debug("Resolution changed to %s." % _dropdown.get_item_text(index))
-	var new_size = _dropdown.get_item_metadata(index)
+	print_debug("Resolution changed to %s." % dropdown.get_item_text(index))
+	var new_size = dropdown.get_item_metadata(index)
 	OS.window_size = new_size # UNSAFE Variant
 
 
 func change_text(event: InputEvent, button: String, pressed := false) -> void:
-	var button_object: Button
-	match button:
-		"LeftDon":
-			button_object = _left_don_butt
-		"LeftKat":
-			button_object = _left_kat_butt
-		"RightDon":
-			button_object = _right_don_butt
-		"RightKat":
-			button_object = _right_kat_butt
+	var button_object := get_node("V/Scroll/V/Keybinds/%s/Button" % button) as Button
 	if event is InputEventJoypadButton:
 		button_object.text = "Joystick Button %s" % (event as InputEventJoypadButton).button_index
 	elif event is InputEventKey:
@@ -137,12 +124,12 @@ func change_text(event: InputEvent, button: String, pressed := false) -> void:
 
 
 func hit_error(new_visible: bool) -> void:
-	_hit_error_toggle.pressed = new_visible
+	hit_error_toggle.pressed = new_visible
 	emit_signal("hit_error_toggled", new_visible)
 
 
 func late_early(new_value: int) -> void:
-	_late_early_drop.select(new_value)
+	late_early_drop.select(new_value)
 	emit_signal("late_early_changed", new_value)
 
 
@@ -157,12 +144,12 @@ func save_settings() -> void:
 		config_file.set_value("Keybinds", str(key), event)
 
 	print_debug("Saving display config...")
-	config_file.set_value("Display", "LateEarly", _late_early_drop.selected)
-	config_file.set_value("Display", "HitError", int(_hit_error_toggle.pressed))
+	config_file.set_value("Display", "LateEarly", late_early_drop.selected)
+	config_file.set_value("Display", "HitError", int(hit_error_toggle.pressed))
 	var res := OS.window_size
 	config_file.set_value("Display", "ResolutionX", res.x)
 	config_file.set_value("Display", "ResolutionY", res.y)
-	config_file.set_value("Display", "Fullscreen", int(_fullscreen_toggle.pressed))
+	config_file.set_value("Display", "Fullscreen", int(fullscreen_toggle.pressed))
 
 	print_debug("Saving audio config...")
 	config_file.set_value("Audio", "GlobalOffset", global_offset)
@@ -178,11 +165,11 @@ func save_settings() -> void:
 func toggle_fullscreen(new_visible: bool) -> void:
 	print_debug("Fullscreen set to %s." % new_visible)
 	OS.window_fullscreen = new_visible
-	_fullscreen_toggle.pressed = new_visible
+	fullscreen_toggle.pressed = new_visible
 
-	for i in range(_dropdown.get_item_count()):
-		_dropdown.set_item_disabled(i, new_visible)
+	for i in range(dropdown.get_item_count()):
+		dropdown.set_item_disabled(i, new_visible)
 
 
 func toggle_settings() -> void:
-	visible = !visible
+	visible = not visible
