@@ -432,7 +432,6 @@ bus = "SFX"
 [node name="VolumeControl" parent="." instance=ExtResource( 8 )]
 
 [connection signal="new_marker" from="." to="UI/HitError" method="new_marker"]
-[connection signal="ready" from="." to="UI/HitError" method="gameplay_ready"]
 [connection signal="change_indicator" from="UI/HitError" to="." method="change_indicator"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="." method="play_chart"]

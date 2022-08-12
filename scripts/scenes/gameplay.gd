@@ -1,13 +1,8 @@
-class_name Gameplay
 extends Node
 
-signal new_marker(type, timing)
+signal new_marker(type, timing, skin)
 
 const CURRENT_CHART_DATA := {}
-
-var acc_timing := 0.06
-var inacc_timing := 0.145
-var skin := SkinManager.new()
 
 var _accurate_count := 0
 var _auto := false
@@ -21,6 +16,7 @@ var _miss_count := 0
 var _next_barline := -1.0
 var _score := 0
 var _score_multiplier := 1.0
+var _skin := SkinManager.new()
 var _total_cur_sv := -1.0
 
 onready var _barline_obj := preload("res://game/objects/bar_line.tscn")
@@ -49,10 +45,11 @@ onready var _timing_indicator_tween := $"BarLeft/TimingIndicator/Tween" as Tween
 
 onready var _score_label := $"UI/Score" as Label
 onready var _accuracy_label := $"UI/Accuracy" as Label
+onready var _hit_error := $"UI/HitError" as HitError
 
 onready var _debug_text := $"debug/debugtext" as Label
-onready var _file_input := $"debug/temploadchart/LineEdit" as LineEdit
 onready var _fps_text := $"debug/fpstext" as Label
+onready var _file_input := $"debug/temploadchart/LineEdit" as LineEdit
 onready var _settings := $"debug/SettingsPanel" as SettingsPanel
 
 onready var _l_don_aud := $"DrumInteraction/LeftDonAudio" as AudioStreamPlayer
@@ -109,7 +106,7 @@ func _input(event: InputEvent) -> void:
 		var note = _obj_container.get_child(i)
 		if note is BarLine or not note is HitObject:
 			continue
-		var new_inputs = note.hit(inputs.duplicate(), _cur_time + (inacc_timing if note is Note else 0.0))
+		var new_inputs = note.hit(inputs.duplicate(), _cur_time + (_hit_error.inacc_timing if note is Note else 0.0))
 		if str(inputs) == str(new_inputs):
 			break
 		var score := str(new_inputs.pop_back())
@@ -133,7 +130,7 @@ func _process(delta: float) -> void:
 		var note = _obj_container.get_child(i)
 		if not note is HitObject:
 			continue
-		var score := str(note.miss_check(_cur_time - (inacc_timing if note is Note else 0.0)))
+		var score := str(note.miss_check(_cur_time - (_hit_error.inacc_timing if note is Note else 0.0)))
 		if note is BarLine or note is SpinnerWarn:
 			continue
 		if score == "":
@@ -142,14 +139,14 @@ func _process(delta: float) -> void:
 			continue
 		add_score(score)
 		if score == "miss":
-			emit_signal("new_marker", score, inacc_timing)
+			emit_signal("new_marker", score, _hit_error.inacc_timing, _skin)
 
 
 func add_score(type: String) -> void:
 	if type.is_valid_float():
-		var timing := float(type) - inacc_timing
-		type = "accurate" if timing < acc_timing else "inaccurate" if timing < inacc_timing else "miss"
-		emit_signal("new_marker", type, timing)
+		var timing := float(type) - _hit_error.inacc_timing
+		type = "accurate" if timing < _hit_error.acc_timing else "inaccurate" if timing < _hit_error.inacc_timing else "miss"
+		emit_signal("new_marker", type, timing, _skin)
 
 	_score += int((150 if type == "inaccurate" else 300 if ["accurate", "finisher", "roll"].has(type) else 600 if type == "spinner" else 0) * _score_multiplier)
 
@@ -360,7 +357,7 @@ func load_func() -> void:
 				note_object.add_to_group("HitObjects")
 				_f.store_csv_line([str(time), str(_total_cur_sv), str(note_type + 2), str(finisher)])
 			_f.close()
-			get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", skin)
+			get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", _skin)
 
 			# load_and_process_song function
 			# get audio file name and separate it in the file
