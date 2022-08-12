@@ -185,7 +185,7 @@ func load_func() -> void:
 	var debug_text := $debug/debugtext as Label
 	debug_text.text = "Loading... [Checking File]"
 	var file_path := ($debug/temploadchart/LineEdit as LineEdit).text.replace("\\", "/")
-	if _f.open(file_path, File.READ) == OK:
+	if not _f.open(file_path, File.READ):
 		debug_text.text = "Loading... [Reading File]"
 
 		# load_and_process_all function
@@ -211,13 +211,13 @@ func load_func() -> void:
 			var bg_file_name = events[events.find("//Background and Video events") + 1] # UNSAFE DictionaryItem
 			var bg_file_path := folder_path.plus_file(str(bg_file_name).split(",")[2].replace("\"", ""))
 			var image := Image.new()
-			if image.load(bg_file_path) == OK:
+			if image.load(bg_file_path):
+				# Failed
+				push_warning("Background failed to load: %s." % bg_file_path)
+			else:
 				var newtexture := ImageTexture.new()
 				newtexture.create_from_image(image, 0)
 				($Background as TextureRect).texture = newtexture
-			else:
-				# Failed
-				push_warning("Background failed to load: %s." % bg_file_path)
 
 			# wipe_past_chart function
 			reset()
@@ -242,7 +242,7 @@ func load_func() -> void:
 
 			var cur_sv := 1.0
 
-			if _f.open("user://debug.fus", File.WRITE) != OK:
+			if _f.open("user://debug.fus", File.WRITE):
 				_f.close()
 				debug_text.text = "Unable to create temporary .fus file."
 				return

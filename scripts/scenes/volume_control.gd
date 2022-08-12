@@ -2,6 +2,7 @@ extends CanvasItem
 
 var _cur_changing := 0
 
+onready var timer := get_tree().create_timer(0)
 onready var tween := $VolumeIncreaseTween as Tween
 
 
@@ -60,7 +61,9 @@ func change_channel(channel: int, needs_visible := true) -> void:
 		if not tween.start():
 			push_warning("Attempted to start volume control fade in tween.")
 
-	($Timer as Timer).start()
+	timer = get_tree().create_timer(2)
+	if timer.connect("timeout", self, "timeout"):
+		push_warning("Attempted to connect timer timeout.")
 
 
 func change_volume(amount: float) -> void:
@@ -96,6 +99,8 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 
 
 func timeout() -> void:
+	if timer.time_left > 0:
+		return
 	if not tween.remove(self, "modulate"):
 		push_warning("Attempted to remove volume control fade out tween.")
 	if not tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 1, Tween.TRANS_QUART, Tween.EASE_OUT):

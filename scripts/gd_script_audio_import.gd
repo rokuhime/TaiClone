@@ -29,7 +29,7 @@ static func loadfile(filepath: String) -> AudioStream:
 	var returnstream := AudioStreamSample.new()
 
 	var file := File.new()
-	if file.open(filepath, File.READ) == OK:
+	if file.open(filepath, File.READ):
 		var bytes := file.get_buffer(file.get_len())
 		file.close()
 

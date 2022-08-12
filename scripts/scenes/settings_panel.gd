@@ -22,7 +22,7 @@ onready var late_early_drop := $V/Scroll/V/ExtraDisplays/LateEarly/Options as Op
 func _ready() -> void:
 	# load config and all the variables
 	var config_file := ConfigFile.new()
-	if config_file.load(_config_path) != OK:
+	if config_file.load(_config_path):
 		print_debug("Config file not found.")
 		save_settings()
 		return
@@ -156,10 +156,10 @@ func save_settings() -> void:
 	for i in range(3):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
-	if config_file.save(_config_path) == OK:
-		print_debug("Saved configuration file.")
-	else:
+	if config_file.save(_config_path):
 		push_warning("Attempted to save configuration file.")
+	else:
+		print_debug("Saved configuration file.")
 
 
 func toggle_fullscreen(new_visible: bool) -> void:

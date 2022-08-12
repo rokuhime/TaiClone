@@ -50,10 +50,6 @@ stream = ExtResource( 4 )
 volume_db = -5.0
 bus = "SFX"
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 2.0
-one_shot = true
-
 [node name="VolumeIncreaseTween" type="Tween" parent="."]
 
 [node name="Bars" type="VBoxContainer" parent="."]
@@ -187,7 +183,6 @@ size_flags_horizontal = 4
 custom_fonts/font = SubResource( 6 )
 text = "MASTER"
 
-[connection signal="timeout" from="Timer" to="." method="timeout"]
 [connection signal="mouse_entered" from="Bars/Specifics/Music" to="." method="change_channel" binds= [ 1 ]]
 [connection signal="mouse_entered" from="Bars/Specifics/SFX" to="." method="change_channel" binds= [ 2 ]]
 [connection signal="mouse_entered" from="Bars/Master" to="." method="change_channel" binds= [ 0 ]]
