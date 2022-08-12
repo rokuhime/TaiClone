@@ -24,11 +24,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/scenes/gameplay.gd"
 }, {
-"base": "Node",
-"class": "HitManager",
-"language": "GDScript",
-"path": "res://scripts/hit_manager.gd"
-}, {
 "base": "KinematicBody2D",
 "class": "HitObject",
 "language": "GDScript",
@@ -68,7 +63,6 @@ _global_script_class_icons={
 "AudioLoader": "",
 "BarLine": "",
 "Gameplay": "",
-"HitManager": "",
 "HitObject": "",
 "Note": "",
 "Roll": "",

@@ -1,24 +1,19 @@
 class_name HitObject
 extends KinematicBody2D
 
-var finisher := false
+var _finisher := false
 var timing := 0.0
 
-var hit_manager: HitManager
-
 var _active := false
+var _finished := false
 var _length := 1.0
 var _loaded := false
 var _speed := 1.0
 
-onready var g := $"/root/Gameplay"
-
 
 func _ready() -> void:
-	hit_manager = g.get_node("HitManager") as HitManager
-
 	# finisher scale
-	if finisher:
+	if _finisher:
 		(get_child(0) as Control).rect_scale = Vector2(0.9, 0.9)
 	_loaded = true
 
@@ -30,7 +25,7 @@ func _process(_delta: float) -> void:
 
 
 func activate() -> void:
-	if _active or not _loaded:
+	if _active or _finished or not _loaded:
 		push_warning("Attempted to activate hitobject.")
 		return
 	modulate = Color.white
@@ -38,21 +33,27 @@ func activate() -> void:
 	_active = true
 
 
-func deactivate(_object := null, _key := "") -> void:
-	if not _active or not _loaded:
-		push_warning("Attempted to deactivate hitobject.")
-	modulate = Color.transparent
-	_active = false
+func hit(inputs: Array, _hit_time: float) -> Array:
+	return inputs
 
 
 func ini(new_timing: float, new_speed: float, new_length: float, new_finisher := false) -> void:
 	if _loaded:
 		push_warning("Attempted to change hitobject properties after loaded.")
 		return
-	finisher = new_finisher
+	_finisher = new_finisher
 	timing = new_timing
 	_length = new_length
 	_speed = new_speed
+
+
+func miss_check(hit_time: float) -> String:
+	if _finished:
+		return "finished"
+	if hit_time > timing:
+		queue_free()
+		return "miss"
+	return ""
 
 
 func skin(_new_skin: SkinManager) -> void:

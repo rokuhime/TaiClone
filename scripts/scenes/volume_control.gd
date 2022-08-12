@@ -92,6 +92,8 @@ func set_volume(channel: int, amount: float, tween := false) -> void:
 		progress.value = amount
 		return
 
+	if not _tween.remove(progress, "value"):
+		push_warning("Attempted to remove volume progress tween.")
 	if not _tween.interpolate_property(progress, "value", null, amount, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
 		push_warning("Attempted to tween volume progress.")
 	if not _tween.start():
@@ -99,6 +101,8 @@ func set_volume(channel: int, amount: float, tween := false) -> void:
 
 
 func timeout() -> void:
+	if not _tween.remove(self, "modulate"):
+		push_warning("Attempted to remove volume control fade out tween.")
 	if not _tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 1, Tween.TRANS_QUART, Tween.EASE_OUT):
 		push_warning("Attempted to tween volume control fade out.")
 	if not _tween.start():

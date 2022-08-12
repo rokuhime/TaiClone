@@ -46,7 +46,7 @@ func _ready() -> void:
 	_late_early_drop.add_item("Off")
 	_late_early_drop.add_item("Simple")
 	_late_early_drop.add_item("Advanced")
-	_late_early_drop.select(int(config_file.get_value("Display", "LateEarly", 1)))
+	call_deferred("late_early", int(config_file.get_value("Display", "LateEarly", 1)))
 
 	call_deferred("hit_error", bool(config_file.get_value("Display", "HitError", 1)))
 
@@ -69,7 +69,7 @@ func _ready() -> void:
 
 	toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
 
-	change_offset(str(config_file.get_value("Audio", "GlobalOffset", 0)))
+	call_deferred("change_offset", str(config_file.get_value("Audio", "GlobalOffset", 0)))
 	var offset_text := $"V/Scroll/V/Offset/LineEdit" as LineEdit
 	if global_offset != 0:
 		offset_text.text = str(global_offset)
@@ -142,6 +142,7 @@ func hit_error(new_visible: bool) -> void:
 
 
 func late_early(new_value: int) -> void:
+	_late_early_drop.select(new_value)
 	emit_signal("late_early_changed", new_value)
 
 

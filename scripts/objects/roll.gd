@@ -10,21 +10,21 @@ onready var _tick_container := $"TickContainer"
 
 #onready var charload = get_node("../../../../../ChartLoader")
 
-func _ready() -> void:
-	_body.rect_size = Vector2(_speed * _length * 1.9, 129)
+#func _ready() -> void:
+#	_body.rect_size = Vector2(_speed * _length * 1.9, 129)
 
-	# haha funny!!! idx like iidx as in funny beatmania silly game keys
-	# but its a lot like INDEX!!!!!!!!!!!!!!!
-	# GET IT
-	for tick_idx in range(_total_ticks):
-		# duplicate base tick and put it in the tick container
-		var new_tick := $"Tick".duplicate() as TextureRect
-		_tick_container.add_child(new_tick)
-		_tick_container.move_child(new_tick, _tick_container.get_child_count())
+#	# haha funny!!! idx like iidx as in funny beatmania silly game keys
+#	# but its a lot like INDEX!!!!!!!!!!!!!!!
+#	# GET IT
+#	for tick_idx in range(_total_ticks):
+#		# duplicate base tick and put it in the tick container
+#		var new_tick := $"Tick".duplicate() as TextureRect
+#		_tick_container.add_child(new_tick)
+#		_tick_container.move_child(new_tick, _tick_container.get_child_count())
 
-		# the number of tick * tick distance * time signature * note speed / 1000 * time signature * 10
-		#new_tick.rect_position = Vector2(tick_idx * _tick_distance * 4 * _speed / 1000 * 40, -64.5)
-		new_tick.rect_position = Vector2(tick_idx * _tick_distance * _speed / 40, -64.5)
+#		# the number of tick * tick distance * time signature * note speed / 1000 * time signature * 10
+#		#new_tick.rect_position = Vector2(tick_idx * _tick_distance * 4 * _speed / 1000 * 40, -64.5)
+#		new_tick.rect_position = Vector2(tick_idx * _tick_distance * _speed / 40, -64.5)
 
 #func _update(_delta):
 #	var a = .fuckoff()
