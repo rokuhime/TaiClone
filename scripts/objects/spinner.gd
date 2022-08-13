@@ -29,7 +29,7 @@ func _ready() -> void:
 
 	if not tween.start():
 		push_warning("Attempted to start spinner tweens.")
-	.activate()
+	state = State.ACTIVE
 
 
 func _process(_delta: float) -> void:
