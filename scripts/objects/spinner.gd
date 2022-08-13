@@ -54,7 +54,7 @@ func hit(inputs: Array, hit_time: float) -> Array:
 	if hit_time < _timing:
 		return inputs
 
-	if _cur_hit_count == 0:
+	if not _cur_hit_count:
 		_first_hit_is_kat = inputs.has("LeftKat") or inputs.has("RightKat")
 	while true:
 		if _cur_hit_count % 2 != int(_first_hit_is_kat):

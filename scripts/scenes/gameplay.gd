@@ -51,14 +51,14 @@ func _input(event: InputEvent) -> void:
 		var note = obj_container.get_child(i)
 		if note is BarLine or not note is HitObject:
 			continue
-		var new_inputs = note.hit(inputs.duplicate(), _cur_time + (hit_error.inacc_timing if note is Note else 0.0))
-		if str(inputs) == str(new_inputs):
+		var new_inputs: Array = note.hit(inputs.duplicate(), _cur_time + (hit_error.inacc_timing if note is Note else 0.0))
+		if inputs == new_inputs:
 			break
 		var score := str(new_inputs.pop_back())
 		if score == "finished":
 			continue
 		_add_score(score)
-		inputs = new_inputs # UNSAFE Variant
+		inputs = new_inputs
 		if inputs.empty() or score == "miss":
 			break
 
@@ -78,7 +78,7 @@ func _process(delta: float) -> void:
 		var score := str(note.miss_check(_cur_time - (hit_error.inacc_timing if note is Note else 0.0)))
 		if note is BarLine or note is SpinnerWarn:
 			continue
-		if score == "":
+		if not score:
 			break
 		if score == "finished":
 			continue
@@ -141,8 +141,8 @@ func load_func() -> void:
 			# load_and_process_background function
 			var folder_path := file_path.get_base_dir()
 			var events = current_chart_data["Events"]
-			var bg_file_name = events[events.find("//Background and Video events") + 1] # UNSAFE DictionaryItem
-			var bg_file_path := folder_path.plus_file(str(bg_file_name).split(",")[2].replace("\"", ""))
+			var bg_file_name := str(events[events.find("//Background and Video events") + 1]) # UNSAFE ArrayItem
+			var bg_file_path := folder_path.plus_file(bg_file_name.split(",")[2].replace("\"", ""))
 			var image := Image.new()
 			if image.load(bg_file_path):
 				# Failed
@@ -197,13 +197,13 @@ func load_func() -> void:
 					var next_timing := float(current_timing_data[0][0]) # UNSAFE ArrayItem
 					while next_timing <= time:
 						next_barline = _barline(total_cur_sv, next_timing, next_barline, f, cur_bpm)
-						var timing = current_timing_data.pop_front()
-						if timing[1] == 0: # UNSAFE ArrayItem
-							cur_sv = float(timing[2]) # UNSAFE ArrayItem
-						else:
-							cur_bpm = float(timing[2]) # UNSAFE ArrayItem
-							next_barline = float(timing[0]) # UNSAFE ArrayItem
+						var timing: Array = current_timing_data.pop_front() # UNSAFE ArrayItem
+						if int(timing[1]):
+							cur_bpm = float(timing[2])
+							next_barline = float(timing[0])
 							f.store_csv_line([str(next_barline), str(cur_bpm), "0"])
+						else:
+							cur_sv = float(timing[2])
 						if current_timing_data.empty():
 							break
 						next_timing = float(current_timing_data[0][0])

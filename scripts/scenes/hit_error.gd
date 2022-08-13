@@ -54,7 +54,7 @@ func new_marker(type: String, timing: float, skin: SkinManager) -> void:
 			avg += marker.anchor_left
 
 	var children := hit_points.get_child_count() - misses - 1
-	anchor = 0.5 if children == 0 else avg / children
+	anchor = avg / children if children else 0.5
 	var avg_hit := $AverageHit as Control
 	avg_hit.anchor_left = anchor
 	avg_hit.anchor_right = anchor

@@ -13,7 +13,7 @@ func _input(event: InputEvent) -> void:
 	if not m_event.alt:
 		return
 
-	if modulate.a == 0:
+	if not modulate.a:
 		_cur_changing = 0
 
 	var vol_difference := 0.01 if m_event.control else 0.05
@@ -32,7 +32,7 @@ func _input(event: InputEvent) -> void:
 
 
 func change_channel(channel: int, needs_visible := true) -> void:
-	if needs_visible and modulate.a == 0:
+	if needs_visible and not modulate.a:
 		return
 	_cur_changing = channel % 3
 
@@ -40,13 +40,11 @@ func change_channel(channel: int, needs_visible := true) -> void:
 		var colour := Color.white if i == _cur_changing else Color(1, 1, 1, 0.5)
 		var vol := _vol_view(i)
 
-		if vol.modulate == colour:
+		if vol.modulate == colour or not modulate.a:
+			vol.modulate = colour
 			continue
 		if not tween.remove(vol, "modulate"):
 			push_warning("Attempted to remove volume fade tween.")
-		if modulate.a == 0:
-			vol.modulate = colour
-			continue
 		if not tween.interpolate_property(vol, "modulate", null, colour, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
 			push_warning("Attempted to tween volume fade.")
 		if not tween.start():
