@@ -32,12 +32,12 @@ func _ready() -> void:
 			var event = config_file.get_value("Keybinds", str(key))
 			if not event is InputEvent:
 				continue
-			change_key(event, str(key))
+			_change_key(event, str(key))
 	for button in ["LeftDon", "LeftKat", "RightDon", "RightKat"]:
 		var event = InputMap.get_action_list(str(button)).front()
 		if not event is InputEvent:
 			continue
-		change_text(event, str(button))
+		_change_text(event, str(button))
 
 	late_early_drop.add_item("Off")
 	late_early_drop.add_item("Simple")
@@ -75,28 +75,17 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if _currently_changing != "" and (event is InputEventJoypadButton or event is InputEventKey):
-		change_key(event, _currently_changing)
-		button_pressed(_currently_changing)
+		_change_key(event, _currently_changing)
 
 
 func button_pressed(type: String) -> void:
 	if _currently_changing == "":
 		_currently_changing = type
-		change_text(null, _currently_changing, true)
+		_change_text(null, _currently_changing, true)
 	else:
 		var event = InputMap.get_action_list(_currently_changing).front()
-		change_text(event, _currently_changing) # UNSAFE ArrayItem
+		_change_text(event, _currently_changing) # UNSAFE ArrayItem
 		_currently_changing = ""
-
-
-func change_key(event: InputEvent, button: String) -> void:
-	# load_keybinds function
-	InputMap.action_erase_events(str(button))
-	InputMap.action_add_event(str(button), event)
-
-	_currently_changing = ""
-	KEYBINDS[button] = event # UNSAFE DictionaryEntry
-	change_text(event, button)
 
 
 # this script stinks. gonna become obsolete when i get actual good settings going w
@@ -110,17 +99,6 @@ func change_res(index: int) -> void:
 	print_debug("Resolution changed to %s." % dropdown.get_item_text(index))
 	var new_size = dropdown.get_item_metadata(index)
 	OS.window_size = new_size # UNSAFE Variant
-
-
-func change_text(event: InputEvent, button: String, pressed := false) -> void:
-	var button_object := get_node("V/Scroll/V/Keybinds/%s/Button" % button) as Button
-	if event is InputEventJoypadButton:
-		button_object.text = "Joystick Button %s" % (event as InputEventJoypadButton).button_index
-	elif event is InputEventKey:
-		button_object.text = OS.get_scancode_string((event as InputEventKey).scancode)
-	else:
-		button_object.text = "..."
-	button_object.pressed = pressed
 
 
 func hit_error(new_visible: bool) -> void:
@@ -173,3 +151,24 @@ func toggle_fullscreen(new_visible: bool) -> void:
 
 func toggle_settings() -> void:
 	visible = not visible
+
+
+func _change_key(event: InputEvent, button: String) -> void:
+	# load_keybinds function
+	InputMap.action_erase_events(str(button))
+	InputMap.action_add_event(str(button), event)
+
+	_currently_changing = ""
+	KEYBINDS[button] = event # UNSAFE DictionaryEntry
+	_change_text(event, button)
+
+
+func _change_text(event: InputEvent, button: String, pressed := false) -> void:
+	var button_object := get_node("V/Scroll/V/Keybinds/%s/Button" % button) as Button
+	if event is InputEventJoypadButton:
+		button_object.text = "Joystick Button %s" % (event as InputEventJoypadButton).button_index
+	elif event is InputEventKey:
+		button_object.text = OS.get_scancode_string((event as InputEventKey).scancode)
+	else:
+		button_object.text = "..."
+	button_object.pressed = pressed

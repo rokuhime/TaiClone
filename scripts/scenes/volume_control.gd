@@ -19,10 +19,10 @@ func _input(event: InputEvent) -> void:
 	var vol_difference := 0.01 if m_event.control else 0.05
 
 	if event.is_action("VolumeUp"):
-		change_volume(vol_difference)
+		_change_volume(vol_difference)
 
 	if event.is_action("VolumeDown"):
-		change_volume(-vol_difference)
+		_change_volume(-vol_difference)
 
 	if event.is_action("VolumeNext"):
 		change_channel(_cur_changing + 1, false)
@@ -38,7 +38,7 @@ func change_channel(channel: int, needs_visible := true) -> void:
 
 	for i in range(3):
 		var colour := Color.white if i == _cur_changing else Color(1, 1, 1, 0.5)
-		var vol := vol_view(i)
+		var vol := _vol_view(i)
 
 		if vol.modulate == colour:
 			continue
@@ -66,23 +66,11 @@ func change_channel(channel: int, needs_visible := true) -> void:
 		push_warning("Attempted to connect timer timeout.")
 
 
-func change_volume(amount: float) -> void:
-	change_channel(_cur_changing, false)
-
-	var channel_volume := clamp(db2linear(AudioServer.get_bus_volume_db(_cur_changing)) + amount, 0, 1)
-
-	set_volume(_cur_changing, channel_volume, true)
-
-	var change_sound := $ChangeSound as AudioStreamPlayer
-	change_sound.pitch_scale = channel_volume / 2 + 1
-	change_sound.play()
-
-
 func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 	AudioServer.set_bus_volume_db(channel, linear2db(amount))
 
 	amount = round(amount * 100)
-	var vol := vol_view(channel)
+	var vol := _vol_view(channel)
 	(vol.get_node("Percentage") as Label).text = str(amount)
 
 	var progress := vol.get_node("TextureProgress") as TextureProgress
@@ -109,7 +97,19 @@ func timeout() -> void:
 		push_warning("Attempted to start volume control fade out tween.")
 
 
-func vol_view(channel: int) -> CanvasItem:
+func _change_volume(amount: float) -> void:
+	change_channel(_cur_changing, false)
+
+	var channel_volume := clamp(db2linear(AudioServer.get_bus_volume_db(_cur_changing)) + amount, 0, 1)
+
+	set_volume(_cur_changing, channel_volume, true)
+
+	var change_sound := $ChangeSound as AudioStreamPlayer
+	change_sound.pitch_scale = channel_volume / 2 + 1
+	change_sound.play()
+
+
+func _vol_view(channel: int) -> CanvasItem:
 	match channel:
 		1:
 			return $Bars/Specifics/Music as CanvasItem
