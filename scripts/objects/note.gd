@@ -6,18 +6,19 @@ var _is_kat := false
 
 func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, new_finisher: bool) -> void:
 	.ini(new_timing, new_speed, 0, new_finisher)
-	if not _loaded:
+	if not state:
 		_is_kat = new_is_kat
 
 
 func hit(inputs: Array, hit_time: float) -> Array:
-	if _finished:
+	if state == int(State.FINISHED):
 		inputs.append("finished")
+	if state != int(State.ACTIVE):
 		return inputs
-	var hit_timing := hit_time - _timing
+	var hit_timing := hit_time - timing
 	if hit_timing < 0:
 		return inputs
-	_finished = true
+	state = int(State.FINISHED)
 	if _is_kat:
 		if inputs.has("LeftKat"):
 			inputs.remove(inputs.find("LeftKat"))

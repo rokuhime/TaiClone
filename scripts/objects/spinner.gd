@@ -18,7 +18,7 @@ func _ready() -> void:
 	var approach := $Approach as Control
 	if not tween.remove(approach, "rect_scale"):
 		push_warning("Attempted to remove spinner approach tween.")
-	if not tween.interpolate_property(approach, "rect_scale", Vector2(1, 1), Vector2(0.1, 0.1), _length, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+	if not tween.interpolate_property(approach, "rect_scale", Vector2(1, 1), Vector2(0.1, 0.1), length, Tween.TRANS_LINEAR, Tween.EASE_OUT):
 		push_warning("Attempted to tween spinner approach.")
 
 	# make spinner fade in
@@ -29,17 +29,17 @@ func _ready() -> void:
 
 	if not tween.start():
 		push_warning("Attempted to start spinner tweens.")
+	.activate()
 
 
 func _process(_delta: float) -> void:
-	if not _loaded:
-		return
-	($RotationObj as Node2D).rotation_degrees += current_speed
+	if state == int(State.ACTIVE):
+		($RotationObj as Node2D).rotation_degrees += current_speed
 
 
 func change_properties(new_timing: float, new_length: float, new_hits: int) -> void:
 	.ini(new_timing, 0, new_length)
-	if not _loaded:
+	if not state:
 		_needed_hits = new_hits
 
 
@@ -48,10 +48,9 @@ func deactivate(_object := null, _key := "") -> void:
 
 
 func hit(inputs: Array, hit_time: float) -> Array:
-	if _finished:
+	if state == int(State.FINISHED):
 		inputs.append("finished")
-		return inputs
-	if hit_time < _timing:
+	if state != int(State.ACTIVE) or hit_time < timing:
 		return inputs
 
 	if not _cur_hit_count:
@@ -95,9 +94,9 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 
 func miss_check(hit_time: float) -> String:
-	if _finished:
+	if state == int(State.FINISHED):
 		return "finished"
-	if hit_time - _length > _timing:
+	if hit_time - length > timing:
 		_spinner_finished()
 		return "inaccurate" if _needed_hits / 2.0 <= _cur_hit_count else "miss"
 	return ""
@@ -108,9 +107,9 @@ func _count_text() -> void:
 
 
 func _spinner_finished() -> void:
-	if _finished:
+	if state == int(State.FINISHED):
 		return
-	_finished = true
+	state = int(State.FINISHED)
 
 	# make spinner fade out
 	if not tween.remove(self, "modulate"):

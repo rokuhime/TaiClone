@@ -54,12 +54,17 @@ func _input(event: InputEvent) -> void:
 		var new_inputs: Array = note.hit(inputs.duplicate(), _cur_time + (hit_error.inacc_timing if note is Note else 0.0))
 		if inputs == new_inputs:
 			break
-		var score := str(new_inputs.pop_back())
-		if score == "finished":
-			continue
-		_add_score(score)
+		while true:
+			var score := str(new_inputs.pop_back())
+			if score == "finished":
+				break
+			_add_score(score)
+			if score == "miss":
+				return
+			if not new_inputs.has("spinner"):
+				break
 		inputs = new_inputs
-		if inputs.empty() or score == "miss":
+		if inputs.empty():
 			break
 
 

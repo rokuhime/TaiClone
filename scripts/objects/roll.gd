@@ -11,7 +11,7 @@ onready var tick_container := $TickContainer
 #onready var charload = get_node("../../../../../ChartLoader")
 
 #func _ready() -> void:
-#	_body.rect_size = Vector2(_speed * _length * 1.9, 129)
+#	_body.rect_size = Vector2(speed * length * 1.9, 129)
 
 #	# haha funny!!! idx like iidx as in funny beatmania silly game keys
 #	# but its a lot like INDEX!!!!!!!!!!!!!!!
@@ -23,8 +23,8 @@ onready var tick_container := $TickContainer
 #		_tick_container.move_child(new_tick, _tick_container.get_child_count())
 
 #		# the number of tick * tick distance * time signature * note speed / 1000 * time signature * 10
-#		#new_tick.rect_position = Vector2(tick_idx * _tick_distance * 4 * _speed / 1000 * 40, -64.5)
-#		new_tick.rect_position = Vector2(tick_idx * _tick_distance * _speed / 40, -64.5)
+#		#new_tick.rect_position = Vector2(tick_idx * _tick_distance * 4 * speed / 1000 * 40, -64.5)
+#		new_tick.rect_position = Vector2(tick_idx * _tick_distance * speed / 40, -64.5)
 
 #func _update(_delta):
 #	var a = .fuckoff()
@@ -38,7 +38,7 @@ onready var tick_container := $TickContainer
 #	#print(charload.curTime)
 #	var cur_song_time := g.cur_time
 #	# if after slider is hittable
-#	if cur_song_time > timing + _length + g.inacc_timing:
+#	if cur_song_time > timing + length + g.inacc_timing:
 #		deactivate()
 #		return
 #	# if before slider is hittable
@@ -57,21 +57,22 @@ onready var tick_container := $TickContainer
 
 
 func activate() -> void:
-	for tick_idx in range(tick_container.get_child_count()):
-		(tick_container.get_child(tick_idx) as CanvasItem).show()
+	if state == int(State.READY):
+		for tick_idx in range(tick_container.get_child_count()):
+			(tick_container.get_child(tick_idx) as CanvasItem).show()
 	.activate()
 
 
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, beat_length: float) -> void:
 	.ini(new_timing, new_speed, new_length, new_finisher)
-	if _loaded:
+	if state:
 		return
 
 	_tick_distance = beat_length / 100
 
 	# length of the roll divided by the distance between ticks
 	# and multiplied by the frequency
-	_total_ticks = int(_length / _tick_distance * 48)
+	_total_ticks = int(length / _tick_distance * 48)
 
 
 func skin(new_skin: SkinManager) -> void:
