@@ -12,8 +12,3 @@ data_*/
 
 # VSCode specific ignores
 .vscode/
-
-# Stuff made by me
-config.ini
-# ZMTT
-*.fus

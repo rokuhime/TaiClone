@@ -1,10 +1,10 @@
 class_name SkinManager
 
-var barline_colour := Color("ffffff");
-var don_colour := Color("eb452c");
-var kat_colour := Color("438eac");
-var roll_colour := Color("fcb806");
+const BARLINE_COLOUR := Color("ffffff")
+const DON_COLOUR := Color("eb452c")
+const KAT_COLOUR := Color("438eac")
+const ROLL_COLOUR := Color("fcb806")
 
-var accurate_colour := Color("52a6ff");
-var inaccurate_colour := Color("79da5e");
-var miss_colour := Color("c74b4b");
+const ACCURATE_COLOUR := Color("52a6ff")
+const INACCURATE_COLOUR := Color("79da5e")
+const MISS_COLOUR := Color("c74b4b")
