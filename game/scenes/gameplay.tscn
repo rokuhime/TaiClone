@@ -7,7 +7,7 @@
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
 [ext_resource path="res://game/scenes/settings_panel.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/scenes/volume_control.tscn" type="PackedScene" id=8]
-[ext_resource path="res://skins/test_skin/osu_rwxudnxmu5.png" type="Texture" id=9]
+[ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://game/scenes/hit_error.tscn" type="PackedScene" id=12]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
 [ext_resource path="res://skins/test_skin/taiko-hit300.png" type="Texture" id=16]
@@ -15,7 +15,7 @@
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
 [ext_resource path="res://skins/test_skin/taiko-hit100.png" type="Texture" id=21]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
-[ext_resource path="res://skins/test_skin/untitled.png" type="Texture" id=23]
+[ext_resource path="res://temporary/untitled.png" type="Texture" id=23]
 [ext_resource path="res://skins/test_skin/taiko-hit0.png" type="Texture" id=24]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
@@ -389,14 +389,14 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -399.0
-margin_top = -43.9999
-margin_right = -352.0
-margin_bottom = -29.9999
+margin_left = -723.0
+margin_top = -44.0
+margin_right = -445.0
+margin_bottom = -30.0
 grow_horizontal = 0
 grow_vertical = 0
 rect_scale = Vector2( 1.9, 1.9 )
-text = "v0.2 - volume slider go brrr"
+text = "v0.3 - LET ME PULL ALREADY"
 align = 2
 
 [node name="SettingsPanel" parent="debug" instance=ExtResource( 7 )]
