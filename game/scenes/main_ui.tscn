@@ -195,6 +195,23 @@ size_flags_horizontal = 3
 custom_constants/separation = 0
 alignment = 2
 
+[node name="Buffer3" type="ColorRect" parent="Bars/Bottom/HBoxContainer/HBoxContainer2"]
+margin_left = 428.0
+margin_right = 431.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 3, 0 )
+color = Color( 1, 1, 1, 0.392157 )
+
+[node name="changevalue" type="Button" parent="Bars/Bottom/HBoxContainer/HBoxContainer2"]
+margin_left = 431.0
+margin_right = 681.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 250, 0 )
+custom_fonts/font = SubResource( 3 )
+custom_styles/hover = SubResource( 4 )
+custom_styles/normal = SubResource( 5 )
+text = "AAAAA"
+
 [node name="Buffer2" type="ColorRect" parent="Bars/Bottom/HBoxContainer/HBoxContainer2"]
 margin_left = 681.0
 margin_right = 684.0
@@ -229,6 +246,18 @@ custom_styles/hover = SubResource( 4 )
 custom_styles/normal = SubResource( 5 )
 text = "Results"
 
+[node name="Tween" type="Tween" parent="Bars"]
+
+[node name="Blackout" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 1 )
+
+[node name="Tween" type="Tween" parent="Blackout"]
+
 [connection signal="pressed" from="Bars/Bottom/HBoxContainer/Back" to="." method="backButtonPressed"]
+[connection signal="pressed" from="Bars/Bottom/HBoxContainer/HBoxContainer2/changevalue" to="CurrentUI/Results" method="animateMenu" binds= [ 1222333 ]]
 [connection signal="pressed" from="Bars/Bottom/HBoxContainer/HBoxContainer2/Replay" to="." method="changeUI" binds= [ "test" ]]
 [connection signal="pressed" from="Bars/Bottom/HBoxContainer/HBoxContainer2/Retry" to="." method="changeUI" binds= [ "results" ]]

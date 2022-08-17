@@ -1,5 +1,12 @@
 extends Node
 
+onready var blackout = $Blackout as Control
+onready var blackoutTween = $Blackout/Tween as Tween
+
+onready var barTop = $Bars/Top as Control
+onready var barBottom = $Bars/Bottom as Control
+onready var barTween = $Bars/Tween as Tween
+
 onready var resultsObj = preload("res://game/scenes/results.tscn")
 onready var testObj = preload("res://game/scenes/test.tscn")
 
@@ -32,7 +39,24 @@ func changeUI(menuID):
 		$CurrentUI.add_child(newUI)
 
 func backButtonPressed():
+	toggleBlackout()
 	#figure out where we need to go
 	match(currentUI):
 		_:
 			print("back button pressed when unapplicable!")
+
+func toggleBlackout():
+	if not blackoutTween.remove(blackout, "self_modulate"):
+		push_warning("Attempted to remove blackout animation tween.")
+
+	#if blackout is invis...
+	if(blackout.modulate.a > 0):
+		if not blackoutTween.interpolate_property(blackout, "modulate", Color.white, Color.transparent, 0.5, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+			push_warning("Attempted to tween blackout animation.")
+	#if blackout is opaque...
+	else:
+		if not blackoutTween.interpolate_property(blackout, "modulate", Color.transparent, Color.white, 0.5, Tween.TRANS_LINEAR, Tween.EASE_OUT):
+			push_warning("Attempted to tween blackout animation.")
+
+	if not blackoutTween.start():
+		push_warning("Attempted to start blackout animation tween.")

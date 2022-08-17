@@ -396,7 +396,7 @@ margin_bottom = -30.0
 grow_horizontal = 0
 grow_vertical = 0
 rect_scale = Vector2( 1.9, 1.9 )
-text = "v0.3 - LET ME PULL ALREADY"
+text = "v0.3 - The Big One(tm)"
 align = 2
 
 [node name="SettingsPanel" parent="debug" instance=ExtResource( 7 )]
@@ -431,7 +431,6 @@ bus = "SFX"
 
 [node name="VolumeControl" parent="." instance=ExtResource( 8 )]
 
-[connection signal="new_marker" from="." to="UI/HitError" method="new_marker"]
 [connection signal="change_indicator" from="UI/HitError" to="." method="change_indicator"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="." method="play_chart"]

@@ -79,7 +79,6 @@ run/main_scene="res://game/scenes/main_ui.tscn"
 
 [debug]
 
-gdscript/warnings/unused_class_variable=true
 gdscript/warnings/unsafe_property_access=true
 gdscript/warnings/unsafe_method_access=true
 gdscript/warnings/unsafe_cast=true
@@ -89,7 +88,6 @@ gdscript/warnings/unsafe_call_argument=true
 
 window/size/width=1440
 window/size/height=1080
-window/size/resizable=false
 window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
