@@ -7,17 +7,19 @@ var _auto := false
 var _combo := 0
 var _cur_time := 0.0
 var _inaccurate_count := 0
+var _judgement_tween := SceneTreeTween.new()
 var _late_early_simple_display := true
 var _miss_count := 0
 var _score := 0
 var _score_multiplier := 1.0
 var _skin := SkinManager.new()
 
+onready var drum_animation_tween := $DrumInteraction/DrumAnimationTween as Tween
+onready var hit_error := $UI/HitError as HitError
+onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var music := $Music as AudioStreamPlayer
 onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
 onready var timing_indicator := $BarLeft/TimingIndicator as Label
-onready var hit_error := $UI/HitError as HitError
-onready var drum_animation_tween := $DrumInteraction/DrumAnimationTween as Tween
 
 
 func _input(event: InputEvent) -> void:
@@ -288,39 +290,28 @@ func _add_score(type) -> void:
 
 	_score += int((150 if int(type) == HitObject.Score.INACCURATE else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(int(type)) else 600 if int(type) == HitObject.Score.SPINNER else 0) * _score_multiplier)
 
-	var node_path := "BarRight/HitPointOffset/Judgements/Judge"
 	match int(type):
 		HitObject.Score.ACCURATE:
 			_accurate_count += 1
 			_combo += 1
-			node_path += "Accurate"
+			_hit_notify_animation()
+			judgement.texture = _skin.accurate_judgement
 		HitObject.Score.INACCURATE:
 			_inaccurate_count += 1
 			_combo += 1
-			node_path += "Inaccurate"
+			_hit_notify_animation()
+			judgement.texture = _skin.inaccurate_judgement
 		HitObject.Score.MISS:
 			_miss_count += 1
 			_combo = 0
-			node_path += "Miss"
+			_hit_notify_animation()
+			judgement.texture = _skin.miss_judgement
 
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
 
 	($BarLeft/DrumVisual/Combo as Label).text = str(_combo)
 	($UI/Score as Label).text = "%010d" % _score
 	($UI/Accuracy as Label).text = "%2.2f" % (0.0 if hit_count == 0 else (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count)))
-
-	# hit_notify_animation function
-	if not has_node(node_path):
-		return
-
-	var obj := get_node(node_path) as CanvasItem
-
-	if not drum_animation_tween.remove(obj, "self_modulate"):
-		push_warning("Attempted to remove hit animation tween.")
-	if not drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT):
-		push_warning("Attempted to tween hit animation.")
-	if not drum_animation_tween.start():
-		push_warning("Attempted to start hit animation tween.")
 
 
 func _barline(total_cur_sv: float, time: float, next_barline: float, f: File, cur_bpm: float, equal := false) -> float:
@@ -343,6 +334,19 @@ func _find_value(section: String, key: String, current_chart_data: Dictionary) -
 		if str(line).begins_with(key):
 			return str(line).substr(key.length())
 	return ""
+
+
+func _hit_notify_animation() -> void:
+	_judgement_tween = _new_tween(_judgement_tween)
+	var _tween := _judgement_tween.tween_property(judgement, "self_modulate", Color.transparent, 0.4).from(Color.white).set_ease(Tween.EASE_OUT)
+
+
+# Stop a previous tween and return the new tween to use going forward.
+func _new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
+	if old_tween.is_valid():
+		old_tween.kill()
+
+	return create_tween()
 
 
 func _reset() -> void:
