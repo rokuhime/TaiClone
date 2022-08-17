@@ -9,4 +9,4 @@ func change_properties(new_timing: float, new_speed: float) -> void:
 
 # See `HitObject`.
 func skin(new_skin: SkinManager) -> void:
-	($ColorRect as CanvasItem).self_modulate = new_skin.BARLINE_COLOUR
+	($ColorRect as CanvasItem).self_modulate = new_skin.barline_color

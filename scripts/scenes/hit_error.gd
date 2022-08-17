@@ -26,11 +26,11 @@ func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 
 	match type:
 		HitObject.Score.ACCURATE:
-			marker.modulate = skin.ACCURATE_COLOUR
+			marker.modulate = skin.accurate_color
 		HitObject.Score.INACCURATE:
-			marker.modulate = skin.INACCURATE_COLOUR
+			marker.modulate = skin.inaccurate_color
 		HitObject.Score.MISS:
-			marker.modulate = skin.MISS_COLOUR
+			marker.modulate = skin.miss_color
 		_:
 			push_warning("Unknown marker type.")
 			return
@@ -48,7 +48,7 @@ func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 			marker.self_modulate = Color(1, 1, 1, 1 - i / 25.0)
 		else:
 			marker.queue_free()
-		if marker.modulate == skin.MISS_COLOUR:
+		if marker.modulate == skin.miss_color:
 			misses += 1
 		else:
 			avg += marker.anchor_left

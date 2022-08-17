@@ -48,5 +48,5 @@ func miss_check(hit_time: float) -> int:
 
 # See `HitObject`.
 func skin(new_skin: SkinManager) -> void:
-	($Scale/Head as CanvasItem).self_modulate = new_skin.ROLL_COLOUR
-	body.modulate = new_skin.ROLL_COLOUR
+	($Scale/Head as CanvasItem).self_modulate = new_skin.roll_color
+	body.modulate = new_skin.roll_color

@@ -54,4 +54,4 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 # See `HitObject`.
 func skin(new_skin: SkinManager) -> void:
-	($Sprite as CanvasItem).self_modulate = new_skin.KAT_COLOUR if _is_kat else new_skin.DON_COLOUR
+	($Sprite as CanvasItem).self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
