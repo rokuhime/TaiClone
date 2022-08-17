@@ -1,7 +1,7 @@
 class_name Note
 extends HitObject
 
-# Whether or not this `Note` is a kat or a don.
+# Whether or not this `Note` is a don or kat.
 var _is_kat := false
 
 
@@ -16,7 +16,7 @@ func hit(inputs: Array, hit_time: float) -> Array:
 	if state == int(State.FINISHED):
 		inputs.append([int(Score.FINISHED)])
 
-	# Time since the start of this `Note`'s hit window. A perfect hit has the value of `HitError.inacc_timing`.
+	# The time since the start of this `Note`'s hit window. A perfect hit has the value of `HitError.inacc_timing`.
 	var hit_timing := hit_time - timing
 
 	if state != int(State.ACTIVE) or hit_timing < 0:

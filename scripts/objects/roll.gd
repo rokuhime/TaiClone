@@ -1,29 +1,23 @@
 class_name Roll
 extends HitObject
 
-# Comment
+# The slider velocity of the chart when the `Roll` starts. Used to determine the position and number of hits required.
 var _cur_sv := 0.0
 
-# Comment
+# The distance between ticks in this `Roll`.
 var _tick_distance := 0.0
 
-# Comment
+# The number of ticks in this `Roll`.
 var _total_ticks := 0
 
-# Comment
 onready var body := $Scale/Body as Control
-
-# Comment
 onready var tick_container := $TickContainer
 
 
 func _ready() -> void:
 	body.rect_size.x = speed * length
-
-	# Comment
 	for tick_idx in range(_total_ticks):
-
-		# Comment
+		# The tick object to spawn.
 		var new_tick := $Tick.duplicate() as TextureRect
 
 		tick_container.add_child(new_tick)

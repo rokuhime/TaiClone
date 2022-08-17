@@ -2,7 +2,7 @@ class_name HitObject
 extends KinematicBody2D
 
 # The possible scores of a `HitObject`:
-# 0: It is too early for this `HitObject` to be hit. Does not affect score or accuracy. Applies to all `HitObject`s.
+# 0: It is too early to hit this `HitObject`. Does not affect score or accuracy. Applies to all `HitObject`s.
 # 1 (ACCURATE): 300 points and 100% accuracy. Applies to all `HitObject`s.
 # 2 (INACCURATE): 150 points and 50% accuracy. Applies to all `HitObject`s.
 # 3 (MISS): 0 points and 0% accuracy. Applies to all `HitObject`s.
@@ -16,10 +16,10 @@ enum Score {ACCURATE = 1, INACCURATE, MISS, FINISHER, ROLL, SPINNER, FINISHED}
 # 0: This `HitObject`'s properties can be changed.
 # 1 (READY): This `HitObject` has been loaded into the scene. Its properties can no longer be changed.
 # 2 (ACTIVE): This `HitObject` has been activated and can receive `hit` and `miss_check` calls.
-# 3 (FINISHED): This `HitObject` has been fully hit or missed. It will be disposed once animations finish.
+# 3 (FINISHED): This `HitObject` has been fully hit or missed. It will be disposed of once all animations finish.
 enum State {READY = 1, ACTIVE, FINISHED}
 
-# The length of this `HitObject`. Does not apply to `BarLine`s and `Note`s.
+# The length of this `HitObject`. This does not apply to `BarLine`s and `Note`s.
 var length := 0.0
 
 # The slider velocity of this `HitObject`. Applies to all `HitObject`s.
@@ -37,7 +37,6 @@ var _finisher := false
 
 func _ready() -> void:
 	if _finisher:
-		# Scale the `HitObject` to the finisher size.
 		(get_child(0) as Control).rect_scale = Vector2(0.9, 0.9)
 
 	state = int(State.READY)
@@ -75,7 +74,7 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 	timing = new_timing
 
 
-# Check if this `HitObject` has been missed. Can be implemented by child classes to extend functionality.
+# Check if this `HitObject` has been missed. It can be implemented by child classes to extend functionality.
 # hit_time (float): The end of this `HitObject`'s hit window.
 # return (String): The score to add.
 func miss_check(hit_time: float) -> int:
