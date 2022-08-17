@@ -49,7 +49,7 @@ func deactivate(_object := null, _key := "") -> void:
 
 func hit(inputs: Array, hit_time: float) -> Array:
 	if state == int(State.FINISHED):
-		inputs.append("finished")
+		inputs.append(Score.FINISHED)
 	if state != int(State.ACTIVE) or hit_time < timing:
 		return inputs
 
@@ -73,13 +73,13 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 		# hit_success function
 		_cur_hit_count += 1
-		inputs.append("spinner")
+		inputs.append(Score.SPINNER)
 		if _cur_hit_count == _needed_hits:
 			_spinner_finished()
-			inputs.append("accurate")
+			inputs.append(Score.ACCURATE)
 			break
-	if not inputs.has("spinner"):
-		inputs.append("finished")
+	if not inputs.has(Score.SPINNER):
+		inputs.append(Score.FINISHED)
 		return inputs
 
 	_count_text()
@@ -93,13 +93,13 @@ func hit(inputs: Array, hit_time: float) -> Array:
 	return inputs
 
 
-func miss_check(hit_time: float) -> String:
+func miss_check(hit_time: float) -> int:
 	if state == int(State.FINISHED):
-		return "finished"
+		return Score.FINISHED
 	if hit_time - length > timing:
 		_spinner_finished()
-		return "inaccurate" if _needed_hits / 2.0 <= _cur_hit_count else "miss"
-	return ""
+		return Score.INACCURATE if _needed_hits / 2.0 <= _cur_hit_count else Score.MISS
+	return 0
 
 
 func _count_text() -> void:

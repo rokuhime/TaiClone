@@ -55,13 +55,13 @@ func _input(event: InputEvent) -> void:
 		if inputs == new_inputs:
 			break
 		while true:
-			var score := str(new_inputs.pop_back())
-			if score == "finished":
+			var score = new_inputs.pop_back()
+			if int(score) == HitObject.Score.FINISHED:
 				break
 			_add_score(score)
-			if score == "miss":
+			if int(score) == HitObject.Score.MISS:
 				return
-			if not new_inputs.has("spinner"):
+			if not new_inputs.has(HitObject.Score.SPINNER):
 				break
 		inputs = new_inputs
 		if inputs.empty():
@@ -80,15 +80,15 @@ func _process(delta: float) -> void:
 		var note = obj_container.get_child(i)
 		if not note is HitObject:
 			continue
-		var score := str(note.miss_check(_cur_time - (hit_error.inacc_timing if note is Note else 0.0)))
+		var score := int(note.miss_check(_cur_time - (hit_error.inacc_timing if note is Note else 0.0)))
 		if note is BarLine or note is SpinnerWarn:
 			continue
 		if not score:
 			break
-		if score == "finished":
+		if score == HitObject.Score.FINISHED:
 			continue
 		_add_score(score)
-		if score == "miss":
+		if score == HitObject.Score.MISS:
 			emit_signal("new_marker", score, hit_error.inacc_timing, _skin)
 
 
@@ -282,24 +282,28 @@ func play_chart() -> void:
 		music.play()
 
 
-func _add_score(type: String) -> void:
-	if type.is_valid_float():
+func _add_score(type) -> void:
+	if type is float:
 		var timing := float(type) - hit_error.inacc_timing
-		type = "accurate" if timing < hit_error.acc_timing else "inaccurate" if timing < hit_error.inacc_timing else "miss"
+		type = HitObject.Score.ACCURATE if timing < hit_error.acc_timing else HitObject.Score.INACCURATE if timing < hit_error.inacc_timing else HitObject.Score.MISS
 		emit_signal("new_marker", type, timing, _skin)
 
-	_score += int((150 if type == "inaccurate" else 300 if ["accurate", "finisher", "roll"].has(type) else 600 if type == "spinner" else 0) * _score_multiplier)
+	_score += int((150 if int(type) == HitObject.Score.INACCURATE else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(int(type)) else 600 if int(type) == HitObject.Score.SPINNER else 0) * _score_multiplier)
 
-	match type:
-		"accurate":
+	var node_path := "BarRight/HitPointOffset/Judgements/Judge"
+	match int(type):
+		HitObject.Score.ACCURATE:
 			_accurate_count += 1
 			_combo += 1
-		"inaccurate":
+			node_path += "Accurate"
+		HitObject.Score.INACCURATE:
 			_inaccurate_count += 1
 			_combo += 1
-		"miss":
+			node_path += "Inaccurate"
+		HitObject.Score.MISS:
 			_miss_count += 1
 			_combo = 0
+			node_path += "Miss"
 
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
 
@@ -308,11 +312,10 @@ func _add_score(type: String) -> void:
 	($UI/Accuracy as Label).text = "%2.2f" % (0.0 if hit_count == 0 else (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count)))
 
 	# hit_notify_animation function
-	type = "BarRight/HitPointOffset/Judgements/Judge" + type.capitalize()
-	if not has_node(type):
+	if not has_node(node_path):
 		return
 
-	var obj := get_node(type) as CanvasItem
+	var obj := get_node(node_path) as CanvasItem
 
 	if not drum_animation_tween.remove(obj, "self_modulate"):
 		push_warning("Attempted to remove hit animation tween.")
@@ -352,7 +355,7 @@ func _reset() -> void:
 	_combo = 0
 	_score = 0
 	_score_multiplier = 1
-	_add_score("")
+	_add_score(0)
 
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if music.playing else "activate")
 	_cur_time = ($debug/SettingsPanel as SettingsPanel).global_offset

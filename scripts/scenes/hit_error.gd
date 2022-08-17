@@ -18,18 +18,18 @@ func hit_error_toggled(new_visible: bool) -> void:
 	visible = new_visible
 
 
-func new_marker(type: String, timing: float, skin: SkinManager) -> void:
+func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 	var hit_points := $HitPoints as Control
 	var marker := $MiddleMarker.duplicate() as ColorRect
 	hit_points.add_child(marker)
 	hit_points.move_child(marker, 1)
 
 	match type:
-		"accurate":
+		HitObject.Score.ACCURATE:
 			marker.modulate = skin.ACCURATE_COLOUR
-		"inaccurate":
+		HitObject.Score.INACCURATE:
 			marker.modulate = skin.INACCURATE_COLOUR
-		"miss":
+		HitObject.Score.MISS:
 			marker.modulate = skin.MISS_COLOUR
 		_:
 			push_warning("Unknown marker type.")
@@ -60,5 +60,5 @@ func new_marker(type: String, timing: float, skin: SkinManager) -> void:
 	avg_hit.anchor_right = anchor
 
 
-	if type == "inaccurate":
+	if type == HitObject.Score.INACCURATE:
 		emit_signal("change_indicator", timing)

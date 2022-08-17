@@ -12,7 +12,7 @@ func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, ne
 
 func hit(inputs: Array, hit_time: float) -> Array:
 	if state == int(State.FINISHED):
-		inputs.append("finished")
+		inputs.append(Score.FINISHED)
 	if state != int(State.ACTIVE):
 		return inputs
 	var hit_timing := hit_time - timing

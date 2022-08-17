@@ -10,9 +10,9 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 		_bpm = new_bpm
 
 
-func miss_check(hit_time: float) -> String:
+func miss_check(hit_time: float) -> int:
 	if state == int(State.FINISHED):
-		return "finished"
+		return Score.FINISHED
 	if hit_time > timing:
 		state = int(State.FINISHED)
 
@@ -24,4 +24,4 @@ func miss_check(hit_time: float) -> String:
 
 		# make self deactive (duh!)
 		queue_free()
-	return ""
+	return 0

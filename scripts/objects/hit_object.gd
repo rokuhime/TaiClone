@@ -1,7 +1,18 @@
 class_name HitObject
 extends KinematicBody2D
 
-# The possible states of a `HitObject`.
+# The possible scores of a `HitObject`:
+# 0: It is too early for this `HitObject` to be hit. Does not affect score or accuracy. Applies to all `HitObject`s.
+# 1 (ACCURATE): 300 points and 100% accuracy. Applies to all `HitObject`s.
+# 2 (INACCURATE): 150 points and 50% accuracy. Applies to all `HitObject`s.
+# 3 (MISS): 0 points and 0% accuracy. Applies to all `HitObject`s.
+# 4 (FINISHER): 300 additional points. Does not affect accuracy. Only applies to `Note`s.
+# 5 (ROLL): 300 points. Does not affect accuracy. Only applies to `Roll`s.
+# 6 (SPINNER): 600 points. Does not affect accuracy. Only applies to `Spinner`s.
+# 7 (FINISHED): This `HitObject` is in the FINISHED `State`. Does not affect score or accuracy. Applies to all `HitObject`s.
+enum Score {ACCURATE = 1, INACCURATE, MISS, FINISHER, ROLL, SPINNER, FINISHED}
+
+# The possible states of a `HitObject`:
 # 0: This `HitObject`'s properties can be changed.
 # 1 (READY): This `HitObject` has been loaded into the scene. Its properties can no longer be changed.
 # 2 (ACTIVE): This `HitObject` has been activated and can receive `hit` and `miss_check` calls.
@@ -65,15 +76,15 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 # Check if this `HitObject` has been missed. Can be implemented by child classes to extend functionality.
 # hit_time (float): The end of this `HitObject`'s hit window.
 # return (String): The score to add.
-func miss_check(hit_time: float) -> String:
+func miss_check(hit_time: float) -> int:
 	if state == int(State.FINISHED):
-		return "finished"
+		return Score.FINISHED
 
 	if hit_time > timing:
 		queue_free()
-		return "miss"
+		return Score.MISS
 
-	return ""
+	return 0
 
 
 # Apply a skin to this `HitObject`. Intended to be implemented by child classes.
