@@ -231,7 +231,7 @@ func load_func() -> void:
 				var finisher := bool(1 << 2 & int(note_array[4]))
 
 				if 1 << 1 & int(note_array[3]): # roll
-					var length := float(note_array[7]) * int(note_array[6]) * 600 / total_cur_sv
+					var length := float(note_array[7]) * int(note_array[6]) * 1.8 / total_cur_sv
 
 					var note_object := preload("res://game/objects/roll_object.tscn").instance() as Roll
 					note_object.change_properties(time, total_cur_sv, length, finisher, cur_bpm)

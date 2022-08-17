@@ -45,14 +45,15 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if state == int(State.ACTIVE):
-		# The distance the `HitObject` moved. Temporarily multiplied by 1.9 due to object scaling.
-		var _vel := move_and_slide(Vector2(-speed * 1.9, 0))
+		# The distance the `HitObject` moved.
+		var _vel := move_and_slide(Vector2(-speed, 0))
 
 
 # Enable motion and `hit` and `miss_check` calls on this `HitObject`.
 func activate() -> void:
 	assert(state == int(State.READY), "Attempted to activate hitobject.")
-	position.x = speed * timing
+	# TODO: Remove 1.9 scaling
+	position.x = speed * timing / 1.9
 	state = int(State.ACTIVE)
 
 
@@ -69,7 +70,8 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 	assert(not state, "Attempted to change hitobject properties after loaded.")
 	_finisher = new_finisher
 	length = new_length
-	speed = new_speed
+	# TODO: Remove 1.9 scaling
+	speed = new_speed * 1.9
 	timing = new_timing
 
 
