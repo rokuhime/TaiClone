@@ -43,12 +43,13 @@ func deactivate(_object := null, _key := "") -> void:
 
 func hit(inputs: Array, hit_time: float) -> Array:
 	if state == int(State.FINISHED):
-		inputs.append(int(Score.FINISHED))
+		inputs.append([int(Score.FINISHED)])
 	if state != int(State.ACTIVE) or hit_time < timing:
 		return inputs
 
 	if not _cur_hit_count:
 		_first_hit_is_kat = inputs.has("LeftKat") or inputs.has("RightKat")
+	var scores := []
 	while true:
 		if _cur_hit_count % 2 != int(_first_hit_is_kat):
 			if inputs.has("LeftKat"):
@@ -67,19 +68,21 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 		# hit_success function
 		_cur_hit_count += 1
-		inputs.append(int(Score.SPINNER))
+		scores.append(int(Score.SPINNER))
 		if _cur_hit_count == _needed_hits:
 			_spinner_finished()
-			inputs.append(int(Score.ACCURATE))
+			scores.append(int(Score.ACCURATE))
 			break
-	if not inputs.has(Score.SPINNER):
-		inputs.append(int(Score.FINISHED))
+	if scores.empty():
+		inputs.append([int(Score.FINISHED)])
 		return inputs
 
 	_count_text()
 
 	_speed_tween = _new_tween(_speed_tween)
 	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1).set_trans(Tween.TRANS_CIRC)
+
+	inputs.append(scores)
 	return inputs
 
 

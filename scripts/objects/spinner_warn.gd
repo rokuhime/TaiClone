@@ -21,6 +21,7 @@ func miss_check(hit_time: float) -> int:
 
 		# The `Spinner` object to spawn.
 		var spinner := preload("res://game/objects/spinner_object.tscn").instance() as Spinner
+
 		spinner.change_properties(timing, length, int(length * 960 / _bpm))
 		get_parent().add_child(spinner)
 		# TODO Check end time for correct index.

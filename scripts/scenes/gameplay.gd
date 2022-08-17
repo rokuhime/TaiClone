@@ -54,15 +54,13 @@ func _input(event: InputEvent) -> void:
 		var new_inputs: Array = note.hit(inputs.duplicate(), _cur_time + (hit_error.inacc_timing if note is Note else 0.0))
 		if inputs == new_inputs:
 			break
-		while true:
-			var score = new_inputs.pop_back()
-			if int(score) == HitObject.Score.FINISHED:
-				break
+		var scores: Array = new_inputs.pop_back() # UNSAFE Variant
+		if scores == [HitObject.Score.FINISHED]:
+			break
+		for score in scores:
 			_add_score(score)
 			if int(score) == HitObject.Score.MISS:
 				return
-			if not new_inputs.has(HitObject.Score.SPINNER):
-				break
 		inputs = new_inputs
 		if inputs.empty():
 			break

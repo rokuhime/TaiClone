@@ -14,10 +14,11 @@ func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, ne
 # See `HitObject`.
 func hit(inputs: Array, hit_time: float) -> Array:
 	if state == int(State.FINISHED):
-		inputs.append(int(Score.FINISHED))
+		inputs.append([int(Score.FINISHED)])
 
 	# Time since the start of this `Note`'s hit window. A perfect hit has the value of `HitError.inacc_timing`.
 	var hit_timing := hit_time - timing
+
 	if state != int(State.ACTIVE) or hit_timing < 0:
 		return inputs
 
@@ -26,26 +27,26 @@ func hit(inputs: Array, hit_time: float) -> Array:
 	if _is_kat:
 		if inputs.has("LeftKat"):
 			inputs.remove(inputs.find("LeftKat"))
-			inputs.append(hit_timing)
+			inputs.append([hit_timing])
 
 		elif inputs.has("RightKat"):
 			inputs.remove(inputs.find("RightKat"))
-			inputs.append(hit_timing)
+			inputs.append([hit_timing])
 
 		else:
-			inputs.append(int(Score.MISS))
+			inputs.append([int(Score.MISS)])
 
 	else:
 		if inputs.has("LeftDon"):
 			inputs.remove(inputs.find("LeftDon"))
-			inputs.append(hit_timing)
+			inputs.append([hit_timing])
 
 		elif inputs.has("RightDon"):
 			inputs.remove(inputs.find("RightDon"))
-			inputs.append(hit_timing)
+			inputs.append([hit_timing])
 
 		else:
-			inputs.append(int(Score.MISS))
+			inputs.append([int(Score.MISS)])
 
 	queue_free()
 	return inputs
