@@ -1,9 +1,19 @@
 extends CanvasItem
 
+const PROGRESS_TWEENS := []
+const VOL_TWEENS := []
+
 var _cur_changing := 0
+var _self_tween := SceneTreeTween.new()
 
 onready var timer := get_tree().create_timer(0)
-onready var tween := $VolumeIncreaseTween as Tween
+onready var vols := [$Bars/Master, $Bars/Specifics/Music, $Bars/Specifics/SFX]
+
+
+func _ready() -> void:
+	for _i in range(vols.size()):
+		PROGRESS_TWEENS.append(SceneTreeTween.new())
+		VOL_TWEENS.append(SceneTreeTween.new())
 
 
 func _input(event: InputEvent) -> void:
@@ -34,41 +44,34 @@ func _input(event: InputEvent) -> void:
 func change_channel(channel: int, needs_visible := true) -> void:
 	if needs_visible and not modulate.a:
 		return
-	_cur_changing = channel % 3
+	_cur_changing = channel % vols.size()
 
-	for i in range(3):
+	for i in range(vols.size()):
 		var colour := Color.white if i == _cur_changing else Color(1, 1, 1, 0.5)
-		var vol := _vol_view(i)
+		var vol: CanvasItem = vols[i] # UNSAFE Variant
 
 		if vol.modulate == colour or not modulate.a:
 			vol.modulate = colour
 			continue
-		if not tween.remove(vol, "modulate"):
-			push_warning("Attempted to remove volume fade tween.")
-		if not tween.interpolate_property(vol, "modulate", null, colour, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
-			push_warning("Attempted to tween volume fade.")
-		if not tween.start():
-			push_warning("Attempted to start volume fade tween.")
+		var tween := _new_tween(VOL_TWEENS[i])
+		var _tween = tween.tween_property(vol, "modulate", colour, 0.2)
+		VOL_TWEENS[i] = tween # UNSAFE ArrayItem
 
 	# appearance_timeout function
 	if modulate.a < 1:
-		if not tween.remove(self, "modulate"):
-			push_warning("Attempted to remove volume control fade tween.")
-		if not tween.interpolate_property(self, "modulate", null, Color.white, 0.25, Tween.TRANS_QUART, Tween.EASE_OUT):
-			push_warning("Attempted to tween volume control fade in.")
-		if not tween.start():
-			push_warning("Attempted to start volume control fade in tween.")
+		_self_tween = _new_tween(_self_tween)
+		var _tween := _self_tween.tween_property(self, "modulate", Color.white, 0.25)
 
 	timer = get_tree().create_timer(2)
 	if timer.connect("timeout", self, "timeout"):
-		push_warning("Attempted to connect timer timeout.")
+		push_warning("Attempted to connect Timer timeout.")
 
 
 func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 	AudioServer.set_bus_volume_db(channel, linear2db(amount))
 
 	amount = round(amount * 100)
-	var vol := _vol_view(channel)
+	var vol: CanvasItem = vols[channel] # UNSAFE Variant
 	(vol.get_node("Percentage") as Label).text = str(amount)
 
 	var progress := vol.get_node("TextureProgress") as TextureProgress
@@ -76,23 +79,16 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 		progress.value = amount
 		return
 
-	if not tween.remove(progress, "value"):
-		push_warning("Attempted to remove volume progress tween.")
-	if not tween.interpolate_property(progress, "value", null, amount, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT):
-		push_warning("Attempted to tween volume progress.")
-	if not tween.start():
-		push_warning("Attempted to start volume progress tween.")
+	var tween: SceneTreeTween = _new_tween(PROGRESS_TWEENS[channel]) # UNSAFE Variant
+	var _tween = tween.tween_property(progress, "value", amount, 0.2)
+	PROGRESS_TWEENS[channel] = tween # UNSAFE ArrayItem
 
 
 func timeout() -> void:
-	if timer.time_left > 0:
-		return
-	if not tween.remove(self, "modulate"):
-		push_warning("Attempted to remove volume control fade out tween.")
-	if not tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 1, Tween.TRANS_QUART, Tween.EASE_OUT):
-		push_warning("Attempted to tween volume control fade out.")
-	if not tween.start():
-		push_warning("Attempted to start volume control fade out tween.")
+	if timer.time_left <= 0:
+		_self_tween = _new_tween(_self_tween)
+		if _self_tween.tween_property(self, "modulate", Color.transparent, 1).connect("finished", self, "hide"):
+			push_warning("Attempted to connect PropertyTweener finish.")
 
 
 func _change_volume(amount: float) -> void:
@@ -107,11 +103,9 @@ func _change_volume(amount: float) -> void:
 	change_sound.play()
 
 
-func _vol_view(channel: int) -> CanvasItem:
-	match channel:
-		1:
-			return $Bars/Specifics/Music as CanvasItem
-		2:
-			return $Bars/Specifics/SFX as CanvasItem
-		_:
-			return $Bars/Master as CanvasItem
+# Stop a previous tween and return the new tween to use going forward.
+func _new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
+	if old_tween.is_valid():
+		old_tween.kill()
+
+	return create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)

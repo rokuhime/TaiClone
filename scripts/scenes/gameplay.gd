@@ -6,6 +6,7 @@ var _accurate_count := 0
 var _auto := false
 var _combo := 0
 var _cur_time := 0.0
+var _drum_animation_tweens := [SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new()]
 var _inaccurate_count := 0
 var _judgement_tween := SceneTreeTween.new()
 var _late_early_simple_display := true
@@ -13,8 +14,8 @@ var _miss_count := 0
 var _score := 0
 var _score_multiplier := 1.0
 var _skin := SkinManager.new()
+var _timing_indicator_tween := SceneTreeTween.new()
 
-onready var drum_animation_tween := $DrumInteraction/DrumAnimationTween as Tween
 onready var hit_error := $UI/HitError as HitError
 onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var music := $Music as AudioStreamPlayer
@@ -39,14 +40,12 @@ func _input(event: InputEvent) -> void:
 	# keypress_animation function
 	for input_action in inputs:
 		(get_node("DrumInteraction/%sAudio" % str(input_action)) as AudioStreamPlayer).play()
-		var obj := get_node("BarLeft/DrumVisual/" + str(input_action))
 
-		if not drum_animation_tween.remove(obj, "self_modulate"):
-			push_warning("Attempted to remove keypress animation tween.")
-		if not drum_animation_tween.interpolate_property(obj, "self_modulate", Color.white, Color.transparent, 0.2, Tween.TRANS_LINEAR, Tween.EASE_OUT):
-			push_warning("Attempted to tween keypress animation.")
-		if not drum_animation_tween.start():
-			push_warning("Attempted to start keypress animation tween.")
+		var i := 0 if str(input_action) == "LeftDon" else 1 if str(input_action) == "LeftKat" else 2 if str(input_action) == "RightDon" else 3
+
+		var tween := _new_tween(_drum_animation_tweens[i]).set_ease(Tween.EASE_OUT)
+		var _tween := tween.tween_property(get_node("BarLeft/DrumVisual/" + str(input_action)), "self_modulate", Color.transparent, 0.2).from(Color.white)
+		_drum_animation_tweens[i] = tween # UNSAFE ArrayItem
 
 	# check_input function
 	for i in range(obj_container.get_child_count()):
@@ -105,13 +104,8 @@ func change_indicator(timing: float) -> void:
 		timing_indicator.text = "EARLY" if _late_early_simple_display else num
 		timing_indicator.modulate = Color("ff5a5a")
 
-	var timing_indicator_tween := $BarLeft/TimingIndicator/Tween as Tween
-	if not timing_indicator_tween.remove(timing_indicator, "self_modulate"):
-		push_warning("Attempted to remove timing indicator tween.")
-	if not timing_indicator_tween.interpolate_property(timing_indicator, "self_modulate", Color.white, Color.transparent, 0.5, Tween.TRANS_QUART):
-		push_warning("Attempted to tween timing indicator.")
-	if not timing_indicator_tween.start():
-		push_warning("Attempted to start timing indicator tween.")
+	_timing_indicator_tween = _new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
+	var _tween := _timing_indicator_tween.tween_property(timing_indicator, "self_modulate", Color.transparent, 0.5).from(Color.white)
 
 
 func late_early_changed(new_value: int) -> void:
@@ -146,7 +140,7 @@ func load_func() -> void:
 			# load_and_process_background function
 			var folder_path := file_path.get_base_dir()
 			var events = current_chart_data["Events"]
-			var bg_file_name := str(events[events.find("//Background and Video events") + 1]) # UNSAFE ArrayItem
+			var bg_file_name: String = events[events.find("//Background and Video events") + 1] # UNSAFE Variant
 			var bg_file_path := folder_path.plus_file(bg_file_name.split(",")[2].replace("\"", ""))
 			var image := Image.new()
 			if image.load(bg_file_path):
@@ -199,10 +193,10 @@ func load_func() -> void:
 
 				# check sv
 				if not current_timing_data.empty():
-					var next_timing := float(current_timing_data[0][0]) # UNSAFE ArrayItem
+					var next_timing: float = current_timing_data[0][0] # UNSAFE Variant
 					while next_timing <= time:
 						next_barline = _barline(total_cur_sv, next_timing, next_barline, f, cur_bpm)
-						var timing: Array = current_timing_data.pop_front() # UNSAFE ArrayItem
+						var timing: Array = current_timing_data.pop_front() # UNSAFE Variant
 						if int(timing[1]):
 							cur_bpm = float(timing[2])
 							next_barline = float(timing[0])
@@ -337,8 +331,8 @@ func _find_value(section: String, key: String, current_chart_data: Dictionary) -
 
 
 func _hit_notify_animation() -> void:
-	_judgement_tween = _new_tween(_judgement_tween)
-	var _tween := _judgement_tween.tween_property(judgement, "self_modulate", Color.transparent, 0.4).from(Color.white).set_ease(Tween.EASE_OUT)
+	_judgement_tween = _new_tween(_judgement_tween).set_ease(Tween.EASE_OUT)
+	var _tween := _judgement_tween.tween_property(judgement, "self_modulate", Color.transparent, 0.4).from(Color.white)
 
 
 # Stop a previous tween and return the new tween to use going forward.

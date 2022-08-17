@@ -44,12 +44,12 @@ func _ready() -> void:
 
 	var resolutions := [["16:9 | 1920x1080", Vector2(1920, 1080)], ["16:9 | 1280x720", Vector2(1280, 720)], ["16:9 | 1024x576", Vector2(1024, 576)], [], ["4:3 | 1280x1024", Vector2(1280, 1024)], ["4:3 | 1024x768", Vector2(1024, 768)], [], ["5:4 | 1025x820", Vector2(1025, 820)]]
 	for i in resolutions.size():
-		var item: Array = resolutions[i] # UNSAFE ArrayItem
+		var item: Array = resolutions[i] # UNSAFE Variant
 		if item.empty():
 			dropdown.add_separator()
 		else:
 			dropdown.add_item(str(item[0]))
-			var item_resolution: Vector2 = item[1] # UNSAFE ArrayItem
+			var item_resolution: Vector2 = item[1] # UNSAFE Variant
 			dropdown.set_item_metadata(int(i), item_resolution)
 			if item_resolution == resolution:
 				dropdown.select(int(i))

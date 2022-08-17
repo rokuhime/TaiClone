@@ -212,8 +212,6 @@ text = "±0"
 align = 1
 valign = 1
 
-[node name="Tween" type="Tween" parent="BarLeft/TimingIndicator"]
-
 [node name="UI" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -380,8 +378,6 @@ bus = "SFX"
 [node name="FinisherKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 22 )
 bus = "SFX"
-
-[node name="DrumAnimationTween" type="Tween" parent="DrumInteraction"]
 
 [node name="VolumeControl" parent="." instance=ExtResource( 8 )]
 

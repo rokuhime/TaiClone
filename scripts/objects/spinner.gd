@@ -100,10 +100,10 @@ func hit(inputs: Array, hit_time: float) -> Array:
 		return inputs
 
 	_count_text()
-	_speed_tween = _new_tween(_speed_tween)
+	_speed_tween = _new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC)
 
 	# The `MethodTweener` that's used to tween this `Spinner`'s `_current_speed`.
-	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1).set_trans(Tween.TRANS_CIRC)
+	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
 
 	inputs.append(scores)
 	return inputs
