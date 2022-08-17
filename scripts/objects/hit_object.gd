@@ -52,7 +52,7 @@ func _process(_delta: float) -> void:
 # Enable motion and `hit` and `miss_check` calls on this `HitObject`.
 func activate() -> void:
 	assert(state == int(State.READY), "Attempted to activate hitobject.")
-	position = Vector2(speed * timing, 0)
+	position.x = speed * timing
 	state = int(State.ACTIVE)
 
 
