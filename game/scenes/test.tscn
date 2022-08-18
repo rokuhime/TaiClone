@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://temporary/comma.mp3" type="AudioStream" id=1]
+[ext_resource path="res://temporary/sanaesan.jpg" type="Texture" id=2]
+[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 286
+font_data = ExtResource( 4 )
+
+[node name="Test" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Background" type="TextureRect" parent="."]
+self_modulate = Color( 0.509804, 0.509804, 0.509804, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 7
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -225.0
+margin_bottom = 225.0
+custom_fonts/normal_font = SubResource( 1 )
+bbcode_enabled = true
+bbcode_text = "[center][rainbow freq=0.2 sat=0.6 val=1.5][wave freq=4 amp=100]my balls"
+text = "my balls"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 1 )

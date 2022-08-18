@@ -75,11 +75,10 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://game/scenes/gameplay.tscn"
+run/main_scene="res://game/scenes/main_ui.tscn"
 
 [debug]
 
-gdscript/warnings/unused_class_variable=true
 gdscript/warnings/unsafe_property_access=true
 gdscript/warnings/unsafe_method_access=true
 gdscript/warnings/unsafe_cast=true
@@ -87,9 +86,8 @@ gdscript/warnings/unsafe_call_argument=true
 
 [display]
 
-window/size/width=1920
+window/size/width=1440
 window/size/height=1080
-window/size/resizable=false
 window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
@@ -190,3 +188,7 @@ VolumePrevious={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777231,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
