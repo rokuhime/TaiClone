@@ -2,11 +2,15 @@ extends Node
 
 signal new_marker(type, timing, skin)
 
+enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
+
 var _accurate_count := 0
 var _auto := false
 var _combo := 0
 var _cur_time := 0.0
 var _drum_animation_tweens := [SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new()]
+var _f := File.new()
+var _fus := "user://debug.fus"
 var _inaccurate_count := 0
 var _judgement_tween := SceneTreeTween.new()
 var _late_early_simple_display := true
@@ -16,11 +20,17 @@ var _score_multiplier := 1.0
 var _skin := SkinManager.new()
 var _timing_indicator_tween := SceneTreeTween.new()
 
+onready var debug_text := $debug/debugtext as Label
 onready var hit_error := $UI/HitError as HitError
 onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var music := $Music as AudioStreamPlayer
 onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
 onready var timing_indicator := $BarLeft/TimingIndicator as Label
+
+
+func _ready() -> void:
+	if _f.file_exists(_fus):
+		load_func(_fus)
 
 
 func _input(event: InputEvent) -> void:
@@ -113,153 +123,178 @@ func late_early_changed(new_value: int) -> void:
 	timing_indicator.visible = new_value > 0
 
 
-func load_func() -> void:
-	var debug_text := $debug/debugtext as Label
+func load_func(file_path := "") -> void:
 	debug_text.text = "Loading... [Checking File]"
-	var file_path := ($debug/temploadchart/LineEdit as LineEdit).text.replace("\\", "/")
-	var f := File.new()
-	if not f.open(file_path, File.READ):
-		debug_text.text = "Loading... [Reading File]"
+	if file_path == "":
+		file_path = ($debug/temploadchart/LineEdit as LineEdit).text.replace("\\", "/")
+	if _f.open(file_path, File.READ):
+		_load_finish("Invalid file!")
+		return
+	debug_text.text = "Loading... [Reading File]"
 
-		# load_and_process_all function
-		# todo: make more adaptable between .osu and all file formats
-		if file_path.ends_with(".osu"):
-			# load chart file
-			var file_in_text := f.get_as_text()
-			f.close()
-			var section := ""
-			var current_chart_data := {section: []}
-			for line in file_in_text.split("\n", false):
-				var line_str := str(line).strip_edges()
-				if line_str.begins_with("[") and line_str.ends_with("]"):
-					section = line_str.substr(1, line_str.length() - 2)
-					current_chart_data[section] = [] # UNSAFE DictionaryItem
-				else:
-					current_chart_data[section].append(line_str) # UNSAFE DictionaryItem
+	var starting_bpm := -1.0
 
-			# load_and_process_background function
-			var folder_path := file_path.get_base_dir()
-			var events = current_chart_data["Events"]
-			var bg_file_name: String = events[events.find("//Background and Video events") + 1] # UNSAFE Variant
-			var bg_file_path := folder_path.plus_file(bg_file_name.split(",")[2].replace("\"", ""))
-			var image := Image.new()
-			if image.load(bg_file_path):
-				# Failed
-				push_warning("Background failed to load: %s." % bg_file_path)
+	# load_and_process_all function
+	if file_path.ends_with(".osu"):
+		# load chart file
+		var file_in_text := _f.get_as_text()
+		_f.close()
+		var section := ""
+		var current_chart_data := {section: []}
+		for line in file_in_text.split("\n", false):
+			var line_str := str(line).strip_edges()
+			if line_str.begins_with("[") and line_str.ends_with("]"):
+				section = line_str.substr(1, line_str.length() - 2)
+				current_chart_data[section] = [] # UNSAFE DictionaryItem
 			else:
-				var newtexture := ImageTexture.new()
-				newtexture.create_from_image(image, 0)
-				($Background as TextureRect).texture = newtexture
+				current_chart_data[section].append(line_str) # UNSAFE DictionaryItem
 
-			# wipe_past_chart function
-			_reset()
-
-			# load_and_process_chart function
-			var cur_bpm := -1.0
-			var next_barline := -1.0
-
-			# get timing points
-			var current_timing_data := []
-			for timing in current_chart_data["TimingPoints"]:
-				var timing_array := str(timing).split(",") # split it to array
-				var uninherited := bool(int(timing_array[6]))
-				var time := float(timing_array[0]) / 1000
-				var timing_value := (60000 if uninherited else -100) / float(timing_array[1])
-				if uninherited and cur_bpm < 0:
-					cur_bpm = timing_value
-					next_barline = time
-				# store timing points in svArr, 0 = timing 1 = type 2 = value
-				current_timing_data.append([time, int(timing_array[2]) if uninherited else 0, timing_value])
-
-			# note speed is bpm * sv
-			var map_sv_multiplier := float(_find_value("Difficulty", "SliderMultiplier:", current_chart_data))
-
-			var cur_sv := 1.0
-			var total_cur_sv := -1.0
-
-			if f.open("user://debug.fus", File.WRITE):
-				f.close()
-				debug_text.text = "Unable to create temporary .fus file."
-				return
-			f.store_line("v0.0.1")
-
-			# spawn notes
-			for note_data in current_chart_data["HitObjects"]:
-				# split up the line by commas
-				var note_array := str(note_data).split(",")
-
-				# set timing
-				var time := float(note_array[2]) / 1000
-
-				# check sv
-				if not current_timing_data.empty():
-					var next_timing: float = current_timing_data[0][0] # UNSAFE Variant
-					while next_timing <= time:
-						next_barline = _barline(total_cur_sv, next_timing, next_barline, f, cur_bpm)
-						var timing: Array = current_timing_data.pop_front() # UNSAFE Variant
-						if int(timing[1]):
-							cur_bpm = float(timing[2])
-							next_barline = float(timing[0])
-							f.store_csv_line([str(next_barline), str(cur_bpm), "0"])
-						else:
-							cur_sv = float(timing[2])
-						if current_timing_data.empty():
-							break
-						next_timing = float(current_timing_data[0][0])
-
-				# tee hee
-				total_cur_sv = cur_bpm * cur_sv * map_sv_multiplier * 3
-
-				next_barline = _barline(total_cur_sv, time, next_barline, f, cur_bpm, true)
-
-				# figure out what kind of note it is
-				# osu keeps type as an int that references bytes
-				if 1 << 3 & int(note_array[3]): # spinner
-					var length := float(note_array[5]) / 1000 - time
-					var note_object := preload("res://game/objects/spinner_warn_object.tscn").instance() as SpinnerWarn
-					note_object.change_properties(time, total_cur_sv, length, cur_bpm)
-					obj_container.add_child(note_object)
-					note_object.add_to_group("HitObjects")
-					f.store_csv_line([str(time), str(total_cur_sv), "5", str(length)])
-					continue
-
-				# finisher check
-				var finisher := bool(1 << 2 & int(note_array[4]))
-
-				if 1 << 1 & int(note_array[3]): # roll
-					var length := float(note_array[7]) * int(note_array[6]) * 1.8 / total_cur_sv
-
-					var note_object := preload("res://game/objects/roll_object.tscn").instance() as Roll
-					note_object.change_properties(time, total_cur_sv, length, finisher, cur_bpm)
-					obj_container.add_child(note_object)
-					note_object.add_to_group("HitObjects")
-					f.store_csv_line([str(time), str(total_cur_sv), "4", str(length), str(finisher)])
-					continue
-
-				# normal note
-				var note_type := int(bool(((1 << 1) + (1 << 3)) & int(note_array[4])))
-				var note_object := preload("res://game/objects/note_object.tscn").instance() as Note
-				note_object.change_properties(time, total_cur_sv, note_type, finisher)
-				obj_container.add_child(note_object)
-				note_object.add_to_group("HitObjects")
-				f.store_csv_line([str(time), str(total_cur_sv), str(note_type + 2), str(finisher)])
-			f.close()
-			get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", _skin)
-
-			# load_and_process_song function
-			# get audio file name and separate it in the file
-			# load audio file and apply to song player
-			music.stream = AudioLoader.loadfile(folder_path.plus_file(_find_value("General", "AudioFilename: ", current_chart_data)))
-
-		else:
-			f.close()
-			debug_text.text = "Invalid file!"
+		var folder_path := file_path.get_base_dir()
+		file_path = _fus
+		if _f.open(file_path, File.WRITE):
+			_load_finish("Unable to create temporary .fus file!")
 			return
+		_f.store_line("v0.0.1")
 
-		debug_text.text = "Done!"
+		# load_and_process_background function
+		var events = current_chart_data["Events"]
+		var bg_file_name: String = events[events.find("//Background and Video events") + 1] # UNSAFE Variant
+		_f.store_line(folder_path.plus_file(bg_file_name.split(",")[2].replace("\"", "")))
+
+		# load_and_process_song function
+		# get audio file name and separate it in the file
+		_f.store_line(folder_path.plus_file(_find_value("General", "AudioFilename: ", current_chart_data)))
+
+		# load_and_process_chart function
+		var next_barline := -1.0
+
+		# get timing points
+		var current_timing_data := []
+		for timing in current_chart_data["TimingPoints"]:
+			var timing_array := str(timing).split(",") # split it to array
+			var uninherited := bool(int(timing_array[6]))
+			var time := float(timing_array[0]) / 1000
+			var timing_value := (60000 if uninherited else -100) / float(timing_array[1])
+			if uninherited and starting_bpm < 0:
+				starting_bpm = timing_value
+				next_barline = time
+			# store timing points in svArr, 0 = timing 1 = type 2 = value
+			current_timing_data.append([time, int(timing_array[2]) if uninherited else 0, timing_value])
+
+		# note speed is bpm * sv
+		var map_sv_multiplier := float(_find_value("Difficulty", "SliderMultiplier:", current_chart_data))
+
+		var cur_bpm := starting_bpm
+		var cur_sv := 1.0
+		var total_cur_sv := -1.0
+
+		# spawn notes
+		for note_data in current_chart_data["HitObjects"]:
+			# split up the line by commas
+			var note_array := str(note_data).split(",")
+
+			# set timing
+			var time := float(note_array[2]) / 1000
+
+			# check sv
+			if not current_timing_data.empty():
+				var next_timing: float = current_timing_data[0][0] # UNSAFE Variant
+				while next_timing <= time:
+					next_barline = _barline(total_cur_sv, next_timing, next_barline, cur_bpm)
+					var timing: Array = current_timing_data.pop_front() # UNSAFE Variant
+					if int(timing[1]):
+						cur_bpm = float(timing[2])
+						next_barline = float(timing[0])
+						_f.store_csv_line([str(next_barline), str(cur_bpm), str(NoteType.TIMING_POINT)])
+					else:
+						cur_sv = float(timing[2])
+					if current_timing_data.empty():
+						break
+					next_timing = float(current_timing_data[0][0])
+
+			# tee hee
+			total_cur_sv = cur_bpm * cur_sv * map_sv_multiplier * 3
+
+			next_barline = _barline(total_cur_sv, time, next_barline, cur_bpm, true)
+
+			# figure out what kind of note it is
+			# osu keeps type as an int that references bytes
+			if 1 << 3 & int(note_array[3]): # spinner
+				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.SPINNER), str(float(note_array[5]) / 1000 - time)])
+				continue
+
+			# finisher check
+			var finisher := 1 << 2 & int(note_array[4])
+
+			if 1 << 1 & int(note_array[3]): # roll
+				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.ROLL), str(float(note_array[7]) * int(note_array[6]) * 1.8 / total_cur_sv), str(finisher)])
+				continue
+
+			# normal note
+			_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(note_array[4])) else NoteType.DON), str(finisher)])
+		_f.close()
+
+	if not file_path.ends_with(".fus"):
+		_load_finish("Invalid file!")
+		return
+
+	if _f.open(file_path, File.READ):
+		_load_finish("Unable to read temporary .fus file!")
+		return
+
+	if _f.get_line() != "v0.0.1":
+		_load_finish("Outdated .fus file!")
+
+	# load_and_process_background function
+	var bg_file_path := _f.get_line()
+	var image := Image.new()
+	if image.load(bg_file_path):
+		push_warning("Background failed to load: %s." % bg_file_path)
 	else:
-		f.close()
-		debug_text.text = "Invalid file!"
+		var newtexture := ImageTexture.new()
+		newtexture.create_from_image(image, 0)
+		($Background as TextureRect).texture = newtexture
+
+	# load_and_process_song function
+	# load audio file and apply to song player
+	music.stream = AudioLoader.loadfile(_f.get_line())
+
+	# wipe_past_chart function
+	_reset()
+
+	# load_and_process_chart function
+	var cur_bpm := starting_bpm
+	while true:
+		var line := _f.get_csv_line()
+		if Array(line) == [""]:
+			break
+		var note_node: Node
+		match int(line[2]):
+			NoteType.BARLINE:
+				var note_object := preload("res://game/objects/bar_line.tscn").instance() as BarLine
+				note_object.change_properties(float(line[0]), float(line[1]))
+				note_node = note_object
+			NoteType.DON, NoteType.KAT:
+				var note_object := preload("res://game/objects/note_object.tscn").instance() as Note
+				note_object.change_properties(float(line[0]), float(line[1]), int(line[2]) == NoteType.KAT, bool(int(line[3])))
+				note_node = note_object
+			NoteType.ROLL:
+				var note_object := preload("res://game/objects/roll_object.tscn").instance() as Roll
+				note_object.change_properties(float(line[0]), float(line[1]), float(line[3]), bool(int(line[4])), cur_bpm)
+				note_node = note_object
+			NoteType.SPINNER:
+				var note_object := preload("res://game/objects/spinner_warn_object.tscn").instance() as SpinnerWarn
+				note_object.change_properties(float(line[0]), float(line[1]), float(line[3]), cur_bpm)
+				note_node = note_object
+			NoteType.TIMING_POINT:
+				cur_bpm = float(line[1])
+				continue
+		obj_container.add_child(note_node)
+		if note_node != null:
+			note_node.add_to_group("HitObjects")
+
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", _skin)
+	_load_finish("Done!")
 
 
 func offset_changed(new_value: float) -> void:
@@ -269,7 +304,7 @@ func offset_changed(new_value: float) -> void:
 
 
 func play_chart() -> void:
-	_reset()
+	_reset(music.playing)
 	if music.playing:
 		music.stop()
 	else:
@@ -308,19 +343,20 @@ func _add_score(type) -> void:
 	($UI/Accuracy as Label).text = "%2.2f" % (0.0 if hit_count == 0 else (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count)))
 
 
-func _barline(total_cur_sv: float, time: float, next_barline: float, f: File, cur_bpm: float, equal := false) -> float:
+func _barline(total_cur_sv: float, time: float, next_barline: float, cur_bpm: float, equal := false) -> float:
 	while true:
 		var barline := int(next_barline * 1000) / 1000.0
 		if barline < time or (equal and barline == time):
-			var note_object := preload("res://game/objects/bar_line.tscn").instance() as BarLine
-			note_object.change_properties(barline, total_cur_sv)
-			obj_container.add_child(note_object)
-			note_object.add_to_group("HitObjects")
-			f.store_csv_line([str(barline), str(total_cur_sv), "1"])
+			_f.store_csv_line([str(barline), str(total_cur_sv), str(NoteType.BARLINE)])
 			next_barline += 240 / cur_bpm
 		else:
 			break
 	return next_barline
+
+
+func _load_finish(new_text: String) -> void:
+	_f.close()
+	debug_text.text = new_text
 
 
 func _find_value(section: String, key: String, current_chart_data: Dictionary) -> String:
@@ -343,7 +379,7 @@ func _new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
 	return create_tween()
 
 
-func _reset() -> void:
+func _reset(dispose := true) -> void:
 	_accurate_count = 0
 	_inaccurate_count = 0
 	_miss_count = 0
@@ -353,5 +389,5 @@ func _reset() -> void:
 	_score_multiplier = 1
 	_add_score(0)
 
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if music.playing else "activate")
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
 	_cur_time = ($debug/SettingsPanel as SettingsPanel).global_offset
