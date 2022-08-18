@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=3]
@@ -10,10 +10,8 @@
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://game/scenes/hit_error.tscn" type="PackedScene" id=12]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
-[ext_resource path="res://skins/test_skin/taiko-hit300.png" type="Texture" id=16]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
-[ext_resource path="res://skins/test_skin/taiko-hit100.png" type="Texture" id=21]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=23]
 [ext_resource path="res://skins/test_skin/taiko-hit0.png" type="Texture" id=24]
@@ -125,16 +123,7 @@ expand = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Judgements" type="Control" parent="BarRight/HitPointOffset"]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = 25.75
-margin_top = 26.35
-margin_right = 25.75
-margin_bottom = 26.35
-
-[node name="JudgeAccurate" type="TextureRect" parent="BarRight/HitPointOffset/Judgements"]
-self_modulate = Color( 1, 1, 1, 0 )
+[node name="Judgement" type="TextureRect" parent="BarRight/HitPointOffset"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -143,42 +132,8 @@ margin_left = -128.0
 margin_top = -128.0
 margin_right = 128.0
 margin_bottom = 128.0
-grow_horizontal = 2
-grow_vertical = 2
 rect_scale = Vector2( 0.8, 0.8 )
-texture = ExtResource( 16 )
-stretch_mode = 4
-
-[node name="JudgeInaccurate" type="TextureRect" parent="BarRight/HitPointOffset/Judgements"]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -128.0
-margin_top = -128.0
-margin_right = 128.0
-margin_bottom = 128.0
-grow_horizontal = 2
-grow_vertical = 2
-rect_scale = Vector2( 0.8, 0.8 )
-texture = ExtResource( 21 )
-stretch_mode = 4
-
-[node name="JudgeMiss" type="TextureRect" parent="BarRight/HitPointOffset/Judgements"]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -128.0
-margin_top = -128.0
-margin_right = 128.0
-margin_bottom = 128.0
-grow_horizontal = 2
-grow_vertical = 2
-rect_scale = Vector2( 0.8, 0.8 )
-texture = ExtResource( 24 )
+rect_pivot_offset = Vector2( 128, 128 )
 stretch_mode = 4
 
 [node name="BarLeft" type="TextureRect" parent="."]
@@ -257,8 +212,6 @@ custom_fonts/font = SubResource( 13 )
 text = "±0"
 align = 1
 valign = 1
-
-[node name="Tween" type="Tween" parent="BarLeft/TimingIndicator"]
 
 [node name="UI" type="Control" parent="."]
 anchor_right = 1.0
@@ -426,8 +379,6 @@ bus = "SFX"
 [node name="FinisherKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
 stream = ExtResource( 22 )
 bus = "SFX"
-
-[node name="DrumAnimationTween" type="Tween" parent="DrumInteraction"]
 
 [node name="VolumeControl" parent="." instance=ExtResource( 8 )]
 

@@ -1,121 +1,150 @@
 class_name Spinner
 extends HitObject
 
-var current_speed := 0.0
-
+# The number of hits received by this `Spinner`.
 var _cur_hit_count := 0
+
+# The current rotational speed of this `Spinner`.
+var _current_speed := 0.0
+
+# Whether or not this `Spinner`'s first hit is a don or kat.
 var _first_hit_is_kat := false
+
+# The `SceneTreeTween` used to fade this `Spinner` in and out.
+var _modulate_tween := SceneTreeTween.new()
+
+# The number of hits required for an ACCURATE `Score` for this `Spinner`.
 var _needed_hits := 0
 
-onready var tween := $Tween as Tween
+# The `SceneTreeTween` used to tween this `Spinner`'s `_current_speed`.
+var _speed_tween := SceneTreeTween.new()
 
 
 func _ready() -> void:
-	# set counter text to say how many hits are needed
 	_count_text()
 
-	# make approach circle shrink
-	var approach := $Approach as Control
-	if not tween.remove(approach, "rect_scale"):
-		push_warning("Attempted to remove spinner approach tween.")
-	if not tween.interpolate_property(approach, "rect_scale", Vector2(1, 1), Vector2(0.1, 0.1), length, Tween.TRANS_LINEAR, Tween.EASE_OUT):
-		push_warning("Attempted to tween spinner approach.")
+	# The `PropertyTweener` that's used to tween the approach circle of this `Spinner`.
+	var _approach_tween := _new_tween(SceneTreeTween.new()).tween_property($Approach as Control, "rect_scale", Vector2(0.1, 0.1), length)
 
-	# make spinner fade in
-	if not tween.remove(self, "modulate"):
-		push_warning("Attempted to remove spinner fade in tween.")
-	if not tween.interpolate_property(self, "modulate", Color.transparent, Color.white, 0.25, Tween.TRANS_EXPO, Tween.EASE_OUT):
-		push_warning("Attempted to tween spinner fade in.")
+	# The `PropertyTweener` used to fade in this `Spinner`.
+	var _tween := _tween_modulate(Color.white)
 
-	if not tween.start():
-		push_warning("Attempted to start spinner tweens.")
-	state = State.ACTIVE
+	.activate()
 
 
 func _process(_delta: float) -> void:
 	if state == int(State.ACTIVE):
-		($RotationObj as Node2D).rotation_degrees += current_speed
+		($RotationObj as Node2D).rotation_degrees += _current_speed
 
 
+# Initialize `Spinner` variables.
 func change_properties(new_timing: float, new_length: float, new_hits: int) -> void:
 	.ini(new_timing, 0, new_length)
-	if not state:
-		_needed_hits = new_hits
+	_needed_hits = new_hits
 
 
+# Tween this `Spinner`'s `_current_speed`.
+func change_speed(new_speed: float) -> void:
+	_current_speed = new_speed
+
+
+# Dispose of this `Spinner` once tweens have finished.
 func deactivate(_object := null, _key := "") -> void:
 	queue_free()
 
 
+# See `HitObject`.
 func hit(inputs: Array, hit_time: float) -> Array:
 	if state == int(State.FINISHED):
-		inputs.append("finished")
+		inputs.append([int(Score.FINISHED)])
+
 	if state != int(State.ACTIVE) or hit_time < timing:
 		return inputs
 
 	if not _cur_hit_count:
 		_first_hit_is_kat = inputs.has("LeftKat") or inputs.has("RightKat")
+
+	# The list of scores to add.
+	var scores := []
+
 	while true:
 		if _cur_hit_count % 2 != int(_first_hit_is_kat):
 			if inputs.has("LeftKat"):
 				inputs.remove(inputs.find("LeftKat"))
+
 			elif inputs.has("RightKat"):
 				inputs.remove(inputs.find("RightKat"))
+
 			else:
 				break
+
 		else:
 			if inputs.has("LeftDon"):
 				inputs.remove(inputs.find("LeftDon"))
+
 			elif inputs.has("RightDon"):
 				inputs.remove(inputs.find("RightDon"))
+
 			else:
 				break
 
-		# hit_success function
 		_cur_hit_count += 1
-		inputs.append("spinner")
+		scores.append(int(Score.SPINNER))
 		if _cur_hit_count == _needed_hits:
 			_spinner_finished()
-			inputs.append("accurate")
+			scores.append(int(Score.ACCURATE))
 			break
-	if not inputs.has("spinner"):
-		inputs.append("finished")
+
+	if scores.empty():
+		inputs.append([int(Score.FINISHED)])
 		return inputs
 
 	_count_text()
+	_speed_tween = _new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC)
 
-	if not tween.remove(self, "current_speed"):
-		push_warning("Attempted to remove spinner speed tween.")
-	if not tween.interpolate_property(self, "current_speed", 3, 0, 1, Tween.TRANS_CIRC, Tween.EASE_OUT):
-		push_warning("Attempted to tween spinner speed.")
-	if not tween.start():
-		push_warning("Attempted to start spinner speed tween.")
+	# The `MethodTweener` that's used to tween this `Spinner`'s `_current_speed`.
+	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
+
+	inputs.append(scores)
 	return inputs
 
 
-func miss_check(hit_time: float) -> String:
+# See `HitObject`.
+func miss_check(hit_time: float) -> int:
 	if state == int(State.FINISHED):
-		return "finished"
+		return Score.FINISHED
+
 	if hit_time - length > timing:
 		_spinner_finished()
-		return "inaccurate" if _needed_hits / 2.0 <= _cur_hit_count else "miss"
-	return ""
+		return Score.INACCURATE if _needed_hits / 2.0 <= _cur_hit_count else Score.MISS
+
+	return 0
 
 
+# Set text to the remaining hits required for an ACCURATE `Score` for this `Spinner`.
 func _count_text() -> void:
 	($Label as Label).text = str(_needed_hits - _cur_hit_count)
 
 
-func _spinner_finished() -> void:
-	if state == int(State.FINISHED):
-		return
-	state = int(State.FINISHED)
+# Stop a previous tween and return the new tween to use going forward.
+func _new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
+	if old_tween.is_valid():
+		old_tween.kill()
 
-	# make spinner fade out
-	if not tween.remove(self, "modulate"):
-		push_warning("Attempted to remove spinner fade out tween.")
-	if not tween.interpolate_property(self, "modulate", Color.white, Color.transparent, 0.25, Tween.TRANS_EXPO, Tween.EASE_OUT):
-		push_warning("Attempted to tween spinner fade out.")
-	var _connect := tween.connect("tween_completed", self, "deactivate")
-	if not tween.start():
-		push_warning("Attempted to start spinner fade out tween.")
+	return create_tween().set_ease(Tween.EASE_OUT)
+
+
+# Set this `Spinner` to the FINISHED `State`.
+func _spinner_finished() -> void:
+	if state != int(State.FINISHED):
+		state = int(State.FINISHED)
+
+		# The `PropertyTweener` used to fade out this `Spinner`.
+		if _tween_modulate(Color.transparent).connect("finished", self, "deactivate"):
+			push_warning("Attempted to connect PropertyTweener finished.")
+
+
+# Fade this `Spinner` in and out.
+func _tween_modulate(final_val: Color) -> PropertyTweener:
+	_modulate_tween = _new_tween(_modulate_tween).set_trans(Tween.TRANS_EXPO)
+	return _modulate_tween.tween_property(self, "modulate", final_val, 0.25)

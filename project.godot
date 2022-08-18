@@ -75,7 +75,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://game/scenes/main_ui.tscn"
+run/main_scene="res://game/scenes/gameplay.tscn"
 
 [debug]
 
