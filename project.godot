@@ -39,6 +39,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/objects/roll.gd"
 }, {
+"base": "Viewport",
+"class": "Root",
+"language": "GDScript",
+"path": "res://scripts/root.gd"
+}, {
 "base": "CanvasItem",
 "class": "SettingsPanel",
 "language": "GDScript",
@@ -58,6 +63,11 @@ _global_script_classes=[ {
 "class": "SpinnerWarn",
 "language": "GDScript",
 "path": "res://scripts/objects/spinner_warn.gd"
+}, {
+"base": "SceneTree",
+"class": "TaiClone",
+"language": "GDScript",
+"path": "res://scripts/taiclone.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -66,16 +76,19 @@ _global_script_class_icons={
 "HitObject": "",
 "Note": "",
 "Roll": "",
+"Root": "",
 "SettingsPanel": "",
 "SkinManager": "",
 "Spinner": "",
-"SpinnerWarn": ""
+"SpinnerWarn": "",
+"TaiClone": ""
 }
 
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://game/scenes/gameplay.tscn"
+run/main_scene="res://game/scenes/taiclone.tscn"
+run/main_loop_type="TaiClone"
 
 [debug]
 
@@ -87,9 +100,8 @@ gdscript/warnings/unsafe_call_argument=true
 
 [display]
 
-window/size/width=1920
+window/size/width=1440
 window/size/height=1080
-window/size/resizable=false
 window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"

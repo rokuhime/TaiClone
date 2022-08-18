@@ -8,8 +8,6 @@ signal volume_set(channel, amount)
 
 const KEYS := ["LeftDon", "LeftKat", "RightDon", "RightKat"]
 
-var global_offset := 0.0
-
 var _config_path := "user://config.ini"
 var _currently_changing := ""
 
@@ -17,6 +15,7 @@ onready var dropdown := $V/Scroll/V/Resolution/Options as OptionButton
 onready var fullscreen_toggle := $V/Scroll/V/Resolution/Fullscreen/Toggle as CheckBox
 onready var hit_error_toggle := $V/Scroll/V/ExtraDisplays/HitError/Toggle as CheckBox
 onready var late_early_drop := $V/Scroll/V/ExtraDisplays/LateEarly/Options as OptionButton
+onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
@@ -42,7 +41,7 @@ func _ready() -> void:
 	OS.window_size = resolution
 	OS.window_resizable = true
 
-	var resolutions := [["16:9 | 1920x1080", Vector2(1920, 1080)], ["16:9 | 1280x720", Vector2(1280, 720)], ["16:9 | 1024x576", Vector2(1024, 576)], [], ["4:3 | 1280x1024", Vector2(1280, 1024)], ["4:3 | 1024x768", Vector2(1024, 768)], [], ["5:4 | 1025x820", Vector2(1025, 820)]]
+	var resolutions := [["16:9 | 1920x1080", Vector2(1920, 1080)], ["16:9 | 1280x720", Vector2(1280, 720)], ["16:9 | 1024x576", Vector2(1024, 576)], [], ["4:3 | 1440x1080", Vector2(1440, 1080)], ["4:3 | 1024x768", Vector2(1024, 768)], [], ["5:4 | 1280x1024", Vector2(1280, 1024)], ["5:4 | 1025x820", Vector2(1025, 820)]]
 	for i in resolutions.size():
 		var item: Array = resolutions[i] # UNSAFE Variant
 		if item.empty():
@@ -58,8 +57,8 @@ func _ready() -> void:
 
 	call_deferred("change_offset", str(config_file.get_value("Audio", "GlobalOffset", 0)))
 	var offset_text := $V/Scroll/V/Offset/LineEdit as LineEdit
-	if global_offset:
-		offset_text.text = str(global_offset)
+	if taiclone.global_offset:
+		offset_text.text = str(taiclone.global_offset)
 	for i in range(3):
 		emit_signal("volume_set", i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
@@ -78,9 +77,9 @@ func button_pressed(type: String) -> void:
 
 # this script stinks. gonna become obsolete when i get actual good settings going w
 func change_offset(new_value: String) -> void:
-	global_offset = float(new_value) / 1000
-	print_debug("Offset set to %s." % global_offset)
-	emit_signal("offset_changed", global_offset)
+	taiclone.global_offset = float(new_value) / 1000
+	print_debug("Offset set to %s." % taiclone.global_offset)
+	emit_signal("offset_changed", taiclone.global_offset)
 
 
 func change_res(index: int) -> void:
@@ -115,7 +114,7 @@ func save_settings() -> void:
 	config_file.set_value("Display", "Fullscreen", int(fullscreen_toggle.pressed))
 
 	print_debug("Saving audio config...")
-	config_file.set_value("Audio", "GlobalOffset", global_offset)
+	config_file.set_value("Audio", "GlobalOffset", taiclone.global_offset)
 	for i in range(3):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 

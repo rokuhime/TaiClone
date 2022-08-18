@@ -3,13 +3,12 @@ extends Control
 
 signal change_indicator(timing)
 
-var acc_timing := 0.06
-var inacc_timing := 0.145
+onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
 	var accurate := $HitPoints/Inaccurate/Accurate as Control
-	var anchor := acc_timing / inacc_timing / 2
+	var anchor := taiclone.acc_timing / taiclone.inacc_timing / 2
 	accurate.anchor_left = 0.5 - anchor
 	accurate.anchor_right = 0.5 + anchor
 
@@ -35,7 +34,7 @@ func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 			push_warning("Unknown marker type.")
 			return
 
-	var anchor := 0.5 + clamp(timing / inacc_timing, -1, 1) * rect_size.x / hit_points.rect_size.x / 2
+	var anchor := 0.5 + clamp(timing / taiclone.inacc_timing, -1, 1) * rect_size.x / hit_points.rect_size.x / 2
 	marker.anchor_left = anchor
 	marker.anchor_right = anchor
 
