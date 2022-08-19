@@ -14,7 +14,6 @@
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=23]
-[ext_resource path="res://skins/test_skin/taiko-hit0.png" type="Texture" id=24]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
 [ext_resource path="res://scripts/scenes/gameplay.gd" type="Script" id=30]

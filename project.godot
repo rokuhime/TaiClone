@@ -29,10 +29,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/objects/hit_object.gd"
 }, {
+"base": "Node",
+"class": "MainUI",
+"language": "GDScript",
+"path": "res://scripts/scenes/main_ui.gd"
+}, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
 "path": "res://scripts/objects/note.gd"
+}, {
+"base": "Node",
+"class": "ResultsScreen",
+"language": "GDScript",
+"path": "res://scripts/scenes/results.gd"
 }, {
 "base": "HitObject",
 "class": "Roll",
@@ -64,7 +74,9 @@ _global_script_class_icons={
 "BarLine": "",
 "HitError": "",
 "HitObject": "",
+"MainUI": "",
 "Note": "",
+"ResultsScreen": "",
 "Roll": "",
 "SettingsPanel": "",
 "SkinManager": "",
@@ -75,7 +87,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://game/scenes/gameplay.tscn"
+run/main_scene="res://game/scenes/main_ui.tscn"
 
 [debug]
 

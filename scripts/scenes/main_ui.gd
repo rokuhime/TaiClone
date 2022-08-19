@@ -1,3 +1,4 @@
+class_name MainUI
 extends Node
 
 onready var blackout = $Blackout as Control
@@ -7,10 +8,12 @@ onready var barTop = $Bars/Top as Control
 onready var barBottom = $Bars/Bottom as Control
 onready var barTween = $Bars/Tween as Tween
 
+onready var mainmenuObj = preload("res://game/scenes/main_menu.tscn")
+onready var songselectObj = preload("res://game/scenes/song_select.tscn")
 onready var resultsObj = preload("res://game/scenes/results.tscn")
 onready var testObj = preload("res://game/scenes/test.tscn")
 
-var currentUI:String = "results"
+var currentUI:String = "gameplay"
 var optionsOpened:bool = false
 
 func changeUI(menuID):
@@ -33,6 +36,10 @@ func changeUI(menuID):
 		match menuID:
 			"results":
 				newUI = resultsObj.instance()
+			"songselect":
+				newUI = songselectObj.instance()
+			"mainmenu":
+				newUI = mainmenuObj.instance()
 			"test":
 				newUI = testObj.instance()
 				newUI.get_node("AudioStreamPlayer").play(32.092)
@@ -42,6 +49,12 @@ func backButtonPressed():
 	toggleBlackout()
 	#figure out where we need to go
 	match(currentUI):
+		"gameplay":
+			changeUI("songselect")
+		"songselect":
+			changeUI("mainmenu")
+		"results":
+			changeUI("songselect")
 		_:
 			print("back button pressed when unapplicable!")
 

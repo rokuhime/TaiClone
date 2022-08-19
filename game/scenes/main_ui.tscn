@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=1]
-[ext_resource path="res://game/scenes/results.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/scenes/gameplay.tscn" type="PackedScene" id=2]
 [ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=4]
 [ext_resource path="res://scripts/scenes/main_ui.gd" type="Script" id=5]
@@ -37,11 +37,12 @@ script = ExtResource( 5 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Results" parent="CurrentUI" instance=ExtResource( 2 )]
+[node name="Gameplay" parent="CurrentUI" instance=ExtResource( 2 )]
 
 [node name="Bars" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 
 [node name="Top" type="ColorRect" parent="Bars"]
 anchor_right = 1.0
@@ -258,6 +259,3 @@ color = Color( 0, 0, 0, 1 )
 [node name="Tween" type="Tween" parent="Blackout"]
 
 [connection signal="pressed" from="Bars/Bottom/HBoxContainer/Back" to="." method="backButtonPressed"]
-[connection signal="pressed" from="Bars/Bottom/HBoxContainer/HBoxContainer2/changevalue" to="CurrentUI/Results" method="animateMenu" binds= [ 1222333 ]]
-[connection signal="pressed" from="Bars/Bottom/HBoxContainer/HBoxContainer2/Replay" to="." method="changeUI" binds= [ "test" ]]
-[connection signal="pressed" from="Bars/Bottom/HBoxContainer/HBoxContainer2/Retry" to="." method="changeUI" binds= [ "results" ]]
