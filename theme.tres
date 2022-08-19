@@ -1,41 +1,69 @@
-[gd_resource type="Theme" load_steps=9 format=2]
+[gd_resource type="Theme" load_steps=14 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
-[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
 
 [sub_resource type="DynamicFont" id=1]
+size = 17
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 26
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=3]
 size = 28
 use_filter = true
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=4]
 size = 22
 use_filter = true
-font_data = ExtResource( 2 )
+font_data = ExtResource( 3 )
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.262745, 0.262745, 0.262745, 0.784314 )
+
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0, 0, 0, 0.607843 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.0980392, 0.0980392, 0.0980392, 1 )
+
+[sub_resource type="StyleBoxFlat" id=7]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=8]
 size = 20
 use_filter = true
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=5]
+[sub_resource type="DynamicFont" id=9]
 size = 15
 use_filter = true
-font_data = ExtResource( 2 )
+font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=6]
+[sub_resource type="DynamicFont" id=10]
 size = 286
 use_filter = true
-font_data = ExtResource( 2 )
+font_data = ExtResource( 3 )
 
 [resource]
-MasterLabel/fonts/font = SubResource( 1 )
-MasterPercentage/fonts/font = SubResource( 2 )
-ScrollContainer/styles/bg = SubResource( 3 )
-SpecificLabel/fonts/font = SubResource( 4 )
-SpecificPercentage/fonts/font = SubResource( 5 )
-TestLabel/fonts/normal_font = SubResource( 6 )
+LabelScore/fonts/font = SubResource( 1 )
+LabelUsername/fonts/font = SubResource( 2 )
+MasterLabel/fonts/font = SubResource( 3 )
+MasterPercentage/fonts/font = SubResource( 4 )
+PlayButton/styles/hover = SubResource( 5 )
+PlayButton/styles/normal = SubResource( 6 )
+PlayButtonContainer/constants/separation = -5
+PlayButtonModsContainer/constants/separation = -8
+ScrollContainer/styles/bg = SubResource( 7 )
+SpecificLabel/fonts/font = SubResource( 8 )
+SpecificPercentage/fonts/font = SubResource( 9 )
+TestLabel/fonts/normal_font = SubResource( 10 )
 VolumeContainer/constants/separation = -3
