@@ -1,3 +1,7 @@
 [gd_scene format=2]
 
-[node name="TaiClone" type="Node"]
+[node name="Background" type="TextureRect"]
+self_modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch_mode = 7
