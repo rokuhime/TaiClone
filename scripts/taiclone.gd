@@ -9,6 +9,7 @@ func _init() -> void:
 	_gameplay = preload("res://game/scenes/gameplay.tscn").instance() as Gameplay
 	if _gameplay.connect("bg_changed", self, "bg_changed"):
 		push_warning("Attempted to connect Gameplay bg_changed.")
+	(_gameplay.get_node("VolumeControl") as CanvasItem).modulate = Color.transparent
 	root.add_child(_gameplay)
 	if root.connect("size_changed", _gameplay.get_node("debug/SettingsPanel"), "save_settings", [], CONNECT_DEFERRED):
 		push_warning("Attempted to connect Root size_changed.")

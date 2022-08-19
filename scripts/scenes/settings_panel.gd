@@ -11,10 +11,10 @@ const KEYS := ["LeftDon", "LeftKat", "RightDon", "RightKat"]
 var _config_path := "user://config.ini"
 var _currently_changing := ""
 
-onready var dropdown := $Scroll/V/Resolution/Options as OptionButton
-onready var fullscreen_toggle := $Scroll/V/Resolution/Fullscreen/Toggle as CheckBox
-onready var hit_error_toggle := $Scroll/V/ExtraDisplays/HitError/Toggle as CheckBox
-onready var late_early_drop := $Scroll/V/ExtraDisplays/LateEarly/Options as OptionButton
+onready var dropdown := $V/Resolution/Options as OptionButton
+onready var fullscreen_toggle := $V/Resolution/Fullscreen/Toggle as CheckBox
+onready var hit_error_toggle := $V/ExtraDisplays/HitError/Toggle as CheckBox
+onready var late_early_drop := $V/ExtraDisplays/LateEarly/Options as OptionButton
 onready var taiclone := $"/root" as Root
 
 
@@ -56,7 +56,7 @@ func _ready() -> void:
 	toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)), false)
 
 	call_deferred("change_offset", str(config_file.get_value("Audio", "GlobalOffset", 0)), false)
-	var offset_text := $Scroll/V/Offset/LineEdit as LineEdit
+	var offset_text := $V/Offset/LineEdit as LineEdit
 	if taiclone.global_offset:
 		offset_text.text = str(taiclone.global_offset)
 	for i in range(3):
@@ -158,7 +158,7 @@ func _change_key(event: InputEvent, button: String, settings_save := true) -> vo
 
 func _change_text(button: String, pressed := false) -> void:
 	var event := _event(button)
-	var button_object := get_node("Scroll/V/Keybinds/%s/Button" % button) as Button
+	var button_object := get_node("V/Keybinds/%s/Button" % button) as Button
 	button_object.text = "..." if pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
 
 
