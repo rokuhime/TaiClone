@@ -391,3 +391,4 @@ bus = "SFX"
 [connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
 [connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
 [connection signal="volume_set" from="debug/SettingsPanel" to="VolumeControl" method="set_volume" flags=3]
+[connection signal="volume_changed" from="VolumeControl" to="debug/SettingsPanel" method="save_settings"]

@@ -1,3 +1,4 @@
+class_name Gameplay
 extends Node
 
 signal new_marker(type, timing, skin)

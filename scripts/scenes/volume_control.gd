@@ -1,5 +1,7 @@
 extends CanvasItem
 
+signal volume_changed
+
 const PROGRESS_TWEENS := []
 const VOL_TWEENS := []
 
@@ -101,6 +103,7 @@ func _change_volume(amount: float) -> void:
 	var change_sound := $ChangeSound as AudioStreamPlayer
 	change_sound.pitch_scale = channel_volume / 2 + 1
 	change_sound.play()
+	emit_signal("volume_changed")
 
 
 # Stop a previous tween and return the new tween to use going forward.
