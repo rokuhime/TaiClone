@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=14 format=2]
+[gd_resource type="Theme" load_steps=15 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
@@ -36,19 +36,31 @@ border_width_bottom = 2
 border_color = Color( 0.0980392, 0.0980392, 0.0980392, 1 )
 
 [sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.145098, 0.145098, 0.164706, 0.843137 )
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id=8]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
 
-[sub_resource type="DynamicFont" id=8]
+[sub_resource type="DynamicFont" id=9]
 size = 20
 use_filter = true
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=9]
+[sub_resource type="DynamicFont" id=10]
 size = 15
 use_filter = true
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=10]
+[sub_resource type="DynamicFont" id=11]
 size = 286
 use_filter = true
 font_data = ExtResource( 3 )
@@ -62,8 +74,9 @@ PlayButton/styles/hover = SubResource( 5 )
 PlayButton/styles/normal = SubResource( 6 )
 PlayButtonContainer/constants/separation = -5
 PlayButtonModsContainer/constants/separation = -8
-ScrollContainer/styles/bg = SubResource( 7 )
-SpecificLabel/fonts/font = SubResource( 8 )
-SpecificPercentage/fonts/font = SubResource( 9 )
-TestLabel/fonts/normal_font = SubResource( 10 )
+Scoreboard/styles/bg = SubResource( 7 )
+ScrollContainer/styles/bg = SubResource( 8 )
+SpecificLabel/fonts/font = SubResource( 9 )
+SpecificPercentage/fonts/font = SubResource( 10 )
+TestLabel/fonts/normal_font = SubResource( 11 )
 VolumeContainer/constants/separation = -3

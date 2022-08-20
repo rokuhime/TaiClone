@@ -7,6 +7,8 @@
 [node name="Play" type="Button"]
 margin_right = 378.0
 margin_bottom = 70.0
+rect_min_size = Vector2( 0, 70 )
+size_flags_horizontal = 3
 theme = ExtResource( 3 )
 theme_type_variation = "PlayButton"
 
