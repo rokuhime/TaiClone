@@ -14,11 +14,9 @@ color = Color( 0, 0, 0, 0.392157 )
 script = ExtResource( 1 )
 
 [node name="Miss" type="ColorRect" parent="."]
-modulate = Color( 0.784314, 0.784314, 0.784314, 1 )
 anchor_top = 0.325
 anchor_right = 1.0
 anchor_bottom = 0.675
-color = Color( 0.780392, 0.294118, 0.294118, 1 )
 
 [node name="HitPoints" type="Control" parent="."]
 anchor_right = 1.0
@@ -27,15 +25,12 @@ margin_left = 2.0
 margin_right = -2.0
 
 [node name="Inaccurate" type="ColorRect" parent="HitPoints"]
-modulate = Color( 0.784314, 0.784314, 0.784314, 1 )
 anchor_top = 0.325
 anchor_right = 1.0
 anchor_bottom = 0.675
-color = Color( 0.47451, 0.854902, 0.368627, 1 )
 
 [node name="Accurate" type="ColorRect" parent="HitPoints/Inaccurate"]
 anchor_bottom = 1.0
-color = Color( 0.321569, 0.65098, 1, 1 )
 
 [node name="MiddleMarker" type="ColorRect" parent="."]
 anchor_left = 0.5

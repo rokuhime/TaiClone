@@ -19,7 +19,6 @@ var _late_early_simple_display := true
 var _miss_count := 0
 var _score := 0
 var _score_multiplier := 1.0
-var _skin := SkinManager.new()
 var _timing_indicator_tween := SceneTreeTween.new()
 
 onready var debug_text := $debug/debugtext as Label
@@ -100,7 +99,7 @@ func _process(delta: float) -> void:
 			continue
 		_add_score(score)
 		if score == HitObject.Score.MISS:
-			emit_signal("new_marker", score, taiclone.inacc_timing, _skin)
+			emit_signal("new_marker", score, taiclone.inacc_timing, taiclone.skin)
 
 
 func auto_toggled(new_auto: bool) -> void:
@@ -111,10 +110,10 @@ func change_indicator(timing: float) -> void:
 	var num := str(int(timing * 1000))
 	if timing > 0:
 		timing_indicator.text = "LATE" if _late_early_simple_display else "+" + num
-		timing_indicator.modulate = Color("5a5aff")
+		timing_indicator.modulate = taiclone.skin.late_color
 	else:
 		timing_indicator.text = "EARLY" if _late_early_simple_display else num
-		timing_indicator.modulate = Color("ff5a5a")
+		timing_indicator.modulate = taiclone.skin.early_color
 
 	_timing_indicator_tween = _new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
 	var _tween := _timing_indicator_tween.tween_property(timing_indicator, "self_modulate", Color.transparent, 0.5).from(Color.white)
@@ -295,7 +294,7 @@ func load_func(file_path := "") -> void:
 		if note_node != null:
 			note_node.add_to_group("HitObjects")
 
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", _skin)
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", taiclone.skin)
 	_load_finish("Done!")
 
 
@@ -317,7 +316,7 @@ func _add_score(type) -> void:
 	if type is float:
 		var timing := float(type) - taiclone.inacc_timing
 		type = HitObject.Score.ACCURATE if timing < taiclone.acc_timing else HitObject.Score.INACCURATE if timing < taiclone.inacc_timing else HitObject.Score.MISS
-		emit_signal("new_marker", type, timing, _skin)
+		emit_signal("new_marker", type, timing, taiclone.skin)
 
 	_score += int((150 if int(type) == HitObject.Score.INACCURATE else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(int(type)) else 600 if int(type) == HitObject.Score.SPINNER else 0) * _score_multiplier)
 
@@ -326,17 +325,17 @@ func _add_score(type) -> void:
 			_accurate_count += 1
 			_combo += 1
 			_hit_notify_animation()
-			judgement.texture = _skin.accurate_judgement
+			judgement.texture = taiclone.skin.accurate_judgement
 		HitObject.Score.INACCURATE:
 			_inaccurate_count += 1
 			_combo += 1
 			_hit_notify_animation()
-			judgement.texture = _skin.inaccurate_judgement
+			judgement.texture = taiclone.skin.inaccurate_judgement
 		HitObject.Score.MISS:
 			_miss_count += 1
 			_combo = 0
 			_hit_notify_animation()
-			judgement.texture = _skin.miss_judgement
+			judgement.texture = taiclone.skin.miss_judgement
 
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
 

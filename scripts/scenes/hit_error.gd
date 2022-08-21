@@ -7,7 +7,19 @@ onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
-	var accurate := $HitPoints/Inaccurate/Accurate as Control
+	var self_modulate_color := Color("c8c8c8")
+	var miss := $Miss as ColorRect
+	miss.color = taiclone.skin.miss_color
+	miss.self_modulate = self_modulate_color
+
+	var inaccurate := $HitPoints/Inaccurate as ColorRect
+	inaccurate.color = taiclone.skin.inaccurate_color
+	inaccurate.self_modulate = self_modulate_color
+
+	var accurate := $HitPoints/Inaccurate/Accurate as ColorRect
+	accurate.color = taiclone.skin.accurate_color
+	accurate.self_modulate = self_modulate_color
+
 	var anchor := taiclone.acc_timing / taiclone.inacc_timing / 2
 	accurate.anchor_left = 0.5 - anchor
 	accurate.anchor_right = 0.5 + anchor

@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=15 format=2]
+[gd_resource type="Theme" load_steps=21 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
@@ -35,7 +35,14 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.0980392, 0.0980392, 0.0980392, 1 )
 
-[sub_resource type="StyleBoxFlat" id=7]
+[sub_resource type="DynamicFont" id=7]
+size = 25
+use_filter = true
+extra_spacing_top = -2
+extra_spacing_bottom = -1
+font_data = ExtResource( 3 )
+
+[sub_resource type="StyleBoxFlat" id=8]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.843137 )
 border_width_left = 10
 border_width_top = 10
@@ -47,20 +54,55 @@ corner_radius_top_right = 7
 corner_radius_bottom_right = 7
 corner_radius_bottom_left = 7
 
-[sub_resource type="StyleBoxFlat" id=8]
+[sub_resource type="DynamicFont" id=9]
+size = 20
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+draw_center = false
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="DynamicFont" id=11]
+size = 60
+use_filter = true
+extra_spacing_top = -24
+extra_spacing_bottom = -11
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=12]
+size = 24
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=13]
+size = 30
+use_filter = true
+extra_spacing_top = 5
+font_data = ExtResource( 3 )
+
+[sub_resource type="StyleBoxFlat" id=14]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
 
-[sub_resource type="DynamicFont" id=9]
+[sub_resource type="DynamicFont" id=15]
 size = 20
 use_filter = true
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=10]
+[sub_resource type="DynamicFont" id=16]
 size = 15
 use_filter = true
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=11]
+[sub_resource type="DynamicFont" id=17]
 size = 286
 use_filter = true
 font_data = ExtResource( 3 )
@@ -74,9 +116,18 @@ PlayButton/styles/hover = SubResource( 5 )
 PlayButton/styles/normal = SubResource( 6 )
 PlayButtonContainer/constants/separation = -5
 PlayButtonModsContainer/constants/separation = -8
-Scoreboard/styles/bg = SubResource( 7 )
-ScrollContainer/styles/bg = SubResource( 8 )
-SpecificLabel/fonts/font = SubResource( 9 )
-SpecificPercentage/fonts/font = SubResource( 10 )
-TestLabel/fonts/normal_font = SubResource( 11 )
+ResultsAmount/fonts/font = SubResource( 7 )
+ResultsContainer/styles/bg = SubResource( 8 )
+ResultsContainer/styles/panel = SubResource( 8 )
+ResultsErrorBar/fonts/font = SubResource( 9 )
+ResultsHitError/styles/panel = SubResource( 10 )
+ResultsMainLabel/fonts/font = SubResource( 11 )
+ResultsMainMax/colors/font_color = Color( 0.45098, 0.45098, 0.45098, 1 )
+ResultsMainMax/fonts/font = SubResource( 12 )
+ResultsMainText/fonts/font = SubResource( 13 )
+ResultsRightBar/constants/separation = 10
+ScrollContainer/styles/bg = SubResource( 14 )
+SpecificLabel/fonts/font = SubResource( 15 )
+SpecificPercentage/fonts/font = SubResource( 16 )
+TestLabel/fonts/normal_font = SubResource( 17 )
 VolumeContainer/constants/separation = -3
