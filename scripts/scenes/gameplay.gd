@@ -54,7 +54,7 @@ func _input(event: InputEvent) -> void:
 
 		var i := 0 if str(input_action) == "LeftDon" else 1 if str(input_action) == "LeftKat" else 2 if str(input_action) == "RightDon" else 3
 
-		var tween := _new_tween(_drum_animation_tweens[i]).set_ease(Tween.EASE_OUT)
+		var tween := Root.new_tween(_drum_animation_tweens[i], self).set_ease(Tween.EASE_OUT)
 		var _tween := tween.tween_property(get_node("BarLeft/DrumVisual/" + str(input_action)), "self_modulate", Color.transparent, 0.2).from(Color.white)
 		_drum_animation_tweens[i] = tween # UNSAFE ArrayItem
 
@@ -115,7 +115,7 @@ func change_indicator(timing: float) -> void:
 		timing_indicator.text = "EARLY" if _late_early_simple_display else num
 		timing_indicator.modulate = taiclone.skin.early_color
 
-	_timing_indicator_tween = _new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
+	_timing_indicator_tween = Root.new_tween(_timing_indicator_tween, self).set_trans(Tween.TRANS_QUART)
 	var _tween := _timing_indicator_tween.tween_property(timing_indicator, "self_modulate", Color.transparent, 0.5).from(Color.white)
 
 
@@ -368,16 +368,8 @@ func _find_value(section: String, key: String, current_chart_data: Dictionary) -
 
 
 func _hit_notify_animation() -> void:
-	_judgement_tween = _new_tween(_judgement_tween).set_ease(Tween.EASE_OUT)
+	_judgement_tween = Root.new_tween(_judgement_tween, self).set_ease(Tween.EASE_OUT)
 	var _tween := _judgement_tween.tween_property(judgement, "self_modulate", Color.transparent, 0.4).from(Color.white)
-
-
-# Stop a previous tween and return the new tween to use going forward.
-func _new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
-	if old_tween.is_valid():
-		old_tween.kill()
-
-	return create_tween()
 
 
 func _reset(dispose := true) -> void:

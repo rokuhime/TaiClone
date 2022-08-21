@@ -55,13 +55,13 @@ func change_channel(channel: int, needs_visible := true) -> void:
 		if vol.modulate == colour or not modulate.a:
 			vol.modulate = colour
 			continue
-		var tween := _new_tween(VOL_TWEENS[i])
+		var tween := Root.new_tween(VOL_TWEENS[i], self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 		var _tween = tween.tween_property(vol, "modulate", colour, 0.2)
 		VOL_TWEENS[i] = tween # UNSAFE ArrayItem
 
 	# appearance_timeout function
 	if modulate.a < 1:
-		_self_tween = _new_tween(_self_tween)
+		_self_tween = Root.new_tween(_self_tween, self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 		var _tween := _self_tween.tween_property(self, "modulate", Color.white, 0.25)
 
 	timer = get_tree().create_timer(2)
@@ -81,14 +81,14 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 		progress.value = amount
 		return
 
-	var tween: SceneTreeTween = _new_tween(PROGRESS_TWEENS[channel]) # UNSAFE Variant
+	var tween: SceneTreeTween = Root.new_tween(PROGRESS_TWEENS[channel], self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT) # UNSAFE Variant
 	var _tween = tween.tween_property(progress, "value", amount, 0.2)
 	PROGRESS_TWEENS[channel] = tween # UNSAFE ArrayItem
 
 
 func timeout() -> void:
 	if timer.time_left <= 0:
-		_self_tween = _new_tween(_self_tween)
+		_self_tween = Root.new_tween(_self_tween, self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 		if _self_tween.tween_property(self, "modulate", Color.transparent, 1).connect("finished", self, "hide"):
 			push_warning("Attempted to connect PropertyTweener finish.")
 
@@ -104,11 +104,3 @@ func _change_volume(amount: float) -> void:
 	change_sound.pitch_scale = channel_volume / 2 + 1
 	change_sound.play()
 	emit_signal("volume_changed")
-
-
-# Stop a previous tween and return the new tween to use going forward.
-func _new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
-	if old_tween.is_valid():
-		old_tween.kill()
-
-	return create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)

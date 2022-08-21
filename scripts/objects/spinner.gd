@@ -24,7 +24,7 @@ func _ready() -> void:
 	_count_text()
 
 	# The `PropertyTweener` that's used to tween the approach circle of this `Spinner`.
-	var _approach_tween := _new_tween(SceneTreeTween.new()).tween_property($Approach as Control, "rect_scale", Vector2(0.1, 0.1), length)
+	var _approach_tween := Root.new_tween(SceneTreeTween.new(), self).tween_property($Approach as Control, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
 
 	# The `PropertyTweener` used to fade in this `Spinner`.
 	var _tween := _tween_modulate(Color.white)
@@ -100,7 +100,7 @@ func hit(inputs: Array, hit_time: float) -> Array:
 		return inputs
 
 	_count_text()
-	_speed_tween = _new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC)
+	_speed_tween = Root.new_tween(_speed_tween, self).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
 
 	# The `MethodTweener` that's used to tween this `Spinner`'s `_current_speed`.
 	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
@@ -126,14 +126,6 @@ func _count_text() -> void:
 	($Label as Label).text = str(_needed_hits - _cur_hit_count)
 
 
-# Stop a previous tween and return the new tween to use going forward.
-func _new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
-	if old_tween.is_valid():
-		old_tween.kill()
-
-	return create_tween().set_ease(Tween.EASE_OUT)
-
-
 # Set this `Spinner` to the FINISHED `State`.
 func _spinner_finished() -> void:
 	if state != int(State.FINISHED):
@@ -146,5 +138,5 @@ func _spinner_finished() -> void:
 
 # Fade this `Spinner` in and out.
 func _tween_modulate(final_val: Color) -> PropertyTweener:
-	_modulate_tween = _new_tween(_modulate_tween).set_trans(Tween.TRANS_EXPO)
+	_modulate_tween = Root.new_tween(_modulate_tween, self).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	return _modulate_tween.tween_property(self, "modulate", final_val, 0.25)

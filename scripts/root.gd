@@ -12,3 +12,11 @@ func _init() -> void:
 	global_offset = 0
 	inacc_timing = 0.145
 	skin = SkinManager.new()
+
+
+# Stop a previous tween and return the new tween to use going forward.
+static func new_tween(old_tween: SceneTreeTween, node: Node) -> SceneTreeTween:
+	if old_tween.is_valid():
+		old_tween.kill()
+
+	return node.create_tween()
