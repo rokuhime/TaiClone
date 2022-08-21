@@ -4,7 +4,7 @@
 [ext_resource path="res://temporary/EZyWWDDWsAEfQMF.jpg" type="Texture" id=2]
 [ext_resource path="res://temporary/brehd.png" type="Texture" id=3]
 [ext_resource path="res://scripts/scenes/results.gd" type="Script" id=4]
-[ext_resource path="res://game/scenes/scoreboard_play.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/scoreboard_play.tscn" type="PackedScene" id=7]
 
 [node name="Results" type="Panel"]
 anchor_left = 0.5

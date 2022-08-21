@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/objects/note.gd" type="Script" id=1]
+[ext_resource path="res://scripts/gameplay/note.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/taikohitcircleoverlay-0.png" type="Texture" id=3]
 

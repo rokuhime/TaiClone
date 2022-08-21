@@ -271,19 +271,19 @@ func load_func(file_path := "") -> void:
 		var note_node: Node
 		match int(line[2]):
 			NoteType.BARLINE:
-				var note_object := preload("res://game/objects/gameplay/bar_line.tscn").instance() as BarLine
+				var note_object := preload("res://scenes/gameplay/bar_line.tscn").instance() as BarLine
 				note_object.change_properties(float(line[0]), float(line[1]))
 				note_node = note_object
 			NoteType.DON, NoteType.KAT:
-				var note_object := preload("res://game/objects/gameplay/note_object.tscn").instance() as Note
+				var note_object := preload("res://scenes/gameplay/note_object.tscn").instance() as Note
 				note_object.change_properties(float(line[0]), float(line[1]), int(line[2]) == NoteType.KAT, bool(int(line[3])))
 				note_node = note_object
 			NoteType.ROLL:
-				var note_object := preload("res://game/objects/gameplay/roll_object.tscn").instance() as Roll
+				var note_object := preload("res://scenes/gameplay/roll_object.tscn").instance() as Roll
 				note_object.change_properties(float(line[0]), float(line[1]), float(line[3]), bool(int(line[4])), cur_bpm)
 				note_node = note_object
 			NoteType.SPINNER:
-				var note_object := preload("res://game/objects/gameplay/spinner_warn_object.tscn").instance() as SpinnerWarn
+				var note_object := preload("res://scenes/gameplay/spinner_warn_object.tscn").instance() as SpinnerWarn
 				note_object.change_properties(float(line[0]), float(line[1]), float(line[3]), cur_bpm)
 				note_node = note_object
 			NoteType.TIMING_POINT:

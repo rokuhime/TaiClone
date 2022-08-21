@@ -5,10 +5,10 @@
 [ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=4]
 [ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
-[ext_resource path="res://game/scenes/settings_panel.tscn" type="PackedScene" id=7]
-[ext_resource path="res://game/scenes/volume_control.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/gameplay/settings_panel.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/gameplay/volume_control.tscn" type="PackedScene" id=8]
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
-[ext_resource path="res://game/scenes/hit_error.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=12]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
@@ -16,7 +16,7 @@
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=23]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
-[ext_resource path="res://scripts/scenes/gameplay.gd" type="Script" id=30]
+[ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=30]
 
 [sub_resource type="DynamicFont" id=1]
 size = 75
