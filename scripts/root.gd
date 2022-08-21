@@ -14,6 +14,12 @@ func _init() -> void:
 	skin = SkinManager.new()
 
 
+func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
+	var background := get_node("Background") as TextureRect
+	background.modulate = newmodulate
+	background.texture = newtexture
+
+
 # Stop a previous tween and return the new tween to use going forward.
 static func new_tween(old_tween: SceneTreeTween, node: Node) -> SceneTreeTween:
 	if old_tween.is_valid():

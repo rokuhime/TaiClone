@@ -1,7 +1,6 @@
 class_name Gameplay
 extends Node
 
-signal bg_changed(newtexture)
 signal new_marker(type, timing, skin)
 
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
@@ -254,7 +253,7 @@ func load_func(file_path := "") -> void:
 	else:
 		var newtexture := ImageTexture.new()
 		newtexture.create_from_image(image, 0)
-		emit_signal("bg_changed", newtexture)
+		taiclone.bg_changed(newtexture, Color("373737"))
 
 	# load_and_process_song function
 	# load audio file and apply to song player
