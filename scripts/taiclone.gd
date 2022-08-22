@@ -12,8 +12,9 @@ func _init() -> void:
 	if root.connect("size_changed", _gameplay.get_node("debug/SettingsPanel"), "save_settings", [], CONNECT_DEFERRED):
 		push_warning("Attempted to connect Root size_changed.")
 
-	(root.get_node("Gameplay") as CanvasItem).hide()
-	root.add_child(preload("res://scenes/main_menu.tscn").instance())
+	# Load Scene == FOR DEBUG ONLY ==
+	#(root.get_node("Gameplay") as CanvasItem).hide()
+	#root.add_child(preload("res://scenes/main_ui.tscn").instance())
 
 
 func _drop_files(files: PoolStringArray, _from_screen: int) -> void:

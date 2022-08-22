@@ -208,3 +208,7 @@ VolumePrevious={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777231,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
+
+[rendering]
+
+quality/dynamic_fonts/use_oversampling=false

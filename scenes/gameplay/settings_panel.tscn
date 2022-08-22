@@ -24,8 +24,7 @@ margin_right = 296.0
 margin_bottom = 426.0
 size_flags_horizontal = 3
 
-[node name="Buffer1" type="HSeparator" parent="V"]
-modulate = Color( 1, 1, 1, 0 )
+[node name="Buffer1" type="Control" parent="V"]
 margin_right = 296.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 0, 16 )
@@ -166,8 +165,7 @@ margin_left = 102.0
 margin_right = 126.0
 margin_bottom = 24.0
 
-[node name="Buffer3" type="HSeparator" parent="V"]
-modulate = Color( 1, 1, 1, 0 )
+[node name="Buffer3" type="Control" parent="V"]
 margin_top = 241.0
 margin_right = 296.0
 margin_bottom = 253.0
@@ -245,8 +243,7 @@ margin_bottom = 24.0
 align = 2
 placeholder_text = "0"
 
-[node name="Buffer5" type="HSeparator" parent="V"]
-modulate = Color( 1, 1, 1, 0 )
+[node name="Buffer5" type="Control" parent="V"]
 margin_top = 410.0
 margin_right = 296.0
 margin_bottom = 426.0

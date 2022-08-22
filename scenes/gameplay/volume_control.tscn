@@ -32,8 +32,7 @@ bus = "SFX"
 margin_right = 278.0
 margin_bottom = 382.0
 
-[node name="Buffer" type="HSeparator" parent="Bars"]
-modulate = Color( 1, 1, 1, 0 )
+[node name="Buffer" type="Control" parent="Bars"]
 margin_right = 278.0
 margin_bottom = 5.0
 rect_min_size = Vector2( 0, 5 )
@@ -69,6 +68,7 @@ nine_patch_stretch = true
 margin_top = 95.0
 margin_right = 137.0
 margin_bottom = 111.0
+theme_type_variation = "SpecificPercentage"
 text = "100"
 align = 1
 
@@ -76,7 +76,7 @@ align = 1
 margin_top = 115.0
 margin_right = 137.0
 margin_bottom = 138.0
-theme_type_variation = "Specific"
+theme_type_variation = "SpecificLabel"
 text = "MUSIC"
 align = 1
 
@@ -105,6 +105,7 @@ nine_patch_stretch = true
 margin_top = 95.0
 margin_right = 137.0
 margin_bottom = 111.0
+theme_type_variation = "SpecificPercentage"
 text = "100"
 align = 1
 
@@ -112,7 +113,7 @@ align = 1
 margin_top = 115.0
 margin_right = 137.0
 margin_bottom = 138.0
-theme_type_variation = "Specific"
+theme_type_variation = "SpecificLabel"
 text = "SFX"
 align = 1
 
