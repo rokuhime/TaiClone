@@ -212,3 +212,7 @@ VolumePrevious={
 [rendering]
 
 quality/dynamic_fonts/use_oversampling=false
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
