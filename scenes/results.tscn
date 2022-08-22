@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://theme.tres" type="Theme" id=1]
-[ext_resource path="res://temporary/EZyWWDDWsAEfQMF.jpg" type="Texture" id=2]
+[ext_resource path="res://scripts/scenes/results.gd" type="Script" id=1]
+[ext_resource path="res://scenes/scoreboard/scoreboard.tscn" type="PackedScene" id=2]
 [ext_resource path="res://temporary/brehd.png" type="Texture" id=3]
-[ext_resource path="res://scripts/scenes/results.gd" type="Script" id=4]
-[ext_resource path="res://scenes/scoreboard_play.tscn" type="PackedScene" id=7]
+[ext_resource path="res://temporary/EZyWWDDWsAEfQMF.jpg" type="Texture" id=4]
+[ext_resource path="res://themes/results.tres" type="Theme" id=5]
 
 [node name="Results" type="Panel"]
 anchor_left = 0.5
@@ -15,29 +15,10 @@ margin_left = -287.0
 margin_top = -395.0
 margin_right = 287.0
 margin_bottom = 395.0
-theme = ExtResource( 1 )
-theme_type_variation = "ResultsContainer"
-script = ExtResource( 4 )
+theme = ExtResource( 5 )
+script = ExtResource( 1 )
 
-[node name="Scoreboard" type="ScrollContainer" parent="."]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = -417.0
-margin_top = -325.0
-margin_right = -17.0
-margin_bottom = 325.0
-theme_type_variation = "ResultsContainer"
-
-[node name="V" type="VBoxContainer" parent="Scoreboard"]
-margin_left = 10.0
-margin_top = 10.0
-margin_right = 390.0
-margin_bottom = 640.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Play" parent="Scoreboard/V" instance=ExtResource( 7 )]
-margin_right = 380.0
+[node name="Scoreboard" parent="." instance=ExtResource( 2 )]
 
 [node name="Main" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -49,19 +30,19 @@ margin_bottom = -24.0
 margin_right = 574.0
 margin_bottom = 350.0
 rect_min_size = Vector2( 0, 350 )
-texture = ExtResource( 2 )
+texture = ExtResource( 4 )
 expand = true
 stretch_mode = 6
 
 [node name="Mods" type="HBoxContainer" parent="Main"]
-margin_left = 257.0
 margin_top = 354.0
-margin_right = 317.0
+margin_right = 574.0
 margin_bottom = 414.0
-size_flags_horizontal = 4
+alignment = 1
 
 [node name="HD" type="TextureRect" parent="Main/Mods"]
-margin_right = 60.0
+margin_left = 257.0
+margin_right = 317.0
 margin_bottom = 60.0
 rect_min_size = Vector2( 60, 60 )
 texture = ExtResource( 3 )
@@ -75,21 +56,19 @@ margin_bottom = 580.0
 size_flags_vertical = 3
 
 [node name="Text" type="Label" parent="Main/Score"]
-margin_left = 247.0
-margin_right = 327.0
+margin_right = 574.0
 margin_bottom = 49.0
-size_flags_horizontal = 4
-theme_type_variation = "ResultsMainText"
+theme_type_variation = "MainText"
 text = "Score"
+align = 1
 
 [node name="Label" type="Label" parent="Main/Score"]
-margin_left = 154.0
 margin_top = 53.0
-margin_right = 419.0
+margin_right = 574.0
 margin_bottom = 106.0
-size_flags_horizontal = 4
-theme_type_variation = "ResultsMainLabel"
+theme_type_variation = "MainLabel"
 text = "1,000,000"
+align = 1
 
 [node name="H" type="HBoxContainer" parent="Main"]
 margin_top = 584.0
@@ -103,35 +82,34 @@ margin_bottom = 162.0
 size_flags_horizontal = 3
 
 [node name="Text" type="Label" parent="Main/H/Combo"]
-margin_left = 91.0
-margin_right = 193.0
+margin_right = 285.0
 margin_bottom = 49.0
-size_flags_horizontal = 4
-theme_type_variation = "ResultsMainText"
+theme_type_variation = "MainText"
 text = "Combo"
+align = 1
 
 [node name="H" type="HBoxContainer" parent="Main/H/Combo"]
-margin_left = 44.0
 margin_top = 53.0
-margin_right = 241.0
+margin_right = 285.0
 margin_bottom = 106.0
-size_flags_horizontal = 4
+alignment = 1
 
 [node name="Label" type="Label" parent="Main/H/Combo/H"]
-margin_right = 132.0
+margin_left = 44.0
+margin_right = 176.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
-theme_type_variation = "ResultsMainLabel"
+theme_type_variation = "MainLabel"
 text = "1024"
 
 [node name="Max" type="Label" parent="Main/H/Combo/H"]
-margin_left = 136.0
+margin_left = 180.0
 margin_top = 18.0
-margin_right = 197.0
+margin_right = 241.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
 size_flags_vertical = 8
-theme_type_variation = "ResultsMainMax"
+theme_type_variation = "MainMax"
 text = "/1024"
 
 [node name="Accuracy" type="VBoxContainer" parent="Main/H"]
@@ -141,21 +119,19 @@ margin_bottom = 162.0
 size_flags_horizontal = 3
 
 [node name="Text" type="Label" parent="Main/H/Accuracy"]
-margin_left = 79.0
-margin_right = 205.0
+margin_right = 285.0
 margin_bottom = 49.0
-size_flags_horizontal = 4
-theme_type_variation = "ResultsMainText"
+theme_type_variation = "MainText"
 text = "Accuracy"
+align = 1
 
 [node name="Label" type="Label" parent="Main/H/Accuracy"]
-margin_left = 40.0
 margin_top = 53.0
-margin_right = 244.0
+margin_right = 285.0
 margin_bottom = 106.0
-size_flags_horizontal = 4
-theme_type_variation = "ResultsMainLabel"
+theme_type_variation = "MainLabel"
 text = "99.99%"
+align = 1
 
 [node name="Performance" type="VBoxContainer" parent="Main"]
 visible = false
@@ -165,53 +141,50 @@ margin_bottom = 746.0
 size_flags_vertical = 3
 
 [node name="Text" type="Label" parent="Main/Performance"]
-margin_left = 195.0
-margin_right = 378.0
+margin_right = 574.0
 margin_bottom = 49.0
-size_flags_horizontal = 4
-theme_type_variation = "ResultsMainText"
+theme_type_variation = "MainText"
 text = "Performance"
+align = 1
 
 [node name="H" type="HBoxContainer" parent="Main/Performance"]
-margin_left = 188.0
 margin_top = 53.0
-margin_right = 385.0
+margin_right = 574.0
 margin_bottom = 106.0
-size_flags_horizontal = 4
+alignment = 1
 
 [node name="Label" type="Label" parent="Main/Performance/H"]
-margin_right = 132.0
+margin_left = 188.0
+margin_right = 320.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
-theme_type_variation = "ResultsMainLabel"
+theme_type_variation = "MainLabel"
 text = "1024"
 
 [node name="Max" type="Label" parent="Main/Performance/H"]
-margin_left = 136.0
+margin_left = 324.0
 margin_top = 18.0
-margin_right = 197.0
+margin_right = 385.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
 size_flags_vertical = 8
-theme_type_variation = "ResultsMainMax"
+theme_type_variation = "MainMax"
 text = "/1024"
 
 [node name="RightBar" type="VBoxContainer" parent="."]
 anchor_left = 1.0
-anchor_top = 0.5
 anchor_right = 1.0
-anchor_bottom = 0.5
+anchor_bottom = 1.0
 margin_left = 17.0
-margin_top = -243.0
 margin_right = 417.0
-margin_bottom = 242.0
-theme_type_variation = "ResultsRightBar"
+theme_type_variation = "RightBar"
+alignment = 1
 
 [node name="HitCount" type="Panel" parent="RightBar"]
+margin_top = 152.0
 margin_right = 400.0
-margin_bottom = 300.0
+margin_bottom = 452.0
 rect_min_size = Vector2( 0, 300 )
-theme_type_variation = "ResultsContainer"
 
 [node name="GridContainer" type="GridContainer" parent="RightBar/HitCount"]
 anchor_right = 1.0
@@ -236,7 +209,6 @@ margin_top = 28.0
 margin_right = 187.0
 margin_bottom = 62.0
 size_flags_horizontal = 3
-theme_type_variation = "ResultsAmount"
 text = "2000"
 align = 1
 
@@ -245,6 +217,7 @@ margin_left = 191.0
 margin_right = 282.0
 margin_bottom = 90.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 expand = true
 stretch_mode = 6
 
@@ -254,7 +227,6 @@ margin_top = 28.0
 margin_right = 377.0
 margin_bottom = 62.0
 size_flags_horizontal = 3
-theme_type_variation = "ResultsAmount"
 text = "2000"
 align = 1
 
@@ -273,7 +245,6 @@ margin_top = 122.0
 margin_right = 187.0
 margin_bottom = 156.0
 size_flags_horizontal = 3
-theme_type_variation = "ResultsAmount"
 text = "2000"
 align = 1
 
@@ -283,6 +254,7 @@ margin_top = 94.0
 margin_right = 282.0
 margin_bottom = 184.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 expand = true
 stretch_mode = 6
 
@@ -292,7 +264,6 @@ margin_top = 122.0
 margin_right = 377.0
 margin_bottom = 156.0
 size_flags_horizontal = 3
-theme_type_variation = "ResultsAmount"
 text = "2000"
 align = 1
 
@@ -311,7 +282,6 @@ margin_top = 216.0
 margin_right = 187.0
 margin_bottom = 250.0
 size_flags_horizontal = 3
-theme_type_variation = "ResultsAmount"
 text = "2000"
 align = 1
 
@@ -322,14 +292,12 @@ margin_right = 282.0
 margin_bottom = 255.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_type_variation = "ResultsHitError"
 
 [node name="Amount" type="Label" parent="RightBar/HitCount/GridContainer/Late"]
 margin_left = 5.0
 margin_top = 5.0
 margin_right = 86.0
 margin_bottom = 39.0
-theme_type_variation = "ResultsAmount"
 text = "500"
 align = 1
 
@@ -340,23 +308,20 @@ margin_right = 377.0
 margin_bottom = 255.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_type_variation = "ResultsHitError"
 
 [node name="Amount" type="Label" parent="RightBar/HitCount/GridContainer/Early"]
 margin_left = 5.0
 margin_top = 5.0
 margin_right = 86.0
 margin_bottom = 39.0
-theme_type_variation = "ResultsAmount"
 text = "500"
 align = 1
 
 [node name="ErrorBar" type="Panel" parent="RightBar"]
-margin_top = 310.0
+margin_top = 462.0
 margin_right = 400.0
-margin_bottom = 485.0
+margin_bottom = 637.0
 rect_min_size = Vector2( 0, 175 )
-theme_type_variation = "ResultsContainer"
 
 [node name="MiddleBar" type="ColorRect" parent="RightBar/ErrorBar"]
 anchor_top = 0.5
@@ -375,7 +340,7 @@ margin_left = -56.0
 margin_top = 8.0
 margin_right = -15.0
 margin_bottom = 38.0
-theme_type_variation = "ResultsErrorBar"
+theme_type_variation = "ErrorBar"
 text = "Late"
 
 [node name="Early" type="Label" parent="RightBar/ErrorBar"]
@@ -387,5 +352,5 @@ margin_left = -62.0
 margin_top = -41.0
 margin_right = -15.0
 margin_bottom = -11.0
-theme_type_variation = "ResultsErrorBar"
+theme_type_variation = "ErrorBar"
 text = "Early"

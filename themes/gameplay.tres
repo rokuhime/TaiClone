@@ -1,0 +1,39 @@
+[gd_resource type="Theme" load_steps=8 format=2]
+
+[ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
+[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 28
+use_filter = true
+extra_spacing_top = -7
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 22
+use_filter = true
+extra_spacing_top = -7
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 20
+use_filter = true
+extra_spacing_top = -7
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 15
+use_filter = true
+extra_spacing_top = -7
+font_data = ExtResource( 2 )
+
+[resource]
+default_font = SubResource( 5 )
+MasterLabel/fonts/font = SubResource( 1 )
+MasterPercentage/fonts/font = SubResource( 2 )
+PanelContainer/styles/panel = SubResource( 3 )
+ScrollContainer/styles/bg = SubResource( 3 )
+Specific/fonts/font = SubResource( 4 )

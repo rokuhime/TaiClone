@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/gameplay/settings_panel.gd" type="Script" id=1]
-[ext_resource path="res://theme.tres" type="Theme" id=2]
+[ext_resource path="res://themes/gameplay.tres" type="Theme" id=2]
 
 [node name="SettingsPanel" type="ScrollContainer"]
 anchor_left = 1.0
@@ -25,7 +25,7 @@ margin_bottom = 426.0
 size_flags_horizontal = 3
 
 [node name="Buffer1" type="HSeparator" parent="V"]
-self_modulate = Color( 1, 1, 1, 0 )
+modulate = Color( 1, 1, 1, 0 )
 margin_right = 296.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 0, 16 )
@@ -38,11 +38,10 @@ margin_bottom = 130.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="V/Keybinds"]
-margin_left = 10.0
-margin_right = 68.0
+margin_right = 78.0
 margin_bottom = 14.0
-size_flags_horizontal = 4
 text = "Keybinds"
+align = 1
 
 [node name="LeftKat" type="HBoxContainer" parent="V/Keybinds"]
 margin_top = 18.0
@@ -128,11 +127,10 @@ margin_bottom = 237.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="V/ExtraDisplays"]
-margin_left = 18.0
-margin_right = 107.0
+margin_right = 126.0
 margin_bottom = 14.0
-size_flags_horizontal = 4
 text = "Extra Displays"
+align = 1
 
 [node name="LateEarly" type="HBoxContainer" parent="V/ExtraDisplays"]
 margin_top = 18.0
@@ -169,7 +167,7 @@ margin_right = 126.0
 margin_bottom = 24.0
 
 [node name="Buffer3" type="HSeparator" parent="V"]
-self_modulate = Color( 1, 1, 1, 0 )
+modulate = Color( 1, 1, 1, 0 )
 margin_top = 241.0
 margin_right = 296.0
 margin_bottom = 253.0
@@ -185,8 +183,8 @@ size_flags_horizontal = 4
 [node name="Label" type="Label" parent="V/Resolution"]
 margin_right = 106.0
 margin_bottom = 14.0
-size_flags_horizontal = 4
 text = "Resolution (WIP)"
+align = 1
 
 [node name="Options" type="OptionButton" parent="V/Resolution"]
 margin_left = 38.0
@@ -221,12 +219,11 @@ rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
 [node name="AudioLabel" type="Label" parent="V"]
-margin_left = 129.0
 margin_top = 364.0
-margin_right = 166.0
+margin_right = 296.0
 margin_bottom = 378.0
-size_flags_horizontal = 4
 text = "Audio"
+align = 1
 
 [node name="Offset" type="HBoxContainer" parent="V"]
 margin_left = 97.0
@@ -249,7 +246,7 @@ align = 2
 placeholder_text = "0"
 
 [node name="Buffer5" type="HSeparator" parent="V"]
-self_modulate = Color( 1, 1, 1, 0 )
+modulate = Color( 1, 1, 1, 0 )
 margin_top = 410.0
 margin_right = 296.0
 margin_bottom = 426.0

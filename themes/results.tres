@@ -1,0 +1,103 @@
+[gd_resource type="Theme" load_steps=15 format=2]
+
+[ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.262745, 0.262745, 0.262745, 0.784314 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 0.607843 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.0980392, 0.0980392, 0.0980392, 1 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 17
+use_filter = true
+extra_spacing_top = -9
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 20
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 60
+use_filter = true
+extra_spacing_top = -24
+extra_spacing_bottom = -11
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 24
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 30
+use_filter = true
+extra_spacing_top = 5
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 26
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxFlat" id=9]
+bg_color = Color( 0.145098, 0.145098, 0.164706, 0.843137 )
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id=10]
+draw_center = false
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="DynamicFont" id=11]
+size = 286
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=12]
+size = 25
+use_filter = true
+extra_spacing_top = -2
+extra_spacing_bottom = -1
+font_data = ExtResource( 3 )
+
+[resource]
+default_font = SubResource( 12 )
+Button/styles/hover = SubResource( 1 )
+Button/styles/normal = SubResource( 2 )
+ButtonContainer/constants/separation = -8
+ButtonLabel/fonts/font = SubResource( 3 )
+ErrorBar/fonts/font = SubResource( 4 )
+MainLabel/fonts/font = SubResource( 5 )
+MainMax/colors/font_color = Color( 0.45098, 0.45098, 0.45098, 1 )
+MainMax/fonts/font = SubResource( 6 )
+MainText/fonts/font = SubResource( 7 )
+Name/fonts/font = SubResource( 8 )
+Panel/styles/bg = SubResource( 9 )
+Panel/styles/panel = SubResource( 9 )
+PanelContainer/styles/panel = SubResource( 10 )
+RightBar/constants/separation = 10
+Test/fonts/normal_font = SubResource( 11 )
