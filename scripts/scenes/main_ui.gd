@@ -8,10 +8,10 @@ onready var barTop = $Bars/Top as Control
 onready var barBottom = $Bars/Bottom as Control
 onready var barTween = $Bars/Tween as Tween
 
-onready var mainmenuObj = preload("res://game/scenes/main_menu.tscn")
-onready var songselectObj = preload("res://game/scenes/song_select.tscn")
-onready var resultsObj = preload("res://game/scenes/results.tscn")
-onready var testObj = preload("res://game/scenes/test.tscn")
+onready var mainmenuObj = preload("res://scenes/main_menu.tscn")
+onready var songselectObj = preload("res://scenes/song_select.tscn")
+onready var resultsObj = preload("res://scenes/results.tscn")
+onready var testObj = preload("res://scenes/test.tscn")
 
 var currentUI:String = "gameplay"
 var optionsOpened:bool = false
