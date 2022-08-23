@@ -19,12 +19,16 @@ var _needed_hits := 0
 ## The [SceneTreeTween] used to tween this [Spinner]'s [member _current_speed].
 var _speed_tween := SceneTreeTween.new()
 
+onready var approach := $Approach as Control
+onready var label := $Label as Label
+onready var rotation_obj := $RotationObj as Node2D
+
 
 func _ready() -> void:
 	_count_text()
 
 	## The [PropertyTweener] that's used to tween the approach circle of this [Spinner].
-	var _approach_tween := Root.new_tween(SceneTreeTween.new(), self).tween_property($Approach as Control, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
+	var _approach_tween := Root.new_tween(SceneTreeTween.new(), self).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
 	var _tween := _tween_modulate(Color.white)
@@ -34,7 +38,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if state == int(State.ACTIVE):
-		($RotationObj as Node2D).rotation_degrees += _current_speed
+		rotation_obj.rotation_degrees += _current_speed
 
 
 ## Initialize [Spinner] variables.
@@ -123,7 +127,7 @@ func miss_check(hit_time: float) -> int:
 
 ## Set text to the remaining hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
 func _count_text() -> void:
-	($Label as Label).text = str(_needed_hits - _cur_hit_count)
+	label.text = str(_needed_hits - _cur_hit_count)
 
 
 ## Set this [Spinner] to the FINISHED [member HitObject.State].

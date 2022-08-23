@@ -11,6 +11,8 @@ var _tick_distance := 0.0
 var _total_ticks := 0
 
 onready var body := $Scale/Body as Control
+onready var head := $Scale/Head as CanvasItem
+onready var tick := $Tick
 onready var tick_container := $TickContainer
 
 
@@ -18,7 +20,7 @@ func _ready() -> void:
 	body.rect_size.x = speed * length
 	for tick_idx in range(_total_ticks):
 		## The tick object to spawn.
-		var new_tick := $Tick.duplicate() as TextureRect
+		var new_tick := tick.duplicate() as TextureRect
 
 		tick_container.add_child(new_tick)
 		new_tick.rect_position.x = tick_idx * _cur_sv * _tick_distance
@@ -48,5 +50,5 @@ func miss_check(hit_time: float) -> int:
 
 ## See [HitObject].
 func skin(new_skin: SkinManager) -> void:
-	($Scale/Head as CanvasItem).self_modulate = new_skin.roll_color
+	head.self_modulate = new_skin.roll_color
 	body.modulate = new_skin.roll_color

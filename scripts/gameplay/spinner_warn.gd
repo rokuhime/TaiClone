@@ -24,7 +24,7 @@ func miss_check(hit_time: float) -> int:
 
 		spinner.change_properties(timing, length, int(length * 960 / _bpm))
 		get_parent().add_child(spinner)
-		# TODO Check end time for correct index.
+		# TODO: Check end time for correct index.
 		get_parent().move_child(spinner, 0)
 		queue_free()
 

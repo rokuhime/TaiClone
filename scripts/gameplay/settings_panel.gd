@@ -26,6 +26,7 @@ onready var dropdown := $V/Resolution/Options as OptionButton
 onready var fullscreen_toggle := $V/Resolution/Fullscreen/Toggle as CheckBox
 onready var hit_error_toggle := $V/ExtraDisplays/HitError/Toggle as CheckBox
 onready var late_early_drop := $V/ExtraDisplays/LateEarly/Options as OptionButton
+onready var offset_text := $V/Offset/LineEdit as LineEdit
 onready var taiclone := $"/root" as Root
 
 
@@ -51,8 +52,7 @@ func _ready() -> void:
 	## Comment
 	var resolution := Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080))
 
-	OS.window_size = resolution
-	OS.window_resizable = true
+	change_res(resolution)
 
 	## Comment
 	var resolutions := [["16:9 | 1920x1080", Vector2(1920, 1080)], ["16:9 | 1280x720", Vector2(1280, 720)], ["16:9 | 1024x576", Vector2(1024, 576)], [], ["4:3 | 1440x1080", Vector2(1440, 1080)], ["4:3 | 1024x768", Vector2(1024, 768)], [], ["5:4 | 1280x1024", Vector2(1280, 1024)], ["5:4 | 1025x820", Vector2(1025, 820)]]
@@ -76,10 +76,6 @@ func _ready() -> void:
 
 	toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)), false)
 	call_deferred("change_offset", str(config_file.get_value("Audio", "GlobalOffset", 0)), false)
-
-	## Comment
-	var offset_text := $V/Offset/LineEdit as LineEdit
-
 	if taiclone.global_offset:
 		offset_text.text = str(taiclone.global_offset)
 

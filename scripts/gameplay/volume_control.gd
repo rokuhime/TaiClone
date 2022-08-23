@@ -15,6 +15,7 @@ var _cur_changing := 0
 ## Comment
 var _self_tween := SceneTreeTween.new()
 
+onready var change_sound := $ChangeSound as AudioStreamPlayer
 onready var timer := get_tree().create_timer(0)
 onready var vols := [$Bars/Master, $Bars/Specifics/Music, $Bars/Specifics/SFX]
 
@@ -132,10 +133,6 @@ func _change_volume(amount: float) -> void:
 	var channel_volume := clamp(db2linear(AudioServer.get_bus_volume_db(_cur_changing)) + amount, 0, 1)
 
 	set_volume(_cur_changing, channel_volume, true)
-
-	## Comment
-	var change_sound := $ChangeSound as AudioStreamPlayer
-
 	change_sound.pitch_scale = channel_volume / 2 + 1
 	change_sound.play()
 	emit_signal("volume_changed")

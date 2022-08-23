@@ -4,6 +4,12 @@ extends Control
 ## Comment
 signal change_indicator(timing)
 
+onready var accurate := $HitPoints/Inaccurate/Accurate as ColorRect
+onready var avg_hit := $AverageHit as Control
+onready var hit_points := $HitPoints as Control
+onready var inaccurate := $HitPoints/Inaccurate as ColorRect
+onready var middle_marker := $MiddleMarker
+onready var miss := $Miss as ColorRect
 onready var taiclone := $"/root" as Root
 
 
@@ -11,21 +17,10 @@ func _ready() -> void:
 	## Comment
 	var self_modulate_color := Color("c8c8c8")
 
-	## Comment
-	var miss := $Miss as ColorRect
-
 	miss.color = taiclone.skin.miss_color
 	miss.self_modulate = self_modulate_color
-
-	## Comment
-	var inaccurate := $HitPoints/Inaccurate as ColorRect
-
 	inaccurate.color = taiclone.skin.inaccurate_color
 	inaccurate.self_modulate = self_modulate_color
-
-	## Comment
-	var accurate := $HitPoints/Inaccurate/Accurate as ColorRect
-
 	accurate.color = taiclone.skin.accurate_color
 	accurate.self_modulate = self_modulate_color
 
@@ -44,10 +39,7 @@ func hit_error_toggled(new_visible: bool) -> void:
 ## Comment
 func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 	## Comment
-	var hit_points := $HitPoints as Control
-
-	## Comment
-	var marker := $MiddleMarker.duplicate() as ColorRect
+	var marker := middle_marker.duplicate() as ColorRect
 
 	hit_points.add_child(marker)
 	hit_points.move_child(marker, 1)
@@ -95,10 +87,6 @@ func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 	var children := hit_points.get_child_count() - misses - 1
 
 	anchor = avg / children if children else 0.5
-
-	## Comment
-	var avg_hit := $AverageHit as Control
-
 	avg_hit.anchor_left = anchor
 	avg_hit.anchor_right = anchor
 	if type == int(HitObject.Score.INACCURATE):
