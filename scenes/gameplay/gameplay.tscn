@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=3]
@@ -6,7 +6,6 @@
 [ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
 [ext_resource path="res://scenes/gameplay/settings_panel.tscn" type="PackedScene" id=7]
-[ext_resource path="res://scenes/gameplay/volume_control.tscn" type="PackedScene" id=8]
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=12]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
@@ -372,8 +371,6 @@ bus = "SFX"
 stream = ExtResource( 22 )
 bus = "SFX"
 
-[node name="VolumeControl" parent="." instance=ExtResource( 8 )]
-
 [connection signal="new_marker" from="." to="UI/HitError" method="new_marker"]
 [connection signal="change_indicator" from="UI/HitError" to="." method="change_indicator"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
@@ -383,5 +380,3 @@ bus = "SFX"
 [connection signal="hit_error_toggled" from="debug/SettingsPanel" to="UI/HitError" method="hit_error_toggled"]
 [connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
 [connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
-[connection signal="volume_set" from="debug/SettingsPanel" to="VolumeControl" method="set_volume" flags=3]
-[connection signal="volume_changed" from="VolumeControl" to="debug/SettingsPanel" method="save_settings"]

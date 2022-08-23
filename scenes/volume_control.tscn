@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://scripts/gameplay/volume_control.gd" type="Script" id=1]
+[ext_resource path="res://scripts/scenes/volume_control.gd" type="Script" id=1]
 [ext_resource path="res://sounds/waw.wav" type="AudioStream" id=2]
 [ext_resource path="res://themes/gameplay.tres" type="Theme" id=3]
 

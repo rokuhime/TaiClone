@@ -5,6 +5,9 @@ extends Viewport
 var acc_timing: float
 
 ## Comment
+var background := $"Background" as TextureRect
+
+## Comment
 var global_offset: float
 
 ## Comment
@@ -22,10 +25,12 @@ func _init() -> void:
 
 
 ## Comment
-func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
-	## Comment
-	var background := get_node("Background") as TextureRect
+func add_scene(new_scene: Node) -> void:
+	add_child_below_node(background, new_scene)
 
+
+## Comment
+func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
 	background.modulate = newmodulate
 	background.texture = newtexture
 
