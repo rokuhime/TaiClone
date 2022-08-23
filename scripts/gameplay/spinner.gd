@@ -31,7 +31,7 @@ func _ready() -> void:
 	var _approach_tween := Root.new_tween(SceneTreeTween.new(), self).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
-	var _tween := _tween_modulate(Color.white)
+	var _tween := _tween_modulate(1)
 
 	.activate()
 
@@ -47,7 +47,7 @@ func change_properties(new_timing: float, new_length: float, new_hits: int) -> v
 	_needed_hits = new_hits
 
 
-## Tween this [Spinner]'s [member _current_speed].
+## Change this [Spinner]'s [member _current_speed].
 func change_speed(new_speed: float) -> void:
 	_current_speed = new_speed
 
@@ -136,11 +136,11 @@ func _spinner_finished() -> void:
 		state = int(State.FINISHED)
 
 		## The [PropertyTweener] used to fade out this [Spinner].
-		if _tween_modulate(Color.transparent).connect("finished", self, "deactivate"):
+		if _tween_modulate(0).connect("finished", self, "deactivate"):
 			push_warning("Attempted to connect PropertyTweener finished.")
 
 
 ## Fade this [Spinner] in and out.
-func _tween_modulate(final_val: Color) -> PropertyTweener:
+func _tween_modulate(final_val: float) -> PropertyTweener:
 	_modulate_tween = Root.new_tween(_modulate_tween, self).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	return _modulate_tween.tween_property(self, "modulate", final_val, 0.25)
+	return _modulate_tween.tween_property(self, "modulate:a", final_val, 0.25)

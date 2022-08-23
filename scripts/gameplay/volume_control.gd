@@ -63,20 +63,20 @@ func change_channel(channel: int, needs_visible := true) -> void:
 	_cur_changing = channel % vols.size()
 	for i in range(vols.size()):
 		## Comment
-		var colour := Color.white if i == _cur_changing else Color(1, 1, 1, 0.5)
+		var colour := 1.0 if i == _cur_changing else 0.5
 
 		## Comment
 		var vol: CanvasItem = vols[i] # UNSAFE Variant
 
-		if vol.modulate == colour or not modulate.a:
-			vol.modulate = colour
+		if vol.modulate.a == colour or not modulate.a:
+			vol.modulate.a = colour
 			continue
 
 		## Comment
 		var tween: SceneTreeTween = Root.new_tween(VOL_TWEENS[i], self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT) # UNSAFE Variant
 
 		## Comment
-		var _tween = tween.tween_property(vol, "modulate", colour, 0.2)
+		var _tween = tween.tween_property(vol, "modulate:a", colour, 0.2)
 
 		VOL_TWEENS[i] = tween # UNSAFE ArrayItem
 
@@ -84,7 +84,7 @@ func change_channel(channel: int, needs_visible := true) -> void:
 		_self_tween = Root.new_tween(_self_tween, self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 		## Comment
-		var _tween := _self_tween.tween_property(self, "modulate", Color.white, 0.25)
+		var _tween := _self_tween.tween_property(self, "modulate:a", 1.0, 0.25)
 
 	timer = get_tree().create_timer(2)
 	if timer.connect("timeout", self, "timeout"):
@@ -121,8 +121,9 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 func timeout() -> void:
 	if timer.time_left <= 0:
 		_self_tween = Root.new_tween(_self_tween, self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
-		if _self_tween.tween_property(self, "modulate", Color.transparent, 1).connect("finished", self, "hide"):
-			push_warning("Attempted to connect PropertyTweener finish.")
+
+		## Comment
+		var _tween := _self_tween.tween_property(self, "modulate:a", 0.0, 1)
 
 
 ## Comment

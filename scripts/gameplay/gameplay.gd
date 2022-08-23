@@ -96,7 +96,7 @@ func _input(event: InputEvent) -> void:
 		var tween: SceneTreeTween = Root.new_tween(_drum_animation_tweens[i], self).set_ease(Tween.EASE_OUT) # UNSAFE Variant
 
 		## Comment
-		var _tween := tween.tween_property(get_node("BarLeft/DrumVisual/" + str(input_action)), "self_modulate", Color.transparent, 0.2).from(Color.white)
+		var _tween := tween.tween_property(get_node("BarLeft/DrumVisual/" + str(input_action)), "self_modulate:a", 0.0, 0.2).from(1.0)
 
 		_drum_animation_tweens[i] = tween # UNSAFE ArrayItem
 
@@ -177,7 +177,7 @@ func change_indicator(timing: float) -> void:
 	_timing_indicator_tween = Root.new_tween(_timing_indicator_tween, self).set_trans(Tween.TRANS_QUART)
 
 	## Comment
-	var _tween := _timing_indicator_tween.tween_property(timing_indicator, "self_modulate", Color.transparent, 0.5).from(Color.white)
+	var _tween := _timing_indicator_tween.tween_property(timing_indicator, "self_modulate:a", 0.0, 0.5).from(1.0)
 
 
 ## Comment
@@ -489,7 +489,7 @@ func _hit_notify_animation() -> void:
 	_judgement_tween = Root.new_tween(_judgement_tween, self).set_ease(Tween.EASE_OUT)
 
 	## Comment
-	var _tween := _judgement_tween.tween_property(judgement, "self_modulate", Color.transparent, 0.4).from(Color.white)
+	var _tween := _judgement_tween.tween_property(judgement, "self_modulate:a", 0.0, 0.4).from(1.0)
 
 
 ## Comment
