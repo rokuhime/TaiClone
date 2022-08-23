@@ -1,4 +1,3 @@
-class_name SettingsPanel
 extends CanvasItem
 
 ## Comment
