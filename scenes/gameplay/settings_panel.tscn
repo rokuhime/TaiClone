@@ -255,6 +255,6 @@ rect_min_size = Vector2( 0, 16 )
 [connection signal="pressed" from="V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
 [connection signal="item_selected" from="V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
 [connection signal="toggled" from="V/ExtraDisplays/HitError/Toggle" to="." method="hit_error"]
-[connection signal="item_selected" from="V/Resolution/Options" to="." method="res_changed"]
+[connection signal="item_selected" from="V/Resolution/Options" to="." method="change_res"]
 [connection signal="toggled" from="V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
 [connection signal="text_changed" from="V/Offset/LineEdit" to="." method="change_offset"]

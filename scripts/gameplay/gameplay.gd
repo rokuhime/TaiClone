@@ -35,9 +35,6 @@ var _inaccurate_count := 0
 var _judgement_tween := SceneTreeTween.new()
 
 ## Comment
-var _late_early_simple_display := true
-
-## Comment
 var _miss_count := 0
 
 ## Comment
@@ -168,12 +165,15 @@ func change_indicator(timing: float) -> void:
 	## Comment
 	var num := str(int(timing * 1000))
 
+	## Comment
+	var late_early_simple_display := taiclone.late_early_simple_display < 2
+
 	if timing > 0:
-		timing_indicator.text = "LATE" if _late_early_simple_display else "+" + num
+		timing_indicator.text = "LATE" if late_early_simple_display else "+" + num
 		timing_indicator.modulate = taiclone.skin.late_color
 
 	else:
-		timing_indicator.text = "EARLY" if _late_early_simple_display else num
+		timing_indicator.text = "EARLY" if late_early_simple_display else num
 		timing_indicator.modulate = taiclone.skin.early_color
 
 	_timing_indicator_tween = Root.new_tween(_timing_indicator_tween, self).set_trans(Tween.TRANS_QUART)
@@ -184,7 +184,6 @@ func change_indicator(timing: float) -> void:
 
 ## Comment
 func late_early_changed() -> void:
-	_late_early_simple_display = taiclone.late_early_simple_display < 2
 	timing_indicator.visible = taiclone.late_early_simple_display > 0
 
 
@@ -405,7 +404,7 @@ func load_func(file_path := "") -> void:
 ## Comment
 func offset_changed() -> void:
 	# TODO: Remove 1.9 scaling
-	obj_container.rect_position = Vector2(taiclone.global_offset * -775, 0)
+	obj_container.rect_position = Vector2(taiclone.global_offset * -0.775, 0)
 
 
 ## Comment
@@ -510,4 +509,4 @@ func _reset(dispose := true) -> void:
 	_score_multiplier = 1
 	_add_score(0)
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
-	_cur_time = taiclone.global_offset
+	_cur_time = taiclone.global_offset / 1000.0

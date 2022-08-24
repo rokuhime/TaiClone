@@ -92,7 +92,7 @@ func change_channel(channel: int, needs_visible := true) -> void:
 				_master_modulate_tween = _modulate_tween(vol, _master_modulate_tween, new_color)
 
 			music_vol:
-				_master_modulate_tween = _modulate_tween(vol, _music_modulate_tween, new_color)
+				_music_modulate_tween = _modulate_tween(vol, _music_modulate_tween, new_color)
 
 			sfx_vol:
 				_sfx_modulate_tween = _modulate_tween(vol, _sfx_modulate_tween, new_color)
@@ -127,7 +127,7 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 			_master_progress_tween = _progress_tween(_master_progress_tween, progress, amount)
 
 		music_vol:
-			_master_progress_tween = _progress_tween(_music_progress_tween, progress, amount)
+			_music_progress_tween = _progress_tween(_music_progress_tween, progress, amount)
 
 		sfx_vol:
 			_sfx_progress_tween = _progress_tween(_sfx_progress_tween, progress, amount)

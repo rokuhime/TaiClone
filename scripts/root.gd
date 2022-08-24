@@ -20,7 +20,7 @@ var vols := AudioServer.bus_count
 var acc_timing: float
 
 ## Comment
-var global_offset: float
+var global_offset: int
 
 ## Comment
 var inacc_timing: float
@@ -38,8 +38,6 @@ func _init() -> void:
 	inacc_timing = 0.145
 	skin = SkinManager.new()
 	background = $"Background" as TextureRect
-	if connect("size_changed", self, "size_changed"):
-		push_warning("Attempted to connect Root size_changed.")
 
 
 ## Comment
@@ -64,6 +62,24 @@ func add_scene(new_scene: Node) -> void:
 func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
 	background.modulate = newmodulate
 	background.texture = newtexture
+
+
+## Comment
+func change_key(event: InputEvent, button: String, settings_save := false) -> void:
+	InputMap.action_erase_events(str(button))
+	InputMap.action_add_event(str(button), event)
+	if settings_save:
+		save_settings("change_key")
+
+
+## Comment
+func change_res(new_size: Vector2) -> void:
+	print_debug(new_size)
+	OS.window_resizable = false
+	OS.window_size = new_size
+	size = new_size
+	OS.window_resizable = true
+	save_settings("change_res")
 
 
 ## Comment
@@ -95,5 +111,7 @@ func save_settings(debug: String) -> void:
 
 
 ## Comment
-func size_changed() -> void:
-	print_debug("size_changed")
+func toggle_fullscreen(new_visible: bool, settings_save := false) -> void:
+	OS.window_fullscreen = new_visible
+	if settings_save:
+		save_settings("toggle_fullscreen")
