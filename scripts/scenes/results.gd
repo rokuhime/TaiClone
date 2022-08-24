@@ -52,12 +52,16 @@ func _ready() -> void:
 #		pass
 
 #	#rank
-#	var rank: String = get_rank(100, 0, [1,1], true)
+#	#get accuracy
+#	var acc: float
+#	acc = judgements["accurate"] + (judgements["inaccurate"] / 2)
+#	acc = acc / (judgements["accurate"] + judgements["inaccurate"] + judgements["miss"]) * 100
+
+#	var rank: String = get_rank(acc, judgements["miss"], [0,0], true)
 #	match rank:
 #		_:
 #			#change texture of rankDisplay
 #			pass
-
 
 ##doesnt belong here but for now /shrug
 #func get_rank(accuracy: float, missCount: int, finishes: Array, rollsHit: bool) -> String:
