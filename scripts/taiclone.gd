@@ -6,6 +6,9 @@ var _root: Root
 
 
 func _init() -> void:
+	if connect("screen_resized", self, "screen_resized"):
+		push_warning("Attempted to connect TaiClone screen_resized.")
+
 	root.set_script(preload("res://scripts/root.gd"))
 	_root = root as Root
 
@@ -18,16 +21,7 @@ func _init() -> void:
 	## Comment
 	var gameplay := preload("res://scenes/gameplay/gameplay.tscn").instance() as Gameplay
 
-	## Comment
-	var settings_panel := gameplay.get_node("debug/SettingsPanel")
-
 	_root.add_scene(gameplay)
-
-	if volume_control.connect("volume_changed", settings_panel, "save_settings"):
-		push_warning("Attempted to connect VolumeControl volume_changed.")
-
-	if root.connect("size_changed", settings_panel, "save_settings"):
-		push_warning("Attempted to connect Root size_changed.")
 
 	# Load Scene == FOR DEBUG ONLY ==
 	#(root.get_node("Gameplay") as CanvasItem).hide()
@@ -37,3 +31,8 @@ func _init() -> void:
 func _drop_files(files: PoolStringArray, _from_screen: int) -> void:
 	if root.has_node("Gameplay"):
 		(root.get_node("Gameplay") as Gameplay).load_func(files[0])
+
+
+## Comment
+func screen_resized() -> void:
+	print_debug("screen_resized")

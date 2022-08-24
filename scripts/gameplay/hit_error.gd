@@ -13,6 +13,8 @@ onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
+	hit_error_toggled()
+
 	## Comment
 	var self_modulate_color := Color("c8c8c8")
 
@@ -31,8 +33,8 @@ func _ready() -> void:
 
 
 ## Comment
-func hit_error_toggled(new_visible: bool) -> void:
-	visible = new_visible
+func hit_error_toggled() -> void:
+	visible = taiclone.hit_error
 
 
 ## Comment

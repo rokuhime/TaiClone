@@ -32,7 +32,13 @@ onready var change_sound := $ChangeSound as AudioStreamPlayer
 onready var master_vol := $Bars/Master as CanvasItem
 onready var music_vol := $Bars/Specifics/Music as CanvasItem
 onready var sfx_vol := $Bars/Specifics/SFX as CanvasItem
+onready var taiclone := $"/root" as Root
 onready var timer := get_tree().create_timer(0)
+
+
+func _ready() -> void:
+	if connect("volume_changed", taiclone, "save_settings", ["volume_changed"]):
+		push_warning("Attempted to connect VolumeControl volume_changed.")
 
 
 func _input(event: InputEvent) -> void:
@@ -69,11 +75,8 @@ func change_channel(channel: int, needs_visible := true) -> void:
 	if needs_visible and not modulate.a:
 		return
 
-	## Comment
-	var vols := 3
-
-	_cur_changing = channel % vols
-	for i in range(vols):
+	_cur_changing = channel % taiclone.vols
+	for i in range(taiclone.vols):
 		## Comment
 		var new_color := 1.0 if i == _cur_changing else 0.5
 

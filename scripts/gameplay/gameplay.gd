@@ -63,6 +63,8 @@ onready var ui_score := $UI/Score as Label
 
 
 func _ready() -> void:
+	late_early_changed()
+	offset_changed()
 	if _f.file_exists(_fus):
 		load_func(_fus)
 
@@ -181,9 +183,9 @@ func change_indicator(timing: float) -> void:
 
 
 ## Comment
-func late_early_changed(new_value: int) -> void:
-	_late_early_simple_display = new_value < 2
-	timing_indicator.visible = new_value > 0
+func late_early_changed() -> void:
+	_late_early_simple_display = taiclone.late_early_simple_display < 2
+	timing_indicator.visible = taiclone.late_early_simple_display > 0
 
 
 ## Comment
@@ -401,9 +403,9 @@ func load_func(file_path := "") -> void:
 
 
 ## Comment
-func offset_changed(new_value: float) -> void:
+func offset_changed() -> void:
 	# TODO: Remove 1.9 scaling
-	obj_container.rect_position = Vector2(new_value * -775, 0)
+	obj_container.rect_position = Vector2(taiclone.global_offset * -775, 0)
 
 
 ## Comment
