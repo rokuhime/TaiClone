@@ -20,7 +20,7 @@ func _process(_a):
 	#change score text
 	if(scoreTween.is_active()):
 		var text: String = "[center][b]Score[/b]\n"
-		var val: String
+		var val: String = ""
 		var scoreDigits = str(displayedScore).length()
 		#if score is more than 6 digits...
 		if scoreDigits > 6:
@@ -58,7 +58,12 @@ func change_properties(texts: Dictionary, judgements: Dictionary, mods: Array):
 		pass
 	
 	#rank
-	var rank: String = get_rank(100, 0, [1,1], true)
+	#get accuracy
+	var acc: float
+	acc = judgements["accurate"] + (judgements["inaccurate"] / 2)
+	acc = acc / (judgements["accurate"] + judgements["inaccurate"] + judgements["miss"]) * 100
+	
+	var rank: String = get_rank(acc, judgements["miss"], [0,0], true)
 	match rank:
 		_:
 			#change texture of rankDisplay
@@ -90,10 +95,7 @@ func get_rank(accuracy: float, missCount: int, finishes: Array, rollsHit: bool) 
 	return "F"
 
 func animate_menu(score):
-	var target
-	
 	#looks butt ugly, but itll be changed with tools update
-	target = scoreText
 	if not scoreTween.remove(self, "displayedScore"):
 		push_warning("Attempted to remove score change animation tween.")
 	if not scoreTween.interpolate_property(self, "displayedScore", 0, score, 1.75, Tween.TRANS_QUINT, Tween.EASE_OUT):

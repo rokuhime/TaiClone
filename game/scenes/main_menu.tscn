@@ -82,7 +82,7 @@ anchor_bottom = 1.0
 texture = ExtResource( 1 )
 expand = true
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+[node name="Middle" type="VBoxContainer" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -91,22 +91,22 @@ margin_right = 282.0
 custom_constants/separation = 50
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer2"]
-margin_top = 247.0
+[node name="Logo" type="TextureRect" parent="Middle"]
+margin_top = 198.0
 margin_right = 564.0
-margin_bottom = 405.0
+margin_bottom = 356.0
 rect_min_size = Vector2( 0, 158 )
 texture = ExtResource( 2 )
 expand = true
 stretch_mode = 6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer2"]
-margin_top = 455.0
+[node name="Buttons" type="VBoxContainer" parent="Middle"]
+margin_top = 406.0
 margin_right = 564.0
-margin_bottom = 832.0
+margin_bottom = 881.0
 custom_constants/separation = 15
 
-[node name="Play" type="Button" parent="VBoxContainer2/VBoxContainer"]
+[node name="Play" type="Button" parent="Middle/Buttons"]
 margin_right = 564.0
 margin_bottom = 83.0
 custom_fonts/font = SubResource( 3 )
@@ -116,7 +116,7 @@ custom_styles/disabled = SubResource( 7 )
 custom_styles/normal = SubResource( 6 )
 text = "Play"
 
-[node name="Edit" type="Button" parent="VBoxContainer2/VBoxContainer"]
+[node name="Edit" type="Button" parent="Middle/Buttons"]
 margin_top = 98.0
 margin_right = 564.0
 margin_bottom = 181.0
@@ -128,7 +128,7 @@ custom_styles/normal = SubResource( 6 )
 disabled = true
 text = "Edit"
 
-[node name="Training" type="Button" parent="VBoxContainer2/VBoxContainer"]
+[node name="Training" type="Button" parent="Middle/Buttons"]
 margin_top = 196.0
 margin_right = 564.0
 margin_bottom = 279.0
@@ -140,10 +140,21 @@ custom_styles/normal = SubResource( 6 )
 disabled = true
 text = "Training"
 
-[node name="Exit" type="Button" parent="VBoxContainer2/VBoxContainer"]
+[node name="Options" type="Button" parent="Middle/Buttons"]
 margin_top = 294.0
 margin_right = 564.0
 margin_bottom = 377.0
+custom_fonts/font = SubResource( 3 )
+custom_styles/hover = SubResource( 4 )
+custom_styles/pressed = SubResource( 5 )
+custom_styles/disabled = SubResource( 7 )
+custom_styles/normal = SubResource( 6 )
+text = "Options"
+
+[node name="Exit" type="Button" parent="Middle/Buttons"]
+margin_top = 392.0
+margin_right = 564.0
+margin_bottom = 475.0
 custom_fonts/font = SubResource( 3 )
 custom_styles/hover = SubResource( 4 )
 custom_styles/pressed = SubResource( 5 )
