@@ -12,6 +12,9 @@ var barline_color: Color
 # The color of don `Note`s.
 var don_color: Color
 
+# Comment
+var early_color: Color
+
 # The color of `HitError` markers with an INACCURATE `HitObject.Score`.
 var inaccurate_color: Color
 
@@ -20,6 +23,9 @@ var inaccurate_judgement: Texture
 
 # The color of kat `Note`s.
 var kat_color: Color
+
+# Comment
+var late_color: Color
 
 # The color of `HitError` markers with a MISS `HitObject.Score`.
 var miss_color: Color
@@ -35,8 +41,10 @@ func _init() -> void:
 	accurate_color = Color("52a6ff")
 	barline_color = Color.white
 	don_color = Color("eb452c")
+	early_color = Color("ff5a5a")
 	inaccurate_color = Color("79da5e")
 	kat_color = Color("438eac")
+	late_color = Color("5a5aff")
 	miss_color = Color("c74b4b")
 	roll_color = Color("fcb806")
 

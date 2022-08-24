@@ -17,17 +17,22 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "BarLine",
 "language": "GDScript",
-"path": "res://scripts/objects/bar_line.gd"
+"path": "res://scripts/gameplay/bar_line.gd"
+}, {
+"base": "Node",
+"class": "Gameplay",
+"language": "GDScript",
+"path": "res://scripts/gameplay/gameplay.gd"
 }, {
 "base": "Control",
 "class": "HitError",
 "language": "GDScript",
-"path": "res://scripts/scenes/hit_error.gd"
+"path": "res://scripts/gameplay/hit_error.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "HitObject",
 "language": "GDScript",
-"path": "res://scripts/objects/hit_object.gd"
+"path": "res://scripts/gameplay/hit_object.gd"
 }, {
 "base": "Node",
 "class": "MainUI",
@@ -37,22 +42,22 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
-"path": "res://scripts/objects/note.gd"
-}, {
-"base": "Node",
-"class": "ResultsScreen",
-"language": "GDScript",
-"path": "res://scripts/scenes/results.gd"
+"path": "res://scripts/gameplay/note.gd"
 }, {
 "base": "HitObject",
 "class": "Roll",
 "language": "GDScript",
-"path": "res://scripts/objects/roll.gd"
+"path": "res://scripts/gameplay/roll.gd"
+}, {
+"base": "Viewport",
+"class": "Root",
+"language": "GDScript",
+"path": "res://scripts/root.gd"
 }, {
 "base": "CanvasItem",
 "class": "SettingsPanel",
 "language": "GDScript",
-"path": "res://scripts/scenes/settings_panel.gd"
+"path": "res://scripts/gameplay/settings_panel.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
@@ -62,35 +67,44 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "Spinner",
 "language": "GDScript",
-"path": "res://scripts/objects/spinner.gd"
+"path": "res://scripts/gameplay/spinner.gd"
 }, {
 "base": "HitObject",
 "class": "SpinnerWarn",
 "language": "GDScript",
-"path": "res://scripts/objects/spinner_warn.gd"
+"path": "res://scripts/gameplay/spinner_warn.gd"
+}, {
+"base": "SceneTree",
+"class": "TaiClone",
+"language": "GDScript",
+"path": "res://scripts/taiclone.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
 "BarLine": "",
+"Gameplay": "",
 "HitError": "",
 "HitObject": "",
 "MainUI": "",
 "Note": "",
-"ResultsScreen": "",
 "Roll": "",
+"Root": "",
 "SettingsPanel": "",
 "SkinManager": "",
 "Spinner": "",
-"SpinnerWarn": ""
+"SpinnerWarn": "",
+"TaiClone": ""
 }
 
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://game/scenes/main_ui.tscn"
+run/main_scene="res://scenes/taiclone.tscn"
+run/main_loop_type="TaiClone"
 
 [debug]
 
+gdscript/warnings/unused_class_variable=true
 gdscript/warnings/unsafe_property_access=true
 gdscript/warnings/unsafe_method_access=true
 gdscript/warnings/unsafe_cast=true
@@ -204,3 +218,7 @@ VolumePrevious={
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+quality/dynamic_fonts/use_oversampling=false

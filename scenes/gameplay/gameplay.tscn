@@ -1,0 +1,387 @@
+[gd_scene load_steps=22 format=2]
+
+[ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
+[ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=3]
+[ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=4]
+[ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
+[ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
+[ext_resource path="res://scenes/gameplay/settings_panel.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/gameplay/volume_control.tscn" type="PackedScene" id=8]
+[ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
+[ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=12]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
+[ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
+[ext_resource path="res://temporary/untitled.png" type="Texture" id=23]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
+[ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
+[ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=30]
+
+[sub_resource type="DynamicFont" id=1]
+size = 75
+outline_size = 2
+outline_color = Color( 0, 0, 0, 0.313726 )
+font_data = ExtResource( 29 )
+
+[sub_resource type="DynamicFont" id=13]
+size = 50
+font_data = ExtResource( 29 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 65
+outline_size = 2
+outline_color = Color( 0, 0, 0, 0.313726 )
+font_data = ExtResource( 29 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 26
+outline_size = 2
+outline_color = Color( 0, 0, 0, 0.313726 )
+font_data = ExtResource( 29 )
+
+[node name="Gameplay" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+script = ExtResource( 30 )
+__meta__ = {
+"_edit_vertical_guides_": [ -119.0 ]
+}
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+bus = "Music"
+
+[node name="ref" type="TextureRect" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.878431 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 9 )
+expand = true
+
+[node name="ref2" type="TextureRect" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.878431 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 23 )
+expand = true
+
+[node name="BarRight" type="TextureRect" parent="."]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -240.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 0, 170 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 6 )
+expand = true
+
+[node name="HitPointOffset" type="Control" parent="BarRight"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 360.0
+margin_top = -21.0
+margin_right = 360.0
+margin_bottom = -21.0
+rect_scale = Vector2( 1.9, 1.9 )
+
+[node name="HitPoint" type="TextureRect" parent="BarRight/HitPointOffset"]
+self_modulate = Color( 1, 1, 1, 0.435294 )
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = -64.0
+margin_top = -64.0
+margin_right = 65.0
+margin_bottom = 65.0001
+rect_scale = Vector2( 0.5, 0.5 )
+rect_pivot_offset = Vector2( 64.5, 64.5 )
+texture = ExtResource( 2 )
+expand = true
+
+[node name="Rim" type="TextureRect" parent="BarRight/HitPointOffset/HitPoint"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_scale = Vector2( 1.25, 1.25 )
+rect_pivot_offset = Vector2( 64.5, 64.5 )
+texture = ExtResource( 20 )
+expand = true
+
+[node name="ObjectContainer" type="Control" parent="BarRight/HitPointOffset"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Judgement" type="TextureRect" parent="BarRight/HitPointOffset"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -128.0
+margin_top = -128.0
+margin_right = 128.0
+margin_bottom = 128.0
+rect_scale = Vector2( 0.8, 0.8 )
+rect_pivot_offset = Vector2( 128, 128 )
+stretch_mode = 4
+
+[node name="BarLeft" type="TextureRect" parent="."]
+anchor_bottom = 1.0
+margin_top = 304.0
+margin_right = 254.0
+margin_bottom = -498.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+texture = ExtResource( 5 )
+expand = true
+
+[node name="DrumVisual" type="Control" parent="BarLeft"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LeftDon" type="TextureRect" parent="BarLeft/DrumVisual"]
+self_modulate = Color( 1, 1, 1, 0 )
+anchor_bottom = 1.0
+margin_right = 127.0
+texture = ExtResource( 3 )
+expand = true
+
+[node name="LeftKat" type="TextureRect" parent="BarLeft/DrumVisual"]
+self_modulate = Color( 1, 1, 1, 0 )
+anchor_bottom = 1.0
+margin_right = 127.0
+texture = ExtResource( 4 )
+expand = true
+flip_h = true
+
+[node name="RightDon" type="TextureRect" parent="BarLeft/DrumVisual"]
+self_modulate = Color( 1, 1, 1, 0 )
+anchor_bottom = 1.0
+margin_left = 127.0
+margin_right = 254.0
+texture = ExtResource( 3 )
+expand = true
+flip_h = true
+
+[node name="RightKat" type="TextureRect" parent="BarLeft/DrumVisual"]
+self_modulate = Color( 1, 1, 1, 0 )
+anchor_bottom = 1.0
+margin_left = 127.0
+margin_right = 254.0
+texture = ExtResource( 4 )
+expand = true
+
+[node name="Combo" type="Label" parent="BarLeft/DrumVisual"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -13.5
+margin_top = -33.0
+margin_right = 13.5
+margin_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_fonts/font = SubResource( 1 )
+text = "0"
+align = 1
+valign = 1
+
+[node name="TimingIndicator" type="Label" parent="BarLeft"]
+self_modulate = Color( 1, 1, 1, 0 )
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 65.5
+margin_top = -63.5
+margin_right = 144.5
+margin_bottom = 9.5
+grow_horizontal = 2
+grow_vertical = 2
+custom_fonts/font = SubResource( 13 )
+text = "±0"
+align = 1
+valign = 1
+
+[node name="UI" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Score" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -391.0
+margin_top = -11.0
+margin_right = -11.0
+margin_bottom = 84.0
+grow_horizontal = 0
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 2 )
+text = "0000000000"
+align = 2
+
+[node name="Accuracy" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -166.0
+margin_top = 57.0
+margin_right = -31.0
+margin_bottom = 152.0
+grow_horizontal = 0
+grow_vertical = 0
+custom_fonts/font = SubResource( 2 )
+text = "0.00"
+align = 2
+
+[node name="AccPercent" type="Label" parent="UI/Accuracy"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -12.0
+margin_top = 29.0
+margin_right = 26.0
+margin_bottom = 83.0
+grow_horizontal = 0
+grow_vertical = 0
+custom_fonts/font = SubResource( 3 )
+text = "%"
+align = 2
+valign = 2
+
+[node name="HitError" parent="UI" instance=ExtResource( 12 )]
+
+[node name="debug" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="debugtext" type="Label" parent="debug"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 12.0
+margin_top = -209.0
+margin_right = 152.0
+margin_bottom = -144.0
+grow_vertical = 0
+rect_scale = Vector2( 1.9, 1.9 )
+text = "Welcome to TaiClone!"
+valign = 2
+
+[node name="fpstext" type="Label" parent="debug"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -303.0
+margin_top = -75.9999
+margin_right = -249.0
+margin_bottom = -61.9999
+grow_horizontal = 0
+grow_vertical = 0
+rect_scale = Vector2( 1.9, 1.9 )
+text = "FPS: XXX"
+align = 2
+valign = 2
+
+[node name="temploadchart" type="HBoxContainer" parent="debug"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = -82.0
+margin_right = 355.0
+margin_bottom = -44.0
+rect_scale = Vector2( 1.9, 1.9 )
+
+[node name="LineEdit" type="LineEdit" parent="debug/temploadchart"]
+margin_right = 195.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Chart Location"
+
+[node name="LoadButton" type="Button" parent="debug/temploadchart"]
+margin_left = 199.0
+margin_right = 241.0
+margin_bottom = 38.0
+text = "Load"
+
+[node name="PlayButton" type="Button" parent="debug/temploadchart"]
+margin_left = 245.0
+margin_right = 283.0
+margin_bottom = 38.0
+text = "Play"
+
+[node name="AutoToggle" type="CheckBox" parent="debug/temploadchart"]
+margin_left = 287.0
+margin_right = 345.0
+margin_bottom = 38.0
+text = "Auto"
+
+[node name="SettingsButton" type="Button" parent="debug"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -180.0
+margin_top = -82.0
+margin_right = -90.0
+margin_bottom = -44.0
+rect_scale = Vector2( 1.9, 1.9 )
+text = "Settings"
+
+[node name="VersionText" type="Label" parent="debug"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -723.0
+margin_top = -44.0
+margin_right = -445.0
+margin_bottom = -30.0
+grow_horizontal = 0
+grow_vertical = 0
+rect_scale = Vector2( 1.9, 1.9 )
+text = "v0.3 - The Big One(tm)"
+align = 2
+
+[node name="SettingsPanel" parent="debug" instance=ExtResource( 7 )]
+
+[node name="DrumInteraction" type="Node" parent="."]
+
+[node name="LeftDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 14 )
+bus = "SFX"
+
+[node name="LeftKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 17 )
+bus = "SFX"
+
+[node name="RightDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 14 )
+bus = "SFX"
+
+[node name="RightKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 17 )
+bus = "SFX"
+
+[node name="FinisherDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 25 )
+bus = "SFX"
+
+[node name="FinisherKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
+stream = ExtResource( 22 )
+bus = "SFX"
+
+[node name="VolumeControl" parent="." instance=ExtResource( 8 )]
+
+[connection signal="new_marker" from="." to="UI/HitError" method="new_marker"]
+[connection signal="change_indicator" from="UI/HitError" to="." method="change_indicator"]
+[connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
+[connection signal="pressed" from="debug/temploadchart/PlayButton" to="." method="play_chart"]
+[connection signal="toggled" from="debug/temploadchart/AutoToggle" to="." method="auto_toggled"]
+[connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
+[connection signal="hit_error_toggled" from="debug/SettingsPanel" to="UI/HitError" method="hit_error_toggled"]
+[connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
+[connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
+[connection signal="volume_set" from="debug/SettingsPanel" to="VolumeControl" method="set_volume" flags=3]
+[connection signal="volume_changed" from="VolumeControl" to="debug/SettingsPanel" method="save_settings"]
