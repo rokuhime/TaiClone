@@ -1,6 +1,8 @@
 class_name TaiClone
 extends SceneTree
 
+# ran on startup, absolute root script of the project
+
 var _gameplay: Gameplay
 
 

@@ -4,6 +4,9 @@ extends HitObject
 # Whether or not this `Note` is a don or kat.
 var _is_kat := false
 
+# if the last hit was on the right side; only applies to finishers
+# saved as int because this cant be null :(
+var _previous_side_was_right : int
 
 # Initialize `Note` variables.
 func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, new_finisher: bool) -> void:
@@ -21,34 +24,62 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 	if state != int(State.ACTIVE) or hit_timing < 0:
 		return inputs
-
-	# TODO: Finishers
-	state = int(State.FINISHED)
+		
+	
+	# The list of scores to add.
+	var scores := []
+	
+	var current_side_is_right : int
+	
 	if _is_kat:
 		if inputs.has("LeftKat"):
 			inputs.remove(inputs.find("LeftKat"))
-			inputs.append([hit_timing])
+			scores.append(hit_timing)
+			current_side_is_right = 1
 
 		elif inputs.has("RightKat"):
 			inputs.remove(inputs.find("RightKat"))
-			inputs.append([hit_timing])
+			scores.append(hit_timing)
+			current_side_is_right = 2
 
 		else:
-			inputs.append([int(Score.MISS)])
+			scores.append(int(Score.MISS))
 
 	else:
 		if inputs.has("LeftDon"):
 			inputs.remove(inputs.find("LeftDon"))
-			inputs.append([hit_timing])
+			scores.append(hit_timing)
+			current_side_is_right = 1
 
 		elif inputs.has("RightDon"):
 			inputs.remove(inputs.find("RightDon"))
-			inputs.append([hit_timing])
+			scores.append(hit_timing)
+			current_side_is_right = 2
 
 		else:
-			inputs.append([int(Score.MISS)])
+			scores.append(int(Score.MISS))
 
-	queue_free()
+	# finisher check
+	
+	# if it isnt a finisher...
+	if not finisher:
+		state = int(State.FINISHED)
+		queue_free()
+	
+	# if finisher, check the last side used
+	elif _previous_side_was_right != 0:
+		if bool(_previous_side_was_right - 1) != bool(current_side_is_right - 1):
+			#finisher hit
+			scores.remove(0)
+			scores.append(int(Score.FINISHER))
+			
+			state = int(State.FINISHED)
+			queue_free()
+	else:
+		_previous_side_was_right = current_side_is_right
+	
+	
+	inputs.append(scores)
 	return inputs
 
 

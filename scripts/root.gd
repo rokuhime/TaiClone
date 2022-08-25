@@ -1,6 +1,8 @@
 class_name Root
 extends Viewport
 
+# first and main object of the project
+
 var acc_timing: float
 var global_offset: float
 var inacc_timing: float

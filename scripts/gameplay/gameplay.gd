@@ -87,11 +87,13 @@ func _process(delta: float) -> void:
 	# miss check
 	for i in range(obj_container.get_child_count()):
 		var note = obj_container.get_child(i)
-		if not note is HitObject:
+		if not note is HitObject or note is BarLine:
 			continue
+		# run the miss check on the current note to see if its past the hit window
 		var score := int(note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)))
-		if note is BarLine or note is SpinnerWarn:
+		if note is SpinnerWarn:
 			continue
+		# if its not in range to be missed, abort the loop
 		if not score:
 			break
 		if score == HitObject.Score.FINISHED:
@@ -289,8 +291,8 @@ func load_func(file_path := "") -> void:
 			NoteType.TIMING_POINT:
 				cur_bpm = float(line[1])
 				continue
-		obj_container.add_child(note_node)
 		if note_node != null:
+			obj_container.add_child(note_node)
 			note_node.add_to_group("HitObjects")
 
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", taiclone.skin)
