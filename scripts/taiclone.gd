@@ -3,16 +3,54 @@ extends SceneTree
 
 # ran on startup, absolute root script of the project
 
-var _gameplay: Gameplay
-
 
 func _init() -> void:
 	root.set_script(preload("res://scripts/root.gd"))
-	_gameplay = preload("res://scenes/gameplay/gameplay.tscn").instance() as Gameplay
-	(_gameplay.get_node("VolumeControl") as CanvasItem).modulate = Color.transparent
-	root.add_child(_gameplay)
-	if root.connect("size_changed", _gameplay.get_node("debug/SettingsPanel"), "save_settings", [], CONNECT_DEFERRED):
-		push_warning("Attempted to connect Root size_changed.")
+
+	## Comment
+	var taiclone := root as Root
+
+	if connect("screen_resized", taiclone, "change_res"):
+		push_warning("Attempted to connect TaiClone screen_resized.")
+
+	## Comment
+	var config_file := ConfigFile.new()
+
+	if config_file.load(taiclone.config_path):
+		print_debug("Config file not found.")
+
+	for key in taiclone.KEYS:
+		## Comment
+		var event: InputEvent = config_file.get_value("Keybinds", str(key), Root.event(str(key))) # UNSAFE Variant
+
+		taiclone.change_key(event, str(key))
+
+	taiclone.late_early_simple_display = int(config_file.get_value("Display", "LateEarly", 1))
+	taiclone.hit_error = bool(config_file.get_value("Display", "HitError", 1))
+	taiclone.RESOLUTIONS.append("0,%s,%s" % [config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)])
+
+	## Comment
+	var idx := taiclone.RESOLUTIONS.size() - 1
+
+	taiclone.change_res(idx)
+	taiclone.RESOLUTIONS.remove(idx)
+	#taiclone.change_res(Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)))
+	taiclone.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
+	taiclone.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
+
+	## Comment
+	var volume_control := preload("res://scenes/root/volume_control.tscn").instance() as VolumeControl
+
+	volume_control.modulate.a = 0
+	taiclone.add_scene(volume_control)
+	for i in range(taiclone.vols):
+		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
+
+	## Comment
+	var gameplay := preload("res://scenes/gameplay/gameplay.tscn").instance() as Gameplay
+
+	taiclone.add_scene(gameplay)
+	taiclone.settings_save = true
 
 	# Load Scene == FOR DEBUG ONLY ==
 	#(root.get_node("Gameplay") as CanvasItem).hide()
@@ -20,4 +58,5 @@ func _init() -> void:
 
 
 func _drop_files(files: PoolStringArray, _from_screen: int) -> void:
-	_gameplay.load_func(files[0])
+	if root.has_node("Gameplay"):
+		(root.get_node("Gameplay") as Gameplay).load_func(files[0])

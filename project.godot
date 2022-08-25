@@ -24,20 +24,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/gameplay/gameplay.gd"
 }, {
-"base": "Control",
-"class": "HitError",
-"language": "GDScript",
-"path": "res://scripts/gameplay/hit_error.gd"
-}, {
 "base": "KinematicBody2D",
 "class": "HitObject",
 "language": "GDScript",
 "path": "res://scripts/gameplay/hit_object.gd"
-}, {
-"base": "Node",
-"class": "MainUI",
-"language": "GDScript",
-"path": "res://scripts/scenes/main_ui.gd"
 }, {
 "base": "HitObject",
 "class": "Note",
@@ -57,7 +47,7 @@ _global_script_classes=[ {
 "base": "CanvasItem",
 "class": "SettingsPanel",
 "language": "GDScript",
-"path": "res://scripts/gameplay/settings_panel.gd"
+"path": "res://scripts/root/settings_panel.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
@@ -78,14 +68,17 @@ _global_script_classes=[ {
 "class": "TaiClone",
 "language": "GDScript",
 "path": "res://scripts/taiclone.gd"
+}, {
+"base": "CanvasItem",
+"class": "VolumeControl",
+"language": "GDScript",
+"path": "res://scripts/root/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
 "BarLine": "",
 "Gameplay": "",
-"HitError": "",
 "HitObject": "",
-"MainUI": "",
 "Note": "",
 "Roll": "",
 "Root": "",
@@ -93,13 +86,14 @@ _global_script_class_icons={
 "SkinManager": "",
 "Spinner": "",
 "SpinnerWarn": "",
-"TaiClone": ""
+"TaiClone": "",
+"VolumeControl": ""
 }
 
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://scenes/taiclone.tscn"
+run/main_scene="res://scenes/root/taiclone.tscn"
 run/main_loop_type="TaiClone"
 
 [debug]

@@ -1,4 +1,3 @@
-class_name MainUI
 extends Node
 
 onready var blackout = $Blackout as Control

@@ -1,25 +1,28 @@
 class_name Note
 extends HitObject
 
-# Whether or not this `Note` is a don or kat.
+## Whether or not this [Note] is a don or kat.
 var _is_kat := false
 
 # if the last hit was on the right side; only applies to finishers
 # saved as int because this cant be null :(
 var _previous_side_was_right : int
 
-# Initialize `Note` variables.
+onready var sprite := $Sprite as CanvasItem
+
+
+## Initialize [Note] variables.
 func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, new_finisher: bool) -> void:
 	.ini(new_timing, new_speed, 0, new_finisher)
 	_is_kat = new_is_kat
 
 
-# See `HitObject`.
+## See [HitObject].
 func hit(inputs: Array, hit_time: float) -> Array:
 	if state == int(State.FINISHED):
 		inputs.append([int(Score.FINISHED)])
 
-	# The time since the start of this `Note`'s hit window. A perfect hit has the value of `HitError.inacc_timing`.
+	## The time since the start of this [Note]'s hit window. A perfect hit has the value of [member Root.inacc_timing].
 	var hit_timing := hit_time - timing
 
 	if state != int(State.ACTIVE) or hit_timing < 0:
@@ -83,6 +86,6 @@ func hit(inputs: Array, hit_time: float) -> Array:
 	return inputs
 
 
-# See `HitObject`.
+## See [HitObject].
 func skin(new_skin: SkinManager) -> void:
-	($Sprite as CanvasItem).self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
+	sprite.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color

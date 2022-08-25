@@ -1,5 +1,7 @@
 extends Node
 
+onready var audio_stream_player := $AudioStreamPlayer as AudioStreamPlayer
+
 
 func _ready() -> void:
-	($AudioStreamPlayer as AudioStreamPlayer).play(32.092)
+	audio_stream_player.play(32.092)

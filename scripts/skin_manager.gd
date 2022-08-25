@@ -1,39 +1,39 @@
 class_name SkinManager
 
-# The color of `HitError` markers with an ACCURATE `HitObject.Score`.
+## The color of hit error markers with an ACCURATE [member HitObject.Score].
 var accurate_color: Color
 
-# The texture of a judgement with an ACCURATE `HitObject.Score`.
+## The texture of a judgement with an ACCURATE [member HitObject.Score].
 var accurate_judgement: Texture
 
-# The color of `BarLine`s.
+## The color of [BarLine]s.
 var barline_color: Color
 
-# The color of don `Note`s.
+## The color of don [Note]s.
 var don_color: Color
 
-# Comment
+## Comment
 var early_color: Color
 
-# The color of `HitError` markers with an INACCURATE `HitObject.Score`.
+## The color of hit error markers with an INACCURATE [member HitObject.Score].
 var inaccurate_color: Color
 
-# The texture of a judgement with an INACCURATE `HitObject.Score`.
+## The texture of a judgement with an INACCURATE [member HitObject.Score].
 var inaccurate_judgement: Texture
 
-# The color of kat `Note`s.
+## The color of kat [Note]s.
 var kat_color: Color
 
-# Comment
+## Comment
 var late_color: Color
 
-# The color of `HitError` markers with a MISS `HitObject.Score`.
+## The color of hit error markers with a MISS [member HitObject.Score].
 var miss_color: Color
 
-# The texture of a judgement with a MISS `HitObject.Score`.
+## The texture of a judgement with a MISS [member HitObject.Score].
 var miss_judgement: Texture
 
-# The color of `Roll`s.
+## The color of [Roll]s.
 var roll_color: Color
 
 
