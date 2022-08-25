@@ -150,12 +150,16 @@ func _process(delta: float) -> void:
 		## Comment
 		var note = obj_container.get_child(i)
 
-		## Comment
-		var score: int = note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)) # UNSAFE Variant
-
-		if note is BarLine or note is SpinnerWarn:
+		if note is BarLine:
 			continue
 
+		# run the miss check on the current note to see if its past the hit window
+		var score: int = note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)) # UNSAFE Variant
+
+		if note is SpinnerWarn:
+			continue
+
+		# if its not in range to be missed, abort the loop
 		if not score:
 			break
 

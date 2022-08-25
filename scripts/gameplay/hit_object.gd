@@ -19,6 +19,9 @@ enum Score {ACCURATE = 1, INACCURATE, MISS, FINISHER, ROLL, SPINNER, FINISHED}
 ## 3 (FINISHED): This [HitObject] has been fully hit or missed. It will be disposed of once all animations finish.
 enum State {READY = 1, ACTIVE, FINISHED}
 
+# Whether or not this `HitObject` is a finisher. Only applies to `Note`s and `Roll`s.
+var finisher := false
+
 ## The length of this [HitObject]. This does not apply to [BarLine]s and [Note]s.
 var length := 0.0
 
@@ -31,12 +34,9 @@ var state := 0
 ## The hit time of this [HitObject]. Applies to all [HitObject]s.
 var timing := 0.0
 
-## Whether or not this [HitObject] is a finisher. Only applies to [Note]s and [Roll]s.
-var _finisher := false
-
 
 func _ready() -> void:
-	if _finisher:
+	if finisher:
 		(get_child(0) as Control).rect_scale = Vector2(0.9, 0.9)
 
 	state = int(State.READY)
@@ -67,7 +67,7 @@ func hit(inputs: Array, _hit_time: float) -> Array:
 ## Initialize base [HitObject] variables. Called and extended by child classes via [method change_properties].
 func ini(new_timing: float, new_speed: float, new_length: float, new_finisher := false) -> void:
 	assert(not state, "Attempted to change hitobject properties after loaded.")
-	_finisher = new_finisher
+	finisher = new_finisher
 	length = new_length
 	# TODO: Remove 1.9 scaling
 	speed = new_speed * 1.9
