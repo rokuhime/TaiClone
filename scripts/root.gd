@@ -5,6 +5,9 @@ extends Viewport
 const KEYS := ["LeftDon", "LeftKat", "RightDon", "RightKat"]
 
 ## Comment
+const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]
+
+## Comment
 var config_path := "user://config.ini"
 
 ## Comment
@@ -46,6 +49,11 @@ static func event(key: String) -> InputEvent:
 
 
 ## Comment
+static func item_resolution(item: Array) -> Vector2:
+	return Vector2(int(item[1]), int(item[2]))
+
+
+## Comment
 static func new_tween(old_tween: SceneTreeTween, node: Node) -> SceneTreeTween:
 	if old_tween.is_valid():
 		old_tween.kill()
@@ -73,8 +81,10 @@ func change_key(event: InputEvent, button: String, settings_save := false) -> vo
 
 
 ## Comment
-func change_res(new_size: Vector2) -> void:
-	print_debug(new_size)
+func change_res(index := -1) -> void:
+	## Comment
+	var new_size := OS.window_size if index == -1 else item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false))
+
 	OS.window_resizable = false
 	OS.window_size = new_size
 	size = new_size

@@ -33,21 +33,18 @@ func _ready() -> void:
 	late_early(taiclone.late_early_simple_display)
 	hit_error(taiclone.hit_error)
 
-	## Comment
-	var resolutions := [["16:9 | 1920x1080", Vector2(1920, 1080)], ["16:9 | 1280x720", Vector2(1280, 720)], ["16:9 | 1024x576", Vector2(1024, 576)], [], ["4:3 | 1440x1080", Vector2(1440, 1080)], ["4:3 | 1024x768", Vector2(1024, 768)], [], ["5:4 | 1280x1024", Vector2(1280, 1024)], ["5:4 | 1025x820", Vector2(1025, 820)]]
-
-	for i in resolutions.size():
+	for i in taiclone.RESOLUTIONS.size():
 		## Comment
-		var item: Array = resolutions[i] # UNSAFE Variant
+		var item := str(taiclone.RESOLUTIONS[i]).split(",", false)
 
 		if item.empty():
 			dropdown.add_separator()
 
 		else:
-			dropdown.add_item(str(item[0]))
+			dropdown.add_item("%s | %sx%s" % Array(item))
 
 			## Comment
-			var item_resolution: Vector2 = item[1] # UNSAFE Variant
+			var item_resolution := taiclone.item_resolution(item)
 
 			dropdown.set_item_metadata(int(i), item_resolution)
 			if item_resolution == OS.window_size:
@@ -86,10 +83,7 @@ func change_offset(new_value: String) -> void:
 
 ## Comment
 func change_res(index: int) -> void:
-	## Comment
-	var new_size: Vector2 = dropdown.get_item_metadata(index) # UNSAFE Variant
-
-	taiclone.change_res(new_size)
+	taiclone.change_res(index)
 
 
 ## Comment

@@ -8,7 +8,7 @@ func _init() -> void:
 	## Comment
 	var taiclone := root as Root
 
-	if connect("screen_resized", taiclone, "res_changed", [OS.window_size]):
+	if connect("screen_resized", taiclone, "change_res"):
 		push_warning("Attempted to connect TaiClone screen_resized.")
 
 	## Comment
@@ -25,7 +25,14 @@ func _init() -> void:
 
 	taiclone.late_early_simple_display = int(config_file.get_value("Display", "LateEarly", 1))
 	taiclone.hit_error = bool(config_file.get_value("Display", "HitError", 1))
-	taiclone.change_res(Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)))
+	taiclone.RESOLUTIONS.append("0,%s,%s" % [config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)])
+
+	## Comment
+	var idx := taiclone.RESOLUTIONS.size() - 1
+
+	taiclone.change_res(idx)
+	taiclone.RESOLUTIONS.remove(idx)
+	#taiclone.change_res(Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)))
 	taiclone.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
 	taiclone.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
 
