@@ -49,6 +49,7 @@ var _timing_indicator_tween := SceneTreeTween.new()
 onready var combo := $BarLeft/DrumVisual/Combo as Label
 onready var debug_text := $debug/debugtext as Label
 onready var fpstext := $debug/fpstext as Label
+onready var hit_error := $UI/HitError
 onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var line_edit := $debug/temploadchart/LineEdit as LineEdit
 onready var music := $Music as AudioStreamPlayer
@@ -60,8 +61,19 @@ onready var ui_score := $UI/Score as Label
 
 
 func _ready() -> void:
+	if taiclone.connect("hit_error_toggled", hit_error, "hit_error_toggled"):
+		push_warning("Attempted to connect Root hit_error_toggled.")
+
 	late_early_changed()
+
+	if taiclone.connect("late_early_changed", self, "late_early_changed"):
+		push_warning("Attempted to connect Root late_early_changed.")
+
 	offset_changed()
+
+	if taiclone.connect("offset_changed", self, "offset_changed"):
+		push_warning("Attempted to connect Root offset_changed.")
+
 	if _f.file_exists(_fus):
 		load_func(_fus)
 
@@ -415,6 +427,12 @@ func play_chart() -> void:
 
 	else:
 		music.play()
+
+
+## Comment
+func toggle_settings() -> void:
+	if not taiclone.remove_scene("SettingsPanel"):
+		taiclone.add_scene(preload("res://scenes/root/settings_panel.tscn").instance(), name)
 
 
 ## Comment

@@ -1,11 +1,10 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=3]
 [ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=4]
 [ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
-[ext_resource path="res://scenes/gameplay/settings_panel.tscn" type="PackedScene" id=7]
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=12]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
@@ -343,8 +342,6 @@ rect_scale = Vector2( 1.9, 1.9 )
 text = "v0.3 - The Big One(tm)"
 align = 2
 
-[node name="SettingsPanel" parent="debug" instance=ExtResource( 7 )]
-
 [node name="DrumInteraction" type="Node" parent="."]
 
 [node name="LeftDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
@@ -376,7 +373,4 @@ bus = "SFX"
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="." method="play_chart"]
 [connection signal="toggled" from="debug/temploadchart/AutoToggle" to="." method="auto_toggled"]
-[connection signal="pressed" from="debug/SettingsButton" to="debug/SettingsPanel" method="toggle_settings"]
-[connection signal="hit_error_toggled" from="debug/SettingsPanel" to="UI/HitError" method="hit_error_toggled"]
-[connection signal="late_early_changed" from="debug/SettingsPanel" to="." method="late_early_changed"]
-[connection signal="offset_changed" from="debug/SettingsPanel" to="." method="offset_changed"]
+[connection signal="pressed" from="debug/SettingsButton" to="." method="toggle_settings"]

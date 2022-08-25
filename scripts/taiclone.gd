@@ -37,7 +37,7 @@ func _init() -> void:
 	taiclone.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
 
 	## Comment
-	var volume_control := preload("res://scenes/volume_control.tscn").instance() as VolumeControl
+	var volume_control := preload("res://scenes/root/volume_control.tscn").instance() as VolumeControl
 
 	volume_control.modulate.a = 0
 	taiclone.add_scene(volume_control)
@@ -48,6 +48,7 @@ func _init() -> void:
 	var gameplay := preload("res://scenes/gameplay/gameplay.tscn").instance() as Gameplay
 
 	taiclone.add_scene(gameplay)
+	taiclone.settings_save = true
 
 	# Load Scene == FOR DEBUG ONLY ==
 	#(root.get_node("Gameplay") as CanvasItem).hide()

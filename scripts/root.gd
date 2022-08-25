@@ -2,6 +2,15 @@ class_name Root
 extends Viewport
 
 ## Comment
+signal hit_error_toggled
+
+## Comment
+signal late_early_changed
+
+## Comment
+signal offset_changed
+
+## Comment
 const KEYS := ["LeftDon", "LeftKat", "RightDon", "RightKat"]
 
 ## Comment
@@ -15,6 +24,9 @@ var hit_error := true
 
 ## Comment
 var late_early_simple_display := 1
+
+## Comment
+var settings_save := false
 
 ## Comment
 var vols := AudioServer.bus_count
@@ -62,8 +74,8 @@ static func new_tween(old_tween: SceneTreeTween, node: Node) -> SceneTreeTween:
 
 
 ## Comment
-func add_scene(new_scene: Node) -> void:
-	add_child_below_node(background, new_scene)
+func add_scene(new_scene: Node, parent_node := "") -> void:
+	add_child_below_node(get_node(parent_node) if has_node(parent_node) else background, new_scene)
 
 
 ## Comment
@@ -73,11 +85,19 @@ func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
 
 
 ## Comment
-func change_key(event: InputEvent, button: String, settings_save := false) -> void:
+func change_key(event: InputEvent, button: String) -> void:
 	InputMap.action_erase_events(str(button))
 	InputMap.action_add_event(str(button), event)
 	if settings_save:
 		save_settings("change_key")
+
+
+## Comment
+func change_offset(new_value: int) -> void:
+	global_offset = new_value
+	emit_signal("offset_changed")
+	if settings_save:
+		save_settings("change_offset")
 
 
 ## Comment
@@ -89,7 +109,33 @@ func change_res(index := -1) -> void:
 	OS.window_size = new_size
 	size = new_size
 	OS.window_resizable = true
-	save_settings("change_res")
+	if settings_save:
+		save_settings("change_res")
+
+
+## Comment
+func hit_error_toggled(new_visible: bool) -> void:
+	hit_error = new_visible
+	emit_signal("hit_error_toggled")
+	if settings_save:
+		save_settings("hit_error_toggled")
+
+
+## Comment
+func late_early(new_value: int) -> void:
+	late_early_simple_display = new_value
+	emit_signal("late_early_changed")
+	if settings_save:
+		save_settings("late_early")
+
+
+## Comment
+func remove_scene(old_scene: String) -> bool:
+	if has_node(old_scene):
+		get_node(old_scene).queue_free()
+		return true
+
+	return false
 
 
 ## Comment
@@ -121,7 +167,7 @@ func save_settings(debug: String) -> void:
 
 
 ## Comment
-func toggle_fullscreen(new_visible: bool, settings_save := false) -> void:
+func toggle_fullscreen(new_visible: bool) -> void:
 	OS.window_fullscreen = new_visible
 	if settings_save:
 		save_settings("toggle_fullscreen")
