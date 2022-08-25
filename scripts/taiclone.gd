@@ -10,8 +10,9 @@ func _init() -> void:
 	## Comment
 	var taiclone := root as Root
 
-	if connect("screen_resized", taiclone, "change_res"):
-		push_warning("Attempted to connect TaiClone screen_resized.")
+	#the borked code that causes the res stuff
+#	if connect("screen_resized", taiclone, "change_res"):
+#		push_warning("Attempted to connect TaiClone screen_resized.")
 
 	## Comment
 	var config_file := ConfigFile.new()

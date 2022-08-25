@@ -6,7 +6,7 @@ var _is_kat := false
 
 # if the last hit was on the right side; only applies to finishers
 # saved as int because this cant be null :(
-var _previous_side_was_right : int
+var _previous_side_was_right := 0
 
 onready var sprite := $Sprite as CanvasItem
 
@@ -79,12 +79,27 @@ func hit(inputs: Array, hit_time: float) -> Array:
 			state = int(State.FINISHED)
 			queue_free()
 	else:
+		hide()
 		_previous_side_was_right = current_side_is_right
 	
 	
 	inputs.append(scores)
 	return inputs
 
+func miss_check(hit_time: float) -> int:
+	if state == int(State.FINISHED):
+		return Score.FINISHED
+
+	if hit_time > timing:
+		if _previous_side_was_right != 0:
+			state = Score.FINISHED
+			queue_free()
+			return Score.FINISHED
+		else:
+			queue_free()
+			return Score.MISS
+
+	return 0
 
 ## See [HitObject].
 func skin(new_skin: SkinManager) -> void:
