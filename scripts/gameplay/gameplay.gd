@@ -50,12 +50,12 @@ onready var combo := $BarLeft/DrumVisual/Combo as Label
 onready var debug_text := $debug/debugtext as Label
 onready var fpstext := $debug/fpstext as Label
 onready var hit_error := $UI/HitError
-onready var judgement := $BarLeft/HitPoint/Judgement as TextureRect
+onready var judgement := $BarLeft/Judgement as TextureRect
 onready var line_edit := $debug/temploadchart/LineEdit as LineEdit
 onready var music := $Music as AudioStreamPlayer
-onready var obj_container := $BarLeft/HitPoint/ObjectContainer as Control
+onready var obj_container := $BarLeft/ObjectContainer as Control
 onready var taiclone := $"/root" as Root
-onready var timing_indicator := $BarLeft/HitPoint/TimingIndicator as Label
+onready var timing_indicator := $BarLeft/TimingIndicator as Label
 onready var ui_accuracy := $UI/Accuracy as Label
 onready var ui_score := $UI/Score as Label
 
@@ -74,6 +74,7 @@ func _ready() -> void:
 	if taiclone.connect("offset_changed", self, "offset_changed"):
 		push_warning("Attempted to connect Root offset_changed.")
 
+	_reset()
 	if _f.file_exists(_fus):
 		load_func(_fus)
 
@@ -151,16 +152,13 @@ func _process(delta: float) -> void:
 		var note = obj_container.get_child(i)
 
 		## Comment
-		var score: int = note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)) # UNSAFE Variant
+		var score: int = note.miss_check(_cur_time - (taiclone.inacc_timing if note is BarLine or note is Note else 0.0)) # UNSAFE Variant
 
-		if note is BarLine or note is SpinnerWarn:
+		if note is BarLine or note is SpinnerWarn or score == int(HitObject.Score.FINISHED):
 			continue
 
 		if not score:
 			break
-
-		if score == int(HitObject.Score.FINISHED):
-			continue
 
 		_add_score(score)
 		if score == int(HitObject.Score.MISS):
@@ -245,7 +243,7 @@ func load_func(file_path := "") -> void:
 			_load_finish("Unable to create temporary .fus file!")
 			return
 
-		_f.store_line("v0.0.1")
+		_f.store_line("v0.0.2")
 
 		## Comment
 		var events = current_chart_data["Events"]
@@ -291,7 +289,7 @@ func load_func(file_path := "") -> void:
 		var cur_sv := 1.0
 
 		## Comment
-		var total_cur_sv := -1.0
+		var total_cur_sv := 1.0
 
 		for note_data in current_chart_data["HitObjects"]:
 			## Comment
@@ -324,7 +322,7 @@ func load_func(file_path := "") -> void:
 					if current_timing_data.empty():
 						break
 
-			total_cur_sv = cur_bpm * cur_sv * map_sv_multiplier * 3
+			total_cur_sv = cur_bpm * cur_sv * map_sv_multiplier
 			next_barline = _barline(total_cur_sv, time, next_barline, cur_bpm, true)
 			if 1 << 3 & int(note_array[3]): # spinner
 				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.SPINNER), str(float(note_array[5]) / 1000 - time)])
@@ -334,7 +332,7 @@ func load_func(file_path := "") -> void:
 			var finisher := 1 << 2 & int(note_array[4])
 
 			if 1 << 1 & int(note_array[3]): # roll
-				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.ROLL), str(float(note_array[7]) * int(note_array[6]) * 1.8 / total_cur_sv), str(finisher)])
+				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.ROLL), str(float(note_array[7]) * int(note_array[6]) * 0.6 / total_cur_sv), str(finisher)])
 
 			else:
 				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(note_array[4])) else NoteType.DON), str(finisher)])
@@ -349,8 +347,9 @@ func load_func(file_path := "") -> void:
 		_load_finish("Unable to read temporary .fus file!")
 		return
 
-	if _f.get_line() != "v0.0.1":
+	if _f.get_line() != "v0.0.2":
 		_load_finish("Outdated .fus file!")
+		return
 
 	## Comment
 	var bg_file_path := _f.get_line()
@@ -381,29 +380,32 @@ func load_func(file_path := "") -> void:
 		if Array(line) == [""]:
 			break
 
+		## Comment
+		var total_cur_sv := float(line[1]) * 5.7
+
 		match int(line[2]):
 			NoteType.BARLINE:
 				## Comment
 				var note_object := preload("res://scenes/gameplay/bar_line.tscn").instance() as BarLine
-				note_object.change_properties(float(line[0]), float(line[1]))
+				note_object.change_properties(float(line[0]), total_cur_sv)
 				_add_note(note_object)
 
 			NoteType.DON, NoteType.KAT:
 				## Comment
-				var note_object := preload("res://scenes/gameplay/note_object.tscn").instance() as Note
-				note_object.change_properties(float(line[0]), float(line[1]), int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
+				var note_object := preload("res://scenes/gameplay/note.tscn").instance() as Note
+				note_object.change_properties(float(line[0]), total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
 				_add_note(note_object)
 
 			NoteType.ROLL:
 				## Comment
-				var note_object := preload("res://scenes/gameplay/roll_object.tscn").instance() as Roll
-				note_object.change_properties(float(line[0]), float(line[1]), float(line[3]), bool(int(line[4])), cur_bpm)
+				var note_object := preload("res://scenes/gameplay/roll.tscn").instance() as Roll
+				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
 				_add_note(note_object)
 
 			NoteType.SPINNER:
 				## Comment
-				var note_object := preload("res://scenes/gameplay/spinner_warn_object.tscn").instance() as SpinnerWarn
-				note_object.change_properties(float(line[0]), float(line[1]), float(line[3]), cur_bpm)
+				var note_object := preload("res://scenes/gameplay/spinner_warn.tscn").instance() as SpinnerWarn
+				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), cur_bpm)
 				_add_note(note_object)
 
 			NoteType.TIMING_POINT:
@@ -416,7 +418,7 @@ func load_func(file_path := "") -> void:
 ## Comment
 func offset_changed() -> void:
 	# TODO: Remove 1.9 scaling
-	obj_container.rect_position = Vector2(taiclone.global_offset * -0.775, 0)
+	obj_container.rect_position.x = taiclone.global_offset * -0.775
 
 
 ## Comment

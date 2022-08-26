@@ -37,7 +37,7 @@ var _finisher := false
 
 func _ready() -> void:
 	if _finisher:
-		(get_child(0) as Control).rect_scale = Vector2(0.9, 0.9)
+		(get_child(0) as Control).rect_scale *= 1.6
 
 	state = int(State.READY)
 
@@ -51,8 +51,7 @@ func _process(_delta: float) -> void:
 ## Enable motion and [method hit] and [method miss_check] calls on this [HitObject].
 func activate() -> void:
 	assert(state == int(State.READY), "Attempted to activate hitobject.")
-	# TODO: Remove 1.9 scaling
-	position.x = speed * timing / 1.9
+	position.x = speed * timing
 	state = int(State.ACTIVE)
 
 
@@ -69,8 +68,7 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 	assert(not state, "Attempted to change hitobject properties after loaded.")
 	_finisher = new_finisher
 	length = new_length
-	# TODO: Remove 1.9 scaling
-	speed = new_speed * 1.9
+	speed = new_speed
 	timing = new_timing
 
 

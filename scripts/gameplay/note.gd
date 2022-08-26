@@ -4,7 +4,7 @@ extends HitObject
 ## Whether or not this [Note] is a don or kat.
 var _is_kat := false
 
-onready var sprite := $Sprite as CanvasItem
+onready var head := $Head as CanvasItem
 
 
 ## Initialize [Note] variables.
@@ -56,4 +56,4 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 ## See [HitObject].
 func skin(new_skin: SkinManager) -> void:
-	sprite.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
+	head.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color

@@ -7,9 +7,9 @@ var _tick_distance := 0.0
 ## The number of ticks in this [Roll].
 var _total_ticks := 0
 
-onready var body := $Scale/Body as Control
-onready var head := $Scale/Head as CanvasItem
-onready var tick := $Tick
+onready var body := $Body as Control
+onready var head := $Head as CanvasItem
+onready var tick := $Tick as CanvasItem
 onready var tick_container := $TickContainer
 
 
@@ -21,16 +21,16 @@ func _ready() -> void:
 
 		tick_container.add_child(new_tick)
 		new_tick.rect_position.x = tick_idx * _tick_distance
-		new_tick.show()
+
+	tick.hide()
 
 
 ## Initialize [Roll] variables.
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, new_bpm: float) -> void:
 	.ini(new_timing, new_speed, new_length, new_finisher)
-	_tick_distance = 15000 / new_bpm
-	_total_ticks = int(round(length * 10000 / _tick_distance) / 10) + 1
-	# TODO: Remove 1.9 scaling
-	_tick_distance *= speed / 1.9 / new_bpm / 4.2
+	_tick_distance = 15 / new_bpm
+	_total_ticks = int(round(length * 10 / _tick_distance) / 10) + 1
+	_tick_distance *= speed
 
 
 ## See [HitObject].

@@ -20,7 +20,7 @@ func miss_check(hit_time: float) -> int:
 		state = int(State.FINISHED)
 
 		## The [Spinner] object to spawn.
-		var spinner := preload("res://scenes/gameplay/spinner_object.tscn").instance() as Spinner
+		var spinner := preload("res://scenes/gameplay/spinner.tscn").instance() as Spinner
 
 		spinner.change_properties(timing, length, int(length * 960 / _bpm))
 		get_parent().add_child(spinner)

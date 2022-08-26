@@ -8,20 +8,17 @@
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=6]
 
 [node name="BarLeft" type="Control"]
-margin_top = 304.0
-margin_right = 254.0
-margin_bottom = 582.0
+margin_left = 361.0
+margin_top = 443.0
+margin_right = 361.0
+margin_bottom = 443.0
 theme = ExtResource( 4 )
 
 [node name="HitPoint" type="TextureRect" parent="."]
 self_modulate = Color( 1, 1, 1, 0.435294 )
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_left = 46.0
+margin_left = -61.0
 margin_top = -61.0
-margin_right = 168.0
+margin_right = 61.0
 margin_bottom = 61.0
 texture = ExtResource( 5 )
 expand = true
@@ -36,33 +33,24 @@ margin_bottom = 16.0
 texture = ExtResource( 6 )
 expand = true
 
-[node name="Judgement" type="TextureRect" parent="HitPoint"]
+[node name="Judgement" type="TextureRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -135.0
-margin_top = -135.0
-margin_right = 135.0
-margin_bottom = 135.0
+margin_left = -196.0
+margin_top = -196.0
+margin_right = 196.0
+margin_bottom = 196.0
 stretch_mode = 6
 
-[node name="ObjectContainer" type="Control" parent="HitPoint"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-rect_scale = Vector2( 1.9, 1.9 )
-
-[node name="TimingIndicator" type="Label" parent="HitPoint"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_top = -142.0
-margin_bottom = -69.0
-grow_horizontal = 2
-theme_type_variation = "TimingIndicator"
-
-[node name="DrumVisual" type="TextureRect" parent="."]
+[node name="ObjectContainer" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="DrumVisual" type="TextureRect" parent="."]
+margin_left = -361.0
+margin_top = -139.0
+margin_right = -107.0
+margin_bottom = 139.0
 texture = ExtResource( 1 )
 expand = true
 
@@ -100,3 +88,11 @@ anchor_bottom = 1.0
 theme_type_variation = "Combo"
 align = 1
 valign = 1
+
+[node name="TimingIndicator" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_top = -203.0
+margin_bottom = -130.0
+grow_horizontal = 2
+theme_type_variation = "TimingIndicator"
