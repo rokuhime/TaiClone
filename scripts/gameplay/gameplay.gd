@@ -154,7 +154,7 @@ func _process(delta: float) -> void:
 		## Comment
 		var score: int = note.miss_check(_cur_time - (taiclone.inacc_timing if note is BarLine or note is Note else 0.0)) # UNSAFE Variant
 
-		if note is BarLine or note is SpinnerWarn or score == int(HitObject.Score.FINISHED):
+		if note is BarLine or note is SpinnerWarn or note is Tick or score == int(HitObject.Score.FINISHED):
 			continue
 
 		if not score:
