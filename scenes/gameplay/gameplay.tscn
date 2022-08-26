@@ -1,30 +1,16 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=14 format=2]
 
-[ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
-[ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=3]
-[ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=4]
-[ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
+[ext_resource path="res://scenes/gameplay/bar_left.tscn" type="PackedScene" id=7]
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=12]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
-[ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=20]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=23]
 [ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
 [ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=30]
-
-[sub_resource type="DynamicFont" id=1]
-size = 75
-outline_size = 2
-outline_color = Color( 0, 0, 0, 0.313726 )
-font_data = ExtResource( 29 )
-
-[sub_resource type="DynamicFont" id=13]
-size = 50
-font_data = ExtResource( 29 )
 
 [sub_resource type="DynamicFont" id=2]
 size = 65
@@ -68,140 +54,13 @@ texture = ExtResource( 23 )
 expand = true
 
 [node name="BarRight" type="TextureRect" parent="."]
-anchor_top = 0.5
 anchor_right = 1.0
-anchor_bottom = 0.5
-margin_top = -240.0
-margin_bottom = 88.0
-rect_min_size = Vector2( 0, 170 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
+margin_top = 300.0
+margin_bottom = 628.0
 texture = ExtResource( 6 )
 expand = true
 
-[node name="HitPointOffset" type="Control" parent="BarRight"]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = 360.0
-margin_top = -21.0
-margin_right = 360.0
-margin_bottom = -21.0
-rect_scale = Vector2( 1.9, 1.9 )
-
-[node name="HitPoint" type="TextureRect" parent="BarRight/HitPointOffset"]
-self_modulate = Color( 1, 1, 1, 0.435294 )
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = -64.0
-margin_top = -64.0
-margin_right = 65.0
-margin_bottom = 65.0001
-rect_scale = Vector2( 0.5, 0.5 )
-rect_pivot_offset = Vector2( 64.5, 64.5 )
-texture = ExtResource( 2 )
-expand = true
-
-[node name="Rim" type="TextureRect" parent="BarRight/HitPointOffset/HitPoint"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-rect_scale = Vector2( 1.25, 1.25 )
-rect_pivot_offset = Vector2( 64.5, 64.5 )
-texture = ExtResource( 20 )
-expand = true
-
-[node name="ObjectContainer" type="Control" parent="BarRight/HitPointOffset"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-
-[node name="Judgement" type="TextureRect" parent="BarRight/HitPointOffset"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -128.0
-margin_top = -128.0
-margin_right = 128.0
-margin_bottom = 128.0
-rect_scale = Vector2( 0.8, 0.8 )
-rect_pivot_offset = Vector2( 128, 128 )
-stretch_mode = 4
-
-[node name="BarLeft" type="TextureRect" parent="."]
-anchor_bottom = 1.0
-margin_top = 304.0
-margin_right = 254.0
-margin_bottom = -498.0
-size_flags_horizontal = 3
-size_flags_vertical = 4
-texture = ExtResource( 5 )
-expand = true
-
-[node name="DrumVisual" type="Control" parent="BarLeft"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-
-[node name="LeftDon" type="TextureRect" parent="BarLeft/DrumVisual"]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_bottom = 1.0
-margin_right = 127.0
-texture = ExtResource( 3 )
-expand = true
-
-[node name="LeftKat" type="TextureRect" parent="BarLeft/DrumVisual"]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_bottom = 1.0
-margin_right = 127.0
-texture = ExtResource( 4 )
-expand = true
-flip_h = true
-
-[node name="RightDon" type="TextureRect" parent="BarLeft/DrumVisual"]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_bottom = 1.0
-margin_left = 127.0
-margin_right = 254.0
-texture = ExtResource( 3 )
-expand = true
-flip_h = true
-
-[node name="RightKat" type="TextureRect" parent="BarLeft/DrumVisual"]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_bottom = 1.0
-margin_left = 127.0
-margin_right = 254.0
-texture = ExtResource( 4 )
-expand = true
-
-[node name="Combo" type="Label" parent="BarLeft/DrumVisual"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -13.5
-margin_top = -33.0
-margin_right = 13.5
-margin_bottom = 33.0
-grow_horizontal = 2
-grow_vertical = 2
-custom_fonts/font = SubResource( 1 )
-text = "0"
-align = 1
-valign = 1
-
-[node name="TimingIndicator" type="Label" parent="BarLeft"]
-self_modulate = Color( 1, 1, 1, 0 )
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = 65.5
-margin_top = -63.5
-margin_right = 144.5
-margin_bottom = 9.5
-grow_horizontal = 2
-grow_vertical = 2
-custom_fonts/font = SubResource( 13 )
-text = "±0"
-align = 1
-valign = 1
+[node name="BarLeft" parent="." instance=ExtResource( 7 )]
 
 [node name="UI" type="Control" parent="."]
 anchor_right = 1.0

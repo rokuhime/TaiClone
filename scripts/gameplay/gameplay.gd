@@ -50,12 +50,12 @@ onready var combo := $BarLeft/DrumVisual/Combo as Label
 onready var debug_text := $debug/debugtext as Label
 onready var fpstext := $debug/fpstext as Label
 onready var hit_error := $UI/HitError
-onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
+onready var judgement := $BarLeft/HitPoint/Judgement as TextureRect
 onready var line_edit := $debug/temploadchart/LineEdit as LineEdit
 onready var music := $Music as AudioStreamPlayer
-onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
+onready var obj_container := $BarLeft/HitPoint/ObjectContainer as Control
 onready var taiclone := $"/root" as Root
-onready var timing_indicator := $BarLeft/TimingIndicator as Label
+onready var timing_indicator := $BarLeft/HitPoint/TimingIndicator as Label
 onready var ui_accuracy := $UI/Accuracy as Label
 onready var ui_score := $UI/Score as Label
 
