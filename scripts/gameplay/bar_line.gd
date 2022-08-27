@@ -10,5 +10,17 @@ func change_properties(new_timing: float, new_speed: float) -> void:
 
 
 ## See [HitObject].
+func miss_check(hit_time: float) -> bool:
+	if hit_time <= end_time:
+		return true
+
+	if state != int(State.FINISHED):
+		state = int(State.FINISHED)
+		queue_free()
+
+	return false
+
+
+## See [HitObject].
 func skin(new_skin: SkinManager) -> void:
 	color_rect.self_modulate = new_skin.barline_color

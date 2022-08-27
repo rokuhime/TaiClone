@@ -95,8 +95,7 @@ func hit(inputs: Array, hit_time: float) -> Array:
 		_cur_hit_count += 1
 		scores.append(int(Score.SPINNER))
 		if _cur_hit_count == _needed_hits:
-			_spinner_finished()
-			scores.append(int(Score.ACCURATE))
+			_spinner_finished(Score.ACCURATE)
 			break
 
 	if scores.empty():
@@ -114,15 +113,13 @@ func hit(inputs: Array, hit_time: float) -> Array:
 
 
 ## See [HitObject].
-func miss_check(hit_time: float) -> int:
-	if state == int(State.FINISHED):
-		return Score.FINISHED
+func miss_check(hit_time: float) -> bool:
+	if hit_time <= end_time:
+		return true
 
-	if hit_time - length > timing:
-		_spinner_finished()
-		return Score.INACCURATE if _needed_hits / 2.0 <= _cur_hit_count else Score.MISS
+	_spinner_finished(Score.INACCURATE if _needed_hits / 2.0 <= _cur_hit_count else Score.MISS)
 
-	return 0
+	return false
 
 
 ## Set text to the remaining hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
@@ -131,9 +128,10 @@ func _count_text() -> void:
 
 
 ## Set this [Spinner] to the FINISHED [member HitObject.State].
-func _spinner_finished() -> void:
+func _spinner_finished(type: int) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
+		emit_signal("score_added", type, false)
 
 		## The [PropertyTweener] used to fade out this [Spinner].
 		if _tween_modulate(0).connect("finished", self, "deactivate"):

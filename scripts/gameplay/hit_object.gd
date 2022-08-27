@@ -1,6 +1,9 @@
 class_name HitObject
 extends KinematicBody2D
 
+## Comment
+signal score_added(type, marker)
+
 ## The possible scores of a [HitObject]:
 ## 0: It is too early to hit this [HitObject]. Does not affect score or accuracy. Applies to all [HitObject]s.
 ## 1 (ACCURATE): 300 points and 100% accuracy. Applies to all [HitObject]s.
@@ -78,16 +81,17 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 
 ## Check if this [HitObject] has been missed. It can be implemented by child classes to extend functionality.
 ## hit_time (float): The end of this [HitObject]'s hit window.
-## return (String): The [member Score] to add.
-func miss_check(hit_time: float) -> int:
-	if state == int(State.FINISHED):
-		return Score.FINISHED
+## return (bool): Whether or not to continue checking for misses.
+func miss_check(hit_time: float) -> bool:
+	if hit_time <= end_time:
+		return true
 
-	if hit_time > timing:
+	if state != int(State.FINISHED):
+		state = int(State.FINISHED)
 		queue_free()
-		return Score.MISS
+		emit_signal("score_added", Score.MISS, true)
 
-	return 0
+	return false
 
 
 ## Apply a skin to this [HitObject]. Intended to be implemented by child classes.

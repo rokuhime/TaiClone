@@ -1,13 +1,26 @@
+class_name BarLeft
 extends Node
 
 ## Comment
 signal debug_text(text)
 
 ## Comment
-signal reset_gameplay
+signal marker_added(type, timing, skin)
+
+## Comment
+signal score_added(score, accuracy)
 
 ## Comment
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
+
+## Comment
+var _accurate_count := 0
+
+## Comment
+var _combo := 0
+
+## Comment
+var _cur_time := 0.0
 
 ## Comment
 var _f := File.new()
@@ -15,22 +28,83 @@ var _f := File.new()
 ## Comment
 var _fus := "user://debug.fus"
 
+## Comment
+var _inaccurate_count := 0
+
+## Comment
+var _judgement_tween := SceneTreeTween.new()
+
+## Comment
+var _miss_count := 0
+
+## Comment
+var _score := 0
+
+onready var combo := $DrumVisual/Combo as Label
+onready var judgement := $Judgement as TextureRect
 onready var music := $Music as AudioStreamPlayer
 onready var obj_container := $ObjectContainer as Control
 onready var taiclone := $"/root" as Root
 
 
 ## Comment
-func add_object(obj: HitObject, add := true) -> void:
-	if add:
-		obj_container.add_child(obj)
-		for i in range(obj_container.get_child_count()):
-			if obj.end_time > (obj_container.get_child(i) as HitObject).end_time:
-				obj_container.move_child(obj, i)
-				break
+func _process(delta: float) -> void:
+	if not music.playing:
+		return
+
+	_cur_time += delta
+	for i in range(obj_container.get_child_count() - 1, -1, -1):
+		## Comment
+		var note := obj_container.get_child(i) as HitObject
+
+		if note.miss_check(_cur_time - (taiclone.inacc_timing if note is BarLine or note is Note else 0.0)):
+			break
+
+
+## Comment
+func add_object(obj: HitObject) -> void:
+	obj_container.add_child(obj)
+	for i in range(obj_container.get_child_count()):
+		if obj.end_time > (obj_container.get_child(i) as HitObject).end_time:
+			obj_container.move_child(obj, i)
+			break
 
 	obj.add_to_group("HitObjects")
+	if obj.connect("score_added", self, "add_score"):
+		push_warning("Attempted to connect HitObject score_added.")
+
 	obj.skin(taiclone.skin)
+
+
+## Comment
+func add_score(type: int, marker := false) -> void:
+	_score += 150 if type == int(HitObject.Score.INACCURATE) else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(type) else 600 if type == int(HitObject.Score.SPINNER) else 0
+	match type:
+		HitObject.Score.ACCURATE:
+			_accurate_count += 1
+			_combo += 1
+			_hit_notify_animation()
+			judgement.texture = taiclone.skin.accurate_judgement
+
+		HitObject.Score.INACCURATE:
+			_inaccurate_count += 1
+			_combo += 1
+			_hit_notify_animation()
+			judgement.texture = taiclone.skin.inaccurate_judgement
+
+		HitObject.Score.MISS:
+			_miss_count += 1
+			_combo = 0
+			_hit_notify_animation()
+			judgement.texture = taiclone.skin.miss_judgement
+			if marker:
+				emit_signal("marker_added", type, taiclone.inacc_timing, taiclone.skin)
+
+	## Comment
+	var hit_count := _accurate_count + _inaccurate_count / 2.0
+
+	combo.text = str(_combo)
+	emit_signal("score_added", _score, (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count) if hit_count else 0.0))
 
 
 ## Comment
@@ -223,7 +297,7 @@ func load_func(file_path: String) -> void:
 		taiclone.bg_changed(newtexture, Color("373737"))
 
 	music.stream = AudioLoader.loadfile(_f.get_line())
-	emit_signal("reset_gameplay")
+	_reset()
 
 	## Comment
 	var cur_bpm := -1.0
@@ -263,6 +337,8 @@ func load_func(file_path: String) -> void:
 
 				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), cur_bpm)
 				add_object(note_object)
+				if note_object.connect("object_added", self, "add_object"):
+					push_warning("Attempted to connect SpinnerWarn object_added.")
 
 			NoteType.TIMING_POINT:
 				cur_bpm = float(line[1])
@@ -277,9 +353,29 @@ func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_me
 
 
 ## Comment
+func _hit_notify_animation() -> void:
+	_judgement_tween = Root.new_tween(_judgement_tween, self).set_ease(Tween.EASE_OUT)
+
+	## Comment
+	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
+
+
+## Comment
 func _load_finish(new_text: String) -> void:
 	_f.close()
 	emit_signal("debug_text", new_text)
+
+
+## Comment
+func _reset(dispose := true) -> void:
+	_accurate_count = 0
+	_inaccurate_count = 0
+	_miss_count = 0
+	_combo = 0
+	_score = 0
+	add_score(0)
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
+	_cur_time = taiclone.global_offset / 1000.0
 
 
 ## Comment

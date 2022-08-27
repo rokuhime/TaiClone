@@ -21,6 +21,20 @@ func _ready() -> void:
 		new_tick.change_properties(tick_idx * _tick_distance * speed)
 		tick_container.add_child(new_tick)
 		tick_container.move_child(new_tick, 0)
+		if new_tick.connect("score_added", self, "add_score"):
+			push_warning("Attempted to connect Tick score_added.")
+
+
+## See [HitObject].
+func activate() -> void:
+	.activate()
+	for tick_idx in range(_total_ticks):
+		(tick_container.get_child(tick_idx) as Tick).activate()
+
+
+## Comment
+func add_score(type: int) -> void:
+	emit_signal("score_added", type, false)
 
 
 ## Initialize [Roll] variables.
@@ -31,16 +45,15 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 
 
 ## See [HitObject].
-func miss_check(hit_time: float) -> int:
-	if state == int(State.FINISHED):
-		return Score.FINISHED
+func miss_check(hit_time: float) -> bool:
+	if hit_time <= end_time:
+		return true
 
-	if hit_time - length > timing:
+	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
 		queue_free()
-		return Score.ACCURATE
 
-	return 0
+	return false
 
 
 ## See [HitObject].

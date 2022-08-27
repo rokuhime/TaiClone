@@ -5,55 +5,21 @@ extends Node
 signal load_chart(file_path)
 
 ## Comment
-signal new_marker(type, timing, skin)
-
-## Comment
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
-
-## Comment
-var _accurate_count := 0
 
 ## Comment
 var _auto := false
 
 ## Comment
-var _combo := 0
-
-## Comment
-var _cur_time := 0.0
-
-## Comment
 var _drum_animation_tweens := [SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new()]
-
-## Comment
-var _f := File.new()
-
-## Comment
-var _fus := "user://debug.fus"
-
-## Comment
-var _inaccurate_count := 0
-
-## Comment
-var _judgement_tween := SceneTreeTween.new()
-
-## Comment
-var _miss_count := 0
-
-## Comment
-var _score := 0
-
-## Comment
-var _score_multiplier := 1.0
 
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
-onready var combo := $BarLeft/DrumVisual/Combo as Label
+onready var bar_left := $BarLeft as BarLeft
 onready var debug_text := $debug/debugtext as Label
 onready var fpstext := $debug/fpstext as Label
 onready var hit_error := $UI/HitError
-onready var judgement := $BarLeft/Judgement as TextureRect
 onready var line_edit := $debug/temploadchart/LineEdit as LineEdit
 onready var music := $BarLeft/Music as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
@@ -77,9 +43,9 @@ func _ready() -> void:
 	if taiclone.connect("offset_changed", self, "offset_changed"):
 		push_warning("Attempted to connect Root offset_changed.")
 
-	_reset()
-	if _f.file_exists(_fus):
-		load_func(_fus)
+	bar_left._reset()
+	if bar_left._f.file_exists(bar_left._fus):
+		load_func(bar_left._fus)
 
 
 func _input(event: InputEvent) -> void:
@@ -123,7 +89,7 @@ func _input(event: InputEvent) -> void:
 			continue
 
 		## Comment
-		var new_inputs: Array = note.hit(inputs.duplicate(), _cur_time + (taiclone.inacc_timing if note is Note else 0.0)) # UNSAFE Variant
+		var new_inputs: Array = note.hit(inputs.duplicate(), bar_left._cur_time + (taiclone.inacc_timing if note is Note else 0.0)) # UNSAFE Variant
 
 		if inputs == new_inputs:
 			break
@@ -135,7 +101,7 @@ func _input(event: InputEvent) -> void:
 			break
 
 		for score in scores:
-			_add_score(score) # UNSAFE Parameter
+			bar_left.add_score(score) # UNSAFE Parameter
 			if int(score) == int(HitObject.Score.MISS):
 				return
 
@@ -144,28 +110,20 @@ func _input(event: InputEvent) -> void:
 			break
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
-	if not music.playing:
-		return
 
-	_cur_time += delta
-	for i in range(obj_container.get_child_count()):
-		## Comment
-		var note = obj_container.get_child(i)
 
-		## Comment
-		var score: int = note.miss_check(_cur_time - (taiclone.inacc_timing if note is BarLine or note is Note else 0.0)) # UNSAFE Variant
+## Comment
+func add_score(score: int, accuracy: float) -> void:
+	#if type is float:
+	#	## Comment
+	#	var timing := float(type) - taiclone.inacc_timing
 
-		if note is BarLine or note is SpinnerWarn or note is Tick or score == int(HitObject.Score.FINISHED):
-			continue
-
-		if not score:
-			break
-
-		_add_score(score)
-		if score == int(HitObject.Score.MISS):
-			emit_signal("new_marker", score, taiclone.inacc_timing, taiclone.skin)
+	#	type = HitObject.Score.ACCURATE if timing < taiclone.acc_timing else HitObject.Score.INACCURATE if timing < taiclone.inacc_timing else HitObject.Score.MISS
+	#	emit_signal("new_marker", type, timing, taiclone.skin)
+	ui_score.text = "%010d" % score
+	ui_accuracy.text = "%2.2f" % accuracy
 
 
 ## Comment
@@ -216,7 +174,7 @@ func offset_changed() -> void:
 
 ## Comment
 func play_chart() -> void:
-	_reset(music.playing)
+	bar_left._reset(music.playing)
 	if music.playing:
 		music.stop()
 
@@ -233,92 +191,3 @@ func text_debug(text: String) -> void:
 func toggle_settings() -> void:
 	if not taiclone.remove_scene("SettingsPanel"):
 		taiclone.add_scene(preload("res://scenes/root/settings_panel.tscn").instance(), name)
-
-
-## Comment
-func _add_score(type) -> void:
-	if type is float:
-		## Comment
-		var timing := float(type) - taiclone.inacc_timing
-
-		type = HitObject.Score.ACCURATE if timing < taiclone.acc_timing else HitObject.Score.INACCURATE if timing < taiclone.inacc_timing else HitObject.Score.MISS
-		emit_signal("new_marker", type, timing, taiclone.skin)
-
-	_score += int((150 if int(type) == int(HitObject.Score.INACCURATE) else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(int(type)) else 600 if int(type) == int(HitObject.Score.SPINNER) else 0) * _score_multiplier)
-	match int(type):
-		HitObject.Score.ACCURATE:
-			_accurate_count += 1
-			_combo += 1
-			_hit_notify_animation()
-			judgement.texture = taiclone.skin.accurate_judgement
-
-		HitObject.Score.INACCURATE:
-			_inaccurate_count += 1
-			_combo += 1
-			_hit_notify_animation()
-			judgement.texture = taiclone.skin.inaccurate_judgement
-
-		HitObject.Score.MISS:
-			_miss_count += 1
-			_combo = 0
-			_hit_notify_animation()
-			judgement.texture = taiclone.skin.miss_judgement
-
-	## Comment
-	var hit_count := _accurate_count + _inaccurate_count / 2.0
-
-	combo.text = str(_combo)
-	ui_score.text = "%010d" % _score
-	ui_accuracy.text = "%2.2f" % (0.0 if hit_count == 0 else (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count)))
-
-
-## Comment
-func _barline(total_cur_sv: float, time: float, next_barline: float, cur_bpm: float, equal := false) -> float:
-	while true:
-		## Comment
-		var barline := int(next_barline * 1000) / 1000.0
-
-		if barline < time or (equal and barline == time):
-			_f.store_csv_line([str(barline), str(total_cur_sv), str(NoteType.BARLINE)])
-			next_barline += 240 / cur_bpm
-
-		else:
-			break
-
-	return next_barline
-
-
-## Comment
-func _find_value(section: String, key: String, current_chart_data: Dictionary) -> String:
-	for line in current_chart_data[section]: # UNSAFE DictionaryItem
-		if str(line).begins_with(key):
-			return str(line).substr(key.length())
-
-	return ""
-
-
-## Comment
-func _hit_notify_animation() -> void:
-	_judgement_tween = Root.new_tween(_judgement_tween, self).set_ease(Tween.EASE_OUT)
-
-	## Comment
-	var _tween := _judgement_tween.tween_property(judgement, "self_modulate:a", 0.0, 0.4).from(1.0)
-
-
-## Comment
-func _load_finish(new_text: String) -> void:
-	_f.close()
-	debug_text.text = new_text
-
-
-## Comment
-func _reset(dispose := true) -> void:
-	_accurate_count = 0
-	_inaccurate_count = 0
-	_miss_count = 0
-	_combo = 0
-	_score = 0
-	_score_multiplier = 1
-	_add_score(0)
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
-	_cur_time = taiclone.global_offset / 1000.0
