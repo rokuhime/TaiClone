@@ -34,9 +34,6 @@ __meta__ = {
 "_edit_vertical_guides_": [ -119.0 ]
 }
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
-bus = "Music"
-
 [node name="ref" type="TextureRect" parent="."]
 visible = false
 modulate = Color( 1, 1, 1, 0.878431 )
@@ -227,7 +224,10 @@ bus = "SFX"
 stream = ExtResource( 22 )
 bus = "SFX"
 
+[connection signal="load_chart" from="." to="BarLeft" method="load_func"]
 [connection signal="new_marker" from="." to="UI/HitError" method="new_marker"]
+[connection signal="debug_text" from="BarLeft" to="." method="text_debug"]
+[connection signal="reset_gameplay" from="BarLeft" to="." method="_reset"]
 [connection signal="change_indicator" from="UI/HitError" to="." method="change_indicator"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="." method="play_chart"]

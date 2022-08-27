@@ -2,6 +2,9 @@ class_name Gameplay
 extends Node
 
 ## Comment
+signal load_chart(file_path)
+
+## Comment
 signal new_marker(type, timing, skin)
 
 ## Comment
@@ -52,7 +55,7 @@ onready var fpstext := $debug/fpstext as Label
 onready var hit_error := $UI/HitError
 onready var judgement := $BarLeft/Judgement as TextureRect
 onready var line_edit := $debug/temploadchart/LineEdit as LineEdit
-onready var music := $Music as AudioStreamPlayer
+onready var music := $BarLeft/Music as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
 onready var taiclone := $"/root" as Root
 onready var timing_indicator := $BarLeft/TimingIndicator as Label
@@ -199,220 +202,10 @@ func late_early_changed() -> void:
 
 ## Comment
 func load_func(file_path := "") -> void:
-	debug_text.text = "Loading... [Checking File]"
 	if file_path == "":
 		file_path = line_edit.text.replace("\\", "/")
 
-	if _f.open(file_path, File.READ):
-		_load_finish("Invalid file!")
-		return
-
-	debug_text.text = "Loading... [Reading File]"
-
-	## Comment
-	var starting_bpm := -1.0
-
-	if file_path.ends_with(".osu"):
-		## Comment
-		var file_in_text := _f.get_as_text()
-
-		_f.close()
-
-		## Comment
-		var section := ""
-
-		## Comment
-		var current_chart_data := {section: []}
-
-		for line in file_in_text.split("\n", false):
-			## Comment
-			var line_str := str(line).strip_edges()
-
-			if line_str.begins_with("[") and line_str.ends_with("]"):
-				section = line_str.substr(1, line_str.length() - 2)
-				current_chart_data[section] = [] # UNSAFE DictionaryItem
-
-			else:
-				current_chart_data[section].append(line_str) # UNSAFE DictionaryItem
-
-		## Comment
-		var folder_path := file_path.get_base_dir()
-
-		file_path = _fus
-		if _f.open(file_path, File.WRITE):
-			_load_finish("Unable to create temporary .fus file!")
-			return
-
-		_f.store_line("v0.0.2")
-
-		## Comment
-		var events = current_chart_data["Events"]
-
-		## Comment
-		var bg_file_name: String = events[events.find("//Background and Video events") + 1] # UNSAFE Variant
-
-		_f.store_line(folder_path.plus_file(bg_file_name.split(",")[2].replace("\"", "")))
-		_f.store_line(folder_path.plus_file(_find_value("General", "AudioFilename: ", current_chart_data)))
-
-		## Comment
-		var next_barline := -1.0
-
-		## Comment
-		var current_timing_data := []
-
-		for timing in current_chart_data["TimingPoints"]:
-			## Comment
-			var timing_array := str(timing).split(",") # split it to array
-
-			## Comment
-			var uninherited := bool(int(timing_array[6]))
-
-			## Comment
-			var time := float(timing_array[0]) / 1000
-
-			## Comment
-			var timing_value := (60000 if uninherited else -100) / float(timing_array[1])
-
-			if uninherited and starting_bpm < 0:
-				starting_bpm = timing_value
-				next_barline = time
-
-			current_timing_data.append([time, int(timing_array[2]) if uninherited else 0, timing_value])
-
-		## Comment
-		var map_sv_multiplier := float(_find_value("Difficulty", "SliderMultiplier:", current_chart_data))
-
-		## Comment
-		var cur_bpm := starting_bpm
-
-		## Comment
-		var cur_sv := 1.0
-
-		## Comment
-		var total_cur_sv := 1.0
-
-		for note_data in current_chart_data["HitObjects"]:
-			## Comment
-			var note_array := str(note_data).split(",")
-
-			## Comment
-			var time := float(note_array[2]) / 1000
-
-			if not current_timing_data.empty():
-				while true:
-					## Comment
-					var next_timing: float = current_timing_data[0][0] # UNSAFE Variant
-
-					if next_timing > time:
-						break
-
-					next_barline = _barline(total_cur_sv, next_timing, next_barline, cur_bpm)
-
-					## Comment
-					var timing: Array = current_timing_data.pop_front() # UNSAFE Variant
-
-					if int(timing[1]):
-						cur_bpm = float(timing[2])
-						next_barline = float(timing[0])
-						_f.store_csv_line([str(next_barline), str(cur_bpm), str(NoteType.TIMING_POINT)])
-
-					else:
-						cur_sv = float(timing[2])
-
-					if current_timing_data.empty():
-						break
-
-			total_cur_sv = cur_bpm * cur_sv * map_sv_multiplier
-			next_barline = _barline(total_cur_sv, time, next_barline, cur_bpm, true)
-			if 1 << 3 & int(note_array[3]): # spinner
-				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.SPINNER), str(float(note_array[5]) / 1000 - time)])
-				continue
-
-			## Comment
-			var finisher := 1 << 2 & int(note_array[4])
-
-			if 1 << 1 & int(note_array[3]): # roll
-				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.ROLL), str(float(note_array[7]) * int(note_array[6]) * 0.6 / total_cur_sv), str(finisher)])
-
-			else:
-				_f.store_csv_line([str(time), str(total_cur_sv), str(NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(note_array[4])) else NoteType.DON), str(finisher)])
-
-		_f.close()
-
-	if not file_path.ends_with(".fus"):
-		_load_finish("Invalid file!")
-		return
-
-	if _f.open(file_path, File.READ):
-		_load_finish("Unable to read temporary .fus file!")
-		return
-
-	if _f.get_line() != "v0.0.2":
-		_load_finish("Outdated .fus file!")
-		return
-
-	## Comment
-	var bg_file_path := _f.get_line()
-
-	## Comment
-	var image := Image.new()
-
-	if image.load(bg_file_path):
-		push_warning("Background failed to load: %s." % bg_file_path)
-
-	else:
-		## Comment
-		var newtexture := ImageTexture.new()
-
-		newtexture.create_from_image(image, 0)
-		taiclone.bg_changed(newtexture, Color("373737"))
-
-	music.stream = AudioLoader.loadfile(_f.get_line())
-	_reset()
-
-	## Comment
-	var cur_bpm := starting_bpm
-
-	while true:
-		## Comment
-		var line := _f.get_csv_line()
-
-		if Array(line) == [""]:
-			break
-
-		## Comment
-		var total_cur_sv := float(line[1]) * 5.7
-
-		match int(line[2]):
-			NoteType.BARLINE:
-				## Comment
-				var note_object := preload("res://scenes/gameplay/bar_line.tscn").instance() as BarLine
-				note_object.change_properties(float(line[0]), total_cur_sv)
-				_add_note(note_object)
-
-			NoteType.DON, NoteType.KAT:
-				## Comment
-				var note_object := preload("res://scenes/gameplay/note.tscn").instance() as Note
-				note_object.change_properties(float(line[0]), total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
-				_add_note(note_object)
-
-			NoteType.ROLL:
-				## Comment
-				var note_object := preload("res://scenes/gameplay/roll.tscn").instance() as Roll
-				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
-				_add_note(note_object)
-
-			NoteType.SPINNER:
-				## Comment
-				var note_object := preload("res://scenes/gameplay/spinner_warn.tscn").instance() as SpinnerWarn
-				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), cur_bpm)
-				_add_note(note_object)
-
-			NoteType.TIMING_POINT:
-				cur_bpm = float(line[1])
-
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", taiclone.skin)
-	_load_finish("Done!")
+	emit_signal("load_chart", file_path)
 
 
 ## Comment
@@ -432,15 +225,14 @@ func play_chart() -> void:
 
 
 ## Comment
-func toggle_settings() -> void:
-	if not taiclone.remove_scene("SettingsPanel"):
-		taiclone.add_scene(preload("res://scenes/root/settings_panel.tscn").instance(), name)
+func text_debug(text: String) -> void:
+	debug_text.text = text
 
 
 ## Comment
-func _add_note(note_object: Node) -> void:
-	obj_container.add_child(note_object)
-	note_object.add_to_group("HitObjects")
+func toggle_settings() -> void:
+	if not taiclone.remove_scene("SettingsPanel"):
+		taiclone.add_scene(preload("res://scenes/root/settings_panel.tscn").instance(), name)
 
 
 ## Comment

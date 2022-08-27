@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=1]
 [ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://themes/gameplay.tres" type="Theme" id=4]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=5]
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=6]
+[ext_resource path="res://scripts/gameplay/bar_left.gd" type="Script" id=7]
 
 [node name="BarLeft" type="Control"]
 margin_left = 361.0
@@ -13,6 +14,10 @@ margin_top = 443.0
 margin_right = 361.0
 margin_bottom = 443.0
 theme = ExtResource( 4 )
+script = ExtResource( 7 )
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+bus = "Music"
 
 [node name="HitPoint" type="TextureRect" parent="."]
 self_modulate = Color( 1, 1, 1, 0.435294 )

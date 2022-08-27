@@ -18,8 +18,9 @@ func _ready() -> void:
 		## The tick object to spawn.
 		var new_tick := preload("res://scenes/gameplay/tick.tscn").instance() as Tick
 
-		new_tick.change_properties(tick_idx * _tick_distance, speed)
+		new_tick.change_properties(tick_idx * _tick_distance * speed)
 		tick_container.add_child(new_tick)
+		tick_container.move_child(new_tick, 0)
 
 
 ## Initialize [Roll] variables.
