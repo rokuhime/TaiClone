@@ -38,7 +38,7 @@ func hit_error_toggled() -> void:
 
 
 ## Comment
-func new_marker(type: int, timing: float, skin: SkinManager) -> void:
+func new_marker(type: int, timing: float) -> void:
 	## Comment
 	var marker := middle_marker.duplicate() as ColorRect
 
@@ -46,13 +46,13 @@ func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 	hit_points.move_child(marker, 1)
 	match type:
 		HitObject.Score.ACCURATE:
-			marker.modulate = skin.accurate_color
+			marker.modulate = taiclone.skin.accurate_color
 
 		HitObject.Score.INACCURATE:
-			marker.modulate = skin.inaccurate_color
+			marker.modulate = taiclone.skin.inaccurate_color
 
 		HitObject.Score.MISS:
-			marker.modulate = skin.miss_color
+			marker.modulate = taiclone.skin.miss_color
 
 		_:
 			push_warning("Unknown marker type.")
@@ -78,7 +78,7 @@ func new_marker(type: int, timing: float, skin: SkinManager) -> void:
 		else:
 			marker.queue_free()
 
-		if marker.modulate == skin.miss_color:
+		if marker.modulate == taiclone.skin.miss_color:
 			misses += 1
 
 		else:

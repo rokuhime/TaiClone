@@ -14,10 +14,7 @@ func miss_check(hit_time: float) -> bool:
 	if hit_time <= end_time:
 		return true
 
-	if state != int(State.FINISHED):
-		state = int(State.FINISHED)
-		queue_free()
-
+	finish()
 	return false
 
 

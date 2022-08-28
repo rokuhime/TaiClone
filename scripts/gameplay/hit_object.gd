@@ -2,18 +2,19 @@ class_name HitObject
 extends KinematicBody2D
 
 ## Comment
+signal audio_played(key)
+
+## Comment
 signal score_added(type, marker)
 
 ## The possible scores of a [HitObject]:
-## 0: It is too early to hit this [HitObject]. Does not affect score or accuracy. Applies to all [HitObject]s.
-## 1 (ACCURATE): 300 points and 100% accuracy. Applies to all [HitObject]s.
-## 2 (INACCURATE): 150 points and 50% accuracy. Applies to all [HitObject]s.
-## 3 (MISS): 0 points and 0% accuracy. Applies to all [HitObject]s.
-## 4 (FINISHER): 300 additional points. Does not affect accuracy. Only applies to [Note]s.
-## 5 (ROLL): 300 points. Does not affect accuracy. Only applies to [Roll]s.
-## 6 (SPINNER): 600 points. Does not affect accuracy. Only applies to [Spinner]s.
-## 7 (FINISHED): This [HitObject] is in the FINISHED [member State]. Does not affect score or accuracy. Applies to all [HitObject]s.
-enum Score {ACCURATE = 1, INACCURATE, MISS, FINISHER, ROLL, SPINNER, FINISHED}
+## 0 (ACCURATE): 300 points and 100% accuracy. Applies to all [HitObject]s.
+## 1 (INACCURATE): 150 points and 50% accuracy. Applies to all [HitObject]s.
+## 2 (MISS): 0 points and 0% accuracy. Applies to all [HitObject]s.
+## 3 (FINISHER): 300 additional points. Does not affect accuracy. Only applies to [Note]s.
+## 4 (ROLL): 300 points. Does not affect accuracy. Only applies to [Roll]s.
+## 5 (SPINNER): 600 points. Does not affect accuracy. Only applies to [Spinner]s.
+enum Score {ACCURATE, INACCURATE, MISS, FINISHER, ROLL, SPINNER}
 
 ## The possible states of a [HitObject]:
 ## 0: This [HitObject]'s properties can be changed.
@@ -45,6 +46,7 @@ func _ready() -> void:
 	if finisher:
 		(get_child(0) as Control).rect_scale *= 1.6
 
+	add_to_group("HitObjects")
 	state = int(State.READY)
 
 
@@ -61,12 +63,59 @@ func activate() -> void:
 	state = int(State.ACTIVE)
 
 
+## Comment
+func check_hit(key: String, inputs: Array, play_audio := true) -> String:
+	## Comment
+	var left_hit := inputs.find("Left" + key)
+
+	## Comment
+	var right_hit := inputs.find("Right" + key)
+
+	if left_hit + 1 and right_hit + 1:
+		inputs.remove(left_hit)
+		inputs.remove(right_hit)
+		inputs.append(key)
+		if play_audio:
+			emit_signal("audio_played", "Left" + key)
+		return key
+
+	elif left_hit + 1:
+		inputs.remove(left_hit)
+		if play_audio:
+			emit_signal("audio_played", "Left" + key)
+		return "Left"
+
+	elif right_hit + 1:
+		inputs.remove(right_hit)
+		if play_audio:
+			emit_signal("audio_played", "Right" + key)
+		return "Right"
+
+	elif inputs.has(key):
+		inputs.remove(inputs.find(key))
+		if play_audio:
+			emit_signal("audio_played", "Right" + key)
+		return key
+
+	else:
+		return ""
+
+
+## Comment
+func finish(type := -1, marker := false) -> void:
+	if state != int(State.FINISHED):
+		state = int(State.FINISHED)
+		queue_free()
+		if type + 1:
+			emit_signal("score_added", type, marker)
+
+
 ## Check if this [HitObject] has been hit. Intended to be implemented by child classes.
 ## inputs (Array): The list of actions received.
 ## hit_time (float): The start of this [HitObject]'s hit window.
-## return (Array): The list of actions remaining and [member Score]s to add.
-func hit(inputs: Array, _hit_time: float) -> Array:
-	return inputs
+## return (bool): Whether or not to continue checking for hits.
+func hit(_inputs: Array, _hit_time: float) -> bool:
+	return false
 
 
 ## Initialize base [HitObject] variables. Called and extended by child classes via [method change_properties].
@@ -79,18 +128,10 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 	end_time = timing + length
 
 
-## Check if this [HitObject] has been missed. It can be implemented by child classes to extend functionality.
+## Check if this [HitObject] has been missed. Intended to be implemented by child classes.
 ## hit_time (float): The end of this [HitObject]'s hit window.
 ## return (bool): Whether or not to continue checking for misses.
-func miss_check(hit_time: float) -> bool:
-	if hit_time <= end_time:
-		return true
-
-	if state != int(State.FINISHED):
-		state = int(State.FINISHED)
-		queue_free()
-		emit_signal("score_added", Score.MISS, true)
-
+func miss_check(_hit_time: float) -> bool:
 	return false
 
 

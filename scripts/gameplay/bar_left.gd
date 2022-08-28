@@ -5,7 +5,7 @@ extends Node
 signal debug_text(text)
 
 ## Comment
-signal marker_added(type, timing, skin)
+signal marker_added(type, timing)
 
 ## Comment
 signal score_added(score, accuracy)
@@ -35,16 +35,80 @@ var _inaccurate_count := 0
 var _judgement_tween := SceneTreeTween.new()
 
 ## Comment
+var _l_don_tween := SceneTreeTween.new()
+
+## Comment
+var _l_kat_tween := SceneTreeTween.new()
+
+## Comment
 var _miss_count := 0
+
+## Comment
+var _r_don_tween := SceneTreeTween.new()
+
+## Comment
+var _r_kat_tween := SceneTreeTween.new()
 
 ## Comment
 var _score := 0
 
 onready var combo := $DrumVisual/Combo as Label
+onready var f_don_aud := $FinisherDonAudio as AudioStreamPlayer
+onready var f_kat_aud := $FinisherKatAudio as AudioStreamPlayer
 onready var judgement := $Judgement as TextureRect
+onready var l_don_aud := $LeftDonAudio as AudioStreamPlayer
+onready var l_don_obj := $DrumVisual/LeftDon as CanvasItem
+onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
+onready var l_kat_obj := $DrumVisual/LeftKat as CanvasItem
 onready var music := $Music as AudioStreamPlayer
 onready var obj_container := $ObjectContainer as Control
+onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
+onready var r_don_obj := $DrumVisual/RightDon as CanvasItem
+onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
+onready var r_kat_obj := $DrumVisual/RightKat as CanvasItem
 onready var taiclone := $"/root" as Root
+
+
+func _ready() -> void:
+	l_don_obj.modulate.a = 0
+	l_kat_obj.modulate.a = 0
+	r_don_obj.modulate.a = 0
+	r_kat_obj.modulate.a = 0
+
+
+## Comment
+func _input(event: InputEvent) -> void:
+	## Comment
+	var inputs := [2]
+
+	for key in Root.KEYS:
+		if event.is_action_pressed(str(key)):
+			inputs.append(str(key))
+			match str(key):
+				"LeftDon":
+					_l_don_tween = _keypress_animation(_l_don_tween, l_don_obj)
+
+				"LeftKat":
+					_l_kat_tween = _keypress_animation(_l_kat_tween, l_kat_obj)
+
+				"RightDon":
+					_r_don_tween = _keypress_animation(_r_don_tween, r_don_obj)
+
+				"RightKat":
+					_r_kat_tween = _keypress_animation(_r_kat_tween, r_kat_obj)
+
+	if Root.inputs_empty(inputs):
+		return
+
+	for i in range(obj_container.get_child_count() - 1, -1, -1):
+		## Comment
+		var note := obj_container.get_child(i) as HitObject
+
+		if note.hit(inputs, _cur_time + (taiclone.inacc_timing if note is Note else 0.0)) or Root.inputs_empty(inputs):
+			break
+
+	for key in inputs:
+		play_audio(str(key))
 
 
 ## Comment
@@ -62,18 +126,23 @@ func _process(delta: float) -> void:
 
 
 ## Comment
+func add_marker(timing: float, add: bool) -> void:
+	timing -= taiclone.inacc_timing
+
+	var type := int(HitObject.Score.ACCURATE if abs(timing) < taiclone.acc_timing else HitObject.Score.INACCURATE if abs(timing) < taiclone.inacc_timing else HitObject.Score.MISS)
+
+	emit_signal("marker_added", type, timing)
+	if add:
+		add_score(type)
+
+
+## Comment
 func add_object(obj: HitObject) -> void:
 	obj_container.add_child(obj)
 	for i in range(obj_container.get_child_count()):
 		if obj.end_time > (obj_container.get_child(i) as HitObject).end_time:
 			obj_container.move_child(obj, i)
 			break
-
-	obj.add_to_group("HitObjects")
-	if obj.connect("score_added", self, "add_score"):
-		push_warning("Attempted to connect HitObject score_added.")
-
-	obj.skin(taiclone.skin)
 
 
 ## Comment
@@ -98,7 +167,7 @@ func add_score(type: int, marker := false) -> void:
 			_hit_notify_animation()
 			judgement.texture = taiclone.skin.miss_judgement
 			if marker:
-				emit_signal("marker_added", type, taiclone.inacc_timing, taiclone.skin)
+				emit_signal("marker_added", type, taiclone.inacc_timing)
 
 	## Comment
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
@@ -323,6 +392,8 @@ func load_func(file_path: String) -> void:
 
 				note_object.change_properties(float(line[0]), total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
 				add_object(note_object)
+				if note_object.connect("marker_added", self, "add_marker"):
+					push_warning("Attempted to connect Note marker_added.")
 
 			NoteType.ROLL:
 				## Comment
@@ -343,44 +414,43 @@ func load_func(file_path: String) -> void:
 			NoteType.TIMING_POINT:
 				cur_bpm = float(line[1])
 
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", taiclone.skin)
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "audio_played", self, "play_audio")
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "score_added", self, "add_score")
 	_load_finish("Done!")
 
 
 ## Comment
-func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_meter: int, cur_bpm: float) -> float:
-	_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
-	return next_barline + 60 * current_meter / cur_bpm
+func play_audio(key: String) -> void:
+	match key:
+		"FinisherDon":
+			f_don_aud.play()
 
+		"FinisherKat":
+			f_kat_aud.play()
 
-## Comment
-func _hit_notify_animation() -> void:
-	_judgement_tween = Root.new_tween(_judgement_tween, self).set_ease(Tween.EASE_OUT)
+		"LeftDon":
+			l_don_aud.play()
 
-	## Comment
-	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
+		"LeftKat":
+			l_kat_aud.play()
 
+		"RightDon":
+			r_don_aud.play()
 
-## Comment
-func _load_finish(new_text: String) -> void:
-	_f.close()
-	emit_signal("debug_text", new_text)
-
-
-## Comment
-func _reset(dispose := true) -> void:
-	_accurate_count = 0
-	_inaccurate_count = 0
-	_miss_count = 0
-	_combo = 0
-	_score = 0
-	add_score(0)
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
-	_cur_time = taiclone.global_offset / 1000.0
+		"RightKat":
+			r_kat_aud.play()
 
 
 ## Comment
 static func _append_note(notes: Array, line: Array) -> void:
 	notes.append(_csv_line(line).join(","))
+
+
+## Comment
+static func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_meter: int, cur_bpm: float) -> float:
+	_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
+	return next_barline + 60 * current_meter / cur_bpm
 
 
 ## Comment
@@ -397,3 +467,39 @@ static func _csv_line(line: Array) -> PoolStringArray:
 ## Comment
 static func _find_value(value: String, line: String, key: String) -> String:
 	return line.trim_prefix(key).strip_edges() if line.begins_with(key) else value
+
+
+## Comment
+func _hit_notify_animation() -> void:
+	_judgement_tween = Root.new_tween(_judgement_tween, self).set_ease(Tween.EASE_OUT)
+
+	## Comment
+	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
+
+
+## Comment
+func _keypress_animation(tween: SceneTreeTween, obj: CanvasItem) -> SceneTreeTween:
+	tween = Root.new_tween(tween, self).set_ease(Tween.EASE_OUT)
+
+	## Comment
+	var _tween := tween.tween_property(obj, "modulate:a", 0.0, 0.2).from(1.0)
+
+	return tween
+
+
+## Comment
+func _load_finish(new_text: String) -> void:
+	_f.close()
+	emit_signal("debug_text", new_text)
+
+
+## Comment
+func _reset(dispose := true) -> void:
+	_accurate_count = 0
+	_inaccurate_count = 0
+	_miss_count = 0
+	_combo = 0
+	_score = 0
+	add_score(-1)
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
+	_cur_time = taiclone.global_offset / 1000.0

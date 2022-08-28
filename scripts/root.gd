@@ -61,6 +61,11 @@ static func event(key: String) -> InputEvent:
 
 
 ## Comment
+static func inputs_empty(inputs: Array) -> bool:
+	return int(inputs[0]) > inputs.size()
+
+
+## Comment
 static func item_resolution(item: Array) -> Vector2:
 	return Vector2(int(item[1]), int(item[2]))
 

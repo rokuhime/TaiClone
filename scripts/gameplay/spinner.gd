@@ -44,7 +44,7 @@ func _process(_delta: float) -> void:
 ## Initialize [Spinner] variables.
 func change_properties(new_timing: float, new_length: float, new_hits: int) -> void:
 	.ini(new_timing, 0, new_length)
-	_needed_hits = new_hits
+	_needed_hits = int(max(1, new_hits))
 
 
 ## Change this [Spinner]'s [member _current_speed].
@@ -58,49 +58,41 @@ func deactivate(_object := null, _key := "") -> void:
 
 
 ## See [HitObject].
-func hit(inputs: Array, hit_time: float) -> Array:
-	if state == int(State.FINISHED):
-		inputs.append([int(Score.FINISHED)])
+func hit(inputs: Array, hit_time: float) -> bool:
+	## Comment
+	var early := hit_time < timing
 
-	if state != int(State.ACTIVE) or hit_time < timing:
-		return inputs
+	if state != int(State.ACTIVE) or early:
+		return early
 
 	if not _cur_hit_count:
-		_first_hit_is_kat = inputs.has("LeftKat") or inputs.has("RightKat")
+		# TODO: Redo first hit logic to not bias kats
+		_first_hit_is_kat = inputs.has("Kat") or inputs.has("LeftKat") or inputs.has("RightKat")
 
 	## The list of [member HitObject.Score]s to add.
 	var scores := []
 
-	while true:
-		if _cur_hit_count % 2 != int(_first_hit_is_kat):
-			if inputs.has("LeftKat"):
-				inputs.remove(inputs.find("LeftKat"))
+	while not Root.inputs_empty(inputs):
+		## Comment
+		var key := "Don" if _cur_hit_count % 2 == int(_first_hit_is_kat) else "Kat"
 
-			elif inputs.has("RightKat"):
-				inputs.remove(inputs.find("RightKat"))
+		## Comment
+		var this_hit := check_hit(key, inputs)
 
-			else:
-				break
-
-		else:
-			if inputs.has("LeftDon"):
-				inputs.remove(inputs.find("LeftDon"))
-
-			elif inputs.has("RightDon"):
-				inputs.remove(inputs.find("RightDon"))
-
-			else:
-				break
+		if not this_hit:
+			break
 
 		_cur_hit_count += 1
 		scores.append(int(Score.SPINNER))
 		if _cur_hit_count == _needed_hits:
-			_spinner_finished(Score.ACCURATE)
+			_spinner_finished(int(Score.ACCURATE))
 			break
 
 	if scores.empty():
-		inputs.append([int(Score.FINISHED)])
-		return inputs
+		return false
+
+	for score in scores:
+		emit_signal("score_added", score, false)
 
 	_count_text()
 	_speed_tween = Root.new_tween(_speed_tween, self).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
@@ -108,8 +100,7 @@ func hit(inputs: Array, hit_time: float) -> Array:
 	## The [MethodTweener] that's used to tween this [Spinner]'s [member _current_speed].
 	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
 
-	inputs.append(scores)
-	return inputs
+	return false
 
 
 ## See [HitObject].
@@ -117,8 +108,7 @@ func miss_check(hit_time: float) -> bool:
 	if hit_time <= end_time:
 		return true
 
-	_spinner_finished(Score.INACCURATE if _needed_hits / 2.0 <= _cur_hit_count else Score.MISS)
-
+	_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE))
 	return false
 
 

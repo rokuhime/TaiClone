@@ -11,9 +11,6 @@ enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 var _auto := false
 
 ## Comment
-var _drum_animation_tweens := [SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new(), SceneTreeTween.new()]
-
-## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
 onready var bar_left := $BarLeft as BarLeft
@@ -48,80 +45,12 @@ func _ready() -> void:
 		load_func(bar_left._fus)
 
 
-func _input(event: InputEvent) -> void:
-	## Comment
-	var inputs := []
-
-	if event.is_action_pressed("LeftDon"):
-		inputs.append("LeftDon")
-
-	if event.is_action_pressed("LeftKat"):
-		inputs.append("LeftKat")
-
-	if event.is_action_pressed("RightDon"):
-		inputs.append("RightDon")
-
-	if event.is_action_pressed("RightKat"):
-		inputs.append("RightKat")
-
-	if inputs.empty():
-		return
-
-	for input_action in inputs:
-		(get_node("DrumInteraction/%sAudio" % str(input_action)) as AudioStreamPlayer).play()
-
-		## Comment
-		var i := 0 if str(input_action) == "LeftDon" else 1 if str(input_action) == "LeftKat" else 2 if str(input_action) == "RightDon" else 3
-
-		## Comment
-		var tween: SceneTreeTween = Root.new_tween(_drum_animation_tweens[i], self).set_ease(Tween.EASE_OUT) # UNSAFE Variant
-
-		## Comment
-		var _tween := tween.tween_property(get_node("BarLeft/DrumVisual/" + str(input_action)), "self_modulate:a", 0.0, 0.2).from(1.0)
-
-		_drum_animation_tweens[i] = tween # UNSAFE ArrayItem
-
-	for i in range(obj_container.get_child_count()):
-		## Comment
-		var note = obj_container.get_child(i)
-
-		if note is BarLine:
-			continue
-
-		## Comment
-		var new_inputs: Array = note.hit(inputs.duplicate(), bar_left._cur_time + (taiclone.inacc_timing if note is Note else 0.0)) # UNSAFE Variant
-
-		if inputs == new_inputs:
-			break
-
-		## Comment
-		var scores: Array = new_inputs.pop_back() # UNSAFE Variant
-
-		if scores == [HitObject.Score.FINISHED]:
-			break
-
-		for score in scores:
-			bar_left.add_score(score) # UNSAFE Parameter
-			if int(score) == int(HitObject.Score.MISS):
-				return
-
-		inputs = new_inputs
-		if inputs.empty():
-			break
-
-
 func _process(_delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
 
 
 ## Comment
 func add_score(score: int, accuracy: float) -> void:
-	#if type is float:
-	#	## Comment
-	#	var timing := float(type) - taiclone.inacc_timing
-
-	#	type = HitObject.Score.ACCURATE if timing < taiclone.acc_timing else HitObject.Score.INACCURATE if timing < taiclone.inacc_timing else HitObject.Score.MISS
-	#	emit_signal("new_marker", type, timing, taiclone.skin)
 	ui_score.text = "%010d" % score
 	ui_accuracy.text = "%2.2f" % accuracy
 

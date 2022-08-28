@@ -1,14 +1,10 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
 [ext_resource path="res://scenes/gameplay/bar_left.tscn" type="PackedScene" id=7]
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=9]
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=12]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=14]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=17]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=22]
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=23]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=25]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=29]
 [ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=30]
 
@@ -198,35 +194,10 @@ rect_scale = Vector2( 1.9, 1.9 )
 text = "v0.3 - The Big One(tm)"
 align = 2
 
-[node name="DrumInteraction" type="Node" parent="."]
-
-[node name="LeftDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
-stream = ExtResource( 14 )
-bus = "SFX"
-
-[node name="LeftKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
-stream = ExtResource( 17 )
-bus = "SFX"
-
-[node name="RightDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
-stream = ExtResource( 14 )
-bus = "SFX"
-
-[node name="RightKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
-stream = ExtResource( 17 )
-bus = "SFX"
-
-[node name="FinisherDonAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
-stream = ExtResource( 25 )
-bus = "SFX"
-
-[node name="FinisherKatAudio" type="AudioStreamPlayer" parent="DrumInteraction"]
-stream = ExtResource( 22 )
-bus = "SFX"
-
 [connection signal="load_chart" from="." to="BarLeft" method="load_func"]
 [connection signal="debug_text" from="BarLeft" to="." method="text_debug"]
 [connection signal="marker_added" from="BarLeft" to="UI/HitError" method="new_marker"]
+[connection signal="score_added" from="BarLeft" to="." method="add_score"]
 [connection signal="change_indicator" from="UI/HitError" to="." method="change_indicator"]
 [connection signal="pressed" from="debug/temploadchart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="debug/temploadchart/PlayButton" to="." method="play_chart"]
