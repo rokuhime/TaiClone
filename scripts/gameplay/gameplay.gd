@@ -14,15 +14,15 @@ var _auto := false
 var _timing_indicator_tween := SceneTreeTween.new()
 
 onready var bar_left := $BarLeft as BarLeft
-onready var debug_text := $debug/debugtext as Label
-onready var fpstext := $debug/fpstext as Label
-onready var hit_error := $UI/HitError
-onready var line_edit := $debug/temploadchart/LineEdit as LineEdit
+onready var debug_text := $Debug/DebugText as Label
+onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
+onready var hit_error := $HitError
+onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var music := $BarLeft/Music as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
 onready var taiclone := $"/root" as Root
 onready var timing_indicator := $BarLeft/TimingIndicator as Label
-onready var ui_accuracy := $UI/Accuracy as Label
+onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var ui_score := $UI/Score as Label
 
 
