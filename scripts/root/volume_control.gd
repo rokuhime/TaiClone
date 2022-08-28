@@ -37,8 +37,7 @@ onready var timer := get_tree().create_timer(0)
 
 
 func _ready() -> void:
-	if connect("volume_changed", taiclone, "save_settings", ["volume_changed"]):
-		push_warning("Attempted to connect VolumeControl volume_changed.")
+	Root.send_signal(taiclone, "volume_changed", self, "save_settings", ["volume_changed"])
 
 
 func _input(event: InputEvent) -> void:
@@ -101,8 +100,7 @@ func change_channel(channel: int, needs_visible := true) -> void:
 		_tween_self(1, 0.25)
 
 	timer = get_tree().create_timer(2)
-	if timer.connect("timeout", self, "timeout"):
-		push_warning("Attempted to connect Timer timeout.")
+	Root.send_signal(self, "timeout", timer, "timeout")
 
 
 ## Comment
@@ -154,7 +152,7 @@ func _change_volume(amount: float) -> void:
 
 ## Comment
 func _modulate_tween(vol: Node, tween: SceneTreeTween, new_color: float) -> SceneTreeTween:
-	tween = Root.new_tween(tween, self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween = taiclone.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween = tween.tween_property(vol, "modulate:a", new_color, 0.2)
@@ -164,7 +162,7 @@ func _modulate_tween(vol: Node, tween: SceneTreeTween, new_color: float) -> Scen
 
 ## Comment
 func _progress_tween(tween: SceneTreeTween, progress: Node, amount: float) -> SceneTreeTween:
-	tween = Root.new_tween(tween, self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween = taiclone.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween = tween.tween_property(progress, "value", amount, 0.2)
@@ -174,7 +172,7 @@ func _progress_tween(tween: SceneTreeTween, progress: Node, amount: float) -> Sc
 
 ## Comment
 func _tween_self(final_val: float, duration: float) -> void:
-	_self_tween = Root.new_tween(_self_tween, self).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	_self_tween = taiclone.new_tween(_self_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween := _self_tween.tween_property(self, "modulate:a", final_val, duration)

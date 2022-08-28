@@ -16,7 +16,7 @@ onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
-	for key in taiclone.KEYS:
+	for key in Root.KEYS:
 		_change_text(str(key))
 
 	late_early_drop.add_item("Off")
@@ -25,9 +25,9 @@ func _ready() -> void:
 	late_early(taiclone.late_early_simple_display)
 	hit_error(taiclone.hit_error)
 
-	for i in taiclone.RESOLUTIONS.size():
+	for i in Root.RESOLUTIONS.size():
 		## Comment
-		var item := str(taiclone.RESOLUTIONS[i]).split(",", false)
+		var item := str(Root.RESOLUTIONS[i]).split(",", false)
 
 		if item.empty():
 			dropdown.add_separator()
@@ -36,7 +36,7 @@ func _ready() -> void:
 			dropdown.add_item("%s | %sx%s" % Array(item))
 
 			## Comment
-			var item_resolution := taiclone.item_resolution(item)
+			var item_resolution := Root.item_resolution(item)
 
 			dropdown.set_item_metadata(int(i), item_resolution)
 			if item_resolution == OS.window_size:

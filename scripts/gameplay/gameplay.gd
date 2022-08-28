@@ -27,19 +27,11 @@ onready var ui_score := $UI/Score as Label
 
 
 func _ready() -> void:
-	if taiclone.connect("hit_error_toggled", hit_error, "hit_error_toggled"):
-		push_warning("Attempted to connect Root hit_error_toggled.")
-
+	Root.send_signal(hit_error, "hit_error_toggled", taiclone, "hit_error_toggled")
+	Root.send_signal(self, "late_early_changed", taiclone, "late_early_changed")
+	Root.send_signal(self, "offset_changed", taiclone, "offset_changed")
 	late_early_changed()
-
-	if taiclone.connect("late_early_changed", self, "late_early_changed"):
-		push_warning("Attempted to connect Root late_early_changed.")
-
 	offset_changed()
-
-	if taiclone.connect("offset_changed", self, "offset_changed"):
-		push_warning("Attempted to connect Root offset_changed.")
-
 	bar_left._reset()
 	if bar_left._f.file_exists(bar_left._fus):
 		load_func(bar_left._fus)
@@ -76,7 +68,7 @@ func change_indicator(timing: float) -> void:
 		timing_indicator.text = "EARLY" if late_early_simple_display else num
 		timing_indicator.modulate = taiclone.skin.early_color
 
-	_timing_indicator_tween = Root.new_tween(_timing_indicator_tween, self).set_trans(Tween.TRANS_QUART)
+	_timing_indicator_tween = taiclone.new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
 
 	## Comment
 	var _tween := _timing_indicator_tween.tween_property(timing_indicator, "self_modulate:a", 0.0, 0.5).from(1.0)

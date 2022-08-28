@@ -11,7 +11,7 @@ signal late_early_changed
 signal offset_changed
 
 ## Comment
-const KEYS := ["LeftDon", "LeftKat", "RightDon", "RightKat"]
+const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 ## Comment
 const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]
@@ -71,11 +71,9 @@ static func item_resolution(item: Array) -> Vector2:
 
 
 ## Comment
-static func new_tween(old_tween: SceneTreeTween, node: Node) -> SceneTreeTween:
-	if old_tween.is_valid():
-		old_tween.kill()
-
-	return node.create_tween()
+static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String, binds := []) -> void:
+	if obj.connect(signal_name, signal_target, method, binds):
+		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
 
 
 ## Comment
@@ -132,6 +130,14 @@ func late_early(new_value: int) -> void:
 	emit_signal("late_early_changed")
 	if settings_save:
 		save_settings("late_early")
+
+
+## Comment
+func new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
+	if old_tween.is_valid():
+		old_tween.kill()
+
+	return get_tree().create_tween()
 
 
 ## Comment

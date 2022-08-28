@@ -392,8 +392,7 @@ func load_func(file_path: String) -> void:
 
 				note_object.change_properties(float(line[0]), total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
 				add_object(note_object)
-				if note_object.connect("marker_added", self, "add_marker"):
-					push_warning("Attempted to connect Note marker_added.")
+				Root.send_signal(self, "marker_added", note_object, "add_marker")
 
 			NoteType.ROLL:
 				## Comment
@@ -408,8 +407,7 @@ func load_func(file_path: String) -> void:
 
 				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), cur_bpm)
 				add_object(note_object)
-				if note_object.connect("object_added", self, "add_object"):
-					push_warning("Attempted to connect SpinnerWarn object_added.")
+				Root.send_signal(self, "object_added", note_object, "add_object")
 
 			NoteType.TIMING_POINT:
 				cur_bpm = float(line[1])
@@ -471,7 +469,7 @@ static func _find_value(value: String, line: String, key: String) -> String:
 
 ## Comment
 func _hit_notify_animation() -> void:
-	_judgement_tween = Root.new_tween(_judgement_tween, self).set_ease(Tween.EASE_OUT)
+	_judgement_tween = taiclone.new_tween(_judgement_tween).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
@@ -479,7 +477,7 @@ func _hit_notify_animation() -> void:
 
 ## Comment
 func _keypress_animation(tween: SceneTreeTween, obj: CanvasItem) -> SceneTreeTween:
-	tween = Root.new_tween(tween, self).set_ease(Tween.EASE_OUT)
+	tween = taiclone.new_tween(tween).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween := tween.tween_property(obj, "modulate:a", 0.0, 0.2).from(1.0)

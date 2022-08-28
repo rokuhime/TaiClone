@@ -8,8 +8,7 @@ func _init() -> void:
 	## Comment
 	var taiclone := root as Root
 
-	if connect("screen_resized", taiclone, "change_res"):
-		push_warning("Attempted to connect TaiClone screen_resized.")
+	Root.send_signal(taiclone, "screen_resized", self, "change_res")
 
 	## Comment
 	var config_file := ConfigFile.new()
@@ -17,21 +16,21 @@ func _init() -> void:
 	if config_file.load(taiclone.config_path):
 		print_debug("Config file not found.")
 
-	for key in taiclone.KEYS:
+	for key in Root.KEYS:
 		## Comment
-		var event: InputEvent = config_file.get_value("Keybinds", str(key), Root.event(str(key))) # UNSAFE Variant
+		var event: InputEvent = config_file.get_value("Keybinds", str(key), Root.event(str(key))) # UNSAFE
 
 		taiclone.change_key(event, str(key))
 
 	taiclone.late_early_simple_display = int(config_file.get_value("Display", "LateEarly", 1))
 	taiclone.hit_error = bool(config_file.get_value("Display", "HitError", 1))
-	taiclone.RESOLUTIONS.append("0,%s,%s" % [config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)])
+	Root.RESOLUTIONS.append("0,%s,%s" % [config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)])
 
 	## Comment
-	var idx := taiclone.RESOLUTIONS.size() - 1
+	var idx := Root.RESOLUTIONS.size() - 1
 
 	taiclone.change_res(idx)
-	taiclone.RESOLUTIONS.remove(idx)
+	Root.RESOLUTIONS.remove(idx)
 	#taiclone.change_res(Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)))
 	taiclone.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
 	taiclone.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))

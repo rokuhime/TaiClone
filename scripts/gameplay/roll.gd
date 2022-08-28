@@ -23,11 +23,6 @@ func _ready() -> void:
 		tick_container.move_child(new_tick, 0)
 
 
-## Comment
-func add_score(type: int) -> void:
-	emit_signal("score_added", type, false)
-
-
 ## Initialize [Roll] variables.
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, new_bpm: float) -> void:
 	.ini(new_timing, new_speed, new_length, new_finisher)
@@ -38,11 +33,7 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 ## See [HitObject].
 func hit(inputs: Array, hit_time: float) -> bool:
 	for tick_idx in range(tick_container.get_child_count() - 1, -1, -1):
-		## Comment
-		var tick_obj := tick_container.get_child(tick_idx) as Tick
-
-		print(tick_obj)
-		if tick_obj.hit(inputs, (hit_time - timing) * speed) or Root.inputs_empty(inputs):
+		if (tick_container.get_child(tick_idx) as Tick).hit(inputs, (hit_time - timing) * speed) or Root.inputs_empty(inputs):
 			break
 
 	return false

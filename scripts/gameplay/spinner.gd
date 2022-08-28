@@ -22,13 +22,14 @@ var _speed_tween := SceneTreeTween.new()
 onready var approach := $Approach as Control
 onready var label := $Label as Label
 onready var rotation_obj := $RotationObj as Node2D
+onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
 	_count_text()
 
 	## The [PropertyTweener] that's used to tween the approach circle of this [Spinner].
-	var _approach_tween := Root.new_tween(SceneTreeTween.new(), self).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
+	var _approach_tween := taiclone.new_tween(SceneTreeTween.new()).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
 	var _tween := _tween_modulate(1)
@@ -53,7 +54,7 @@ func change_speed(new_speed: float) -> void:
 
 
 ## Dispose of this [Spinner] once tweens have finished.
-func deactivate(_object := null, _key := "") -> void:
+func deactivate(_object, _key) -> void:
 	queue_free()
 
 
@@ -95,7 +96,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		emit_signal("score_added", score, false)
 
 	_count_text()
-	_speed_tween = Root.new_tween(_speed_tween, self).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
+	_speed_tween = taiclone.new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
 
 	## The [MethodTweener] that's used to tween this [Spinner]'s [member _current_speed].
 	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
@@ -122,13 +123,10 @@ func _spinner_finished(type: int) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
 		emit_signal("score_added", type, false)
-
-		## The [PropertyTweener] used to fade out this [Spinner].
-		if _tween_modulate(0).connect("finished", self, "deactivate"):
-			push_warning("Attempted to connect PropertyTweener finished.")
+		Root.send_signal(self, "finished", _tween_modulate(0), "deactivate")
 
 
 ## Fade this [Spinner] in and out.
 func _tween_modulate(final_val: float) -> PropertyTweener:
-	_modulate_tween = Root.new_tween(_modulate_tween, self).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	_modulate_tween = taiclone.new_tween(_modulate_tween).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	return _modulate_tween.tween_property(self, "modulate:a", final_val, 0.25)
