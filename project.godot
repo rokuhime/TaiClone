@@ -14,11 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/gd_script_audio_import.gd"
 }, {
-"base": "Node",
-"class": "BarLeft",
-"language": "GDScript",
-"path": "res://scripts/gameplay/bar_left.gd"
-}, {
 "base": "HitObject",
 "class": "BarLine",
 "language": "GDScript",
@@ -86,7 +81,6 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
-"BarLeft": "",
 "BarLine": "",
 "Gameplay": "",
 "HitObject": "",
