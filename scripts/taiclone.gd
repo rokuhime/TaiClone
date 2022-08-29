@@ -21,9 +21,24 @@ func _init() -> void:
 
 	for key in Root.KEYS:
 		## Comment
-		var event: InputEvent = config_file.get_value("Keybinds", str(key), Root.event(str(key))) # UNSAFE
+		var new_event := str(config_file.get_value("Keybinds", str(key), ""))
 
-		taiclone.change_key(event, str(key))
+		## Comment
+		var event_value := new_event.substr(1)
+
+		match new_event.left(1):
+			"J":
+				var event := InputEventJoypadButton.new()
+				event.button_index = int(event_value)
+				taiclone.change_key(event, str(key))
+
+			"K":
+				var event := InputEventKey.new()
+				event.scancode = OS.find_scancode_from_string(event_value)
+				taiclone.change_key(event, str(key))
+
+			_:
+				taiclone.change_key(Root.event(str(key)), str(key))
 
 	taiclone.late_early_simple_display = int(config_file.get_value("Display", "LateEarly", 1))
 	taiclone.hit_error = bool(config_file.get_value("Display", "HitError", 1))

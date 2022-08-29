@@ -157,7 +157,10 @@ func save_settings(debug: String) -> void:
 	var config_file := ConfigFile.new()
 
 	for key in KEYS:
-		config_file.set_value("Keybinds", str(key), event(str(key)))
+		## Comment
+		var new_event := event(str(key))
+
+		config_file.set_value("Keybinds", str(key), ("J%s" % (new_event as InputEventJoypadButton).button_index) if new_event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((new_event as InputEventKey).scancode)) if new_event is InputEventKey else "")
 
 	config_file.set_value("Display", "LateEarly", late_early_simple_display)
 	config_file.set_value("Display", "HitError", int(hit_error))
