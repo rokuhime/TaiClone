@@ -1,6 +1,8 @@
 class_name Root
 extends Viewport
 
+# first and main object of the project
+
 ## Comment
 signal hit_error_toggled
 

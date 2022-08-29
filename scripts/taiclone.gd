@@ -1,6 +1,8 @@
 class_name TaiClone
 extends SceneTree
 
+# ran on startup, absolute root script of the project
+
 
 func _init() -> void:
 	root.set_script(preload("res://scripts/root.gd"))
@@ -8,7 +10,8 @@ func _init() -> void:
 	## Comment
 	var taiclone := root as Root
 
-	Root.send_signal(taiclone, "screen_resized", self, "change_res")
+	# the borked code that causes the res stuff
+	#Root.send_signal(taiclone, "screen_resized", self, "change_res")
 
 	## Comment
 	var config_file := ConfigFile.new()
