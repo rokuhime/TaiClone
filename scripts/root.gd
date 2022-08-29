@@ -94,13 +94,9 @@ func change_key(event: InputEvent, button: String) -> void:
 
 
 ## Comment
-func change_res(index := -1) -> void:
-	## Comment
-	var new_size := OS.window_size if index == -1 else item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false))
-
+func change_res(new_size: Vector2) -> void:
 	OS.window_resizable = false
 	OS.window_size = new_size
-	size = new_size
 	OS.window_resizable = true
 	save_settings("change_res")
 

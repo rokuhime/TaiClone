@@ -34,12 +34,7 @@ func _ready() -> void:
 
 		else:
 			dropdown.add_item("%s | %sx%s" % Array(item))
-
-			## Comment
-			var item_resolution := Root.item_resolution(item)
-
-			dropdown.set_item_metadata(int(i), item_resolution)
-			if item_resolution == OS.window_size:
+			if Root.item_resolution(item) == OS.window_size:
 				dropdown.select(int(i))
 
 	toggle_fullscreen(OS.window_fullscreen)
@@ -73,7 +68,7 @@ func change_offset(new_value: String) -> void:
 
 ## Comment
 func change_res(index: int) -> void:
-	taiclone.change_res(index)
+	taiclone.change_res(Root.item_resolution(str(taiclone.RESOLUTIONS.slice(index, index)[0]).split(",", false)))
 
 
 ## Comment
