@@ -27,10 +27,12 @@ bus = "Music"
 
 [node name="FinisherDonAudio" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 7 )
+volume_db = 5.0
 bus = "SFX"
 
 [node name="FinisherKatAudio" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 9 )
+volume_db = 5.0
 bus = "SFX"
 
 [node name="LeftDonAudio" type="AudioStreamPlayer" parent="."]
@@ -204,59 +206,60 @@ grow_vertical = 0
 
 [node name="DebugText" type="Label" parent="Debug"]
 margin_right = 1421.0
-margin_bottom = 14.0
+margin_bottom = 39.0
 text = "Welcome to TaiClone!"
 
 [node name="TempLoadChart" type="HBoxContainer" parent="Debug"]
-margin_top = 18.0
+margin_top = 43.0
 margin_right = 1421.0
-margin_bottom = 90.0
+margin_bottom = 125.0
 size_flags_vertical = 3
 theme_type_variation = "TempLoadChart"
 
 [node name="LineEdit" type="LineEdit" parent="Debug/TempLoadChart"]
 margin_right = 370.0
-margin_bottom = 72.0
+margin_bottom = 82.0
 rect_min_size = Vector2( 370, 0 )
 placeholder_text = "Chart Location"
 
 [node name="LoadButton" type="Button" parent="Debug/TempLoadChart"]
 margin_left = 378.0
 margin_right = 458.0
-margin_bottom = 72.0
+margin_bottom = 82.0
 rect_min_size = Vector2( 80, 0 )
 text = "Load"
 
 [node name="PlayButton" type="Button" parent="Debug/TempLoadChart"]
 margin_left = 466.0
 margin_right = 538.0
-margin_bottom = 72.0
+margin_bottom = 82.0
 rect_min_size = Vector2( 72, 0 )
 text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="Debug/TempLoadChart"]
+visible = false
 margin_left = 546.0
-margin_right = 604.0
-margin_bottom = 72.0
+margin_right = 632.0
+margin_bottom = 82.0
 text = "Auto"
 
 [node name="Text" type="VBoxContainer" parent="Debug/TempLoadChart"]
-margin_left = 612.0
+margin_left = 546.0
 margin_right = 1234.0
-margin_bottom = 72.0
+margin_bottom = 82.0
 size_flags_horizontal = 3
 
 [node name="FPS" type="Label" parent="Debug/TempLoadChart/Text"]
-margin_right = 622.0
-margin_bottom = 34.0
+margin_right = 688.0
+margin_bottom = 39.0
 size_flags_vertical = 3
 align = 2
 valign = 1
 
 [node name="Version" type="Label" parent="Debug/TempLoadChart/Text"]
-margin_top = 38.0
-margin_right = 622.0
-margin_bottom = 72.0
+margin_top = 43.0
+margin_right = 688.0
+margin_bottom = 82.0
 size_flags_vertical = 3
 text = "v0.3 - The Big One(tm)"
 align = 2
@@ -265,12 +268,12 @@ valign = 1
 [node name="Buffer" type="Control" parent="Debug/TempLoadChart"]
 margin_left = 1242.0
 margin_right = 1242.0
-margin_bottom = 72.0
+margin_bottom = 82.0
 
 [node name="SettingsButton" type="Button" parent="Debug/TempLoadChart"]
 margin_left = 1250.0
 margin_right = 1421.0
-margin_bottom = 72.0
+margin_bottom = 82.0
 rect_min_size = Vector2( 171, 0 )
 text = "Settings"
 

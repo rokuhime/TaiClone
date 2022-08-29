@@ -50,9 +50,9 @@ onready var background: TextureRect
 
 
 func _init() -> void:
-	acc_timing = 0.06
 	global_offset = 0
-	inacc_timing = 0.145
+	acc_timing = 0.03
+	inacc_timing = 0.07
 	skin = SkinManager.new()
 	background = $"Background" as TextureRect
 
