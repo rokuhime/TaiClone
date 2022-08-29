@@ -1,28 +1,28 @@
 class_name TaiClone
 extends SceneTree
 
-# ran on startup, absolute root script of the project
+## Ran on startup, absolute root script of the project.
 
 
 func _init() -> void:
 	root.set_script(preload("res://scripts/root.gd"))
 
-	## Comment
+	## The root viewport that's used when requiring [Root]-specific functions.
 	var taiclone := root as Root
 
 	Root.send_signal(taiclone, "screen_resized", self, "save_settings", ["save_settings"])
 
-	## Comment
+	## The configuration file that's used to load settings.
 	var config_file := ConfigFile.new()
 
 	if config_file.load(taiclone.config_path):
 		print_debug("Config file not found.")
 
 	for key in Root.KEYS:
-		## Comment
+		## The key-bind for this [member key].
 		var new_event := str(config_file.get_value("Keybinds", str(key), ""))
 
-		## Comment
+		## The key-bind value for this [member key].
 		var event_value := new_event.substr(1)
 
 		match new_event.left(1):
@@ -45,7 +45,7 @@ func _init() -> void:
 	taiclone.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
 	taiclone.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
 
-	## Comment
+	## The [VolumeControl] instance. It requires initialization before being added as a scene.
 	var volume_control := preload("res://scenes/root/volume_control.tscn").instance() as VolumeControl
 
 	volume_control.modulate.a = 0
@@ -53,10 +53,7 @@ func _init() -> void:
 	for i in range(taiclone.vols):
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
-	## Comment
-	var gameplay := preload("res://scenes/gameplay/gameplay.tscn").instance() as Gameplay
-
-	taiclone.add_scene(gameplay)
+	taiclone.add_scene(preload("res://scenes/gameplay/gameplay.tscn").instance())
 	taiclone.settings_save = true
 
 	# Load Scene == FOR DEBUG ONLY ==

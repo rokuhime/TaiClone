@@ -12,7 +12,7 @@ var barline_color: Color
 ## The color of don [Note]s.
 var don_color: Color
 
-## Comment
+## The color of an early timing indicator or container.
 var early_color: Color
 
 ## The color of hit error markers with an INACCURATE [member HitObject.Score].
@@ -24,7 +24,7 @@ var inaccurate_judgement: Texture
 ## The color of kat [Note]s.
 var kat_color: Color
 
-## Comment
+## The color of a late timing indicator or container.
 var late_color: Color
 
 ## The color of hit error markers with a MISS [member HitObject.Score].
