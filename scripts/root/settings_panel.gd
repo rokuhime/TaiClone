@@ -42,7 +42,7 @@ func _ready() -> void:
 	_settings_save = true
 
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if _currently_changing and (event is InputEventJoypadButton or event is InputEventKey):
 		taiclone.change_key(event, _currently_changing)
 		_change_text(_currently_changing)

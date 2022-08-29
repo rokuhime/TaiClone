@@ -58,15 +58,19 @@ func _input(event: InputEvent) -> void:
 
 	if event.is_action("VolumeUp"):
 		_change_volume(vol_difference)
+		get_tree().set_input_as_handled()
 
 	if event.is_action("VolumeDown"):
 		_change_volume(-vol_difference)
+		get_tree().set_input_as_handled()
 
 	if event.is_action("VolumeNext"):
 		change_channel(_cur_changing + 1, false)
+		get_tree().set_input_as_handled()
 
 	if event.is_action("VolumePrevious"):
 		change_channel(_cur_changing + 2, false)
+		get_tree().set_input_as_handled()
 
 
 ## Comment

@@ -91,8 +91,22 @@ func _ready() -> void:
 #		load_func(_fus)
 
 
+func _process(delta: float) -> void:
+	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
+	if not music.playing:
+		return
+
+	_cur_time += delta
+	for i in range(obj_container.get_child_count() - 1, -1, -1):
+		## Comment
+		var note := obj_container.get_child(i) as HitObject
+
+		if note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)):
+			break
+
+
 ## Comment
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	## Comment
 	var inputs := [2]
 
@@ -124,20 +138,6 @@ func _input(event: InputEvent) -> void:
 
 	for key in inputs:
 		play_audio(str(key))
-
-
-func _process(delta: float) -> void:
-	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
-	if not music.playing:
-		return
-
-	_cur_time += delta
-	for i in range(obj_container.get_child_count() - 1, -1, -1):
-		## Comment
-		var note := obj_container.get_child(i) as HitObject
-
-		if note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)):
-			break
 
 
 ## Comment
