@@ -32,7 +32,6 @@ outline_size = 2
 outline_color = Color( 0, 0, 0, 0.313726 )
 use_filter = true
 extra_spacing_top = -9
-extra_spacing_space = 2
 font_data = ExtResource( 2 )
 
 [sub_resource type="DynamicFont" id=6]
@@ -63,6 +62,7 @@ font_data = ExtResource( 2 )
 
 [sub_resource type="DynamicFont" id=10]
 size = 26
+use_filter = true
 font_data = ExtResource( 3 )
 
 [resource]

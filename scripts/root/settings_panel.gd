@@ -1,13 +1,13 @@
 class_name SettingsPanel
 extends CanvasItem
 
-## Comment
+## The list of selectable resolutions.
 const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]
 
-## Comment
+## The key-bind that's currently being changed.
 var _currently_changing := ""
 
-## Comment
+## Whether or not settings should be saved.
 var _settings_save := false
 
 onready var dropdown := $V/Resolution/Options as OptionButton
@@ -27,17 +27,16 @@ func _ready() -> void:
 	late_early_drop.add_item("Advanced")
 	late_early(taiclone.late_early_simple_display)
 	hit_error(taiclone.hit_error)
-
 	for i in RESOLUTIONS.size():
-		## Comment
-		var item := str(RESOLUTIONS[i]).split(",", false)
+		## A resolution in the format: ratio, width, height.
+		var resolution := str(RESOLUTIONS[i]).split(",", false)
 
-		if item.empty():
+		if resolution.empty():
 			dropdown.add_separator()
 
 		else:
-			dropdown.add_item("%s | %sx%s" % Array(item))
-			if Root.item_resolution(item) == OS.window_size:
+			dropdown.add_item("%s | %sx%s" % Array(resolution))
+			if Root.item_resolution(resolution) == OS.window_size:
 				dropdown.select(int(i))
 
 	toggle_fullscreen(OS.window_fullscreen)
@@ -52,43 +51,56 @@ func _unhandled_input(event: InputEvent) -> void:
 		_currently_changing = ""
 
 
-## Comment
-func button_pressed(type: String) -> void:
-	_change_text(type, not _currently_changing)
-	_currently_changing = "" if _currently_changing else type
+## Called when a key-bind button is pressed.
+## key ([String]): The key-bind that should be changed.
+func button_pressed(key: String) -> void:
+	_change_text(key, not _currently_changing)
+	_currently_changing = "" if _currently_changing else key
 
 
-## Comment
-func change_offset(new_value: String) -> void:
-	## Comment
-	var new_offset := int(new_value)
+## Called when [member offset_text] changes.
+## new_text ([String]): The new value entered.
+func change_offset(new_text: String) -> void:
+	if new_text == "-":
+		return
+
+	## The position of the cursor in [member offset_text].
+	var text_position := offset_text.caret_position
+
+	## The new offset value that's being applied.
+	var new_offset := int(new_text)
 
 	offset_text.text = str(new_offset) if new_offset else ""
+	offset_text.caret_position = text_position
 	if _settings_save:
 		taiclone.global_offset = new_offset
 		taiclone.save_settings("change_offset")
 
 
-## Comment
+## Called when a different resolution is selected.
+## index ([int]): The index of the resolution in [member RESOLUTIONS].
 func change_res(index: int) -> void:
 	taiclone.change_res(Root.item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
 
 
-## Comment
+## Called when [member hit_error_toggle] is toggled.
+## new_visible ([bool]): Whether or not the hit error bar should be visible.
 func hit_error(new_visible: bool) -> void:
 	hit_error_toggle.pressed = new_visible
 	if _settings_save:
 		taiclone.hit_error_toggled(new_visible)
 
 
-## Comment
+## Called when a new timing indicator format is selected,
+## new_value ([int]): The index of [member late_early_drop] chosen.
 func late_early(new_value: int) -> void:
 	late_early_drop.select(new_value)
 	if _settings_save:
 		taiclone.late_early(new_value)
 
 
-## Comment
+## Called when [member fullscreen_toggle] is toggled.
+## new_visible ([bool]): Whether or not the window should be fullscreen.
 func toggle_fullscreen(new_visible: bool) -> void:
 	fullscreen_toggle.pressed = new_visible
 	for i in range(dropdown.get_item_count()):
@@ -98,12 +110,11 @@ func toggle_fullscreen(new_visible: bool) -> void:
 		taiclone.toggle_fullscreen(new_visible)
 
 
-## Comment
-func _change_text(button: String, pressed := false) -> void:
-	## Comment
-	var event := Root.event(button)
+## Changes the label of a key-bind button.
+## key ([String]): The key-bind being changed.
+## was_pressed ([bool]): Whether or not the button was pressed.
+func _change_text(key: String, was_pressed := false) -> void:
+	## The action associated with this key-bind.
+	var event := Root.event(key)
 
-	## Comment
-	var button_object := get_node("V/Keybinds/%s/Button" % button) as Button
-
-	button_object.text = "..." if pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
+	(get_node("V/Keybinds/%s/Button" % key) as Button).text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
