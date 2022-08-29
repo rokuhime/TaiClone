@@ -73,7 +73,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		var key := "Don" if _cur_hit_count % 2 == int(_first_hit_is_kat) else "Kat"
 
 		## Comment
-		var this_hit := check_hit(key, inputs)
+		var this_hit := check_hit(key, inputs, true)
 
 		if not this_hit:
 			break

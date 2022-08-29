@@ -152,12 +152,19 @@ func add_marker(timing: float, add: bool) -> void:
 
 
 ## Comment
-func add_object(obj: HitObject) -> void:
+func add_object(obj: HitObject, loaded := true) -> void:
 	obj_container.add_child(obj)
 	for i in range(obj_container.get_child_count()):
 		if obj.end_time > (obj_container.get_child(i) as HitObject).end_time:
 			obj_container.move_child(obj, i)
 			break
+
+	if loaded:
+		return
+
+	obj.skin(taiclone.skin)
+	Root.send_signal(self, "audio_played", obj, "play_audio")
+	Root.send_signal(self, "score_added", obj, "add_score")
 
 
 ## Comment

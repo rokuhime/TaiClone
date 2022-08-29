@@ -2,7 +2,7 @@ class_name SpinnerWarn
 extends HitObject
 
 ## Comment
-signal object_added(obj)
+signal object_added(obj, loaded)
 
 ## The BPM of the chart when the [Spinner] starts. Used to determine the number of hits required.
 var _bpm := 1.0
@@ -27,7 +27,7 @@ func miss_check(hit_time: float) -> bool:
 		var spinner := preload("res://scenes/gameplay/spinner.tscn").instance() as Spinner
 
 		spinner.change_properties(timing, length, int(length * 960 / _bpm))
-		emit_signal("object_added", spinner)
+		emit_signal("object_added", spinner, false)
 		queue_free()
 
 	return false
