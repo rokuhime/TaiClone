@@ -18,7 +18,7 @@ func _ready() -> void:
 
 	if finisher:
 		head.rect_scale *= 1.6
-		
+
 	for tick_idx in range(_total_ticks):
 		## The tick object to spawn.
 		var new_tick := preload("res://scenes/gameplay/tick.tscn").instance() as Tick

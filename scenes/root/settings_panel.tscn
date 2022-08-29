@@ -19,7 +19,7 @@ script = ExtResource( 1 )
 
 [node name="V" type="VBoxContainer" parent="."]
 margin_right = 573.0
-margin_bottom = 426.0
+margin_bottom = 747.0
 size_flags_horizontal = 3
 
 [node name="Buffer1" type="Control" parent="V"]
@@ -28,223 +28,223 @@ margin_bottom = 16.0
 rect_min_size = Vector2( 0, 16 )
 
 [node name="Keybinds" type="VBoxContainer" parent="V"]
-margin_left = 247.0
+margin_left = 218.0
 margin_top = 20.0
-margin_right = 325.0
-margin_bottom = 130.0
+margin_right = 355.0
+margin_bottom = 255.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="V/Keybinds"]
-margin_right = 78.0
-margin_bottom = 14.0
+margin_right = 137.0
+margin_bottom = 39.0
 text = "Keybinds"
 align = 1
 
 [node name="LeftKat" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 18.0
-margin_right = 78.0
-margin_bottom = 38.0
+margin_top = 43.0
+margin_right = 137.0
+margin_bottom = 88.0
 
 [node name="Label" type="Label" parent="V/Keybinds/LeftKat"]
 margin_top = 3.0
-margin_right = 62.0
-margin_bottom = 17.0
+margin_right = 121.0
+margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Left Kat"
 
 [node name="Button" type="Button" parent="V/Keybinds/LeftKat"]
-margin_left = 66.0
-margin_right = 78.0
-margin_bottom = 20.0
+margin_left = 125.0
+margin_right = 137.0
+margin_bottom = 45.0
 
 [node name="LeftDon" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 42.0
-margin_right = 78.0
-margin_bottom = 62.0
+margin_top = 92.0
+margin_right = 137.0
+margin_bottom = 137.0
 
 [node name="Label" type="Label" parent="V/Keybinds/LeftDon"]
 margin_top = 3.0
-margin_right = 62.0
-margin_bottom = 17.0
+margin_right = 121.0
+margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Left Don"
 
 [node name="Button" type="Button" parent="V/Keybinds/LeftDon"]
-margin_left = 66.0
-margin_right = 78.0
-margin_bottom = 20.0
+margin_left = 125.0
+margin_right = 137.0
+margin_bottom = 45.0
 
 [node name="RightDon" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 66.0
-margin_right = 78.0
-margin_bottom = 86.0
+margin_top = 141.0
+margin_right = 137.0
+margin_bottom = 186.0
 
 [node name="Label" type="Label" parent="V/Keybinds/RightDon"]
 margin_top = 3.0
-margin_right = 62.0
-margin_bottom = 17.0
+margin_right = 121.0
+margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Right Don"
 
 [node name="Button" type="Button" parent="V/Keybinds/RightDon"]
-margin_left = 66.0
-margin_right = 78.0
-margin_bottom = 20.0
+margin_left = 125.0
+margin_right = 137.0
+margin_bottom = 45.0
 
 [node name="RightKat" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 90.0
-margin_right = 78.0
-margin_bottom = 110.0
+margin_top = 190.0
+margin_right = 137.0
+margin_bottom = 235.0
 
 [node name="Label" type="Label" parent="V/Keybinds/RightKat"]
 margin_top = 3.0
-margin_right = 62.0
-margin_bottom = 17.0
+margin_right = 121.0
+margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Right Kat"
 
 [node name="Button" type="Button" parent="V/Keybinds/RightKat"]
-margin_left = 66.0
-margin_right = 78.0
-margin_bottom = 20.0
+margin_left = 125.0
+margin_right = 137.0
+margin_bottom = 45.0
 
 [node name="Buffer2" type="HSeparator" parent="V"]
 margin_left = 211.0
-margin_top = 134.0
+margin_top = 259.0
 margin_right = 361.0
-margin_bottom = 167.0
+margin_bottom = 292.0
 rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
 [node name="ExtraDisplays" type="VBoxContainer" parent="V"]
-margin_left = 223.0
-margin_top = 171.0
-margin_right = 349.0
-margin_bottom = 237.0
+margin_left = 178.0
+margin_top = 296.0
+margin_right = 394.0
+margin_bottom = 435.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="V/ExtraDisplays"]
-margin_right = 126.0
-margin_bottom = 14.0
+margin_right = 216.0
+margin_bottom = 39.0
 text = "Extra Displays"
 align = 1
 
 [node name="LateEarly" type="HBoxContainer" parent="V/ExtraDisplays"]
-margin_top = 18.0
-margin_right = 126.0
-margin_bottom = 38.0
+margin_top = 43.0
+margin_right = 216.0
+margin_bottom = 88.0
 
 [node name="Label" type="Label" parent="V/ExtraDisplays/LateEarly"]
 margin_top = 3.0
-margin_right = 93.0
-margin_bottom = 17.0
+margin_right = 183.0
+margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Late/Early Text"
 
 [node name="Options" type="OptionButton" parent="V/ExtraDisplays/LateEarly"]
-margin_left = 97.0
-margin_right = 126.0
-margin_bottom = 20.0
+margin_left = 187.0
+margin_right = 216.0
+margin_bottom = 45.0
 
 [node name="HitError" type="HBoxContainer" parent="V/ExtraDisplays"]
-margin_top = 42.0
-margin_right = 126.0
-margin_bottom = 66.0
+margin_top = 92.0
+margin_right = 216.0
+margin_bottom = 139.0
 
 [node name="Label" type="Label" parent="V/ExtraDisplays/HitError"]
-margin_top = 5.0
-margin_right = 98.0
-margin_bottom = 19.0
+margin_top = 4.0
+margin_right = 188.0
+margin_bottom = 43.0
 size_flags_horizontal = 3
 text = "Hit Error Bar"
 
 [node name="Toggle" type="CheckBox" parent="V/ExtraDisplays/HitError"]
-margin_left = 102.0
-margin_right = 126.0
-margin_bottom = 24.0
+margin_left = 192.0
+margin_right = 216.0
+margin_bottom = 47.0
 
 [node name="Buffer3" type="Control" parent="V"]
-margin_top = 241.0
+margin_top = 439.0
 margin_right = 573.0
-margin_bottom = 253.0
+margin_bottom = 451.0
 rect_min_size = Vector2( 0, 12 )
 
 [node name="Resolution" type="VBoxContainer" parent="V"]
-margin_left = 233.0
-margin_top = 257.0
-margin_right = 339.0
-margin_bottom = 323.0
+margin_left = 185.0
+margin_top = 455.0
+margin_right = 387.0
+margin_bottom = 594.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="V/Resolution"]
-margin_right = 106.0
-margin_bottom = 14.0
+margin_right = 202.0
+margin_bottom = 39.0
 text = "Resolution (WIP)"
 align = 1
 
 [node name="Options" type="OptionButton" parent="V/Resolution"]
-margin_left = 38.0
-margin_top = 18.0
-margin_right = 67.0
-margin_bottom = 38.0
+margin_left = 86.0
+margin_top = 43.0
+margin_right = 115.0
+margin_bottom = 88.0
 size_flags_horizontal = 4
 
 [node name="Fullscreen" type="HBoxContainer" parent="V/Resolution"]
-margin_top = 42.0
-margin_right = 106.0
-margin_bottom = 66.0
+margin_top = 92.0
+margin_right = 202.0
+margin_bottom = 139.0
 
 [node name="Label" type="Label" parent="V/Resolution/Fullscreen"]
-margin_top = 5.0
-margin_right = 78.0
-margin_bottom = 19.0
+margin_top = 4.0
+margin_right = 174.0
+margin_bottom = 43.0
 size_flags_horizontal = 3
 text = "Fullscreen"
 
 [node name="Toggle" type="CheckBox" parent="V/Resolution/Fullscreen"]
-margin_left = 82.0
-margin_right = 106.0
-margin_bottom = 24.0
+margin_left = 178.0
+margin_right = 202.0
+margin_bottom = 47.0
 
 [node name="Buffer4" type="HSeparator" parent="V"]
 margin_left = 211.0
-margin_top = 327.0
+margin_top = 598.0
 margin_right = 361.0
-margin_bottom = 360.0
+margin_bottom = 631.0
 rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
 [node name="AudioLabel" type="Label" parent="V"]
-margin_top = 364.0
+margin_top = 635.0
 margin_right = 573.0
-margin_bottom = 378.0
+margin_bottom = 674.0
 text = "Audio"
 align = 1
 
 [node name="Offset" type="HBoxContainer" parent="V"]
-margin_left = 236.0
-margin_top = 382.0
-margin_right = 337.0
-margin_bottom = 406.0
+margin_left = 208.0
+margin_top = 678.0
+margin_right = 365.0
+margin_bottom = 727.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="V/Offset"]
 margin_top = 5.0
-margin_right = 39.0
-margin_bottom = 19.0
+margin_right = 71.0
+margin_bottom = 44.0
 text = "Offset"
 
 [node name="LineEdit" type="LineEdit" parent="V/Offset"]
-margin_left = 43.0
-margin_right = 101.0
-margin_bottom = 24.0
+margin_left = 75.0
+margin_right = 157.0
+margin_bottom = 49.0
 align = 2
 placeholder_text = "0"
 
 [node name="Buffer5" type="Control" parent="V"]
-margin_top = 410.0
+margin_top = 731.0
 margin_right = 573.0
-margin_bottom = 426.0
+margin_bottom = 747.0
 rect_min_size = Vector2( 0, 16 )
 
 [connection signal="pressed" from="V/Keybinds/LeftKat/Button" to="." method="button_pressed" binds= [ "LeftKat" ]]
