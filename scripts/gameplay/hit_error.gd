@@ -1,7 +1,14 @@
+class_name HitError
 extends Control
 
 ## Comment
 signal change_indicator(timing)
+
+## Comment
+const ACC_TIMING := 0.03
+
+## Comment
+const INACC_TIMING := 0.07
 
 onready var accurate := $HitPoints/Inaccurate/Accurate as ColorRect
 onready var avg_hit := $AverageHit as Control
@@ -26,7 +33,7 @@ func _ready() -> void:
 	accurate.self_modulate = self_modulate_color
 
 	## Comment
-	var anchor := taiclone.acc_timing / taiclone.inacc_timing / 2
+	var anchor := ACC_TIMING / INACC_TIMING / 2
 
 	accurate.anchor_left = 0.5 - anchor
 	accurate.anchor_right = 0.5 + anchor
@@ -59,7 +66,7 @@ func new_marker(type: int, timing: float) -> void:
 			return
 
 	## Comment
-	var anchor := 0.5 + clamp(timing / taiclone.inacc_timing, -1, 1) * rect_size.x / hit_points.rect_size.x / 2
+	var anchor := 0.5 + clamp(timing / INACC_TIMING, -1, 1) * rect_size.x / hit_points.rect_size.x / 2
 
 	marker.anchor_left = anchor
 	marker.anchor_right = anchor

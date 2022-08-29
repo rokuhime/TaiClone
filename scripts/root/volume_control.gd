@@ -78,8 +78,8 @@ func change_channel(channel: int, needs_visible := true) -> void:
 	if needs_visible and not modulate.a:
 		return
 
-	_cur_changing = channel % taiclone.vols
-	for i in range(taiclone.vols):
+	_cur_changing = channel % AudioServer.bus_count
+	for i in range(AudioServer.bus_count):
 		## Comment
 		var new_color := 1.0 if i == _cur_changing else 0.5
 

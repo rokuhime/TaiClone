@@ -24,6 +24,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/gameplay/gameplay.gd"
 }, {
+"base": "Control",
+"class": "HitError",
+"language": "GDScript",
+"path": "res://scripts/gameplay/hit_error.gd"
+}, {
 "base": "KinematicBody2D",
 "class": "HitObject",
 "language": "GDScript",
@@ -83,6 +88,7 @@ _global_script_class_icons={
 "AudioLoader": "",
 "BarLine": "",
 "Gameplay": "",
+"HitError": "",
 "HitObject": "",
 "Note": "",
 "Roll": "",

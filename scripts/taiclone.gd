@@ -15,7 +15,7 @@ func _init() -> void:
 	## The configuration file that's used to load settings.
 	var config_file := ConfigFile.new()
 
-	if config_file.load(taiclone.config_path):
+	if config_file.load(Root.CONFIG_PATH):
 		print_debug("Config file not found.")
 
 	for key in Root.KEYS:
@@ -50,7 +50,7 @@ func _init() -> void:
 
 	volume_control.modulate.a = 0
 	taiclone.add_scene(volume_control)
-	for i in range(taiclone.vols):
+	for i in range(AudioServer.bus_count):
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
 	taiclone.add_scene(preload("res://scenes/gameplay/gameplay.tscn").instance())

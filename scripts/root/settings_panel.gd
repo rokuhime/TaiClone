@@ -2,6 +2,9 @@ class_name SettingsPanel
 extends CanvasItem
 
 ## Comment
+const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]
+
+## Comment
 var _currently_changing := ""
 
 ## Comment
@@ -25,9 +28,9 @@ func _ready() -> void:
 	late_early(taiclone.late_early_simple_display)
 	hit_error(taiclone.hit_error)
 
-	for i in Root.RESOLUTIONS.size():
+	for i in RESOLUTIONS.size():
 		## Comment
-		var item := str(Root.RESOLUTIONS[i]).split(",", false)
+		var item := str(RESOLUTIONS[i]).split(",", false)
 
 		if item.empty():
 			dropdown.add_separator()
@@ -68,7 +71,7 @@ func change_offset(new_value: String) -> void:
 
 ## Comment
 func change_res(index: int) -> void:
-	taiclone.change_res(Root.item_resolution(str(taiclone.RESOLUTIONS.slice(index, index)[0]).split(",", false)))
+	taiclone.change_res(Root.item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
 
 
 ## Comment

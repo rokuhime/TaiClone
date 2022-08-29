@@ -101,7 +101,7 @@ func _process(delta: float) -> void:
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
-		if note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)):
+		if note.miss_check(_cur_time - (HitError.INACC_TIMING if note is Note else 0.0)):
 			break
 
 
@@ -133,7 +133,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
-		if note.hit(inputs, _cur_time + (taiclone.inacc_timing if note is Note else 0.0)) or Root.inputs_empty(inputs):
+		if note.hit(inputs, _cur_time + (HitError.INACC_TIMING if note is Note else 0.0)) or Root.inputs_empty(inputs):
 			break
 
 	for key in inputs:
@@ -142,9 +142,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## Comment
 func add_marker(timing: float, add: bool) -> void:
-	timing -= taiclone.inacc_timing
+	timing -= HitError.INACC_TIMING
 
-	var type := int(HitObject.Score.ACCURATE if abs(timing) < taiclone.acc_timing else HitObject.Score.INACCURATE if abs(timing) < taiclone.inacc_timing else HitObject.Score.MISS)
+	var type := int(HitObject.Score.ACCURATE if abs(timing) < HitError.ACC_TIMING else HitObject.Score.INACCURATE if abs(timing) < HitError.INACC_TIMING else HitObject.Score.MISS)
 
 	emit_signal("marker_added", type, timing)
 	if add:
@@ -189,7 +189,7 @@ func add_score(type: int, marker := false) -> void:
 			_hit_notify_animation()
 			judgement.texture = taiclone.skin.miss_judgement
 			if marker:
-				emit_signal("marker_added", type, taiclone.inacc_timing)
+				emit_signal("marker_added", type, HitError.INACC_TIMING)
 
 	## Comment
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
