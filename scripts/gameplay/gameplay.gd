@@ -85,8 +85,10 @@ func _ready() -> void:
 	r_kat_obj.modulate.a = 0
 	late_early_changed()
 	_reset()
-	if _f.file_exists(_fus):
-		load_func(_fus)
+
+	#dev autoload map
+#	if _f.file_exists(_fus):
+#		load_func(_fus)
 
 
 ## Comment
