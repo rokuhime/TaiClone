@@ -79,13 +79,11 @@ onready var ui_score := $UI/Score as Label
 func _ready() -> void:
 	Root.send_signal(hit_error, "hit_error_toggled", taiclone, "hit_error_toggled")
 	Root.send_signal(self, "late_early_changed", taiclone, "late_early_changed")
-	Root.send_signal(self, "offset_changed", taiclone, "offset_changed")
 	l_don_obj.modulate.a = 0
 	l_kat_obj.modulate.a = 0
 	r_don_obj.modulate.a = 0
 	r_kat_obj.modulate.a = 0
 	late_early_changed()
-	offset_changed()
 	_reset()
 	if _f.file_exists(_fus):
 		load_func(_fus)
@@ -422,6 +420,9 @@ func load_func(file_path := "") -> void:
 		var line := _f.get_csv_line()
 
 		## Comment
+		var timing := float(line[0]) + taiclone.global_offset / 1000.0
+
+		## Comment
 		var total_cur_sv := float(line[1]) * cur_bpm * 5.7
 
 		match int(line[2]):
@@ -429,14 +430,14 @@ func load_func(file_path := "") -> void:
 				## Comment
 				var note_object := preload("res://scenes/gameplay/bar_line.tscn").instance() as BarLine
 
-				note_object.change_properties(float(line[0]), total_cur_sv)
+				note_object.change_properties(timing, total_cur_sv)
 				add_object(note_object)
 
 			NoteType.DON, NoteType.KAT:
 				## Comment
 				var note_object := preload("res://scenes/gameplay/note.tscn").instance() as Note
 
-				note_object.change_properties(float(line[0]), total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
+				note_object.change_properties(timing, total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
 				add_object(note_object)
 				Root.send_signal(self, "marker_added", note_object, "add_marker")
 
@@ -444,14 +445,14 @@ func load_func(file_path := "") -> void:
 				## Comment
 				var note_object := preload("res://scenes/gameplay/roll.tscn").instance() as Roll
 
-				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
+				note_object.change_properties(timing, total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
 				add_object(note_object)
 
 			NoteType.SPINNER:
 				## Comment
 				var note_object := preload("res://scenes/gameplay/spinner_warn.tscn").instance() as SpinnerWarn
 
-				note_object.change_properties(float(line[0]), total_cur_sv, float(line[3]), cur_bpm)
+				note_object.change_properties(timing, total_cur_sv, float(line[3]), cur_bpm)
 				add_object(note_object)
 				Root.send_signal(self, "object_added", note_object, "add_object")
 
@@ -462,12 +463,6 @@ func load_func(file_path := "") -> void:
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "audio_played", self, "play_audio")
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "score_added", self, "add_score")
 	_load_finish("Done!")
-
-
-## Comment
-func offset_changed() -> void:
-	# FUS TODO: Fix position multiplier
-	obj_container.rect_position.x = taiclone.global_offset * -0.775
 
 
 ## Comment
@@ -572,4 +567,4 @@ func _reset(dispose := true) -> void:
 	_score = 0
 	add_score(-1)
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
-	_cur_time = taiclone.global_offset / 1000.0
+	_cur_time = 0

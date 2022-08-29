@@ -67,7 +67,8 @@ func change_offset(new_value: String) -> void:
 
 	offset_text.text = str(new_offset) if new_offset else ""
 	if _settings_save:
-		taiclone.change_offset(new_offset)
+		taiclone.global_offset = new_offset
+		taiclone.save_settings("change_offset")
 
 
 ## Comment
