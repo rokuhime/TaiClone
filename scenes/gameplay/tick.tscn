@@ -6,6 +6,9 @@
 [node name="Tick" type="KinematicBody2D"]
 script = ExtResource( 2 )
 
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+rect = Rect2( -6, -6, 12, 12 )
+
 [node name="Tick" type="TextureRect" parent="."]
 margin_left = -6.0
 margin_top = -6.0

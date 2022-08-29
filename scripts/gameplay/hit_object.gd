@@ -41,17 +41,24 @@ var state := 0
 ## The hit time of this [HitObject]. Applies to all [HitObject]s.
 var timing := 0.0
 
+onready var visibility_notifier := $VisibilityNotifier2D as VisibilityNotifier2D
+
 
 func _ready() -> void:
+	hide()
+	Root.send_signal(self, "screen_entered", visibility_notifier, "show")
+	Root.send_signal(self, "screen_exited", visibility_notifier, "dispose_if_finished")
+
 	if finisher:
-		(get_child(0) as Control).rect_scale *= 1.6
+		(get_child(1) as Control).rect_scale *= 1.6
+		visibility_notifier.scale *= 1.6
 
 	add_to_group("HitObjects")
 	state = int(State.READY)
 
 
 func _process(_delta: float) -> void:
-	if state == int(State.ACTIVE):
+	if state > int(State.READY):
 		## The distance the [HitObject] moved.
 		var _vel := move_and_slide(Vector2(-speed, 0))
 
@@ -99,6 +106,15 @@ func check_hit(key: String, inputs: Array, play_audio := true) -> String:
 
 	else:
 		return ""
+
+
+## Comment
+func dispose_if_finished() -> void:
+	if state == int(State.FINISHED):
+		queue_free()
+
+	else:
+		hide()
 
 
 ## Comment

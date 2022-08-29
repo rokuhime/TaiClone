@@ -136,7 +136,7 @@ func _process(delta: float) -> void:
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
-		if note.miss_check(_cur_time - (taiclone.inacc_timing if note is BarLine or note is Note else 0.0)):
+		if note.miss_check(_cur_time - (taiclone.inacc_timing if note is Note else 0.0)):
 			break
 
 

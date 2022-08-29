@@ -53,11 +53,6 @@ func change_speed(new_speed: float) -> void:
 	_current_speed = new_speed
 
 
-## Dispose of this [Spinner] once tweens have finished.
-func deactivate(_object, _key) -> void:
-	queue_free()
-
-
 ## See [HitObject].
 func hit(inputs: Array, hit_time: float) -> bool:
 	## Comment
@@ -106,11 +101,11 @@ func hit(inputs: Array, hit_time: float) -> bool:
 
 ## See [HitObject].
 func miss_check(hit_time: float) -> bool:
-	if hit_time <= end_time:
-		return true
+	if hit_time > end_time:
+		_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE))
+		return false
 
-	_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE))
-	return false
+	return true
 
 
 ## Set text to the remaining hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
@@ -123,7 +118,7 @@ func _spinner_finished(type: int) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
 		emit_signal("score_added", type, false)
-		Root.send_signal(self, "finished", _tween_modulate(0), "deactivate")
+		Root.send_signal(self, "finished", _tween_modulate(0), "queue_free")
 
 
 ## Fade this [Spinner] in and out.

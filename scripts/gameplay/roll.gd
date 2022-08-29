@@ -14,6 +14,7 @@ onready var tick_container := $TickContainer
 
 func _ready() -> void:
 	body.rect_size.x = speed * length
+	visibility_notifier.rect.size.x += speed * length
 	for tick_idx in range(_total_ticks):
 		## The tick object to spawn.
 		var new_tick := preload("res://scenes/gameplay/tick.tscn").instance() as Tick
@@ -33,8 +34,22 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 ## See [HitObject].
 func hit(inputs: Array, hit_time: float) -> bool:
 	for tick_idx in range(tick_container.get_child_count() - 1, -1, -1):
-		if (tick_container.get_child(tick_idx) as Tick).hit(inputs, (hit_time - timing) * speed) or Root.inputs_empty(inputs):
+		if (tick_container.get_child(tick_idx) as Tick).hit(inputs, (hit_time - timing + _tick_distance / 2) * speed) or Root.inputs_empty(inputs):
 			break
+
+	return false
+
+
+## See [HitObject].
+func miss_check(hit_time: float) -> bool:
+	if hit_time > end_time:
+		state = int(State.FINISHED)
+		if not visible:
+			queue_free()
+
+	for tick_idx in range(tick_container.get_child_count() - 1, -1, -1):
+		if (tick_container.get_child(tick_idx) as Tick).miss_check((hit_time - timing - _tick_distance / 2) * speed):
+			return true
 
 	return false
 

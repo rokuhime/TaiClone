@@ -78,11 +78,11 @@ func hit(inputs: Array, hit_time: float) -> bool:
 
 ## See [HitObject].
 func miss_check(hit_time: float) -> bool:
-	if hit_time <= end_time:
-		return true
+	if hit_time > timing:
+		finish(int(Score.MISS) if _first_hit < 0 else -1)
+		return false
 
-	finish(int(Score.MISS) if _first_hit < 0 else -1)
-	return false
+	return true
 
 
 ## See [HitObject].

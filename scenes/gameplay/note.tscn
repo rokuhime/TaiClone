@@ -6,4 +6,7 @@
 [node name="Note" type="KinematicBody2D"]
 script = ExtResource( 2 )
 
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+rect = Rect2( -67, -67, 134, 134 )
+
 [node name="Head" parent="." instance=ExtResource( 1 )]
