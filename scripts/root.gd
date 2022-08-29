@@ -10,9 +10,6 @@ signal hit_error_toggled
 signal late_early_changed
 
 ## Comment
-signal offset_changed
-
-## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 ## Comment
@@ -93,16 +90,7 @@ func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
 func change_key(event: InputEvent, button: String) -> void:
 	InputMap.action_erase_events(str(button))
 	InputMap.action_add_event(str(button), event)
-	if settings_save:
-		save_settings("change_key")
-
-
-## Comment
-func change_offset(new_value: int) -> void:
-	global_offset = new_value
-	emit_signal("offset_changed")
-	if settings_save:
-		save_settings("change_offset")
+	save_settings("change_key")
 
 
 ## Comment
@@ -114,24 +102,21 @@ func change_res(index := -1) -> void:
 	OS.window_size = new_size
 	size = new_size
 	OS.window_resizable = true
-	if settings_save:
-		save_settings("change_res")
+	save_settings("change_res")
 
 
 ## Comment
 func hit_error_toggled(new_visible: bool) -> void:
 	hit_error = new_visible
 	emit_signal("hit_error_toggled")
-	if settings_save:
-		save_settings("hit_error_toggled")
+	save_settings("hit_error_toggled")
 
 
 ## Comment
 func late_early(new_value: int) -> void:
 	late_early_simple_display = new_value
 	emit_signal("late_early_changed")
-	if settings_save:
-		save_settings("late_early")
+	save_settings("late_early")
 
 
 ## Comment
@@ -153,6 +138,9 @@ func remove_scene(old_scene: String) -> bool:
 
 ## Comment
 func save_settings(debug: String) -> void:
+	if not settings_save:
+		return
+
 	## Comment
 	var config_file := ConfigFile.new()
 
@@ -185,5 +173,4 @@ func save_settings(debug: String) -> void:
 ## Comment
 func toggle_fullscreen(new_visible: bool) -> void:
 	OS.window_fullscreen = new_visible
-	if settings_save:
-		save_settings("toggle_fullscreen")
+	save_settings("toggle_fullscreen")
