@@ -22,13 +22,14 @@ var _speed_tween := SceneTreeTween.new()
 onready var approach := $Approach as Control
 onready var label := $Label as Label
 onready var rotation_obj := $RotationObj as Node2D
+onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
 	_count_text()
 
 	## The [PropertyTweener] that's used to tween the approach circle of this [Spinner].
-	var _approach_tween := Root.new_tween(SceneTreeTween.new(), self).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
+	var _approach_tween := taiclone.new_tween(SceneTreeTween.new()).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
 	var _tween := _tween_modulate(1)
@@ -44,7 +45,7 @@ func _process(_delta: float) -> void:
 ## Initialize [Spinner] variables.
 func change_properties(new_timing: float, new_length: float, new_hits: int) -> void:
 	.ini(new_timing, 0, new_length)
-	_needed_hits = new_hits
+	_needed_hits = int(max(1, new_hits))
 
 
 ## Change this [Spinner]'s [member _current_speed].
@@ -52,77 +53,59 @@ func change_speed(new_speed: float) -> void:
 	_current_speed = new_speed
 
 
-## Dispose of this [Spinner] once tweens have finished.
-func deactivate(_object := null, _key := "") -> void:
-	queue_free()
-
-
 ## See [HitObject].
-func hit(inputs: Array, hit_time: float) -> Array:
-	if state == int(State.FINISHED):
-		inputs.append([int(Score.FINISHED)])
+func hit(inputs: Array, hit_time: float) -> bool:
+	## Comment
+	var early := hit_time < timing
 
-	if state != int(State.ACTIVE) or hit_time < timing:
-		return inputs
+	if state != int(State.ACTIVE) or early:
+		return early
 
 	if not _cur_hit_count:
-		_first_hit_is_kat = inputs.has("LeftKat") or inputs.has("RightKat")
+		# TODO: Redo first hit logic to not bias kats
+		_first_hit_is_kat = inputs.has("Kat") or inputs.has("LeftKat") or inputs.has("RightKat")
 
 	## The list of [member HitObject.Score]s to add.
 	var scores := []
 
-	while true:
-		if _cur_hit_count % 2 != int(_first_hit_is_kat):
-			if inputs.has("LeftKat"):
-				inputs.remove(inputs.find("LeftKat"))
+	while not Root.inputs_empty(inputs):
+		## Comment
+		var key := "Don" if _cur_hit_count % 2 == int(_first_hit_is_kat) else "Kat"
 
-			elif inputs.has("RightKat"):
-				inputs.remove(inputs.find("RightKat"))
+		## Comment
+		var this_hit := check_hit(key, inputs)
 
-			else:
-				break
-
-		else:
-			if inputs.has("LeftDon"):
-				inputs.remove(inputs.find("LeftDon"))
-
-			elif inputs.has("RightDon"):
-				inputs.remove(inputs.find("RightDon"))
-
-			else:
-				break
+		if not this_hit:
+			break
 
 		_cur_hit_count += 1
 		scores.append(int(Score.SPINNER))
 		if _cur_hit_count == _needed_hits:
-			_spinner_finished()
-			scores.append(int(Score.ACCURATE))
+			_spinner_finished(int(Score.ACCURATE))
 			break
 
 	if scores.empty():
-		inputs.append([int(Score.FINISHED)])
-		return inputs
+		return false
+
+	for score in scores:
+		emit_signal("score_added", score, false)
 
 	_count_text()
-	_speed_tween = Root.new_tween(_speed_tween, self).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
+	_speed_tween = taiclone.new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
 
 	## The [MethodTweener] that's used to tween this [Spinner]'s [member _current_speed].
 	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
 
-	inputs.append(scores)
-	return inputs
+	return false
 
 
 ## See [HitObject].
-func miss_check(hit_time: float) -> int:
-	if state == int(State.FINISHED):
-		return Score.FINISHED
+func miss_check(hit_time: float) -> bool:
+	if hit_time > end_time:
+		_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE))
+		return false
 
-	if hit_time - length > timing:
-		_spinner_finished()
-		return Score.INACCURATE if _needed_hits / 2.0 <= _cur_hit_count else Score.MISS
-
-	return 0
+	return true
 
 
 ## Set text to the remaining hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
@@ -131,16 +114,14 @@ func _count_text() -> void:
 
 
 ## Set this [Spinner] to the FINISHED [member HitObject.State].
-func _spinner_finished() -> void:
+func _spinner_finished(type: int) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
-
-		## The [PropertyTweener] used to fade out this [Spinner].
-		if _tween_modulate(0).connect("finished", self, "deactivate"):
-			push_warning("Attempted to connect PropertyTweener finished.")
+		emit_signal("score_added", type, false)
+		Root.send_signal(self, "finished", _tween_modulate(0), "queue_free")
 
 
 ## Fade this [Spinner] in and out.
 func _tween_modulate(final_val: float) -> PropertyTweener:
-	_modulate_tween = Root.new_tween(_modulate_tween, self).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	_modulate_tween = taiclone.new_tween(_modulate_tween).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	return _modulate_tween.tween_property(self, "modulate:a", final_val, 0.25)

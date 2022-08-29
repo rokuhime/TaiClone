@@ -1,39 +1,76 @@
-[gd_resource type="Theme" load_steps=8 format=2]
+[gd_resource type="Theme" load_steps=13 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
-[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
 
 [sub_resource type="DynamicFont" id=1]
+size = 75
+outline_size = 2
+outline_color = Color( 0, 0, 0, 0.313726 )
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=2]
 size = 28
 use_filter = true
 extra_spacing_top = -7
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=3]
 size = 22
 use_filter = true
 extra_spacing_top = -7
-font_data = ExtResource( 2 )
+font_data = ExtResource( 3 )
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=5]
+size = 26
+outline_size = 2
+outline_color = Color( 0, 0, 0, 0.313726 )
+use_filter = true
+extra_spacing_top = -9
+extra_spacing_space = 2
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=6]
 size = 20
 use_filter = true
 extra_spacing_top = -7
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=5]
+[sub_resource type="DynamicFont" id=7]
 size = 15
 use_filter = true
 extra_spacing_top = -7
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 50
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=9]
+size = 65
+outline_size = 2
+outline_color = Color( 0, 0, 0, 0.313726 )
+use_filter = true
+extra_spacing_top = -19
+extra_spacing_bottom = -12
 font_data = ExtResource( 2 )
 
 [resource]
-MasterLabel/fonts/font = SubResource( 1 )
-MasterPercentage/fonts/font = SubResource( 2 )
-PanelContainer/styles/panel = SubResource( 3 )
-ScrollContainer/styles/bg = SubResource( 3 )
-SpecificLabel/fonts/font = SubResource( 4 )
-SpecificPercentage/fonts/font = SubResource( 5 )
+Accuracy/constants/separation = 1
+Combo/fonts/font = SubResource( 1 )
+MasterLabel/fonts/font = SubResource( 2 )
+MasterPercentage/fonts/font = SubResource( 3 )
+PanelContainer/styles/panel = SubResource( 4 )
+Percent/fonts/font = SubResource( 5 )
+ScrollContainer/styles/bg = SubResource( 4 )
+SpecificLabel/fonts/font = SubResource( 6 )
+SpecificPercentage/fonts/font = SubResource( 7 )
+TempLoadChart/constants/separation = 8
+TimingIndicator/fonts/font = SubResource( 8 )
+UI/fonts/font = SubResource( 9 )

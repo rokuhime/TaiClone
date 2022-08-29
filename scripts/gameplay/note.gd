@@ -1,14 +1,19 @@
 class_name Note
 extends HitObject
 
+## Comment
+signal marker_added(timing, add)
+
+## Comment
+var _first_hit := -1.0
+
 ## Whether or not this [Note] is a don or kat.
-var _is_kat := false
+var _is_kat := true
 
-# if the last hit was on the right side; only applies to finishers
-# saved as int because this cant be null :(
-var _previous_side_was_right := 0
+## Comment
+var _next_hit := ""
 
-onready var sprite := $Sprite as CanvasItem
+onready var head := $Head as CanvasItem
 
 
 ## Initialize [Note] variables.
@@ -18,89 +23,68 @@ func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, ne
 
 
 ## See [HitObject].
-func hit(inputs: Array, hit_time: float) -> Array:
-	if state == int(State.FINISHED):
-		inputs.append([int(Score.FINISHED)])
+func hit(inputs: Array, hit_time: float) -> bool:
+	hit_time -= timing
 
-	## The time since the start of this [Note]'s hit window. A perfect hit has the value of [member Root.inacc_timing].
-	var hit_timing := hit_time - timing
+	## Comment
+	var early := hit_time < 0
 
-	if state != int(State.ACTIVE) or hit_timing < 0:
-		return inputs
-		
-	
-	# The list of scores to add.
-	var scores := []
-	
-	var current_side_is_right : int
-	
-	if _is_kat:
-		if inputs.has("LeftKat"):
-			inputs.remove(inputs.find("LeftKat"))
-			scores.append(hit_timing)
-			current_side_is_right = 1
+	if state != int(State.ACTIVE) or early:
+		return early
 
-		elif inputs.has("RightKat"):
-			inputs.remove(inputs.find("RightKat"))
-			scores.append(hit_timing)
-			current_side_is_right = 2
+	## Comment
+	var key := "Kat" if _is_kat else "Don"
 
-		else:
-			scores.append(int(Score.MISS))
+	if _first_hit < 0:
+		## Comment
+		var this_hit := check_hit(key, inputs, not finisher)
 
-	else:
-		if inputs.has("LeftDon"):
-			inputs.remove(inputs.find("LeftDon"))
-			scores.append(hit_timing)
-			current_side_is_right = 1
+		if not this_hit:
+			finish(int(Score.MISS), true)
+			return true
 
-		elif inputs.has("RightDon"):
-			inputs.remove(inputs.find("RightDon"))
-			scores.append(hit_timing)
-			current_side_is_right = 2
+		_next_hit = "Right" if this_hit == "Left" else "Left" if this_hit == "Right" else ""
+		if finisher:
+			emit_signal("audio_played", "Finisher" + key)
+			_first_hit = hit_time
+			hide()
 
 		else:
-			scores.append(int(Score.MISS))
+			finish()
 
-	# finisher check
-	
-	# if it isnt a finisher...
+		emit_signal("marker_added", hit_time, true)
+		if Root.inputs_empty(inputs):
+			return true
+
 	if not finisher:
-		state = int(State.FINISHED)
-		queue_free()
-	
-	# if finisher, check the last side used
-	elif _previous_side_was_right != 0:
-		if bool(_previous_side_was_right - 1) != bool(current_side_is_right - 1):
-			#finisher hit
-			scores.remove(0)
-			scores.append(int(Score.FINISHER))
-			
-			state = int(State.FINISHED)
-			queue_free()
-	else:
-		hide()
-		_previous_side_was_right = current_side_is_right
-	
-	
-	inputs.append(scores)
-	return inputs
+		return false
 
-func miss_check(hit_time: float) -> int:
-	if state == int(State.FINISHED):
-		return Score.FINISHED
+	if _next_hit:
+		key = _next_hit + key
+		if inputs.has(key):
+			inputs.remove(inputs.find(key))
+			emit_signal("marker_added", hit_time, false)
 
-	if hit_time > timing:
-		if _previous_side_was_right != 0:
-			state = Score.FINISHED
-			queue_free()
-			return Score.FINISHED
 		else:
-			queue_free()
-			return Score.MISS
+			finish()
+			return false
 
-	return 0
+	elif not check_hit(key, inputs, false):
+		return true
+
+	finish(int(Score.FINISHER))
+	return false
+
+
+## See [HitObject].
+func miss_check(hit_time: float) -> bool:
+	if hit_time > timing:
+		finish(int(Score.MISS) if _first_hit < 0 else -1)
+		return false
+
+	return true
+
 
 ## See [HitObject].
 func skin(new_skin: SkinManager) -> void:
-	sprite.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
+	head.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color

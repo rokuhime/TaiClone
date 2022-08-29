@@ -1,16 +1,20 @@
 class_name HitObject
 extends KinematicBody2D
 
+## Comment
+signal audio_played(key)
+
+## Comment
+signal score_added(type, marker)
+
 ## The possible scores of a [HitObject]:
-## 0: It is too early to hit this [HitObject]. Does not affect score or accuracy. Applies to all [HitObject]s.
-## 1 (ACCURATE): 300 points and 100% accuracy. Applies to all [HitObject]s.
-## 2 (INACCURATE): 150 points and 50% accuracy. Applies to all [HitObject]s.
-## 3 (MISS): 0 points and 0% accuracy. Applies to all [HitObject]s.
-## 4 (FINISHER): 300 additional points. Does not affect accuracy. Only applies to [Note]s.
-## 5 (ROLL): 300 points. Does not affect accuracy. Only applies to [Roll]s.
-## 6 (SPINNER): 600 points. Does not affect accuracy. Only applies to [Spinner]s.
-## 7 (FINISHED): This [HitObject] is in the FINISHED [member State]. Does not affect score or accuracy. Applies to all [HitObject]s.
-enum Score {ACCURATE = 1, INACCURATE, MISS, FINISHER, ROLL, SPINNER, FINISHED}
+## 0 (ACCURATE): 300 points and 100% accuracy. Applies to all [HitObject]s.
+## 1 (INACCURATE): 150 points and 50% accuracy. Applies to all [HitObject]s.
+## 2 (MISS): 0 points and 0% accuracy. Applies to all [HitObject]s.
+## 3 (FINISHER): 300 additional points. Does not affect accuracy. Only applies to [Note]s.
+## 4 (ROLL): 300 points. Does not affect accuracy. Only applies to [Roll]s.
+## 5 (SPINNER): 600 points. Does not affect accuracy. Only applies to [Spinner]s.
+enum Score {ACCURATE, INACCURATE, MISS, FINISHER, ROLL, SPINNER}
 
 ## The possible states of a [HitObject]:
 ## 0: This [HitObject]'s properties can be changed.
@@ -19,7 +23,10 @@ enum Score {ACCURATE = 1, INACCURATE, MISS, FINISHER, ROLL, SPINNER, FINISHED}
 ## 3 (FINISHED): This [HitObject] has been fully hit or missed. It will be disposed of once all animations finish.
 enum State {READY = 1, ACTIVE, FINISHED}
 
-# Whether or not this `HitObject` is a finisher. Only applies to `Note`s and `Roll`s.
+## Comment
+var end_time := 0.0
+
+## Whether or not this [HitObject] is a finisher. Only applies to [Note]s and [Roll]s.
 var finisher := false
 
 ## The length of this [HitObject]. This does not apply to [BarLine]s and [Note]s.
@@ -34,16 +41,24 @@ var state := 0
 ## The hit time of this [HitObject]. Applies to all [HitObject]s.
 var timing := 0.0
 
+onready var visibility_notifier := $VisibilityNotifier2D as VisibilityNotifier2D
+
 
 func _ready() -> void:
-	if finisher:
-		(get_child(0) as Control).rect_scale = Vector2(0.9, 0.9)
+	hide()
+	Root.send_signal(self, "screen_entered", visibility_notifier, "show")
+	Root.send_signal(self, "screen_exited", visibility_notifier, "dispose_if_finished")
 
+	if finisher:
+		(get_child(1) as Control).rect_scale *= 1.6
+		visibility_notifier.scale *= 1.6
+
+	add_to_group("HitObjects")
 	state = int(State.READY)
 
 
 func _process(_delta: float) -> void:
-	if state == int(State.ACTIVE):
+	if state > int(State.READY):
 		## The distance the [HitObject] moved.
 		var _vel := move_and_slide(Vector2(-speed, 0))
 
@@ -51,17 +66,72 @@ func _process(_delta: float) -> void:
 ## Enable motion and [method hit] and [method miss_check] calls on this [HitObject].
 func activate() -> void:
 	assert(state == int(State.READY), "Attempted to activate hitobject.")
-	# TODO: Remove 1.9 scaling
-	position.x = speed * timing / 1.9
+	position.x = speed * timing
 	state = int(State.ACTIVE)
+
+
+## Comment
+func check_hit(key: String, inputs: Array, play_audio := true) -> String:
+	## Comment
+	var left_hit := inputs.find("Left" + key)
+
+	## Comment
+	var right_hit := inputs.find("Right" + key)
+
+	if left_hit + 1 and right_hit + 1:
+		inputs.remove(left_hit)
+		inputs.remove(right_hit)
+		inputs.append(key)
+		if play_audio:
+			emit_signal("audio_played", "Left" + key)
+		return key
+
+	elif left_hit + 1:
+		inputs.remove(left_hit)
+		if play_audio:
+			emit_signal("audio_played", "Left" + key)
+		return "Left"
+
+	elif right_hit + 1:
+		inputs.remove(right_hit)
+		if play_audio:
+			emit_signal("audio_played", "Right" + key)
+		return "Right"
+
+	elif inputs.has(key):
+		inputs.remove(inputs.find(key))
+		if play_audio:
+			emit_signal("audio_played", "Right" + key)
+		return key
+
+	else:
+		return ""
+
+
+## Comment
+func dispose_if_finished() -> void:
+	if state == int(State.FINISHED):
+		queue_free()
+
+	else:
+		hide()
+
+
+## Comment
+func finish(type := -1, marker := false) -> void:
+	if state != int(State.FINISHED):
+		state = int(State.FINISHED)
+		queue_free()
+		if type + 1:
+			emit_signal("score_added", type, marker)
 
 
 ## Check if this [HitObject] has been hit. Intended to be implemented by child classes.
 ## inputs (Array): The list of actions received.
 ## hit_time (float): The start of this [HitObject]'s hit window.
-## return (Array): The list of actions remaining and [member Score]s to add.
-func hit(inputs: Array, _hit_time: float) -> Array:
-	return inputs
+## return (bool): Whether or not to continue checking for hits.
+func hit(_inputs: Array, _hit_time: float) -> bool:
+	return false
 
 
 ## Initialize base [HitObject] variables. Called and extended by child classes via [method change_properties].
@@ -69,23 +139,16 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 	assert(not state, "Attempted to change hitobject properties after loaded.")
 	finisher = new_finisher
 	length = new_length
-	# TODO: Remove 1.9 scaling
-	speed = new_speed * 1.9
+	speed = new_speed
 	timing = new_timing
+	end_time = timing + length
 
 
-## Check if this [HitObject] has been missed. It can be implemented by child classes to extend functionality.
+## Check if this [HitObject] has been missed. Intended to be implemented by child classes.
 ## hit_time (float): The end of this [HitObject]'s hit window.
-## return (String): The [member Score] to add.
-func miss_check(hit_time: float) -> int:
-	if state == int(State.FINISHED):
-		return Score.FINISHED
-
-	if hit_time > timing:
-		queue_free()
-		return Score.MISS
-
-	return 0
+## return (bool): Whether or not to continue checking for misses.
+func miss_check(_hit_time: float) -> bool:
+	return false
 
 
 ## Apply a skin to this [HitObject]. Intended to be implemented by child classes.

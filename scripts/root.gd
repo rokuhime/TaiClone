@@ -13,7 +13,7 @@ signal late_early_changed
 signal offset_changed
 
 ## Comment
-const KEYS := ["LeftDon", "LeftKat", "RightDon", "RightKat"]
+const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 ## Comment
 const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]
@@ -63,16 +63,19 @@ static func event(key: String) -> InputEvent:
 
 
 ## Comment
+static func inputs_empty(inputs: Array) -> bool:
+	return int(inputs[0]) > inputs.size()
+
+
+## Comment
 static func item_resolution(item: Array) -> Vector2:
 	return Vector2(int(item[1]), int(item[2]))
 
 
 ## Comment
-static func new_tween(old_tween: SceneTreeTween, node: Node) -> SceneTreeTween:
-	if old_tween.is_valid():
-		old_tween.kill()
-
-	return node.create_tween()
+static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String, binds := []) -> void:
+	if obj.connect(signal_name, signal_target, method, binds):
+		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
 
 
 ## Comment
@@ -132,6 +135,14 @@ func late_early(new_value: int) -> void:
 
 
 ## Comment
+func new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
+	if old_tween.is_valid():
+		old_tween.kill()
+
+	return get_tree().create_tween()
+
+
+## Comment
 func remove_scene(old_scene: String) -> bool:
 	if has_node(old_scene):
 		get_node(old_scene).queue_free()
@@ -146,7 +157,10 @@ func save_settings(debug: String) -> void:
 	var config_file := ConfigFile.new()
 
 	for key in KEYS:
-		config_file.set_value("Keybinds", str(key), event(str(key)))
+		## Comment
+		var new_event := event(str(key))
+
+		config_file.set_value("Keybinds", str(key), ("J%s" % (new_event as InputEventJoypadButton).button_index) if new_event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((new_event as InputEventKey).scancode)) if new_event is InputEventKey else "")
 
 	config_file.set_value("Display", "LateEarly", late_early_simple_display)
 	config_file.set_value("Display", "HitError", int(hit_error))

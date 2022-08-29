@@ -17,7 +17,7 @@ func _ready() -> void:
 	($RightBar/ErrorBar/Late as CanvasItem).self_modulate = taiclone.skin.late_color
 	($RightBar/ErrorBar/Early as CanvasItem).self_modulate = taiclone.skin.early_color
 
-	_animation_tween = Root.new_tween(_animation_tween, self).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
+	_animation_tween = taiclone.new_tween(_animation_tween).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
 
 	# Comment
 	var _score_tween := _animation_tween.tween_method(self, "score_text", 0, 1000000, 1.75)
