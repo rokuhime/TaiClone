@@ -1,10 +1,10 @@
 class_name HitObject
 extends KinematicBody2D
 
-## Comment
+## Signals [Gameplay] when a hit sound should be played.
 signal audio_played(key)
 
-## Comment
+## Signals [Gameplay] when a score should be added.
 signal score_added(type, marker)
 
 ## The possible scores of a [HitObject]:
@@ -23,13 +23,13 @@ enum Score {ACCURATE, INACCURATE, MISS, FINISHER, ROLL, SPINNER}
 ## 3 (FINISHED): This [HitObject] has been fully hit or missed. It will be disposed of once all animations finish.
 enum State {READY = 1, ACTIVE, FINISHED}
 
-## Comment
+## The time when this [HitObject] completes. It's used to sort [HitObject]s. Applies to all [HitObject]s.
 var end_time := 0.0
 
 ## Whether or not this [HitObject] is a finisher. Only applies to [Note]s and [Roll]s.
 var finisher := false
 
-## The length of this [HitObject]. This does not apply to [BarLine]s and [Note]s.
+## The length of this [HitObject]. Only applies to [Roll]s, [Spinner]s, and [SpinnerWarn]s.
 var length := 0.0
 
 ## The slider velocity of this [HitObject]. Applies to all [HitObject]s.
@@ -47,8 +47,7 @@ onready var visibility_notifier := $VisibilityNotifier2D as VisibilityNotifier2D
 func _ready() -> void:
 	hide()
 	Root.send_signal(self, "screen_entered", visibility_notifier, "show")
-	Root.send_signal(self, "screen_exited", visibility_notifier, "dispose_if_finished")
-
+	Root.send_signal(self, "screen_exited", visibility_notifier, "hide")
 	if finisher:
 		(get_child(1) as Control).rect_scale *= 1.6
 		visibility_notifier.scale *= 1.6
@@ -70,12 +69,16 @@ func activate() -> void:
 	state = int(State.ACTIVE)
 
 
-## Comment
+## Perform a comprehensive check to see if this [HitObject] was correctly hit. Currently used by [Note]s and [Spinner]s.
+## key ([String]): "Don" or "Kat"
+## inputs ([Array]): The list of actions received.
+## play_audio ([bool]): Whether or not to play the corresponding hit sound.
+## return ([String]): The side hit. An empty string means this [HitObject] was not correctly hit.
 func check_hit(key: String, inputs: Array, play_audio := true) -> String:
-	## Comment
+	## Whether or not this [HitObject] was hit on the left side.
 	var left_hit := inputs.find("Left" + key)
 
-	## Comment
+	## Whether or not this [HitObject] was hit on the right side.
 	var right_hit := inputs.find("Right" + key)
 
 	if left_hit + 1 and right_hit + 1:
@@ -108,16 +111,9 @@ func check_hit(key: String, inputs: Array, play_audio := true) -> String:
 		return ""
 
 
-## Comment
-func dispose_if_finished() -> void:
-	if state == int(State.FINISHED):
-		queue_free()
-
-	else:
-		hide()
-
-
-## Comment
+## Sets this [HitObject] to the FINISHED [member State].
+## type ([int]): The optional type of [member Score] to score. If -1, no score will be added.
+## marker ([bool]): Whether or not a marker on the hit error bar should be added.
 func finish(type := -1, marker := false) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
