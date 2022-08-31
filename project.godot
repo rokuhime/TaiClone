@@ -19,7 +19,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://hitobjects/bar_line.gd"
 }, {
-"base": "Node",
+"base": "Scene",
 "class": "Gameplay",
 "language": "GDScript",
 "path": "res://gameplay/gameplay.gd"
@@ -50,6 +50,11 @@ _global_script_classes=[ {
 "path": "res://scripts/root.gd"
 }, {
 "base": "CanvasItem",
+"class": "Scene",
+"language": "GDScript",
+"path": "res://scripts/scene.gd"
+}, {
+"base": "Scene",
 "class": "SettingsPanel",
 "language": "GDScript",
 "path": "res://scenes/settings_panel.gd"
@@ -93,6 +98,7 @@ _global_script_class_icons={
 "Note": "",
 "Roll": "",
 "Root": "",
+"Scene": "",
 "SettingsPanel": "",
 "SkinManager": "",
 "Spinner": "",

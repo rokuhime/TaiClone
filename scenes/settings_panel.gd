@@ -1,5 +1,5 @@
 class_name SettingsPanel
-extends CanvasItem
+extends Scene
 
 ## The list of selectable resolutions.
 const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]

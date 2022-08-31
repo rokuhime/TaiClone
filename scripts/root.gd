@@ -36,6 +36,9 @@ var skin: SkinManager
 ## Comment
 var _background := $"Background" as TextureRect
 
+## Comment
+var _next_scene := PackedScene.new()
+
 
 func _init() -> void:
 	skin = SkinManager.new()
@@ -60,6 +63,12 @@ static func item_resolution(item: Array) -> Vector2:
 static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String, binds := []) -> void:
 	if obj.connect(signal_name, signal_target, method, binds):
 		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
+
+
+## Comment
+func add_blackout(next_scene: PackedScene) -> void:
+	_next_scene = next_scene
+	add_scene((load("res://scenes/blackout.tscn") as PackedScene).instance(), "VolumeControl")
 
 
 ## Comment
@@ -108,9 +117,20 @@ func offset_difference(difference: int) -> void:
 
 
 ## Comment
+func remove_blackout() -> void:
+	## Comment
+	var _old_scene := remove_scene(get_child(1).name)
+
+	add_scene(_next_scene.instance())
+
+	## Comment
+	var _blackout_removed := remove_scene("Blackout")
+
+
+## Comment
 func remove_scene(old_scene: String) -> bool:
 	if has_node(old_scene):
-		get_node(old_scene).queue_free()
+		(get_node(old_scene) as Scene).scene_removed()
 		return true
 
 	return false

@@ -1,5 +1,5 @@
 class_name Gameplay
-extends Node
+extends Scene
 
 ## Comment
 signal marker_added(type, timing)
@@ -30,6 +30,9 @@ var _fus := "user://debug.fus"
 
 ## Comment
 var _inaccurate_count := 0
+
+## Comment
+var _inactive := true
 
 ## Comment
 var _judgement_tween := SceneTreeTween.new()
@@ -106,11 +109,14 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
-	if not music.playing:
+	if _inactive:
 		return
 
 	_cur_time += delta
 	song_progress.value = _cur_time * 100 / _last_note_time
+	if _cur_time > _last_note_time + 1:
+		root_viewport.add_blackout(preload("res://scenes/results.tscn"))
+		_inactive = true
 
 	## Comment
 	var check_auto := false
@@ -564,9 +570,11 @@ func play_audio(key: String) -> void:
 ## Comment
 func play_chart() -> void:
 	_reset(music.playing)
+	_inactive = true
 	music.stop()
 
 	if not music.playing:
+		_inactive = false
 		music.play()
 
 
