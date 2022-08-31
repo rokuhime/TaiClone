@@ -86,6 +86,8 @@ onready var ui_score := $UI/Score as Label
 func _ready() -> void:
 	Root.send_signal(self, "late_early_changed", root_viewport, "late_early_changed")
 	late_early_changed()
+	Root.send_signal(self, "offset_changed", root_viewport, "offset_difference")
+	offset_difference(root_viewport.global_offset)
 	l_don_obj.modulate.a = 0
 	l_kat_obj.modulate.a = 0
 	r_don_obj.modulate.a = 0
@@ -107,24 +109,27 @@ func _process(delta: float) -> void:
 	($UI/SongProgress as ProgressBar).value = _cur_time / _last_note_time
 
 	## Comment
+	var check_auto := false
+
+	## Comment
 	var check_misses := true
 
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
+		note.move(_cur_time)
 		# If Godot errors this line, reload the project.
 		if check_misses and note.miss_check(_cur_time - (HitError.INACC_TIMING if note is Note else 0.0)):
+			check_auto = true
 			check_misses = false
-			if not _auto:
-				break
 
-		if not check_misses and _auto:
+		if _auto and check_auto:
 			## Comment
 			var hit_auto := note.auto_hit(_cur_time, _auto_left)
 
 			if hit_auto == 1:
-				break
+				check_auto = false
 
 			elif hit_auto:
 				_auto_left = not _auto_left
@@ -523,6 +528,11 @@ func load_func(file_path := "") -> void:
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "audio_played", self, "play_audio")
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "score_added", self, "add_score")
 	_load_finish("Done!")
+
+
+## Comment
+func offset_difference(difference: int) -> void:
+	_cur_time -= difference / 1000.0
 
 
 ## Comment
