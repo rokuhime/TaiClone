@@ -48,6 +48,6 @@ func _init() -> void:
 	miss_color = Color("c74b4b")
 	roll_color = Color("fcb806")
 
-	accurate_judgement = preload("res://skins/test_skin/taiko-hit300.png")
-	inaccurate_judgement = preload("res://skins/test_skin/taiko-hit100.png")
-	miss_judgement = preload("res://skins/test_skin/taiko-hit0.png")
+	accurate_judgement = load("res://skins/test_skin/taiko-hit300.png") as Texture
+	inaccurate_judgement = load("res://skins/test_skin/taiko-hit100.png") as Texture
+	miss_judgement = load("res://skins/test_skin/taiko-hit0.png") as Texture

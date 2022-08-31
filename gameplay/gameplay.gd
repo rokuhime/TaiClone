@@ -115,7 +115,7 @@ func _process(delta: float) -> void:
 	_cur_time += delta
 	song_progress.value = _cur_time * 100 / _last_note_time
 	if _cur_time > _last_note_time + 1:
-		root_viewport.add_blackout(preload("res://scenes/results.tscn"))
+		root_viewport.add_blackout(root_viewport.results)
 		_inactive = true
 
 	## Comment
@@ -129,7 +129,6 @@ func _process(delta: float) -> void:
 		var note := obj_container.get_child(i) as HitObject
 
 		note.move(_cur_time)
-		# If Godot errors this line, reload the project.
 		if check_misses and note.miss_check(_cur_time - (HitError.INACC_TIMING if note is Note else 0.0)):
 			check_auto = true
 			check_misses = false
@@ -173,7 +172,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
-		# If Godot errors this line, reload the project.
 		if note.hit(inputs, _cur_time + (HitError.INACC_TIMING if note is Note else 0.0)) or Root.inputs_empty(inputs):
 			break
 
@@ -499,35 +497,31 @@ func load_func(file_path := "") -> void:
 		match int(line[2]):
 			NoteType.BARLINE:
 				## Comment
-				var note_object := preload("res://hitobjects/bar_line.tscn").instance() as BarLine
+				var note_object := root_viewport.bar_line_object.instance() as BarLine
 
 				note_object.change_properties(timing, total_cur_sv)
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 
 			NoteType.DON, NoteType.KAT:
 				## Comment
-				var note_object := preload("res://hitobjects/note.tscn").instance() as Note
+				var note_object := root_viewport.note_object.instance() as Note
 
 				note_object.change_properties(timing, total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 				Root.send_signal(self, "new_marker_added", note_object, "add_marker")
 
 			NoteType.ROLL:
 				## Comment
-				var note_object := preload("res://hitobjects/roll.tscn").instance() as Roll
+				var note_object := root_viewport.roll_object.instance() as Roll
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 
 			NoteType.SPINNER:
 				## Comment
-				var note_object := preload("res://hitobjects/spinner_warn.tscn").instance() as SpinnerWarn
+				var note_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), cur_bpm)
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 				Root.send_signal(self, "object_added", note_object, "add_object")
 
@@ -586,7 +580,7 @@ func text_debug(text: String) -> void:
 ## Comment
 func toggle_settings() -> void:
 	if not root_viewport.remove_scene("SettingsPanel"):
-		root_viewport.add_scene(preload("res://scenes/settings_panel.tscn").instance(), name)
+		root_viewport.add_scene(root_viewport.settings_panel.instance(), name)
 
 
 ## Comment

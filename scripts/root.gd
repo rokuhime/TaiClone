@@ -28,20 +28,59 @@ var hit_error := true
 var late_early_simple_display := 1
 
 ## Comment
+var bar_line_object: PackedScene
+
+## Comment
+var menu_bg: Texture
+
+## Comment
+var note_object: PackedScene
+
+## Comment
+var results: PackedScene
+
+## Comment
+var roll_object: PackedScene
+
+## Comment
+var settings_panel: PackedScene
+
+## Comment
 var settings_save := false
 
 ## Comment
 var skin: SkinManager
 
 ## Comment
+var spinner_object: PackedScene
+
+## Comment
+var spinner_warn_object: PackedScene
+
+## Comment
+var tick_object: PackedScene
+
+## Comment
 var _background := $"Background" as TextureRect
+
+## Comment
+var _blackout := load("res://scenes/blackout.tscn") as PackedScene
 
 ## Comment
 var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
+	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
+	menu_bg = load("res://temporary/menubg.png") as Texture
+	note_object = load("res://hitobjects/note.tscn") as PackedScene
+	results = load("res://scenes/results.tscn") as PackedScene
+	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
+	settings_panel = load("res://scenes/settings_panel.tscn") as PackedScene
 	skin = SkinManager.new()
+	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
+	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
+	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
 
 
 ## Comment
@@ -68,7 +107,7 @@ static func send_signal(signal_target: Node, signal_name: String, obj: Object, m
 ## Comment
 func add_blackout(next_scene: PackedScene) -> void:
 	_next_scene = next_scene
-	add_scene((load("res://scenes/blackout.tscn") as PackedScene).instance(), "VolumeControl")
+	add_scene(_blackout.instance(), "VolumeControl")
 
 
 ## Comment
