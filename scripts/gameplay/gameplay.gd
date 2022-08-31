@@ -14,6 +14,9 @@ var _accurate_count := 0
 var _auto := false
 
 ## Comment
+var _auto_left := true
+
+## Comment
 var _combo := 0
 
 ## Comment
@@ -84,9 +87,9 @@ func _ready() -> void:
 	r_kat_obj.modulate.a = 0
 	_reset()
 
-	#dev autoload map
-#	if _f.file_exists(_fus):
-#		load_func(_fus)
+	# dev autoload map
+	if _f.file_exists(_fus):
+		load_func(_fus)
 
 
 func _process(delta: float) -> void:
@@ -95,12 +98,29 @@ func _process(delta: float) -> void:
 		return
 
 	_cur_time += delta
+
+	## Comment
+	var check_misses := true
+
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
-		if note.miss_check(_cur_time - (HitError.INACC_TIMING if note is Note else 0.0)):
-			break
+		# If Godot errors this line, reload the project.
+		if check_misses and note.miss_check(_cur_time - (HitError.INACC_TIMING if note is Note else 0.0)):
+			check_misses = false
+			if not _auto:
+				break
+
+		if not check_misses and _auto:
+			## Comment
+			var hit_auto := note.auto_hit(_cur_time, _auto_left)
+
+			if hit_auto == 1:
+				break
+
+			elif hit_auto:
+				_auto_left = not _auto_left
 
 
 ## Comment
@@ -131,6 +151,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
+		# If Godot errors this line, reload the project.
 		if note.hit(inputs, _cur_time + (HitError.INACC_TIMING if note is Note else 0.0)) or Root.inputs_empty(inputs):
 			break
 
@@ -431,6 +452,7 @@ func load_func(file_path := "") -> void:
 				var note_object := preload("res://scenes/gameplay/bar_line.tscn").instance() as BarLine
 
 				note_object.change_properties(timing, total_cur_sv)
+				# If Godot errors this line, reload the project.
 				add_object(note_object)
 
 			NoteType.DON, NoteType.KAT:
@@ -438,6 +460,7 @@ func load_func(file_path := "") -> void:
 				var note_object := preload("res://scenes/gameplay/note.tscn").instance() as Note
 
 				note_object.change_properties(timing, total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
+				# If Godot errors this line, reload the project.
 				add_object(note_object)
 				Root.send_signal(self, "new_marker_added", note_object, "add_marker")
 
@@ -446,6 +469,7 @@ func load_func(file_path := "") -> void:
 				var note_object := preload("res://scenes/gameplay/roll.tscn").instance() as Roll
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
+				# If Godot errors this line, reload the project.
 				add_object(note_object)
 
 			NoteType.SPINNER:
@@ -453,6 +477,7 @@ func load_func(file_path := "") -> void:
 				var note_object := preload("res://scenes/gameplay/spinner_warn.tscn").instance() as SpinnerWarn
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), cur_bpm)
+				# If Godot errors this line, reload the project.
 				add_object(note_object)
 				Root.send_signal(self, "object_added", note_object, "add_object")
 

@@ -21,6 +21,32 @@ func apply_skin(new_skin: SkinManager) -> void:
 	head.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
 
 
+## See [HitObject].
+func auto_hit(hit_time: float, hit_left: bool) -> int:
+	## Comment
+	var early := hit_time < timing
+
+	if state != int(State.ACTIVE) or early:
+		return int(early)
+
+	## Comment
+	var key := "Kat" if _is_kat else "Don"
+
+	## Comment
+	var action_event := InputEventAction.new()
+
+	action_event.action = ("Left" if hit_left else "Right") + key
+	action_event.pressed = true
+	Input.parse_input_event(action_event)
+	if finisher:
+		action_event = InputEventAction.new()
+		action_event.action = ("Right" if hit_left else "Left") + key
+		action_event.pressed = true
+		Input.parse_input_event(action_event)
+
+	return 2
+
+
 ## Initialize [Note] variables.
 func change_properties(new_timing: float, new_speed: float, new_is_kat: bool, new_finisher: bool) -> void:
 	.ini(new_timing, new_speed, 0, new_finisher)

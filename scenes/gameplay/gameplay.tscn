@@ -235,20 +235,19 @@ rect_min_size = Vector2( 72, 0 )
 text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="Debug/TempLoadChart"]
-visible = false
 margin_left = 546.0
 margin_right = 632.0
 margin_bottom = 82.0
 text = "Auto"
 
 [node name="Text" type="VBoxContainer" parent="Debug/TempLoadChart"]
-margin_left = 546.0
+margin_left = 640.0
 margin_right = 1242.0
 margin_bottom = 82.0
 size_flags_horizontal = 3
 
 [node name="FPS" type="Label" parent="Debug/TempLoadChart/Text"]
-margin_right = 696.0
+margin_right = 602.0
 margin_bottom = 39.0
 size_flags_vertical = 3
 align = 2
@@ -256,7 +255,7 @@ valign = 1
 
 [node name="Version" type="Label" parent="Debug/TempLoadChart/Text"]
 margin_top = 43.0
-margin_right = 696.0
+margin_right = 602.0
 margin_bottom = 82.0
 size_flags_vertical = 3
 text = "v0.3 - The Big One(tm)"
