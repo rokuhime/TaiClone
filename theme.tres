@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=40 format=2]
+[gd_resource type="Theme" load_steps=43 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
@@ -152,6 +152,27 @@ size = 26
 use_filter = true
 font_data = ExtResource( 2 )
 
+[sub_resource type="DynamicFont" id=37]
+
+[sub_resource type="StyleBoxFlat" id=38]
+bg_color = Color( 0.0392157, 0.0392157, 0.0392157, 0.490196 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id=39]
+bg_color = Color( 0.360784, 0.603922, 0.737255, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.8, 0.8, 0.8, 0 )
+
 [sub_resource type="DynamicFont" id=23]
 size = 26
 use_filter = true
@@ -267,6 +288,9 @@ PlayButton/styles/normal = SubResource( 20 )
 PlayContainer/constants/separation = -8
 PlayLabel/fonts/font = SubResource( 21 )
 PlayName/fonts/font = SubResource( 22 )
+ProgressBar/fonts/font = SubResource( 37 )
+ProgressBar/styles/bg = SubResource( 38 )
+ProgressBar/styles/fg = SubResource( 39 )
 Resolution/fonts/font = SubResource( 23 )
 Results/styles/bg = SubResource( 24 )
 Results/styles/panel = SubResource( 24 )

@@ -22,6 +22,9 @@ var _combo := 0
 ## Comment
 var _cur_time := 0.0
 
+## the time for the last note in the chart
+var _last_note_time := 0.0
+
 ## Comment
 var _f := File.new()
 
@@ -99,6 +102,8 @@ func _process(delta: float) -> void:
 		return
 
 	_cur_time += delta
+	
+	($UI/SongProgress as ProgressBar).value = _cur_time / _last_note_time
 
 	## Comment
 	var check_misses := true
@@ -468,6 +473,7 @@ func load_func(file_path := "") -> void:
 
 		## Comment
 		var timing := float(line[0]) + root_viewport.global_offset / 1000.0
+		_last_note_time = timing
 
 		## Comment
 		var total_cur_sv := float(line[1]) * cur_bpm * 5.7

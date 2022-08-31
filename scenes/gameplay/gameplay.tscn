@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=12]
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=13]
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=14]
+[ext_resource path="res://theme.tres" type="Theme" id=15]
 
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
@@ -165,38 +166,49 @@ margin_bottom = 140.0
 grow_horizontal = 0
 
 [node name="Score" type="Label" parent="UI"]
-margin_right = 26.0
+margin_right = 250.0
 margin_bottom = 64.0
 theme_type_variation = "UI"
 
 [node name="LastHitScore" type="Label" parent="UI"]
 self_modulate = Color( 1, 0.227451, 0.227451, 1 )
 margin_top = 68.0
-margin_right = 26.0
+margin_right = 250.0
 margin_bottom = 132.0
 theme_type_variation = "UI"
 align = 2
 
 [node name="Accuracy" type="HBoxContainer" parent="UI"]
 margin_top = 136.0
-margin_right = 26.0
+margin_right = 250.0
 margin_bottom = 200.0
 theme_type_variation = "Accuracy"
 
 [node name="Label" type="Label" parent="UI/Accuracy"]
+margin_right = 224.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
 theme_type_variation = "UI"
 align = 2
 
 [node name="Percent" type="Label" parent="UI/Accuracy"]
-margin_left = 1.0
+margin_left = 225.0
 margin_top = 34.0
-margin_right = 26.0
+margin_right = 250.0
 margin_bottom = 64.0
 size_flags_vertical = 8
 theme_type_variation = "Percent"
 text = "%"
+
+[node name="SongProgress" type="ProgressBar" parent="UI"]
+margin_top = 204.0
+margin_right = 250.0
+margin_bottom = 219.0
+rect_min_size = Vector2( 250, 15 )
+theme = ExtResource( 15 )
+max_value = 1.0
+step = 0.0
+percent_visible = false
 
 [node name="HitError" parent="." instance=ExtResource( 1 )]
 
