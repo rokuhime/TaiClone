@@ -22,6 +22,9 @@ var _combo := 0
 ## Comment
 var _cur_time := 0.0
 
+## the time for the last note in the chart
+var _last_note_time := 0.0
+
 ## Comment
 var _f := File.new()
 
@@ -54,6 +57,7 @@ var _score := 0
 
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
+var _score_indicator_tween := SceneTreeTween.new()
 
 onready var combo := $BarLeft/DrumVisual/Combo as Label
 onready var debug_text := $Debug/DebugText as Label
@@ -67,6 +71,7 @@ onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
 onready var l_kat_obj := $BarLeft/DrumVisual/LeftKat as CanvasItem
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var music := $Music as AudioStreamPlayer
+onready var combobreak := $ComboBreakAudio as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
 onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
 onready var r_don_obj := $BarLeft/DrumVisual/RightDon as CanvasItem
@@ -100,6 +105,8 @@ func _process(delta: float) -> void:
 		return
 
 	_cur_time += delta
+	
+	($UI/SongProgress as ProgressBar).value = _cur_time / _last_note_time
 
 	## Comment
 	var check_auto := false
@@ -193,27 +200,54 @@ func add_object(obj: HitObject, loaded := true) -> void:
 
 ## Comment
 func add_score(type: int, marker := false) -> void:
-	_score += 150 if type == int(HitObject.Score.INACCURATE) else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(type) else 600 if type == int(HitObject.Score.SPINNER) else 0
+
+	var score_value := 0;
+	var play_tween := true;
+
 	match type:
 		HitObject.Score.ACCURATE:
 			_accurate_count += 1
 			_combo += 1
+			score_value = 300
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.accurate_judgement
 
 		HitObject.Score.INACCURATE:
 			_inaccurate_count += 1
 			_combo += 1
+			score_value = 150
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.inaccurate_judgement
 
 		HitObject.Score.MISS:
+			if _combo >= 25:
+				combobreak.play()
 			_miss_count += 1
 			_combo = 0
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.miss_judgement
+			play_tween = false
 			if marker:
 				emit_signal("marker_added", type, HitError.INACC_TIMING)
+		
+		HitObject.Score.FINISHER:
+				score_value = 300
+		
+		HitObject.Score.ROLL:
+				score_value = 300
+		
+		HitObject.Score.SPINNER:
+				score_value = 600
+
+
+	# add combo multiplier to score 
+	_score += int(score_value * (1 + min(1, _combo / 300.0)))
+	
+	#visual indicator for last recieved score
+	($UI/LastHitScore as Label).text = str(int(score_value * (1 + min(1, _combo / 300.0))))
+	if play_tween:
+		_score_indicator_tween = root_viewport.new_tween(_score_indicator_tween)
+		var _tween := _score_indicator_tween.tween_property($UI/LastHitScore, "self_modulate:a", 0.0, 1).from(1.0)
 
 	## Comment
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
@@ -447,6 +481,7 @@ func load_func(file_path := "") -> void:
 
 		## Comment
 		var timing := float(line[0]) + root_viewport.global_offset / 1000.0
+		_last_note_time = timing
 
 		## Comment
 		var total_cur_sv := float(line[1]) * cur_bpm * 5.7
