@@ -71,6 +71,7 @@ onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
 onready var l_kat_obj := $BarLeft/DrumVisual/LeftKat as CanvasItem
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var music := $Music as AudioStreamPlayer
+onready var combobreak := $ComboBreakAudio as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
 onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
 onready var r_don_obj := $BarLeft/DrumVisual/RightDon as CanvasItem
@@ -214,6 +215,8 @@ func add_score(type: int, marker := false) -> void:
 			judgement.texture = root_viewport.skin.inaccurate_judgement
 
 		HitObject.Score.MISS:
+			if _combo >= 25:
+				combobreak.play()
 			_miss_count += 1
 			_combo = 0
 			_hit_notify_animation()
@@ -239,7 +242,7 @@ func add_score(type: int, marker := false) -> void:
 	($UI/LastHitScore as Label).text = str(int(score_value * (1 + min(1, _combo / 300.0))))
 	if play_tween:
 		_score_indicator_tween = root_viewport.new_tween(_score_indicator_tween)
-		var _tween := _score_indicator_tween.tween_property($UI/LastHitScore, "self_modulate:a", 0.0, 2).from(1.0)
+		var _tween := _score_indicator_tween.tween_property($UI/LastHitScore, "self_modulate:a", 0.0, 1).from(1.0)
 
 	## Comment
 	var hit_count := _accurate_count + _inaccurate_count / 2.0

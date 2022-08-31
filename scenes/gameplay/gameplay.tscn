@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=2]
@@ -15,6 +15,7 @@
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=13]
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=14]
 [ext_resource path="res://theme.tres" type="Theme" id=15]
+[ext_resource path="res://skins/test_skin/combobreak.wav" type="AudioStream" id=16]
 
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
@@ -23,6 +24,10 @@ script = ExtResource( 2 )
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 bus = "Music"
+
+[node name="ComboBreakAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 16 )
+bus = "SFX"
 
 [node name="FinisherDonAudio" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 7 )
