@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/gameplay/spinner.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/spinner-approachcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/spinner-circle.png" type="Texture" id=3]
-[ext_resource path="res://themes/gameplay.tres" type="Theme" id=4]
 
 [node name="Spinner" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -35,6 +34,5 @@ expand = true
 margin_top = 105.0
 margin_bottom = 214.0
 grow_horizontal = 2
-theme = ExtResource( 4 )
 theme_type_variation = "Combo"
 align = 1

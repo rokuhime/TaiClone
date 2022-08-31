@@ -1,7 +1,14 @@
+class_name HitError
 extends Control
 
 ## Comment
-signal change_indicator(timing)
+signal indicator_changed(timing)
+
+## Comment
+const ACC_TIMING := 0.03
+
+## Comment
+const INACC_TIMING := 0.07
 
 onready var accurate := $HitPoints/Inaccurate/Accurate as ColorRect
 onready var avg_hit := $AverageHit as Control
@@ -9,60 +16,56 @@ onready var hit_points := $HitPoints as Control
 onready var inaccurate := $HitPoints/Inaccurate as ColorRect
 onready var middle_marker := $MiddleMarker
 onready var miss := $Miss as ColorRect
-onready var taiclone := $"/root" as Root
+onready var root_viewport := $"/root" as Root
 
 
 func _ready() -> void:
-	hit_error_toggled()
+	Root.send_signal(self, "hit_error_changed", root_viewport, "visibility_toggled")
+	visibility_toggled()
 
 	## Comment
 	var self_modulate_color := Color("c8c8c8")
 
-	miss.color = taiclone.skin.miss_color
+	miss.color = root_viewport.skin.miss_color
 	miss.self_modulate = self_modulate_color
-	inaccurate.color = taiclone.skin.inaccurate_color
+	inaccurate.color = root_viewport.skin.inaccurate_color
 	inaccurate.self_modulate = self_modulate_color
-	accurate.color = taiclone.skin.accurate_color
+	accurate.color = root_viewport.skin.accurate_color
 	accurate.self_modulate = self_modulate_color
 
 	## Comment
-	var anchor := taiclone.acc_timing / taiclone.inacc_timing / 2
+	var anchor := ACC_TIMING / INACC_TIMING / 2
 
 	accurate.anchor_left = 0.5 - anchor
 	accurate.anchor_right = 0.5 + anchor
 
 
 ## Comment
-func hit_error_toggled() -> void:
-	visible = taiclone.hit_error
-
-
-## Comment
 func new_marker(type: int, timing: float) -> void:
 	## Comment
-	var marker := middle_marker.duplicate() as ColorRect
+	var marker_obj := middle_marker.duplicate() as ColorRect
 
-	hit_points.add_child(marker)
-	hit_points.move_child(marker, 1)
+	hit_points.add_child(marker_obj)
+	hit_points.move_child(marker_obj, 1)
 	match type:
 		HitObject.Score.ACCURATE:
-			marker.modulate = taiclone.skin.accurate_color
+			marker_obj.modulate = root_viewport.skin.accurate_color
 
 		HitObject.Score.INACCURATE:
-			marker.modulate = taiclone.skin.inaccurate_color
+			marker_obj.modulate = root_viewport.skin.inaccurate_color
 
 		HitObject.Score.MISS:
-			marker.modulate = taiclone.skin.miss_color
+			marker_obj.modulate = root_viewport.skin.miss_color
 
 		_:
 			push_warning("Unknown marker type.")
 			return
 
 	## Comment
-	var anchor := 0.5 + clamp(timing / taiclone.inacc_timing, -1, 1) * rect_size.x / hit_points.rect_size.x / 2
+	var anchor := 0.5 + clamp(timing / INACC_TIMING, -1, 1) * rect_size.x / hit_points.rect_size.x / 2
 
-	marker.anchor_left = anchor
-	marker.anchor_right = anchor
+	marker_obj.anchor_left = anchor
+	marker_obj.anchor_right = anchor
 
 	## Comment
 	var avg := 0.0
@@ -71,18 +74,18 @@ func new_marker(type: int, timing: float) -> void:
 	var misses := 0
 
 	for i in range(hit_points.get_child_count() - 1):
-		marker = hit_points.get_child(i + 1) as ColorRect
+		marker_obj = hit_points.get_child(i + 1) as ColorRect
 		if i < 25:
-			marker.self_modulate = Color(1, 1, 1, 1 - i / 25.0)
+			marker_obj.self_modulate = Color(1, 1, 1, 1 - i / 25.0)
 
 		else:
-			marker.queue_free()
+			marker_obj.queue_free()
 
-		if marker.modulate == taiclone.skin.miss_color:
+		if marker_obj.modulate == root_viewport.skin.miss_color:
 			misses += 1
 
 		else:
-			avg += marker.anchor_left
+			avg += marker_obj.anchor_left
 
 	## Comment
 	var children := hit_points.get_child_count() - misses - 1
@@ -91,4 +94,9 @@ func new_marker(type: int, timing: float) -> void:
 	avg_hit.anchor_left = anchor
 	avg_hit.anchor_right = anchor
 	if type == int(HitObject.Score.INACCURATE):
-		emit_signal("change_indicator", timing)
+		emit_signal("indicator_changed", timing)
+
+
+## Comment
+func visibility_toggled() -> void:
+	visible = root_viewport.hit_error

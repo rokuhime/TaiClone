@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=2]
@@ -14,12 +14,10 @@
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=12]
 [ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=13]
 [ext_resource path="res://temporary/untitled.png" type="Texture" id=14]
-[ext_resource path="res://themes/gameplay.tres" type="Theme" id=15]
 
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource( 15 )
 script = ExtResource( 2 )
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
@@ -245,12 +243,12 @@ text = "Auto"
 
 [node name="Text" type="VBoxContainer" parent="Debug/TempLoadChart"]
 margin_left = 546.0
-margin_right = 1234.0
+margin_right = 1242.0
 margin_bottom = 82.0
 size_flags_horizontal = 3
 
 [node name="FPS" type="Label" parent="Debug/TempLoadChart/Text"]
-margin_right = 688.0
+margin_right = 696.0
 margin_bottom = 39.0
 size_flags_vertical = 3
 align = 2
@@ -258,17 +256,12 @@ valign = 1
 
 [node name="Version" type="Label" parent="Debug/TempLoadChart/Text"]
 margin_top = 43.0
-margin_right = 688.0
+margin_right = 696.0
 margin_bottom = 82.0
 size_flags_vertical = 3
 text = "v0.3 - The Big One(tm)"
 align = 2
 valign = 1
-
-[node name="Buffer" type="Control" parent="Debug/TempLoadChart"]
-margin_left = 1242.0
-margin_right = 1242.0
-margin_bottom = 82.0
 
 [node name="SettingsButton" type="Button" parent="Debug/TempLoadChart"]
 margin_left = 1250.0
@@ -278,7 +271,7 @@ rect_min_size = Vector2( 171, 0 )
 text = "Settings"
 
 [connection signal="marker_added" from="." to="HitError" method="new_marker"]
-[connection signal="change_indicator" from="HitError" to="." method="change_indicator"]
+[connection signal="indicator_changed" from="HitError" to="." method="change_indicator"]
 [connection signal="pressed" from="Debug/TempLoadChart/LoadButton" to="." method="load_func"]
 [connection signal="pressed" from="Debug/TempLoadChart/PlayButton" to="." method="play_chart"]
 [connection signal="toggled" from="Debug/TempLoadChart/AutoToggle" to="." method="auto_toggled"]

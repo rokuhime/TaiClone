@@ -1,10 +1,10 @@
 class_name Roll
 extends HitObject
 
-## The distance between ticks in this [Roll].
+## The distance between [Tick]s in this [Roll].
 var _tick_distance := 0.0
 
-## The number of ticks in this [Roll].
+## The number of [Tick]s in this [Roll].
 var _total_ticks := 0
 
 onready var body := $Body as Control
@@ -18,14 +18,21 @@ func _ready() -> void:
 
 	if finisher:
 		head.rect_scale *= 1.6
-		
+
 	for tick_idx in range(_total_ticks):
-		## The tick object to spawn.
+		## The [Tick] object to spawn.
 		var new_tick := preload("res://scenes/gameplay/tick.tscn").instance() as Tick
 
 		new_tick.change_properties(tick_idx * _tick_distance * speed)
 		tick_container.add_child(new_tick)
 		tick_container.move_child(new_tick, 0)
+
+
+## See [HitObject].
+func apply_skin(new_skin: SkinManager) -> void:
+	head.self_modulate = new_skin.roll_color
+	body.modulate = new_skin.roll_color
+
 
 ## Initialize [Roll] variables.
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, new_bpm: float) -> void:
@@ -55,9 +62,3 @@ func miss_check(hit_time: float) -> bool:
 			return true
 
 	return false
-
-
-## See [HitObject].
-func skin(new_skin: SkinManager) -> void:
-	head.self_modulate = new_skin.roll_color
-	body.modulate = new_skin.roll_color

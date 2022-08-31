@@ -1,22 +1,22 @@
 class_name Root
 extends Viewport
 
-# first and main object of the project
+## The first and primary object of the project.
 
-## Comment
-signal hit_error_toggled
+## Signals [HitError] when the value of [member hit_error] has changed.
+signal hit_error_changed
 
-## Comment
+## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
 signal late_early_changed
+
+## Comment
+const CONFIG_PATH := "user://config.ini"
 
 ## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 ## Comment
-const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]
-
-## Comment
-var config_path := "user://config.ini"
+var global_offset := 0
 
 ## Comment
 var hit_error := true
@@ -28,34 +28,18 @@ var late_early_simple_display := 1
 var settings_save := false
 
 ## Comment
-var vols := AudioServer.bus_count
-
-## Comment
-var acc_timing: float
-
-## Comment
-var global_offset: int
-
-## Comment
-var inacc_timing: float
-
-## Comment
 var skin: SkinManager
 
 ## Comment
-onready var background: TextureRect
+var _background := $"Background" as TextureRect
 
 
 func _init() -> void:
-	global_offset = 0
-	acc_timing = 0.03
-	inacc_timing = 0.07
 	skin = SkinManager.new()
-	background = $"Background" as TextureRect
 
 
 ## Comment
-static func event(key: String) -> InputEvent:
+static func get_event(key: String) -> InputEvent:
 	return InputMap.get_action_list(key)[0]
 
 
@@ -77,13 +61,13 @@ static func send_signal(signal_target: Node, signal_name: String, obj: Object, m
 
 ## Comment
 func add_scene(new_scene: Node, parent_node := "") -> void:
-	add_child_below_node(get_node(parent_node) if has_node(parent_node) else background, new_scene)
+	add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
 
 
 ## Comment
-func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
-	background.modulate = newmodulate
-	background.texture = newtexture
+func bg_changed(new_texture: Texture, new_modulate := Color.white) -> void:
+	_background.modulate = new_modulate
+	_background.texture = new_texture
 
 
 ## Comment
@@ -94,21 +78,9 @@ func change_key(event: InputEvent, button: String) -> void:
 
 
 ## Comment
-func change_res(index := -1) -> void:
-	## Comment
-	var new_size := OS.window_size if index == -1 else item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false))
-
-	OS.window_resizable = false
-	OS.window_size = new_size
-	size = new_size
-	OS.window_resizable = true
-	save_settings("change_res")
-
-
-## Comment
 func hit_error_toggled(new_visible: bool) -> void:
 	hit_error = new_visible
-	emit_signal("hit_error_toggled")
+	emit_signal("hit_error_changed")
 	save_settings("hit_error_toggled")
 
 
@@ -137,6 +109,14 @@ func remove_scene(old_scene: String) -> bool:
 
 
 ## Comment
+func res_changed(new_size: Vector2) -> void:
+	OS.window_resizable = false
+	OS.window_size = new_size
+	OS.window_resizable = true
+	save_settings("res_changed")
+
+
+## Comment
 func save_settings(debug: String) -> void:
 	if not settings_save:
 		return
@@ -146,9 +126,9 @@ func save_settings(debug: String) -> void:
 
 	for key in KEYS:
 		## Comment
-		var new_event := event(str(key))
+		var event := get_event(str(key))
 
-		config_file.set_value("Keybinds", str(key), ("J%s" % (new_event as InputEventJoypadButton).button_index) if new_event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((new_event as InputEventKey).scancode)) if new_event is InputEventKey else "")
+		config_file.set_value("Keybinds", str(key), ("J%s" % (event as InputEventJoypadButton).button_index) if event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((event as InputEventKey).scancode)) if event is InputEventKey else "")
 
 	config_file.set_value("Display", "LateEarly", late_early_simple_display)
 	config_file.set_value("Display", "HitError", int(hit_error))
@@ -160,10 +140,10 @@ func save_settings(debug: String) -> void:
 	config_file.set_value("Display", "ResolutionY", res.y)
 	config_file.set_value("Display", "Fullscreen", int(OS.window_fullscreen))
 	config_file.set_value("Audio", "GlobalOffset", global_offset)
-	for i in range(vols):
+	for i in range(AudioServer.bus_count):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
-	if config_file.save(config_path):
+	if config_file.save(CONFIG_PATH):
 		push_warning("Attempted to save configuration file.")
 
 	else:

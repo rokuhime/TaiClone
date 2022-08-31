@@ -31,13 +31,13 @@ var _sfx_progress_tween := SceneTreeTween.new()
 onready var change_sound := $ChangeSound as AudioStreamPlayer
 onready var master_vol := $Bars/Master as CanvasItem
 onready var music_vol := $Bars/Specifics/Music as CanvasItem
+onready var root_viewport := $"/root" as Root
 onready var sfx_vol := $Bars/Specifics/SFX as CanvasItem
-onready var taiclone := $"/root" as Root
 onready var timer := get_tree().create_timer(0)
 
 
 func _ready() -> void:
-	Root.send_signal(taiclone, "volume_changed", self, "save_settings", ["volume_changed"])
+	Root.send_signal(root_viewport, "volume_changed", self, "save_settings", ["volume_changed"])
 
 
 func _input(event: InputEvent) -> void:
@@ -58,15 +58,19 @@ func _input(event: InputEvent) -> void:
 
 	if event.is_action("VolumeUp"):
 		_change_volume(vol_difference)
+		get_tree().set_input_as_handled()
 
 	if event.is_action("VolumeDown"):
 		_change_volume(-vol_difference)
+		get_tree().set_input_as_handled()
 
 	if event.is_action("VolumeNext"):
 		change_channel(_cur_changing + 1, false)
+		get_tree().set_input_as_handled()
 
 	if event.is_action("VolumePrevious"):
 		change_channel(_cur_changing + 2, false)
+		get_tree().set_input_as_handled()
 
 
 ## Comment
@@ -74,8 +78,8 @@ func change_channel(channel: int, needs_visible := true) -> void:
 	if needs_visible and not modulate.a:
 		return
 
-	_cur_changing = channel % taiclone.vols
-	for i in range(taiclone.vols):
+	_cur_changing = channel % AudioServer.bus_count
+	for i in range(AudioServer.bus_count):
 		## Comment
 		var new_color := 1.0 if i == _cur_changing else 0.5
 
@@ -152,7 +156,7 @@ func _change_volume(amount: float) -> void:
 
 ## Comment
 func _modulate_tween(vol: Node, tween: SceneTreeTween, new_color: float) -> SceneTreeTween:
-	tween = taiclone.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween = root_viewport.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween = tween.tween_property(vol, "modulate:a", new_color, 0.2)
@@ -162,7 +166,7 @@ func _modulate_tween(vol: Node, tween: SceneTreeTween, new_color: float) -> Scen
 
 ## Comment
 func _progress_tween(tween: SceneTreeTween, progress: Node, amount: float) -> SceneTreeTween:
-	tween = taiclone.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween = root_viewport.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween = tween.tween_property(progress, "value", amount, 0.2)
@@ -172,7 +176,7 @@ func _progress_tween(tween: SceneTreeTween, progress: Node, amount: float) -> Sc
 
 ## Comment
 func _tween_self(final_val: float, duration: float) -> void:
-	_self_tween = taiclone.new_tween(_self_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	_self_tween = root_viewport.new_tween(_self_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween := _self_tween.tween_property(self, "modulate:a", final_val, duration)

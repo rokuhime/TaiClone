@@ -1,7 +1,7 @@
 extends Node
 
-onready var taiclone := $"/root" as Root
+onready var root_viewport := $"/root" as Root
 
 
 func _ready() -> void:
-	taiclone.bg_changed(preload("res://temporary/menubg.png"))
+	root_viewport.bg_changed(preload("res://temporary/menubg.png"))
