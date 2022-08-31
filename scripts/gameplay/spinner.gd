@@ -21,15 +21,15 @@ var _speed_tween := SceneTreeTween.new()
 
 onready var approach := $Approach as Control
 onready var label := $Label as Label
+onready var root_viewport := $"/root" as Root
 onready var rotation_obj := $RotationObj as Node2D
-onready var taiclone := $"/root" as Root
 
 
 func _ready() -> void:
 	_count_text()
 
 	## The [PropertyTweener] that's used to tween the approach circle of this [Spinner].
-	var _approach_tween := taiclone.new_tween(SceneTreeTween.new()).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
+	var _approach_tween := root_viewport.new_tween(SceneTreeTween.new()).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
 	var _tween := _tween_modulate(1)
@@ -91,7 +91,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		emit_signal("score_added", score, false)
 
 	_count_text()
-	_speed_tween = taiclone.new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
+	_speed_tween = root_viewport.new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
 
 	## The [MethodTweener] that's used to tween this [Spinner]'s [member _current_speed].
 	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
@@ -123,5 +123,5 @@ func _spinner_finished(type: int) -> void:
 
 ## Fade this [Spinner] in and out.
 func _tween_modulate(final_val: float) -> PropertyTweener:
-	_modulate_tween = taiclone.new_tween(_modulate_tween).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	_modulate_tween = root_viewport.new_tween(_modulate_tween).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	return _modulate_tween.tween_property(self, "modulate:a", final_val, 0.25)

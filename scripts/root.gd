@@ -4,7 +4,7 @@ extends Viewport
 ## The first and primary object of the project.
 
 ## Signals [HitError] when the value of [member hit_error] has changed.
-signal hit_error_toggled
+signal hit_error_changed
 
 ## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
 signal late_early_changed
@@ -39,7 +39,7 @@ func _init() -> void:
 
 
 ## Comment
-static func event(key: String) -> InputEvent:
+static func get_event(key: String) -> InputEvent:
 	return InputMap.get_action_list(key)[0]
 
 
@@ -65,9 +65,9 @@ func add_scene(new_scene: Node, parent_node := "") -> void:
 
 
 ## Comment
-func bg_changed(newtexture: Texture, newmodulate := Color.white) -> void:
-	_background.modulate = newmodulate
-	_background.texture = newtexture
+func bg_changed(new_texture: Texture, new_modulate := Color.white) -> void:
+	_background.modulate = new_modulate
+	_background.texture = new_texture
 
 
 ## Comment
@@ -78,17 +78,9 @@ func change_key(event: InputEvent, button: String) -> void:
 
 
 ## Comment
-func change_res(new_size: Vector2) -> void:
-	OS.window_resizable = false
-	OS.window_size = new_size
-	OS.window_resizable = true
-	save_settings("change_res")
-
-
-## Comment
 func hit_error_toggled(new_visible: bool) -> void:
 	hit_error = new_visible
-	emit_signal("hit_error_toggled")
+	emit_signal("hit_error_changed")
 	save_settings("hit_error_toggled")
 
 
@@ -117,6 +109,14 @@ func remove_scene(old_scene: String) -> bool:
 
 
 ## Comment
+func res_changed(new_size: Vector2) -> void:
+	OS.window_resizable = false
+	OS.window_size = new_size
+	OS.window_resizable = true
+	save_settings("res_changed")
+
+
+## Comment
 func save_settings(debug: String) -> void:
 	if not settings_save:
 		return
@@ -126,9 +126,9 @@ func save_settings(debug: String) -> void:
 
 	for key in KEYS:
 		## Comment
-		var new_event := event(str(key))
+		var event := get_event(str(key))
 
-		config_file.set_value("Keybinds", str(key), ("J%s" % (new_event as InputEventJoypadButton).button_index) if new_event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((new_event as InputEventKey).scancode)) if new_event is InputEventKey else "")
+		config_file.set_value("Keybinds", str(key), ("J%s" % (event as InputEventJoypadButton).button_index) if event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((event as InputEventKey).scancode)) if event is InputEventKey else "")
 
 	config_file.set_value("Display", "LateEarly", late_early_simple_display)
 	config_file.set_value("Display", "HitError", int(hit_error))

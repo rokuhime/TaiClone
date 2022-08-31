@@ -3,21 +3,21 @@ extends Node
 #Comment
 var _animation_tween := SceneTreeTween.new()
 
-onready var taiclone := $"/root" as Root
+onready var root_viewport := $"/root" as Root
 
 
 func _ready() -> void:
-	($RightBar/HitCount/GridContainer/AccurateTexture as TextureRect).texture = taiclone.skin.accurate_judgement
-	($RightBar/HitCount/GridContainer/FAccurateTexture as TextureRect).texture = taiclone.skin.accurate_judgement
-	($RightBar/HitCount/GridContainer/InaccurateTexture as TextureRect).texture = taiclone.skin.inaccurate_judgement
-	($RightBar/HitCount/GridContainer/FInaccurateTexture as TextureRect).texture = taiclone.skin.inaccurate_judgement
-	($RightBar/HitCount/GridContainer/MissTexture as TextureRect).texture = taiclone.skin.miss_judgement
-	($RightBar/HitCount/GridContainer/Late as CanvasItem).self_modulate = taiclone.skin.late_color
-	($RightBar/HitCount/GridContainer/Early as CanvasItem).self_modulate = taiclone.skin.early_color
-	($RightBar/ErrorBar/Late as CanvasItem).self_modulate = taiclone.skin.late_color
-	($RightBar/ErrorBar/Early as CanvasItem).self_modulate = taiclone.skin.early_color
+	($RightBar/HitCount/GridContainer/AccurateTexture as TextureRect).texture = root_viewport.skin.accurate_judgement
+	($RightBar/HitCount/GridContainer/FAccurateTexture as TextureRect).texture = root_viewport.skin.accurate_judgement
+	($RightBar/HitCount/GridContainer/InaccurateTexture as TextureRect).texture = root_viewport.skin.inaccurate_judgement
+	($RightBar/HitCount/GridContainer/FInaccurateTexture as TextureRect).texture = root_viewport.skin.inaccurate_judgement
+	($RightBar/HitCount/GridContainer/MissTexture as TextureRect).texture = root_viewport.skin.miss_judgement
+	($RightBar/HitCount/GridContainer/Late as CanvasItem).self_modulate = root_viewport.skin.late_color
+	($RightBar/HitCount/GridContainer/Early as CanvasItem).self_modulate = root_viewport.skin.early_color
+	($RightBar/ErrorBar/Late as CanvasItem).self_modulate = root_viewport.skin.late_color
+	($RightBar/ErrorBar/Early as CanvasItem).self_modulate = root_viewport.skin.early_color
 
-	_animation_tween = taiclone.new_tween(_animation_tween).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
+	_animation_tween = root_viewport.new_tween(_animation_tween).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
 
 	# Comment
 	var _score_tween := _animation_tween.tween_method(self, "score_text", 0, 1000000, 1.75)

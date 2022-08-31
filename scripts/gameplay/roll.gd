@@ -27,6 +27,13 @@ func _ready() -> void:
 		tick_container.add_child(new_tick)
 		tick_container.move_child(new_tick, 0)
 
+
+## See [HitObject].
+func apply_skin(new_skin: SkinManager) -> void:
+	head.self_modulate = new_skin.roll_color
+	body.modulate = new_skin.roll_color
+
+
 ## Initialize [Roll] variables.
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, new_bpm: float) -> void:
 	.ini(new_timing, new_speed, new_length, new_finisher)
@@ -55,9 +62,3 @@ func miss_check(hit_time: float) -> bool:
 			return true
 
 	return false
-
-
-## See [HitObject].
-func skin(new_skin: SkinManager) -> void:
-	head.self_modulate = new_skin.roll_color
-	body.modulate = new_skin.roll_color

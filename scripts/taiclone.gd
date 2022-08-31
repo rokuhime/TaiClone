@@ -8,9 +8,9 @@ func _init() -> void:
 	root.set_script(preload("res://scripts/root.gd"))
 
 	## The root viewport that's used when requiring [Root]-specific functions.
-	var taiclone := root as Root
+	var root_viewport := root as Root
 
-	Root.send_signal(taiclone, "screen_resized", self, "save_settings", ["save_settings"])
+	Root.send_signal(root_viewport, "screen_resized", self, "save_settings", ["save_settings"])
 
 	## The configuration file that's used to load settings.
 	var config_file := ConfigFile.new()
@@ -29,32 +29,32 @@ func _init() -> void:
 			"J":
 				var event := InputEventJoypadButton.new()
 				event.button_index = int(event_value)
-				taiclone.change_key(event, str(key))
+				root_viewport.change_key(event, str(key))
 
 			"K":
 				var event := InputEventKey.new()
 				event.scancode = OS.find_scancode_from_string(event_value)
-				taiclone.change_key(event, str(key))
+				root_viewport.change_key(event, str(key))
 
 			_:
-				taiclone.change_key(Root.event(str(key)), str(key))
+				root_viewport.change_key(Root.get_event(str(key)), str(key))
 
-	taiclone.late_early_simple_display = int(config_file.get_value("Display", "LateEarly", 1))
-	taiclone.hit_error = bool(config_file.get_value("Display", "HitError", 1))
-	taiclone.change_res(Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)))
-	taiclone.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
-	taiclone.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
+	root_viewport.late_early_simple_display = int(config_file.get_value("Display", "LateEarly", 1))
+	root_viewport.hit_error = bool(config_file.get_value("Display", "HitError", 1))
+	root_viewport.res_changed(Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)))
+	root_viewport.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
+	root_viewport.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
 
 	## The [VolumeControl] instance. It requires initialization before being added as a scene.
 	var volume_control := preload("res://scenes/root/volume_control.tscn").instance() as VolumeControl
 
 	volume_control.modulate.a = 0
-	taiclone.add_scene(volume_control)
+	root_viewport.add_scene(volume_control)
 	for i in range(AudioServer.bus_count):
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
-	taiclone.add_scene(preload("res://scenes/gameplay/gameplay.tscn").instance())
-	taiclone.settings_save = true
+	root_viewport.add_scene(preload("res://scenes/gameplay/gameplay.tscn").instance())
+	root_viewport.settings_save = true
 
 	# Load Scene == FOR DEBUG ONLY ==
 	#(root.get_node("Gameplay") as CanvasItem).hide()

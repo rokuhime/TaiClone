@@ -69,6 +69,12 @@ func activate() -> void:
 	state = int(State.ACTIVE)
 
 
+## Apply a skin to this [HitObject]. Intended to be implemented by child classes.
+## new_skin (SkinManager): The skin to apply.
+func apply_skin(_new_skin: SkinManager) -> void:
+	pass
+
+
 ## Perform a comprehensive check to see if this [HitObject] was correctly hit. Currently used by [Note]s and [Spinner]s.
 ## key ([String]): "Don" or "Kat"
 ## inputs ([Array]): The list of actions received.
@@ -145,9 +151,3 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 ## return (bool): Whether or not to continue checking for misses.
 func miss_check(_hit_time: float) -> bool:
 	return false
-
-
-## Apply a skin to this [HitObject]. Intended to be implemented by child classes.
-## new_skin (SkinManager): The skin to apply.
-func skin(_new_skin: SkinManager) -> void:
-	pass

@@ -57,7 +57,6 @@ onready var debug_text := $Debug/DebugText as Label
 onready var f_don_aud := $FinisherDonAudio as AudioStreamPlayer
 onready var f_kat_aud := $FinisherKatAudio as AudioStreamPlayer
 onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
-onready var hit_error := $HitError
 onready var judgement := $BarLeft/Judgement as TextureRect
 onready var l_don_aud := $LeftDonAudio as AudioStreamPlayer
 onready var l_don_obj := $BarLeft/DrumVisual/LeftDon as CanvasItem
@@ -70,20 +69,19 @@ onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
 onready var r_don_obj := $BarLeft/DrumVisual/RightDon as CanvasItem
 onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
 onready var r_kat_obj := $BarLeft/DrumVisual/RightKat as CanvasItem
-onready var taiclone := $"/root" as Root
+onready var root_viewport := $"/root" as Root
 onready var timing_indicator := $BarLeft/TimingIndicator as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var ui_score := $UI/Score as Label
 
 
 func _ready() -> void:
-	Root.send_signal(hit_error, "hit_error_toggled", taiclone, "hit_error_toggled")
-	Root.send_signal(self, "late_early_changed", taiclone, "late_early_changed")
+	Root.send_signal(self, "late_early_changed", root_viewport, "late_early_changed")
+	late_early_changed()
 	l_don_obj.modulate.a = 0
 	l_kat_obj.modulate.a = 0
 	r_don_obj.modulate.a = 0
 	r_kat_obj.modulate.a = 0
-	late_early_changed()
 	_reset()
 
 	#dev autoload map
@@ -162,7 +160,7 @@ func add_object(obj: HitObject, loaded := true) -> void:
 	if loaded:
 		return
 
-	obj.skin(taiclone.skin)
+	obj.apply_skin(root_viewport.skin)
 	Root.send_signal(self, "audio_played", obj, "play_audio")
 	Root.send_signal(self, "score_added", obj, "add_score")
 
@@ -175,19 +173,19 @@ func add_score(type: int, marker := false) -> void:
 			_accurate_count += 1
 			_combo += 1
 			_hit_notify_animation()
-			judgement.texture = taiclone.skin.accurate_judgement
+			judgement.texture = root_viewport.skin.accurate_judgement
 
 		HitObject.Score.INACCURATE:
 			_inaccurate_count += 1
 			_combo += 1
 			_hit_notify_animation()
-			judgement.texture = taiclone.skin.inaccurate_judgement
+			judgement.texture = root_viewport.skin.inaccurate_judgement
 
 		HitObject.Score.MISS:
 			_miss_count += 1
 			_combo = 0
 			_hit_notify_animation()
-			judgement.texture = taiclone.skin.miss_judgement
+			judgement.texture = root_viewport.skin.miss_judgement
 			if marker:
 				emit_signal("marker_added", type, HitError.INACC_TIMING)
 
@@ -206,9 +204,9 @@ func auto_toggled(new_auto: bool) -> void:
 
 ## Comment
 func change_indicator(timing: float) -> void:
-	timing_indicator.text = ("LATE" if timing > 0 else "EARLY") if taiclone.late_early_simple_display < 2 else "%+d" % int(timing * 1000)
-	timing_indicator.modulate = taiclone.skin.late_color if timing > 0 else taiclone.skin.early_color
-	_timing_indicator_tween = taiclone.new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
+	timing_indicator.text = ("LATE" if timing > 0 else "EARLY") if root_viewport.late_early_simple_display < 2 else "%+d" % int(timing * 1000)
+	timing_indicator.modulate = root_viewport.skin.late_color if timing > 0 else root_viewport.skin.early_color
+	_timing_indicator_tween = root_viewport.new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
 
 	## Comment
 	var _tween := _timing_indicator_tween.tween_property(timing_indicator, "self_modulate:a", 0.0, 0.5).from(1.0)
@@ -216,7 +214,7 @@ func change_indicator(timing: float) -> void:
 
 ## Comment
 func late_early_changed() -> void:
-	timing_indicator.visible = taiclone.late_early_simple_display > 0
+	timing_indicator.visible = root_viewport.late_early_simple_display > 0
 
 
 ## Comment
@@ -409,7 +407,7 @@ func load_func(file_path := "") -> void:
 		var newtexture := ImageTexture.new()
 
 		newtexture.create_from_image(image, 0)
-		taiclone.bg_changed(newtexture, Color("373737"))
+		root_viewport.bg_changed(newtexture, Color("373737"))
 
 	music.stream = AudioLoader.loadfile(_f.get_line())
 	_reset()
@@ -422,7 +420,7 @@ func load_func(file_path := "") -> void:
 		var line := _f.get_csv_line()
 
 		## Comment
-		var timing := float(line[0]) + taiclone.global_offset / 1000.0
+		var timing := float(line[0]) + root_viewport.global_offset / 1000.0
 
 		## Comment
 		var total_cur_sv := float(line[1]) * cur_bpm * 5.7
@@ -441,7 +439,7 @@ func load_func(file_path := "") -> void:
 
 				note_object.change_properties(timing, total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
 				add_object(note_object)
-				Root.send_signal(self, "marker_added", note_object, "add_marker")
+				Root.send_signal(self, "new_marker_added", note_object, "add_marker")
 
 			NoteType.ROLL:
 				## Comment
@@ -461,7 +459,7 @@ func load_func(file_path := "") -> void:
 			NoteType.TIMING_POINT:
 				cur_bpm = float(line[1])
 
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "skin", taiclone.skin)
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "apply_skin", root_viewport.skin)
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "audio_played", self, "play_audio")
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "score_added", self, "add_score")
 	_load_finish("Done!")
@@ -505,8 +503,8 @@ func text_debug(text: String) -> void:
 
 ## Comment
 func toggle_settings() -> void:
-	if not taiclone.remove_scene("SettingsPanel"):
-		taiclone.add_scene(preload("res://scenes/root/settings_panel.tscn").instance(), name)
+	if not root_viewport.remove_scene("SettingsPanel"):
+		root_viewport.add_scene(preload("res://scenes/root/settings_panel.tscn").instance(), name)
 
 
 ## Comment
@@ -525,8 +523,8 @@ static func _csv_line(line: Array) -> PoolStringArray:
 	## Comment
 	var csv_line := []
 
-	for item in line:
-		csv_line.append(str(item))
+	for key in line:
+		csv_line.append(str(key))
 
 	return PoolStringArray(csv_line)
 
@@ -538,7 +536,7 @@ static func _find_value(value: String, line: String, key: String) -> String:
 
 ## Comment
 func _hit_notify_animation() -> void:
-	_judgement_tween = taiclone.new_tween(_judgement_tween).set_ease(Tween.EASE_OUT)
+	_judgement_tween = root_viewport.new_tween(_judgement_tween).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
@@ -546,7 +544,7 @@ func _hit_notify_animation() -> void:
 
 ## Comment
 func _keypress_animation(tween: SceneTreeTween, obj: CanvasItem) -> SceneTreeTween:
-	tween = taiclone.new_tween(tween).set_ease(Tween.EASE_OUT)
+	tween = root_viewport.new_tween(tween).set_ease(Tween.EASE_OUT)
 
 	## Comment
 	var _tween := tween.tween_property(obj, "modulate:a", 0.0, 0.2).from(1.0)

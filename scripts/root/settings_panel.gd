@@ -15,7 +15,7 @@ onready var fullscreen_toggle := $V/Resolution/Fullscreen/Toggle as CheckBox
 onready var hit_error_toggle := $V/ExtraDisplays/HitError/Toggle as CheckBox
 onready var late_early_drop := $V/ExtraDisplays/LateEarly/Options as OptionButton
 onready var offset_text := $V/Offset/LineEdit as LineEdit
-onready var taiclone := $"/root" as Root
+onready var root_viewport := $"/root" as Root
 
 
 func _ready() -> void:
@@ -25,8 +25,8 @@ func _ready() -> void:
 	late_early_drop.add_item("Off")
 	late_early_drop.add_item("Simple")
 	late_early_drop.add_item("Advanced")
-	late_early(taiclone.late_early_simple_display)
-	hit_error(taiclone.hit_error)
+	late_early(root_viewport.late_early_simple_display)
+	hit_error_func(root_viewport.hit_error)
 	for i in RESOLUTIONS.size():
 		## A resolution in the format: ratio, width, height.
 		var resolution := str(RESOLUTIONS[i]).split(",", false)
@@ -40,13 +40,13 @@ func _ready() -> void:
 				dropdown.select(int(i))
 
 	toggle_fullscreen(OS.window_fullscreen)
-	change_offset(str(taiclone.global_offset))
+	change_offset(str(root_viewport.global_offset))
 	_settings_save = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _currently_changing and (event is InputEventJoypadButton or event is InputEventKey):
-		taiclone.change_key(event, _currently_changing)
+		root_viewport.change_key(event, _currently_changing)
 		_change_text(_currently_changing)
 		_currently_changing = ""
 
@@ -73,22 +73,22 @@ func change_offset(new_text: String) -> void:
 	offset_text.text = str(new_offset) if new_offset else ""
 	offset_text.caret_position = text_position
 	if _settings_save:
-		taiclone.global_offset = new_offset
-		taiclone.save_settings("change_offset")
+		root_viewport.global_offset = new_offset
+		root_viewport.save_settings("change_offset")
 
 
 ## Called when a different resolution is selected.
 ## index ([int]): The index of the resolution in [member RESOLUTIONS].
 func change_res(index: int) -> void:
-	taiclone.change_res(Root.item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
+	root_viewport.res_changed(Root.item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
 
 
 ## Called when [member hit_error_toggle] is toggled.
 ## new_visible ([bool]): Whether or not the hit error bar should be visible.
-func hit_error(new_visible: bool) -> void:
+func hit_error_func(new_visible: bool) -> void:
 	hit_error_toggle.pressed = new_visible
 	if _settings_save:
-		taiclone.hit_error_toggled(new_visible)
+		root_viewport.hit_error_toggled(new_visible)
 
 
 ## Called when a new timing indicator format is selected,
@@ -96,7 +96,7 @@ func hit_error(new_visible: bool) -> void:
 func late_early(new_value: int) -> void:
 	late_early_drop.select(new_value)
 	if _settings_save:
-		taiclone.late_early(new_value)
+		root_viewport.late_early(new_value)
 
 
 ## Called when [member fullscreen_toggle] is toggled.
@@ -107,7 +107,7 @@ func toggle_fullscreen(new_visible: bool) -> void:
 		dropdown.set_item_disabled(i, new_visible)
 
 	if _settings_save:
-		taiclone.toggle_fullscreen(new_visible)
+		root_viewport.toggle_fullscreen(new_visible)
 
 
 ## Changes the label of a key-bind button.
@@ -115,6 +115,6 @@ func toggle_fullscreen(new_visible: bool) -> void:
 ## was_pressed ([bool]): Whether or not the button was pressed.
 func _change_text(key: String, was_pressed := false) -> void:
 	## The action associated with this key-bind.
-	var event := Root.event(key)
+	var event := Root.get_event(key)
 
 	(get_node("V/Keybinds/%s/Button" % key) as Button).text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""

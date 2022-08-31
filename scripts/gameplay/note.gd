@@ -2,7 +2,7 @@ class_name Note
 extends HitObject
 
 ## Comment
-signal marker_added(timing, add)
+signal new_marker_added(timing, add)
 
 ## Comment
 var _first_hit := -1.0
@@ -14,6 +14,11 @@ var _is_kat := true
 var _next_hit := ""
 
 onready var head := $Head as CanvasItem
+
+
+## See [HitObject].
+func apply_skin(new_skin: SkinManager) -> void:
+	head.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
 
 
 ## Initialize [Note] variables.
@@ -52,7 +57,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		else:
 			finish()
 
-		emit_signal("marker_added", hit_time, true)
+		emit_signal("new_marker_added", hit_time, true)
 		if Root.inputs_empty(inputs):
 			return true
 
@@ -63,7 +68,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		key = _next_hit + key
 		if inputs.has(key):
 			inputs.remove(inputs.find(key))
-			emit_signal("marker_added", hit_time, false)
+			emit_signal("new_marker_added", hit_time, false)
 
 		else:
 			finish()
@@ -83,8 +88,3 @@ func miss_check(hit_time: float) -> bool:
 		return false
 
 	return true
-
-
-## See [HitObject].
-func skin(new_skin: SkinManager) -> void:
-	head.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
