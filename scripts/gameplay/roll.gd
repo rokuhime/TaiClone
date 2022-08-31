@@ -34,6 +34,14 @@ func apply_skin(new_skin: SkinManager) -> void:
 	body.modulate = new_skin.roll_color
 
 
+## See [HitObject].
+func auto_hit(hit_time: float, hit_left: bool) -> int:
+	if tick_container.get_child_count():
+		return (tick_container.get_child(tick_container.get_child_count() - 1) as Tick).auto_hit((hit_time - timing) * speed, hit_left)
+
+	return 0
+
+
 ## Initialize [Roll] variables.
 func change_properties(new_timing: float, new_speed: float, new_length: float, new_finisher: bool, new_bpm: float) -> void:
 	.ini(new_timing, new_speed, new_length, new_finisher)

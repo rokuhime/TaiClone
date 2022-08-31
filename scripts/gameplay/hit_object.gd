@@ -56,16 +56,9 @@ func _ready() -> void:
 	state = int(State.READY)
 
 
-func _process(_delta: float) -> void:
-	if state > int(State.READY):
-		## The distance the [HitObject] moved.
-		var _vel := move_and_slide(Vector2(-speed, 0))
-
-
 ## Enable motion and [method hit] and [method miss_check] calls on this [HitObject].
 func activate() -> void:
 	assert(state == int(State.READY), "Attempted to activate hitobject.")
-	position.x = speed * timing
 	state = int(State.ACTIVE)
 
 
@@ -156,3 +149,9 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 ## return (bool): Whether or not to continue checking for misses.
 func miss_check(_hit_time: float) -> bool:
 	return false
+
+
+## Comment
+func move(cur_time: float) -> void:
+	if state > int(State.READY):
+		position.x = speed * (timing - cur_time)

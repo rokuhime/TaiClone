@@ -73,6 +73,7 @@ func change_offset(new_text: String) -> void:
 	offset_text.text = str(new_offset) if new_offset else ""
 	offset_text.caret_position = text_position
 	if _settings_save:
+		root_viewport.offset_difference(new_offset - root_viewport.global_offset)
 		root_viewport.global_offset = new_offset
 		root_viewport.save_settings("change_offset")
 

@@ -8,6 +8,23 @@ func activate() -> void:
 	position.x = timing
 
 
+## See [HitObject].
+func auto_hit(hit_time: float, hit_left: bool) -> int:
+	## Comment
+	var early := hit_time < timing
+
+	if state != int(State.ACTIVE) or early:
+		return int(early)
+
+	## Comment
+	var action_event := InputEventAction.new()
+
+	action_event.action = ("Left" if hit_left else "Right") + "Don"
+	action_event.pressed = true
+	Input.parse_input_event(action_event)
+	return 2
+
+
 ## Initialize [Tick] variables.
 func change_properties(new_timing: float) -> void:
 	.ini(new_timing, 0, 0)
