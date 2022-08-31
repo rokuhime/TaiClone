@@ -75,6 +75,11 @@ func apply_skin(_new_skin: SkinManager) -> void:
 	pass
 
 
+## Comment
+func auto_hit(_hit_time: float, _hit_left: bool) -> int:
+	return 0
+
+
 ## Perform a comprehensive check to see if this [HitObject] was correctly hit. Currently used by [Note]s and [Spinner]s.
 ## key ([String]): "Don" or "Kat"
 ## inputs ([Array]): The list of actions received.

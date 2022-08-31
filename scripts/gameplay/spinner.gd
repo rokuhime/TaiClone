@@ -42,6 +42,23 @@ func _process(_delta: float) -> void:
 		rotation_obj.rotation_degrees += _current_speed
 
 
+## See [HitObject].
+func auto_hit(_hit_time: float, _hit_left: bool) -> int:
+	if state != int(State.ACTIVE):
+		return 0
+
+	## Comment
+	var action_event: InputEventAction
+
+	for key in Root.KEYS:
+		action_event = InputEventAction.new()
+		action_event.action = str(key)
+		action_event.pressed = true
+		Input.parse_input_event(action_event)
+
+	return 2
+
+
 ## Initialize [Spinner] variables.
 func change_properties(new_timing: float, new_length: float, new_hits: int) -> void:
 	.ini(new_timing, 0, new_length)
@@ -54,12 +71,9 @@ func change_speed(new_speed: float) -> void:
 
 
 ## See [HitObject].
-func hit(inputs: Array, hit_time: float) -> bool:
-	## Comment
-	var early := hit_time < timing
-
-	if state != int(State.ACTIVE) or early:
-		return early
+func hit(inputs: Array, _hit_time: float) -> bool:
+	if state != int(State.ACTIVE):
+		return false
 
 	if not _cur_hit_count:
 		# TODO: Redo first hit logic to not bias kats
