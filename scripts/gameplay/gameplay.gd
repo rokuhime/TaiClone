@@ -40,6 +40,9 @@ var _l_don_tween := SceneTreeTween.new()
 ## Comment
 var _l_kat_tween := SceneTreeTween.new()
 
+## the time for the last note in the chart
+var _last_note_time := 0.0
+
 ## Comment
 var _miss_count := 0
 
@@ -53,9 +56,13 @@ var _r_kat_tween := SceneTreeTween.new()
 var _score := 0
 
 ## Comment
+var _score_indicator_tween := SceneTreeTween.new()
+
+## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
 onready var combo := $BarLeft/DrumVisual/Combo as Label
+onready var combo_break := $ComboBreakAudio as AudioStreamPlayer
 onready var debug_text := $Debug/DebugText as Label
 onready var f_don_aud := $FinisherDonAudio as AudioStreamPlayer
 onready var f_kat_aud := $FinisherKatAudio as AudioStreamPlayer
@@ -65,6 +72,7 @@ onready var l_don_aud := $LeftDonAudio as AudioStreamPlayer
 onready var l_don_obj := $BarLeft/DrumVisual/LeftDon as CanvasItem
 onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
 onready var l_kat_obj := $BarLeft/DrumVisual/LeftKat as CanvasItem
+onready var last_hit_score := $UI/LastHitScore as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var music := $Music as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
@@ -73,6 +81,7 @@ onready var r_don_obj := $BarLeft/DrumVisual/RightDon as CanvasItem
 onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
 onready var r_kat_obj := $BarLeft/DrumVisual/RightKat as CanvasItem
 onready var root_viewport := $"/root" as Root
+onready var song_progress := $UI/SongProgress as ProgressBar
 onready var timing_indicator := $BarLeft/TimingIndicator as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var ui_score := $UI/Score as Label
@@ -83,6 +92,7 @@ func _ready() -> void:
 	late_early_changed()
 	Root.send_signal(self, "offset_changed", root_viewport, "offset_difference")
 	offset_difference(root_viewport.global_offset)
+	last_hit_score.modulate.a = 0
 	l_don_obj.modulate.a = 0
 	l_kat_obj.modulate.a = 0
 	r_don_obj.modulate.a = 0
@@ -100,6 +110,7 @@ func _process(delta: float) -> void:
 		return
 
 	_cur_time += delta
+	song_progress.value = _cur_time * 100 / _last_note_time
 
 	## Comment
 	var check_auto := false
@@ -193,8 +204,17 @@ func add_object(obj: HitObject, loaded := true) -> void:
 
 ## Comment
 func add_score(type: int, marker := false) -> void:
-	_score += 150 if type == int(HitObject.Score.INACCURATE) else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(type) else 600 if type == int(HitObject.Score.SPINNER) else 0
+	## Comment
+	var play_tween := true
+
+	## Comment
+	var score_value := 300
+
 	match type:
+		-1:
+			score_value = 0
+			play_tween = false
+
 		HitObject.Score.ACCURATE:
 			_accurate_count += 1
 			_combo += 1
@@ -204,16 +224,33 @@ func add_score(type: int, marker := false) -> void:
 		HitObject.Score.INACCURATE:
 			_inaccurate_count += 1
 			_combo += 1
+			score_value = 150
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.inaccurate_judgement
 
 		HitObject.Score.MISS:
+			if _combo >= 25:
+				combo_break.play()
 			_miss_count += 1
 			_combo = 0
+			score_value = 0
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.miss_judgement
+			play_tween = false
 			if marker:
 				emit_signal("marker_added", type, HitError.INACC_TIMING)
+
+		HitObject.Score.SPINNER:
+			score_value = 600
+
+	score_value = int(score_value * (1 + min(1, _combo / 300.0)))
+	_score += score_value
+	last_hit_score.text = str(score_value)
+	if play_tween:
+		_score_indicator_tween = root_viewport.new_tween(_score_indicator_tween)
+
+		## Comment
+		var _tween := _score_indicator_tween.tween_property(last_hit_score, "modulate:a", 0.0, 1).from(1.0)
 
 	## Comment
 	var hit_count := _accurate_count + _inaccurate_count / 2.0
@@ -447,6 +484,8 @@ func load_func(file_path := "") -> void:
 
 		## Comment
 		var timing := float(line[0]) + root_viewport.global_offset / 1000.0
+
+		_last_note_time = timing
 
 		## Comment
 		var total_cur_sv := float(line[1]) * cur_bpm * 5.7

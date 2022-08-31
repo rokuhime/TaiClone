@@ -1,19 +1,20 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://scenes/gameplay/hit_error.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/gameplay/gameplay.gd" type="Script" id=2]
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=3]
-[ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=4]
-[ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=5]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=6]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=7]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=8]
-[ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=9]
-[ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=10]
-[ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=11]
-[ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=12]
-[ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=13]
-[ext_resource path="res://temporary/untitled.png" type="Texture" id=14]
+[ext_resource path="res://skins/test_skin/combobreak.wav" type="AudioStream" id=4]
+[ext_resource path="res://skins/test_skin/taiko-bar-left.png" type="Texture" id=5]
+[ext_resource path="res://skins/test_skin/taiko-bar-right.png" type="Texture" id=6]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitclap.wav" type="AudioStream" id=7]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitfinish.wav" type="AudioStream" id=8]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitnormal.wav" type="AudioStream" id=9]
+[ext_resource path="res://skins/test_skin/taiko-drum-hitwhistle.wav" type="AudioStream" id=10]
+[ext_resource path="res://skins/test_skin/taiko-drum-inner.png" type="Texture" id=11]
+[ext_resource path="res://skins/test_skin/taiko-drum-outer.png" type="Texture" id=12]
+[ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=13]
+[ext_resource path="res://temporary/osu_rwxudnxmu5.png" type="Texture" id=14]
+[ext_resource path="res://temporary/untitled.png" type="Texture" id=15]
 
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
@@ -23,47 +24,51 @@ script = ExtResource( 2 )
 [node name="Music" type="AudioStreamPlayer" parent="."]
 bus = "Music"
 
+[node name="ComboBreakAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+bus = "SFX"
+
 [node name="FinisherDonAudio" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 7 )
+stream = ExtResource( 8 )
 volume_db = 5.0
 bus = "SFX"
 
 [node name="FinisherKatAudio" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 9 )
+stream = ExtResource( 10 )
 volume_db = 5.0
 bus = "SFX"
 
 [node name="LeftDonAudio" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 8 )
+stream = ExtResource( 9 )
 bus = "SFX"
 
 [node name="LeftKatAudio" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 6 )
+stream = ExtResource( 7 )
 bus = "SFX"
 
 [node name="RightDonAudio" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 8 )
+stream = ExtResource( 9 )
 bus = "SFX"
 
 [node name="RightKatAudio" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 6 )
+stream = ExtResource( 7 )
 bus = "SFX"
 
 [node name="Ref" type="TextureRect" parent="."]
 visible = false
 modulate = Color( 1, 1, 1, 0.878431 )
-texture = ExtResource( 13 )
+texture = ExtResource( 14 )
 
 [node name="Ref2" type="TextureRect" parent="."]
 visible = false
 modulate = Color( 1, 1, 1, 0.878431 )
-texture = ExtResource( 14 )
+texture = ExtResource( 15 )
 
 [node name="BarRight" type="TextureRect" parent="."]
 anchor_right = 1.0
 margin_top = 300.0
 margin_bottom = 628.0
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 expand = true
 
 [node name="BarLeft" type="Control" parent="."]
@@ -78,7 +83,7 @@ margin_left = -61.0
 margin_top = -61.0
 margin_right = 61.0
 margin_bottom = 61.0
-texture = ExtResource( 12 )
+texture = ExtResource( 13 )
 expand = true
 
 [node name="Rim" type="TextureRect" parent="BarLeft/HitPoint"]
@@ -109,19 +114,19 @@ margin_left = -361.0
 margin_top = -139.0
 margin_right = -107.0
 margin_bottom = 139.0
-texture = ExtResource( 4 )
+texture = ExtResource( 5 )
 expand = true
 
 [node name="LeftDon" type="TextureRect" parent="BarLeft/DrumVisual"]
 anchor_right = 0.5
 anchor_bottom = 1.0
-texture = ExtResource( 10 )
+texture = ExtResource( 11 )
 expand = true
 
 [node name="LeftKat" type="TextureRect" parent="BarLeft/DrumVisual"]
 anchor_right = 0.5
 anchor_bottom = 1.0
-texture = ExtResource( 11 )
+texture = ExtResource( 12 )
 expand = true
 flip_h = true
 
@@ -129,7 +134,7 @@ flip_h = true
 anchor_left = 0.5
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = ExtResource( 10 )
+texture = ExtResource( 11 )
 expand = true
 flip_h = true
 
@@ -137,7 +142,7 @@ flip_h = true
 anchor_left = 0.5
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = ExtResource( 11 )
+texture = ExtResource( 12 )
 expand = true
 
 [node name="Combo" type="Label" parent="BarLeft/DrumVisual"]
@@ -169,10 +174,18 @@ margin_right = 26.0
 margin_bottom = 64.0
 theme_type_variation = "UI"
 
-[node name="Accuracy" type="HBoxContainer" parent="UI"]
+[node name="LastHitScore" type="Label" parent="UI"]
+modulate = Color( 1, 0.227451, 0.227451, 1 )
 margin_top = 68.0
 margin_right = 26.0
 margin_bottom = 132.0
+theme_type_variation = "UI"
+align = 2
+
+[node name="Accuracy" type="HBoxContainer" parent="UI"]
+margin_top = 136.0
+margin_right = 26.0
+margin_bottom = 200.0
 theme_type_variation = "Accuracy"
 
 [node name="Label" type="Label" parent="UI/Accuracy"]
@@ -189,6 +202,14 @@ margin_bottom = 64.0
 size_flags_vertical = 8
 theme_type_variation = "Percent"
 text = "%"
+
+[node name="SongProgress" type="ProgressBar" parent="UI"]
+margin_top = 204.0
+margin_right = 26.0
+margin_bottom = 219.0
+rect_min_size = Vector2( 0, 15 )
+theme_type_variation = "SongProgress"
+percent_visible = false
 
 [node name="HitError" parent="." instance=ExtResource( 1 )]
 
