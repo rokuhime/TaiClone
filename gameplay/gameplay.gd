@@ -493,7 +493,7 @@ func load_func(file_path := "") -> void:
 		match int(line[2]):
 			NoteType.BARLINE:
 				## Comment
-				var note_object := preload("res://scenes/gameplay/bar_line.tscn").instance() as BarLine
+				var note_object := preload("res://hitobjects/bar_line.tscn").instance() as BarLine
 
 				note_object.change_properties(timing, total_cur_sv)
 				# If Godot errors this line, reload the project.
@@ -501,7 +501,7 @@ func load_func(file_path := "") -> void:
 
 			NoteType.DON, NoteType.KAT:
 				## Comment
-				var note_object := preload("res://scenes/gameplay/note.tscn").instance() as Note
+				var note_object := preload("res://hitobjects/note.tscn").instance() as Note
 
 				note_object.change_properties(timing, total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
 				# If Godot errors this line, reload the project.
@@ -510,7 +510,7 @@ func load_func(file_path := "") -> void:
 
 			NoteType.ROLL:
 				## Comment
-				var note_object := preload("res://scenes/gameplay/roll.tscn").instance() as Roll
+				var note_object := preload("res://hitobjects/roll.tscn").instance() as Roll
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
 				# If Godot errors this line, reload the project.
@@ -518,7 +518,7 @@ func load_func(file_path := "") -> void:
 
 			NoteType.SPINNER:
 				## Comment
-				var note_object := preload("res://scenes/gameplay/spinner_warn.tscn").instance() as SpinnerWarn
+				var note_object := preload("res://hitobjects/spinner_warn.tscn").instance() as SpinnerWarn
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), cur_bpm)
 				# If Godot errors this line, reload the project.
@@ -578,7 +578,7 @@ func text_debug(text: String) -> void:
 ## Comment
 func toggle_settings() -> void:
 	if not root_viewport.remove_scene("SettingsPanel"):
-		root_viewport.add_scene(preload("res://scenes/root/settings_panel.tscn").instance(), name)
+		root_viewport.add_scene(preload("res://scenes/settings_panel.tscn").instance(), name)
 
 
 ## Comment

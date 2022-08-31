@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/gameplay/spinner.gd" type="Script" id=1]
+[ext_resource path="res://hitobjects/spinner.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/spinner-approachcircle.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/spinner-circle.png" type="Texture" id=3]
 

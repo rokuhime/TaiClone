@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://scripts/gameplay/hit_error.gd" type="Script" id=1]
+[ext_resource path="res://gameplay/hit_error.gd" type="Script" id=1]
 
 [node name="HitError" type="ColorRect"]
 anchor_left = 0.5

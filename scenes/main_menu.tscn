@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://scripts/scenes/main_menu.gd" type="Script" id=1]
+[ext_resource path="res://scenes/main_menu.gd" type="Script" id=1]
 [ext_resource path="res://temporary/sdsddsd.png" type="Texture" id=2]
 
 [node name="MainMenu" type="VBoxContainer"]

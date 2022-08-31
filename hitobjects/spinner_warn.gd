@@ -24,7 +24,7 @@ func miss_check(hit_time: float) -> bool:
 		state = int(State.FINISHED)
 
 		## The [Spinner] object to spawn.
-		var spinner := preload("res://scenes/gameplay/spinner.tscn").instance() as Spinner
+		var spinner := preload("res://hitobjects/spinner.tscn").instance() as Spinner
 
 		spinner.change_properties(timing, length, int(length * 960 / _bpm))
 		emit_signal("object_added", spinner, false)

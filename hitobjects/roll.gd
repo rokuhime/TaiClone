@@ -21,7 +21,7 @@ func _ready() -> void:
 
 	for tick_idx in range(_total_ticks):
 		## The [Tick] object to spawn.
-		var new_tick := preload("res://scenes/gameplay/tick.tscn").instance() as Tick
+		var new_tick := preload("res://hitobjects/tick.tscn").instance() as Tick
 
 		new_tick.change_properties(tick_idx * _tick_distance * speed)
 		tick_container.add_child(new_tick)
