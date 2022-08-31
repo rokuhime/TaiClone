@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=38 format=2]
+[gd_resource type="Theme" load_steps=40 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
@@ -53,13 +53,19 @@ extra_spacing_bottom = -1
 font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=10]
+size = 26
+use_filter = true
+extra_spacing_top = 20
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=11]
 size = 50
 use_filter = true
 extra_spacing_top = -5
 extra_spacing_bottom = 5
 font_data = ExtResource( 3 )
 
-[sub_resource type="StyleBoxFlat" id=11]
+[sub_resource type="StyleBoxFlat" id=12]
 bg_color = Color( 0, 0, 0, 0.686275 )
 border_width_left = 5
 border_width_top = 5
@@ -71,7 +77,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=12]
+[sub_resource type="StyleBoxFlat" id=13]
 bg_color = Color( 0.176471, 0.176471, 0.176471, 1 )
 border_width_left = 5
 border_width_top = 5
@@ -82,7 +88,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=13]
+[sub_resource type="StyleBoxFlat" id=14]
 bg_color = Color( 0, 0, 0, 1 )
 border_width_left = 5
 border_width_top = 5
@@ -93,7 +99,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=14]
+[sub_resource type="StyleBoxFlat" id=15]
 bg_color = Color( 0.45098, 0.45098, 0.45098, 1 )
 border_width_left = 5
 border_width_top = 5
@@ -104,19 +110,19 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="DynamicFont" id=15]
+[sub_resource type="DynamicFont" id=16]
 size = 28
 use_filter = true
 extra_spacing_top = -7
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=16]
+[sub_resource type="DynamicFont" id=17]
 size = 22
 use_filter = true
 extra_spacing_top = -7
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=17]
+[sub_resource type="DynamicFont" id=18]
 size = 26
 outline_size = 2
 outline_color = Color( 0, 0, 0, 0.313726 )
@@ -124,10 +130,10 @@ use_filter = true
 extra_spacing_top = -9
 font_data = ExtResource( 2 )
 
-[sub_resource type="StyleBoxFlat" id=18]
+[sub_resource type="StyleBoxFlat" id=19]
 bg_color = Color( 0.262745, 0.262745, 0.262745, 0.784314 )
 
-[sub_resource type="StyleBoxFlat" id=19]
+[sub_resource type="StyleBoxFlat" id=20]
 bg_color = Color( 0, 0, 0, 0.607843 )
 border_width_left = 2
 border_width_top = 2
@@ -135,18 +141,24 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.0980392, 0.0980392, 0.0980392, 1 )
 
-[sub_resource type="DynamicFont" id=20]
+[sub_resource type="DynamicFont" id=21]
 size = 17
 use_filter = true
 extra_spacing_top = -9
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=21]
+[sub_resource type="DynamicFont" id=22]
 size = 26
 use_filter = true
 font_data = ExtResource( 2 )
 
-[sub_resource type="StyleBoxFlat" id=22]
+[sub_resource type="DynamicFont" id=23]
+size = 26
+use_filter = true
+extra_spacing_top = 16
+font_data = ExtResource( 3 )
+
+[sub_resource type="StyleBoxFlat" id=24]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.843137 )
 border_width_left = 10
 border_width_top = 10
@@ -158,62 +170,62 @@ corner_radius_top_right = 7
 corner_radius_bottom_right = 7
 corner_radius_bottom_left = 7
 
-[sub_resource type="DynamicFont" id=23]
+[sub_resource type="DynamicFont" id=25]
 size = 60
 use_filter = true
 extra_spacing_top = -24
 extra_spacing_bottom = -11
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=24]
+[sub_resource type="DynamicFont" id=26]
 size = 24
 use_filter = true
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=25]
+[sub_resource type="DynamicFont" id=27]
 size = 30
 use_filter = true
 extra_spacing_top = 5
 font_data = ExtResource( 3 )
 
-[sub_resource type="StyleBoxFlat" id=26]
+[sub_resource type="StyleBoxFlat" id=28]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
 
-[sub_resource type="DynamicFont" id=27]
+[sub_resource type="DynamicFont" id=29]
 size = 20
 use_filter = true
 extra_spacing_top = -7
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=28]
+[sub_resource type="DynamicFont" id=30]
 size = 15
 use_filter = true
 extra_spacing_top = -7
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=29]
+[sub_resource type="DynamicFont" id=31]
 size = 286
 use_filter = true
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=30]
+[sub_resource type="DynamicFont" id=32]
 size = 50
 use_filter = true
 font_data = ExtResource( 2 )
 
-[sub_resource type="DynamicFont" id=31]
+[sub_resource type="DynamicFont" id=33]
 size = 30
 use_filter = true
 extra_spacing_top = -3
 extra_spacing_bottom = -3
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=32]
+[sub_resource type="DynamicFont" id=34]
 size = 30
 use_filter = true
 font_data = ExtResource( 2 )
 
-[sub_resource type="DynamicFont" id=33]
+[sub_resource type="DynamicFont" id=35]
 size = 65
 outline_size = 2
 outline_color = Color( 0, 0, 0, 0.313726 )
@@ -222,13 +234,13 @@ extra_spacing_top = -19
 extra_spacing_bottom = -12
 font_data = ExtResource( 2 )
 
-[sub_resource type="DynamicFont" id=34]
+[sub_resource type="DynamicFont" id=36]
 size = 26
 use_filter = true
 font_data = ExtResource( 3 )
 
 [resource]
-default_font = SubResource( 34 )
+default_font = SubResource( 36 )
 Accuracy/constants/separation = 1
 Bottom/constants/separation = 3
 Bottom/styles/panel = SubResource( 1 )
@@ -240,36 +252,38 @@ Combo/fonts/font = SubResource( 6 )
 ErrorBar/fonts/font = SubResource( 7 )
 HitCount/styles/panel = SubResource( 8 )
 HitCountLabel/fonts/font = SubResource( 9 )
+Keybinds/fonts/font = SubResource( 10 )
 Main/constants/separation = 15
-MainButton/fonts/font = SubResource( 10 )
-MainButton/styles/disabled = SubResource( 11 )
-MainButton/styles/hover = SubResource( 12 )
-MainButton/styles/normal = SubResource( 13 )
-MainButton/styles/pressed = SubResource( 14 )
-MasterLabel/fonts/font = SubResource( 15 )
-MasterPercentage/fonts/font = SubResource( 16 )
-Percent/fonts/font = SubResource( 17 )
-PlayButton/styles/hover = SubResource( 18 )
-PlayButton/styles/normal = SubResource( 19 )
+MainButton/fonts/font = SubResource( 11 )
+MainButton/styles/disabled = SubResource( 12 )
+MainButton/styles/hover = SubResource( 13 )
+MainButton/styles/normal = SubResource( 14 )
+MainButton/styles/pressed = SubResource( 15 )
+MasterLabel/fonts/font = SubResource( 16 )
+MasterPercentage/fonts/font = SubResource( 17 )
+Percent/fonts/font = SubResource( 18 )
+PlayButton/styles/hover = SubResource( 19 )
+PlayButton/styles/normal = SubResource( 20 )
 PlayContainer/constants/separation = -8
-PlayLabel/fonts/font = SubResource( 20 )
-PlayName/fonts/font = SubResource( 21 )
-Results/styles/bg = SubResource( 22 )
-Results/styles/panel = SubResource( 22 )
-ResultsLabel/fonts/font = SubResource( 23 )
+PlayLabel/fonts/font = SubResource( 21 )
+PlayName/fonts/font = SubResource( 22 )
+Resolution/fonts/font = SubResource( 23 )
+Results/styles/bg = SubResource( 24 )
+Results/styles/panel = SubResource( 24 )
+ResultsLabel/fonts/font = SubResource( 25 )
 ResultsMax/colors/font_color = Color( 0.45098, 0.45098, 0.45098, 1 )
-ResultsMax/fonts/font = SubResource( 24 )
-ResultsText/fonts/font = SubResource( 25 )
+ResultsMax/fonts/font = SubResource( 26 )
+ResultsText/fonts/font = SubResource( 27 )
 RightBar/constants/separation = 10
-Settings/styles/bg = SubResource( 26 )
-Settings/styles/panel = SubResource( 26 )
-SpecificLabel/fonts/font = SubResource( 27 )
-SpecificPercentage/fonts/font = SubResource( 28 )
+Settings/styles/bg = SubResource( 28 )
+Settings/styles/panel = SubResource( 28 )
+SpecificLabel/fonts/font = SubResource( 29 )
+SpecificPercentage/fonts/font = SubResource( 30 )
 TempLoadChart/constants/separation = 8
-Test/fonts/normal_font = SubResource( 29 )
-TimingIndicator/fonts/font = SubResource( 30 )
+Test/fonts/normal_font = SubResource( 31 )
+TimingIndicator/fonts/font = SubResource( 32 )
 Top/constants/separation = 7
 Top/styles/panel = SubResource( 5 )
-TopLabel/fonts/font = SubResource( 31 )
-TopName/fonts/font = SubResource( 32 )
-UI/fonts/font = SubResource( 33 )
+TopLabel/fonts/font = SubResource( 33 )
+TopName/fonts/font = SubResource( 34 )
+UI/fonts/font = SubResource( 35 )

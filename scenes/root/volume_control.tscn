@@ -10,7 +10,7 @@ colors = PoolColorArray( 1, 1, 1, 1 )
 [sub_resource type="GradientTexture" id=2]
 gradient = SubResource( 1 )
 
-[node name="VolumeControl" type="PanelContainer"]
+[node name="VolumeControl" type="Panel"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -28,18 +28,13 @@ volume_db = -5.0
 bus = "SFX"
 
 [node name="Bars" type="VBoxContainer" parent="."]
-margin_right = 278.0
-margin_bottom = 382.0
-
-[node name="Buffer" type="Control" parent="Bars"]
-margin_right = 278.0
-margin_bottom = 5.0
-rect_min_size = Vector2( 0, 5 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 9.0
 
 [node name="Specifics" type="HBoxContainer" parent="Bars"]
-margin_top = 9.0
 margin_right = 278.0
-margin_bottom = 147.0
+margin_bottom = 138.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 
@@ -117,9 +112,9 @@ text = "SFX"
 align = 1
 
 [node name="Master" type="VBoxContainer" parent="Bars"]
-margin_top = 151.0
+margin_top = 142.0
 margin_right = 278.0
-margin_bottom = 382.0
+margin_bottom = 373.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 5.0
 
