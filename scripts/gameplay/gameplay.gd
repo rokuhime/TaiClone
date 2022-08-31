@@ -51,6 +51,7 @@ var _score := 0
 
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
+var _score_indicator_tween := SceneTreeTween.new()
 
 onready var combo := $BarLeft/DrumVisual/Combo as Label
 onready var debug_text := $Debug/DebugText as Label
@@ -74,7 +75,6 @@ onready var timing_indicator := $BarLeft/TimingIndicator as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var ui_score := $UI/Score as Label
 
-
 func _ready() -> void:
 	Root.send_signal(self, "late_early_changed", root_viewport, "late_early_changed")
 	late_early_changed()
@@ -85,8 +85,8 @@ func _ready() -> void:
 	_reset()
 
 	#dev autoload map
-#	if _f.file_exists(_fus):
-#		load_func(_fus)
+	if _f.file_exists(_fus):
+		load_func(_fus)
 
 
 func _process(delta: float) -> void:
@@ -167,17 +167,22 @@ func add_object(obj: HitObject, loaded := true) -> void:
 
 ## Comment
 func add_score(type: int, marker := false) -> void:
-	_score += 150 if type == int(HitObject.Score.INACCURATE) else 300 if [HitObject.Score.ACCURATE, HitObject.Score.FINISHER, HitObject.Score.ROLL].has(type) else 600 if type == int(HitObject.Score.SPINNER) else 0
+
+	var score_value := 0;
+	var play_tween := true;
+
 	match type:
 		HitObject.Score.ACCURATE:
 			_accurate_count += 1
 			_combo += 1
+			score_value = 300
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.accurate_judgement
 
 		HitObject.Score.INACCURATE:
 			_inaccurate_count += 1
 			_combo += 1
+			score_value = 150
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.inaccurate_judgement
 
@@ -186,8 +191,28 @@ func add_score(type: int, marker := false) -> void:
 			_combo = 0
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.miss_judgement
+			play_tween = false
 			if marker:
 				emit_signal("marker_added", type, HitError.INACC_TIMING)
+		
+		HitObject.Score.FINISHER:
+				score_value = 300
+		
+		HitObject.Score.ROLL:
+				score_value = 300
+		
+		HitObject.Score.SPINNER:
+				score_value = 600
+
+
+	# add combo multiplier to score 
+	_score += int(score_value * (1 + min(1, _combo / 300.0)))
+	
+	#visual indicator for last recieved score
+	($UI/LastHitScore as Label).text = str(int(score_value * (1 + min(1, _combo / 300.0))))
+	if play_tween:
+		_score_indicator_tween = root_viewport.new_tween(_score_indicator_tween)
+		var _tween := _score_indicator_tween.tween_property($UI/LastHitScore, "self_modulate:a", 0.0, 2).from(1.0)
 
 	## Comment
 	var hit_count := _accurate_count + _inaccurate_count / 2.0

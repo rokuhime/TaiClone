@@ -169,10 +169,18 @@ margin_right = 26.0
 margin_bottom = 64.0
 theme_type_variation = "UI"
 
-[node name="Accuracy" type="HBoxContainer" parent="UI"]
+[node name="LastHitScore" type="Label" parent="UI"]
+self_modulate = Color( 1, 0.227451, 0.227451, 1 )
 margin_top = 68.0
 margin_right = 26.0
 margin_bottom = 132.0
+theme_type_variation = "UI"
+align = 2
+
+[node name="Accuracy" type="HBoxContainer" parent="UI"]
+margin_top = 136.0
+margin_right = 26.0
+margin_bottom = 200.0
 theme_type_variation = "Accuracy"
 
 [node name="Label" type="Label" parent="UI/Accuracy"]
