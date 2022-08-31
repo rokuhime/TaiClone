@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/scenes/test.gd" type="Script" id=1]
 [ext_resource path="res://temporary/comma.mp3" type="AudioStream" id=2]
-[ext_resource path="res://themes/results.tres" type="Theme" id=3]
 
 [node name="Test" type="RichTextLabel"]
 anchor_top = 0.5
@@ -10,7 +9,6 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 margin_top = -225.0
 margin_bottom = 225.0
-theme = ExtResource( 3 )
 theme_type_variation = "Test"
 bbcode_enabled = true
 bbcode_text = "[center][rainbow freq=0.2 sat=0.6 val=1.5][wave freq=4 amp=100]my balls"
