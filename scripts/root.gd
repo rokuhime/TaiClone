@@ -40,7 +40,22 @@ var bar_line_object: PackedScene
 var combo: int
 
 ## Comment
+var early_count: int
+
+## Comment
+var f_accurate_count: int
+
+## Comment
+var f_inaccurate_count: int
+
+## Comment
 var inaccurate_count: int
+
+## Comment
+var late_count: int
+
+## Comment
+var max_combo: int
 
 ## Comment
 var menu_bg: Texture
@@ -93,7 +108,12 @@ func _init() -> void:
 	accurate_count = 0
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
 	combo = 0
+	early_count = 0
+	f_accurate_count = 0
+	f_inaccurate_count = 0
 	inaccurate_count = 0
+	late_count = 0
+	max_combo = 0
 	menu_bg = load("res://temporary/menubg.png") as Texture
 	miss_count = 0
 	note_object = load("res://hitobjects/note.tscn") as PackedScene

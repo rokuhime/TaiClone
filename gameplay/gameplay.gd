@@ -17,6 +17,9 @@ var _auto_left := true
 var _cur_time := 0.0
 
 ## Comment
+var _current_combo := 0
+
+## Comment
 var _f := File.new()
 
 ## Comment
@@ -165,14 +168,23 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 ## Comment
-func add_marker(timing: float, add: bool) -> void:
+func add_marker(timing: float, previous_timing: float) -> void:
 	timing -= HitError.INACC_TIMING
 
+	## Comment
 	var type := int(HitObject.Score.ACCURATE if abs(timing) < HitError.ACC_TIMING else HitObject.Score.INACCURATE if abs(timing) < HitError.INACC_TIMING else HitObject.Score.MISS)
 
 	emit_signal("marker_added", type, timing)
-	if add:
+	if previous_timing < 0:
 		add_score(type)
+		return
+
+	previous_timing -= HitError.INACC_TIMING
+	if abs(previous_timing) < HitError.ACC_TIMING:
+		root_viewport.f_accurate_count += 1
+
+	elif abs(previous_timing) < HitError.INACC_TIMING:
+		root_viewport.f_inaccurate_count += 1
 
 
 ## Comment
@@ -206,22 +218,25 @@ func add_score(type: int, marker := false) -> void:
 
 		HitObject.Score.ACCURATE:
 			root_viewport.accurate_count += 1
-			root_viewport.combo += 1
+			root_viewport.max_combo += 1
+			_current_combo += 1
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.accurate_judgement
 
 		HitObject.Score.INACCURATE:
 			root_viewport.inaccurate_count += 1
-			root_viewport.combo += 1
+			root_viewport.max_combo += 1
+			_current_combo += 1
 			score_value = 150
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.inaccurate_judgement
 
 		HitObject.Score.MISS:
-			if root_viewport.combo >= 25:
+			if _current_combo >= 25:
 				combo_break.play()
 			root_viewport.miss_count += 1
-			root_viewport.combo = 0
+			root_viewport.max_combo += 1
+			_current_combo = 0
 			score_value = 0
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.miss_judgement
@@ -232,7 +247,8 @@ func add_score(type: int, marker := false) -> void:
 		HitObject.Score.SPINNER:
 			score_value = 600
 
-	score_value = int(score_value * (1 + min(1, root_viewport.combo / 300.0)))
+	root_viewport.combo = int(max(root_viewport.combo, _current_combo))
+	score_value = int(score_value * (1 + min(1, _current_combo / 300.0)))
 	root_viewport.score += score_value
 	last_hit_score.text = str(score_value)
 	if play_tween:
@@ -244,7 +260,7 @@ func add_score(type: int, marker := false) -> void:
 	## Comment
 	var hit_count := root_viewport.accurate_count + root_viewport.inaccurate_count / 2.0
 
-	combo_label.text = str(root_viewport.combo)
+	combo_label.text = str(_current_combo)
 	ui_score.text = "%010d" % root_viewport.score
 	root_viewport.accuracy = "%2.2f" % (hit_count * 100 / (root_viewport.accurate_count + root_viewport.inaccurate_count + root_viewport.miss_count) if hit_count else 0.0)
 	ui_accuracy.text = root_viewport.accuracy
@@ -257,8 +273,19 @@ func auto_toggled(new_auto: bool) -> void:
 
 ## Comment
 func change_indicator(timing: float) -> void:
-	timing_indicator.text = ("LATE" if timing > 0 else "EARLY") if root_viewport.late_early_simple_display < 2 else "%+d" % int(timing * 1000)
-	timing_indicator.modulate = root_viewport.skin.late_color if timing > 0 else root_viewport.skin.early_color
+	if timing > 0:
+		timing_indicator.modulate = root_viewport.skin.late_color
+		timing_indicator.text = "LATE"
+		root_viewport.late_count += 1
+
+	else:
+		timing_indicator.modulate = root_viewport.skin.early_color
+		timing_indicator.text = "EARLY"
+		root_viewport.early_count += 1
+
+	if root_viewport.late_early_simple_display > 1:
+		timing_indicator.text = "%+d" % int(timing * 1000)
+
 	_timing_indicator_tween = root_viewport.new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
 
 	## Comment
@@ -625,8 +652,8 @@ func _reset(dispose := true) -> void:
 	root_viewport.accurate_count = 0
 	root_viewport.inaccurate_count = 0
 	root_viewport.miss_count = 0
-	root_viewport.combo = 0
 	root_viewport.score = 0
+	_current_combo = 0
 	add_score(-1)
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
 	_cur_time = 0

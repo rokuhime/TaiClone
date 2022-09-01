@@ -93,21 +93,20 @@ margin_bottom = 106.0
 alignment = 1
 
 [node name="Label" type="Label" parent="Main/H/Combo/H"]
-margin_left = 113.0
-margin_right = 113.0
+margin_left = 140.0
+margin_right = 140.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
 theme_type_variation = "ResultsLabel"
 
 [node name="Max" type="Label" parent="Main/H/Combo/H"]
-margin_left = 117.0
+margin_left = 144.0
 margin_top = 18.0
-margin_right = 171.0
+margin_right = 144.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
 size_flags_vertical = 8
 theme_type_variation = "ResultsMax"
-text = "/Max"
 
 [node name="Accuracy" type="VBoxContainer" parent="Main/H"]
 margin_left = 289.0
@@ -225,7 +224,6 @@ margin_right = 377.0
 margin_bottom = 62.0
 size_flags_horizontal = 3
 theme_type_variation = "HitCountLabel"
-text = "N/A"
 align = 1
 
 [node name="InaccurateTexture" type="TextureRect" parent="RightBar/HitCount/GridContainer"]
@@ -263,7 +261,6 @@ margin_right = 377.0
 margin_bottom = 156.0
 size_flags_horizontal = 3
 theme_type_variation = "HitCountLabel"
-text = "N/A"
 align = 1
 
 [node name="MissTexture" type="TextureRect" parent="RightBar/HitCount/GridContainer"]
@@ -299,7 +296,6 @@ margin_top = 5.0
 margin_right = 86.0
 margin_bottom = 39.0
 theme_type_variation = "HitCountLabel"
-text = "N/A"
 align = 1
 
 [node name="Early" type="PanelContainer" parent="RightBar/HitCount/GridContainer"]
@@ -317,7 +313,6 @@ margin_top = 5.0
 margin_right = 86.0
 margin_bottom = 39.0
 theme_type_variation = "HitCountLabel"
-text = "N/A"
 align = 1
 
 [node name="ErrorBar" type="Panel" parent="RightBar"]
