@@ -2,7 +2,7 @@ class_name Note
 extends HitObject
 
 ## Comment
-signal new_marker_added(timing, add)
+signal new_marker_added(timing, previous_timing)
 
 ## Comment
 var _first_hit := -1.0
@@ -83,7 +83,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		else:
 			finish()
 
-		emit_signal("new_marker_added", hit_time, true)
+		emit_signal("new_marker_added", hit_time, -1)
 		if Root.inputs_empty(inputs):
 			return true
 
@@ -94,7 +94,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		key = _next_hit + key
 		if inputs.has(key):
 			inputs.remove(inputs.find(key))
-			emit_signal("new_marker_added", hit_time, false)
+			emit_signal("new_marker_added", hit_time, _first_hit)
 
 		else:
 			finish()

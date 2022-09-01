@@ -1,67 +1,64 @@
 extends Node
 
-#Comment
+## Comment
 var _animation_tween := SceneTreeTween.new()
 
+onready var accuracy_label := $Main/H/Accuracy/Label as Label
+onready var accurate_amount := $RightBar/HitCount/GridContainer/AccurateAmount as Label
+onready var accurate_texture := $RightBar/HitCount/GridContainer/AccurateTexture as TextureRect
+onready var combo_label := $Main/H/Combo/H/Label as Label
+onready var early_error_bar := $RightBar/ErrorBar/Early as CanvasItem
+onready var early_hit_count := $RightBar/HitCount/GridContainer/Early as CanvasItem
+onready var early_hit_count_amount := $RightBar/HitCount/GridContainer/Early/Amount as Label
+onready var f_accurate_amount := $RightBar/HitCount/GridContainer/FAccurateAmount as Label
+onready var f_accurate_texture := $RightBar/HitCount/GridContainer/FAccurateTexture as TextureRect
+onready var f_inaccurate_amount := $RightBar/HitCount/GridContainer/FInaccurateAmount as Label
+onready var f_inaccurate_texture := $RightBar/HitCount/GridContainer/FInaccurateTexture as TextureRect
+onready var inaccurate_amount := $RightBar/HitCount/GridContainer/InaccurateAmount as Label
+onready var inaccurate_texture := $RightBar/HitCount/GridContainer/InaccurateTexture as TextureRect
+onready var late_error_bar := $RightBar/ErrorBar/Late as CanvasItem
+onready var late_hit_count := $RightBar/HitCount/GridContainer/Late as CanvasItem
+onready var late_hit_count_amount := $RightBar/HitCount/GridContainer/Late/Amount as Label
+onready var max_combo_label := $Main/H/Combo/H/Max as Label
+onready var miss_amount := $RightBar/HitCount/GridContainer/MissAmount as Label
+onready var miss_texture := $RightBar/HitCount/GridContainer/MissTexture as TextureRect
+onready var right_bar := $RightBar
 onready var root_viewport := $"/root" as Root
+onready var score_label := $Main/Score/Label as Label
+onready var scoreboard := $Scoreboard
 
 
 func _ready() -> void:
-	($RightBar/HitCount/GridContainer/AccurateTexture as TextureRect).texture = root_viewport.skin.accurate_judgement
-	($RightBar/HitCount/GridContainer/FAccurateTexture as TextureRect).texture = root_viewport.skin.accurate_judgement
-	($RightBar/HitCount/GridContainer/InaccurateTexture as TextureRect).texture = root_viewport.skin.inaccurate_judgement
-	($RightBar/HitCount/GridContainer/FInaccurateTexture as TextureRect).texture = root_viewport.skin.inaccurate_judgement
-	($RightBar/HitCount/GridContainer/MissTexture as TextureRect).texture = root_viewport.skin.miss_judgement
-	($RightBar/HitCount/GridContainer/Late as CanvasItem).self_modulate = root_viewport.skin.late_color
-	($RightBar/HitCount/GridContainer/Early as CanvasItem).self_modulate = root_viewport.skin.early_color
-	($RightBar/ErrorBar/Late as CanvasItem).self_modulate = root_viewport.skin.late_color
-	($RightBar/ErrorBar/Early as CanvasItem).self_modulate = root_viewport.skin.early_color
-
+	accuracy_label.text = root_viewport.accuracy + "%"
+	accurate_amount.text = str(root_viewport.accurate_count - root_viewport.f_accurate_count)
+	accurate_texture.texture = root_viewport.skin.accurate_judgement
+	combo_label.text = str(root_viewport.combo)
+	early_error_bar.modulate = root_viewport.skin.early_color
+	early_hit_count.modulate = root_viewport.skin.early_color
+	early_hit_count_amount.text = str(root_viewport.early_count)
+	f_accurate_amount.text = str(root_viewport.f_accurate_count)
+	f_accurate_texture.texture = root_viewport.skin.accurate_judgement
+	f_inaccurate_amount.text = str(root_viewport.f_inaccurate_count)
+	f_inaccurate_texture.texture = root_viewport.skin.inaccurate_judgement
+	inaccurate_amount.text = str(root_viewport.inaccurate_count - root_viewport.f_inaccurate_count)
+	inaccurate_texture.texture = root_viewport.skin.inaccurate_judgement
+	late_error_bar.modulate = root_viewport.skin.late_color
+	late_hit_count.modulate = root_viewport.skin.late_color
+	late_hit_count_amount.text = str(root_viewport.late_count)
+	max_combo_label.text = "/" + str(root_viewport.max_combo)
+	miss_amount.text = str(root_viewport.miss_count)
+	miss_texture.texture = root_viewport.skin.miss_judgement
 	_animation_tween = root_viewport.new_tween(_animation_tween).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
 
-	# Comment
-	var _score_tween := _animation_tween.tween_method(self, "score_text", 0, 1000000, 1.75)
+	## Comment
+	var _score_tween := _animation_tween.tween_method(self, "score_text", 0, root_viewport.score, 1.75)
 
-	# Comment
-	var _left_tween := _animation_tween.tween_property($Scoreboard, "rect_position:x", -417.0, 1).from(87.0)
+	## Comment
+	var _left_tween := _animation_tween.tween_property(scoreboard, "rect_position:x", -417.0, 1).from(87.0)
 
-	# Comment
-	var _right_tween := _animation_tween.tween_property($RightBar, "rect_position:x", 591.0, 1).from(87.0)
+	## Comment
+	var _right_tween := _animation_tween.tween_property(right_bar, "rect_position:x", 591.0, 1).from(87.0)
 
-
-## initialize ResultsScreen variables
-#func change_properties(texts: Dictionary, judgements: Dictionary, mods: Array):
-#	#texts
-#	comboText.text = texts["combo"]
-#	accuracyText.text = texts["accuracy"]
-
-#	#judgements
-#	judgementDisplay.get_node("Accurate/Amount").text = judgements["accurate"]
-#	judgementDisplay.get_node("FAccurate/Amount").text = judgements["faccurate"]
-#	judgementDisplay.get_node("Inaccurate/Amount").text = judgements["inaccurate"]
-#	judgementDisplay.get_node("FInaccurate/Amount").text = judgements["finaccurate"]
-#	judgementDisplay.get_node("Miss/Amount").text = judgements["miss"]
-
-#	judgementDisplay.get_node("LateEarly/Organizer/Late/Amount").text = judgements["late"]
-#	judgementDisplay.get_node("LateEarly/Organizer/Early/Amount").text = judgements["early"]
-
-#	#mods
-#	if mods.size() > 0:
-#		#instance mod object to show the amount of mods
-#		#rate changing/forced judgement/sv multiplier will show number, havent really figured out the design yet
-#		pass
-
-#	#rank
-#	#get accuracy
-#	var acc: float
-#	acc = judgements["accurate"] + (judgements["inaccurate"] / 2)
-#	acc = acc / (judgements["accurate"] + judgements["inaccurate"] + judgements["miss"]) * 100
-
-#	var rank: String = get_rank(acc, judgements["miss"], [0,0], true)
-#	match rank:
-#		_:
-#			#change texture of rankDisplay
-#			pass
 
 ##doesnt belong here but for now /shrug
 #func get_rank(accuracy: float, missCount: int, finishes: Array, rollsHit: bool) -> String:
@@ -89,6 +86,6 @@ func _ready() -> void:
 #	return "F"
 
 
-# Comment
+## Comment
 func score_text(score: int) -> void:
-	($Main/Score/Label as Label).text = str(score)
+	score_label.text = str(score)

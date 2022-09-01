@@ -1,5 +1,5 @@
 class_name Gameplay
-extends Node
+extends Scene
 
 ## Comment
 signal marker_added(type, timing)
@@ -8,19 +8,16 @@ signal marker_added(type, timing)
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 
 ## Comment
-var _accurate_count := 0
-
-## Comment
 var _auto := false
 
 ## Comment
 var _auto_left := true
 
 ## Comment
-var _combo := 0
+var _cur_time := 0.0
 
 ## Comment
-var _cur_time := 0.0
+var _current_combo := 0
 
 ## Comment
 var _f := File.new()
@@ -29,7 +26,7 @@ var _f := File.new()
 var _fus := "user://debug.fus"
 
 ## Comment
-var _inaccurate_count := 0
+var _inactive := true
 
 ## Comment
 var _judgement_tween := SceneTreeTween.new()
@@ -44,16 +41,10 @@ var _l_kat_tween := SceneTreeTween.new()
 var _last_note_time := 0.0
 
 ## Comment
-var _miss_count := 0
-
-## Comment
 var _r_don_tween := SceneTreeTween.new()
 
 ## Comment
 var _r_kat_tween := SceneTreeTween.new()
-
-## Comment
-var _score := 0
 
 ## Comment
 var _score_indicator_tween := SceneTreeTween.new()
@@ -61,8 +52,8 @@ var _score_indicator_tween := SceneTreeTween.new()
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
-onready var combo := $BarLeft/DrumVisual/Combo as Label
 onready var combo_break := $ComboBreakAudio as AudioStreamPlayer
+onready var combo_label := $BarLeft/DrumVisual/Combo as Label
 onready var debug_text := $Debug/DebugText as Label
 onready var f_don_aud := $FinisherDonAudio as AudioStreamPlayer
 onready var f_kat_aud := $FinisherKatAudio as AudioStreamPlayer
@@ -106,11 +97,14 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
-	if not music.playing:
+	if _inactive:
 		return
 
 	_cur_time += delta
 	song_progress.value = _cur_time * 100 / _last_note_time
+	if _cur_time > _last_note_time + 1:
+		root_viewport.add_blackout(root_viewport.results)
+		_inactive = true
 
 	## Comment
 	var check_auto := false
@@ -123,7 +117,6 @@ func _process(delta: float) -> void:
 		var note := obj_container.get_child(i) as HitObject
 
 		note.move(_cur_time)
-		# If Godot errors this line, reload the project.
 		if check_misses and note.miss_check(_cur_time - (HitError.INACC_TIMING if note is Note else 0.0)):
 			check_auto = true
 			check_misses = false
@@ -167,7 +160,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		## Comment
 		var note := obj_container.get_child(i) as HitObject
 
-		# If Godot errors this line, reload the project.
 		if note.hit(inputs, _cur_time + (HitError.INACC_TIMING if note is Note else 0.0)) or Root.inputs_empty(inputs):
 			break
 
@@ -176,14 +168,23 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 ## Comment
-func add_marker(timing: float, add: bool) -> void:
+func add_marker(timing: float, previous_timing: float) -> void:
 	timing -= HitError.INACC_TIMING
 
+	## Comment
 	var type := int(HitObject.Score.ACCURATE if abs(timing) < HitError.ACC_TIMING else HitObject.Score.INACCURATE if abs(timing) < HitError.INACC_TIMING else HitObject.Score.MISS)
 
 	emit_signal("marker_added", type, timing)
-	if add:
+	if previous_timing < 0:
 		add_score(type)
+		return
+
+	previous_timing -= HitError.INACC_TIMING
+	if abs(previous_timing) < HitError.ACC_TIMING:
+		root_viewport.f_accurate_count += 1
+
+	elif abs(previous_timing) < HitError.INACC_TIMING:
+		root_viewport.f_inaccurate_count += 1
 
 
 ## Comment
@@ -216,23 +217,26 @@ func add_score(type: int, marker := false) -> void:
 			play_tween = false
 
 		HitObject.Score.ACCURATE:
-			_accurate_count += 1
-			_combo += 1
+			root_viewport.accurate_count += 1
+			root_viewport.max_combo += 1
+			_current_combo += 1
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.accurate_judgement
 
 		HitObject.Score.INACCURATE:
-			_inaccurate_count += 1
-			_combo += 1
+			root_viewport.inaccurate_count += 1
+			root_viewport.max_combo += 1
+			_current_combo += 1
 			score_value = 150
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.inaccurate_judgement
 
 		HitObject.Score.MISS:
-			if _combo >= 25:
+			if _current_combo >= 25:
 				combo_break.play()
-			_miss_count += 1
-			_combo = 0
+			root_viewport.miss_count += 1
+			root_viewport.max_combo += 1
+			_current_combo = 0
 			score_value = 0
 			_hit_notify_animation()
 			judgement.texture = root_viewport.skin.miss_judgement
@@ -243,8 +247,9 @@ func add_score(type: int, marker := false) -> void:
 		HitObject.Score.SPINNER:
 			score_value = 600
 
-	score_value = int(score_value * (1 + min(1, _combo / 300.0)))
-	_score += score_value
+	root_viewport.combo = int(max(root_viewport.combo, _current_combo))
+	score_value = int(score_value * (1 + min(1, _current_combo / 300.0)))
+	root_viewport.score += score_value
 	last_hit_score.text = str(score_value)
 	if play_tween:
 		_score_indicator_tween = root_viewport.new_tween(_score_indicator_tween)
@@ -253,11 +258,12 @@ func add_score(type: int, marker := false) -> void:
 		var _tween := _score_indicator_tween.tween_property(last_hit_score, "modulate:a", 0.0, 1).from(1.0)
 
 	## Comment
-	var hit_count := _accurate_count + _inaccurate_count / 2.0
+	var hit_count := root_viewport.accurate_count + root_viewport.inaccurate_count / 2.0
 
-	combo.text = str(_combo)
-	ui_score.text = "%010d" % _score
-	ui_accuracy.text = "%2.2f" % (hit_count * 100 / (_accurate_count + _inaccurate_count + _miss_count) if hit_count else 0.0)
+	combo_label.text = str(_current_combo)
+	ui_score.text = "%010d" % root_viewport.score
+	root_viewport.accuracy = "%2.2f" % (hit_count * 100 / (root_viewport.accurate_count + root_viewport.inaccurate_count + root_viewport.miss_count) if hit_count else 0.0)
+	ui_accuracy.text = root_viewport.accuracy
 
 
 ## Comment
@@ -267,8 +273,19 @@ func auto_toggled(new_auto: bool) -> void:
 
 ## Comment
 func change_indicator(timing: float) -> void:
-	timing_indicator.text = ("LATE" if timing > 0 else "EARLY") if root_viewport.late_early_simple_display < 2 else "%+d" % int(timing * 1000)
-	timing_indicator.modulate = root_viewport.skin.late_color if timing > 0 else root_viewport.skin.early_color
+	if timing > 0:
+		timing_indicator.modulate = root_viewport.skin.late_color
+		timing_indicator.text = "LATE"
+		root_viewport.late_count += 1
+
+	else:
+		timing_indicator.modulate = root_viewport.skin.early_color
+		timing_indicator.text = "EARLY"
+		root_viewport.early_count += 1
+
+	if root_viewport.late_early_simple_display > 1:
+		timing_indicator.text = "%+d" % int(timing * 1000)
+
 	_timing_indicator_tween = root_viewport.new_tween(_timing_indicator_tween).set_trans(Tween.TRANS_QUART)
 
 	## Comment
@@ -493,35 +510,31 @@ func load_func(file_path := "") -> void:
 		match int(line[2]):
 			NoteType.BARLINE:
 				## Comment
-				var note_object := preload("res://hitobjects/bar_line.tscn").instance() as BarLine
+				var note_object := root_viewport.bar_line_object.instance() as BarLine
 
 				note_object.change_properties(timing, total_cur_sv)
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 
 			NoteType.DON, NoteType.KAT:
 				## Comment
-				var note_object := preload("res://hitobjects/note.tscn").instance() as Note
+				var note_object := root_viewport.note_object.instance() as Note
 
 				note_object.change_properties(timing, total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 				Root.send_signal(self, "new_marker_added", note_object, "add_marker")
 
 			NoteType.ROLL:
 				## Comment
-				var note_object := preload("res://hitobjects/roll.tscn").instance() as Roll
+				var note_object := root_viewport.roll_object.instance() as Roll
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 
 			NoteType.SPINNER:
 				## Comment
-				var note_object := preload("res://hitobjects/spinner_warn.tscn").instance() as SpinnerWarn
+				var note_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
 
 				note_object.change_properties(timing, total_cur_sv, float(line[3]), cur_bpm)
-				# If Godot errors this line, reload the project.
 				add_object(note_object)
 				Root.send_signal(self, "object_added", note_object, "add_object")
 
@@ -564,9 +577,11 @@ func play_audio(key: String) -> void:
 ## Comment
 func play_chart() -> void:
 	_reset(music.playing)
+	_inactive = true
 	music.stop()
 
 	if not music.playing:
+		_inactive = false
 		music.play()
 
 
@@ -578,7 +593,7 @@ func text_debug(text: String) -> void:
 ## Comment
 func toggle_settings() -> void:
 	if not root_viewport.remove_scene("SettingsPanel"):
-		root_viewport.add_scene(preload("res://scenes/settings_panel.tscn").instance(), name)
+		root_viewport.add_scene(root_viewport.settings_panel.instance(), name)
 
 
 ## Comment
@@ -634,11 +649,11 @@ func _load_finish(new_text: String) -> void:
 
 ## Comment
 func _reset(dispose := true) -> void:
-	_accurate_count = 0
-	_inaccurate_count = 0
-	_miss_count = 0
-	_combo = 0
-	_score = 0
+	root_viewport.accurate_count = 0
+	root_viewport.inaccurate_count = 0
+	root_viewport.miss_count = 0
+	root_viewport.score = 0
+	_current_combo = 0
 	add_score(-1)
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
 	_cur_time = 0

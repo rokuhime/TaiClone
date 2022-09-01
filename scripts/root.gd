@@ -28,17 +28,103 @@ var hit_error := true
 var late_early_simple_display := 1
 
 ## Comment
+var accuracy: String
+
+## Comment
+var accurate_count: int
+
+## Comment
+var bar_line_object: PackedScene
+
+## Comment
+var combo: int
+
+## Comment
+var early_count: int
+
+## Comment
+var f_accurate_count: int
+
+## Comment
+var f_inaccurate_count: int
+
+## Comment
+var inaccurate_count: int
+
+## Comment
+var late_count: int
+
+## Comment
+var max_combo: int
+
+## Comment
+var menu_bg: Texture
+
+## Comment
+var miss_count: int
+
+## Comment
+var note_object: PackedScene
+
+## Comment
+var results: PackedScene
+
+## Comment
+var roll_object: PackedScene
+
+## Comment
+var score: int
+
+## Comment
+var settings_panel: PackedScene
+
+## Comment
 var settings_save := false
 
 ## Comment
 var skin: SkinManager
 
 ## Comment
+var spinner_object: PackedScene
+
+## Comment
+var spinner_warn_object: PackedScene
+
+## Comment
+var tick_object: PackedScene
+
+## Comment
 var _background := $"Background" as TextureRect
+
+## Comment
+var _blackout := load("res://scenes/blackout.tscn") as PackedScene
+
+## Comment
+var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
+	accuracy = ""
+	accurate_count = 0
+	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
+	combo = 0
+	early_count = 0
+	f_accurate_count = 0
+	f_inaccurate_count = 0
+	inaccurate_count = 0
+	late_count = 0
+	max_combo = 0
+	menu_bg = load("res://temporary/menubg.png") as Texture
+	miss_count = 0
+	note_object = load("res://hitobjects/note.tscn") as PackedScene
+	results = load("res://scenes/results.tscn") as PackedScene
+	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
+	score = 0
+	settings_panel = load("res://scenes/settings_panel.tscn") as PackedScene
 	skin = SkinManager.new()
+	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
+	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
+	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
 
 
 ## Comment
@@ -60,6 +146,12 @@ static func item_resolution(item: Array) -> Vector2:
 static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String, binds := []) -> void:
 	if obj.connect(signal_name, signal_target, method, binds):
 		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
+
+
+## Comment
+func add_blackout(next_scene: PackedScene) -> void:
+	_next_scene = next_scene
+	add_scene(_blackout.instance(), "VolumeControl")
 
 
 ## Comment
@@ -108,9 +200,20 @@ func offset_difference(difference: int) -> void:
 
 
 ## Comment
+func remove_blackout() -> void:
+	## Comment
+	var _old_scene := remove_scene(get_child(1).name)
+
+	add_scene(_next_scene.instance())
+
+	## Comment
+	var _blackout_removed := remove_scene("Blackout")
+
+
+## Comment
 func remove_scene(old_scene: String) -> bool:
 	if has_node(old_scene):
-		get_node(old_scene).queue_free()
+		(get_node(old_scene) as Scene).scene_removed()
 		return true
 
 	return false
