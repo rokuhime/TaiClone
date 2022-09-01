@@ -17,32 +17,32 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "BarLine",
 "language": "GDScript",
-"path": "res://scripts/gameplay/bar_line.gd"
+"path": "res://hitobjects/bar_line.gd"
 }, {
 "base": "Node",
 "class": "Gameplay",
 "language": "GDScript",
-"path": "res://scripts/gameplay/gameplay.gd"
+"path": "res://gameplay/gameplay.gd"
 }, {
 "base": "Control",
 "class": "HitError",
 "language": "GDScript",
-"path": "res://scripts/gameplay/hit_error.gd"
+"path": "res://gameplay/hit_error.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "HitObject",
 "language": "GDScript",
-"path": "res://scripts/gameplay/hit_object.gd"
+"path": "res://hitobjects/hit_object.gd"
 }, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
-"path": "res://scripts/gameplay/note.gd"
+"path": "res://hitobjects/note.gd"
 }, {
 "base": "HitObject",
 "class": "Roll",
 "language": "GDScript",
-"path": "res://scripts/gameplay/roll.gd"
+"path": "res://hitobjects/roll.gd"
 }, {
 "base": "Viewport",
 "class": "Root",
@@ -52,7 +52,7 @@ _global_script_classes=[ {
 "base": "CanvasItem",
 "class": "SettingsPanel",
 "language": "GDScript",
-"path": "res://scripts/root/settings_panel.gd"
+"path": "res://scenes/settings_panel.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
@@ -62,12 +62,12 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "Spinner",
 "language": "GDScript",
-"path": "res://scripts/gameplay/spinner.gd"
+"path": "res://hitobjects/spinner.gd"
 }, {
 "base": "HitObject",
 "class": "SpinnerWarn",
 "language": "GDScript",
-"path": "res://scripts/gameplay/spinner_warn.gd"
+"path": "res://hitobjects/spinner_warn.gd"
 }, {
 "base": "SceneTree",
 "class": "TaiClone",
@@ -77,12 +77,12 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "Tick",
 "language": "GDScript",
-"path": "res://scripts/gameplay/tick.gd"
+"path": "res://hitobjects/tick.gd"
 }, {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
-"path": "res://scripts/root/volume_control.gd"
+"path": "res://scenes/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -105,7 +105,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://scenes/root/taiclone.tscn"
+run/main_scene="res://scenes/taiclone.tscn"
 run/main_loop_type="TaiClone"
 
 [debug]

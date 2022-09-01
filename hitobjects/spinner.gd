@@ -79,8 +79,8 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 		# TODO: Redo first hit logic to not bias kats
 		_first_hit_is_kat = inputs.has("Kat") or inputs.has("LeftKat") or inputs.has("RightKat")
 
-	## The list of [member HitObject.Score]s to add.
-	var scores := []
+	## Whether or not this [Spinner] was hit.
+	var not_hit := true
 
 	while not Root.inputs_empty(inputs):
 		## Comment
@@ -93,16 +93,14 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 			break
 
 		_cur_hit_count += 1
-		scores.append(int(Score.SPINNER))
+		emit_signal("score_added", Score.SPINNER, false)
+		not_hit = false
 		if _cur_hit_count == _needed_hits:
 			_spinner_finished(int(Score.ACCURATE))
 			break
 
-	if scores.empty():
+	if not_hit:
 		return false
-
-	for score in scores:
-		emit_signal("score_added", score, false)
 
 	_count_text()
 	_speed_tween = root_viewport.new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)

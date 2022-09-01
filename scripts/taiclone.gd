@@ -46,14 +46,14 @@ func _init() -> void:
 	root_viewport.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
 
 	## The [VolumeControl] instance. It requires initialization before being added as a scene.
-	var volume_control := preload("res://scenes/root/volume_control.tscn").instance() as VolumeControl
+	var volume_control := preload("res://scenes/volume_control.tscn").instance() as VolumeControl
 
 	volume_control.modulate.a = 0
 	root_viewport.add_scene(volume_control)
 	for i in range(AudioServer.bus_count):
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
-	root_viewport.add_scene(preload("res://scenes/gameplay/gameplay.tscn").instance())
+	root_viewport.add_scene(preload("res://gameplay/gameplay.tscn").instance())
 	root_viewport.settings_save = true
 
 	# Load Scene == FOR DEBUG ONLY ==
