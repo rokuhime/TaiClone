@@ -28,10 +28,25 @@ var hit_error := true
 var late_early_simple_display := 1
 
 ## Comment
+var accuracy: String
+
+## Comment
+var accurate_count: int
+
+## Comment
 var bar_line_object: PackedScene
 
 ## Comment
+var combo: int
+
+## Comment
+var inaccurate_count: int
+
+## Comment
 var menu_bg: Texture
+
+## Comment
+var miss_count: int
 
 ## Comment
 var note_object: PackedScene
@@ -41,6 +56,9 @@ var results: PackedScene
 
 ## Comment
 var roll_object: PackedScene
+
+## Comment
+var score: int
 
 ## Comment
 var settings_panel: PackedScene
@@ -71,11 +89,17 @@ var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
+	accuracy = ""
+	accurate_count = 0
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
+	combo = 0
+	inaccurate_count = 0
 	menu_bg = load("res://temporary/menubg.png") as Texture
+	miss_count = 0
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
+	score = 0
 	settings_panel = load("res://scenes/settings_panel.tscn") as PackedScene
 	skin = SkinManager.new()
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene

@@ -66,7 +66,6 @@ margin_top = 53.0
 margin_right = 574.0
 margin_bottom = 106.0
 theme_type_variation = "ResultsLabel"
-text = "1,000,000"
 align = 1
 
 [node name="H" type="HBoxContainer" parent="Main"]
@@ -94,22 +93,21 @@ margin_bottom = 106.0
 alignment = 1
 
 [node name="Label" type="Label" parent="Main/H/Combo/H"]
-margin_left = 44.0
-margin_right = 176.0
+margin_left = 113.0
+margin_right = 113.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
 theme_type_variation = "ResultsLabel"
-text = "1024"
 
 [node name="Max" type="Label" parent="Main/H/Combo/H"]
-margin_left = 180.0
+margin_left = 117.0
 margin_top = 18.0
-margin_right = 241.0
+margin_right = 171.0
 margin_bottom = 53.0
 size_flags_horizontal = 4
 size_flags_vertical = 8
 theme_type_variation = "ResultsMax"
-text = "/1024"
+text = "/Max"
 
 [node name="Accuracy" type="VBoxContainer" parent="Main/H"]
 margin_left = 289.0
@@ -129,7 +127,6 @@ margin_top = 53.0
 margin_right = 285.0
 margin_bottom = 106.0
 theme_type_variation = "ResultsLabel"
-text = "99.99%"
 align = 1
 
 [node name="Performance" type="VBoxContainer" parent="Main"]
@@ -210,7 +207,6 @@ margin_right = 187.0
 margin_bottom = 62.0
 size_flags_horizontal = 3
 theme_type_variation = "HitCountLabel"
-text = "2000"
 align = 1
 
 [node name="FAccurateTexture" type="TextureRect" parent="RightBar/HitCount/GridContainer"]
@@ -229,7 +225,7 @@ margin_right = 377.0
 margin_bottom = 62.0
 size_flags_horizontal = 3
 theme_type_variation = "HitCountLabel"
-text = "2000"
+text = "N/A"
 align = 1
 
 [node name="InaccurateTexture" type="TextureRect" parent="RightBar/HitCount/GridContainer"]
@@ -248,7 +244,6 @@ margin_right = 187.0
 margin_bottom = 156.0
 size_flags_horizontal = 3
 theme_type_variation = "HitCountLabel"
-text = "2000"
 align = 1
 
 [node name="FInaccurateTexture" type="TextureRect" parent="RightBar/HitCount/GridContainer"]
@@ -268,7 +263,7 @@ margin_right = 377.0
 margin_bottom = 156.0
 size_flags_horizontal = 3
 theme_type_variation = "HitCountLabel"
-text = "2000"
+text = "N/A"
 align = 1
 
 [node name="MissTexture" type="TextureRect" parent="RightBar/HitCount/GridContainer"]
@@ -287,7 +282,6 @@ margin_right = 187.0
 margin_bottom = 250.0
 size_flags_horizontal = 3
 theme_type_variation = "HitCountLabel"
-text = "2000"
 align = 1
 
 [node name="Late" type="PanelContainer" parent="RightBar/HitCount/GridContainer"]
@@ -305,7 +299,7 @@ margin_top = 5.0
 margin_right = 86.0
 margin_bottom = 39.0
 theme_type_variation = "HitCountLabel"
-text = "500"
+text = "N/A"
 align = 1
 
 [node name="Early" type="PanelContainer" parent="RightBar/HitCount/GridContainer"]
@@ -323,7 +317,7 @@ margin_top = 5.0
 margin_right = 86.0
 margin_bottom = 39.0
 theme_type_variation = "HitCountLabel"
-text = "500"
+text = "N/A"
 align = 1
 
 [node name="ErrorBar" type="Panel" parent="RightBar"]
