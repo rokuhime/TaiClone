@@ -83,12 +83,16 @@ func _ready() -> void:
 	late_early_changed()
 	Root.send_signal(self, "offset_changed", root_viewport, "offset_difference")
 	offset_difference(root_viewport.global_offset)
+	root_viewport.music.stop()
 	last_hit_score.modulate.a = 0
 	l_don_obj.modulate.a = 0
 	l_kat_obj.modulate.a = 0
 	r_don_obj.modulate.a = 0
 	r_kat_obj.modulate.a = 0
 	_reset()
+
+	## Comment
+	var _bars_removed := root_viewport.remove_scene("Bars")
 
 	# dev autoload map
 	if _f.file_exists(_fus):
@@ -310,14 +314,20 @@ func load_func(file_path := "") -> void:
 	debug_text.text = "Loading... [Reading File]"
 
 	## Comment
-	var fus_version := "v0.0.2"
+	var fus_version := "v0.0.3"
 
 	if file_path.ends_with(".osu"):
+		## Comment
+		var artist := ""
+
 		## Comment
 		var audio_filename := ""
 
 		## Comment
 		var bg_file_name := ""
+
+		## Comment
+		var charter := ""
 
 		## Comment
 		var cur_bpm := -1.0
@@ -327,6 +337,9 @@ func load_func(file_path := "") -> void:
 
 		## Comment
 		var current_timing_data := []
+
+		## Comment
+		var difficulty_name := ""
 
 		## Comment
 		var map_sv_multiplier := ""
@@ -345,6 +358,9 @@ func load_func(file_path := "") -> void:
 
 		## Comment
 		var subsection := ""
+
+		## Comment
+		var title := ""
 
 		## Comment
 		var total_cur_sv := 0.0
@@ -435,6 +451,12 @@ func load_func(file_path := "") -> void:
 					else:
 						_append_note(notes, [time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher])
 
+				"Metadata":
+					artist = _find_value(artist, line, "Artist:")
+					charter = _find_value(charter, line, "Creator:")
+					difficulty_name = _find_value(difficulty_name, line, "Version:")
+					title = _find_value(title, line, "Title:")
+
 				"TimingPoints":
 					## Comment
 					var uninherited := bool(int(line_data[6]))
@@ -458,7 +480,7 @@ func load_func(file_path := "") -> void:
 			_load_finish("Unable to create temporary .fus file!")
 			return
 
-		_f.store_string(_csv_line([fus_version, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename)] + notes).join("\n"))
+		_f.store_string(_csv_line([fus_version, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist, charter, difficulty_name, title] + notes).join("\n"))
 		_f.close()
 
 	if not file_path.ends_with(".fus"):
@@ -490,6 +512,10 @@ func load_func(file_path := "") -> void:
 		root_viewport.bg_changed(newtexture, Color("373737"))
 
 	root_viewport.music.stream = AudioLoader.loadfile(_f.get_line())
+	root_viewport.artist = _f.get_line()
+	root_viewport.charter = _f.get_line()
+	root_viewport.difficulty_name = _f.get_line()
+	root_viewport.title = _f.get_line()
 	_reset()
 
 	## Comment

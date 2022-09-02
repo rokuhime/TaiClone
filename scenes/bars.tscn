@@ -26,26 +26,25 @@ theme_type_variation = "Top"
 
 [node name="SongName" type="Label" parent="Top/V/Top"]
 margin_top = 3.0
-margin_right = 1214.0
+margin_right = 1173.0
 margin_bottom = 41.0
 size_flags_horizontal = 3
 theme_type_variation = "TopLabel"
-text = "Sanae-San - RD-Sounds feat. Meramipop"
 
 [node name="PlayedByText" type="Label" parent="Top/V/Top"]
-margin_left = 1221.0
+margin_left = 1180.0
 margin_top = 3.0
-margin_right = 1360.0
+margin_right = 1319.0
 margin_bottom = 41.0
 theme_type_variation = "TopLabel"
 text = "Played by"
 
 [node name="Name" type="Label" parent="Top/V/Top"]
-margin_left = 1367.0
+margin_left = 1326.0
 margin_right = 1420.0
 margin_bottom = 44.0
 theme_type_variation = "TopName"
-text = "6_6"
+text = "Player"
 
 [node name="Bottom" type="HBoxContainer" parent="Top/V"]
 margin_top = 48.0
@@ -54,16 +53,14 @@ margin_bottom = 86.0
 theme_type_variation = "Top"
 
 [node name="CharterName" type="Label" parent="Top/V/Bottom"]
-margin_right = 112.0
 margin_bottom = 38.0
 theme_type_variation = "TopLabel"
-text = "Genjuro"
 
 [node name="TextureRect" type="TextureRect" parent="Top/V/Bottom"]
 modulate = Color( 0.921569, 0.313726, 0.215686, 1 )
-margin_left = 119.0
+margin_left = 7.0
 margin_top = 6.0
-margin_right = 176.0
+margin_right = 64.0
 margin_bottom = 31.0
 rect_min_size = Vector2( 57, 25 )
 size_flags_vertical = 4
@@ -72,19 +69,17 @@ expand = true
 stretch_mode = 6
 
 [node name="DifficultyName" type="Label" parent="Top/V/Bottom"]
-margin_left = 183.0
-margin_right = 1066.0
+margin_left = 71.0
+margin_right = 1413.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 theme_type_variation = "TopLabel"
-text = "Hell Oni - 8.01"
 
 [node name="PlayDate" type="Label" parent="Top/V/Bottom"]
-margin_left = 1073.0
+margin_left = 1420.0
 margin_right = 1420.0
 margin_bottom = 38.0
 theme_type_variation = "TopLabel"
-text = "2022-07-11, 11:46:44 PM."
 
 [node name="Bottom" type="PanelContainer" parent="."]
 anchor_top = 1.0
@@ -107,31 +102,9 @@ text = "<<<"
 
 [node name="Buffer" type="ColorRect" parent="Bottom/H"]
 margin_left = 253.0
-margin_right = 681.0
+margin_right = 1440.0
 margin_bottom = 100.0
 size_flags_horizontal = 3
 color = Color( 0, 0, 0, 1 )
 
-[node name="ChangeValue" type="Button" parent="Bottom/H"]
-margin_left = 684.0
-margin_right = 934.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 250, 0 )
-theme_type_variation = "BottomButton"
-text = "AAAAA"
-
-[node name="Replay" type="Button" parent="Bottom/H"]
-margin_left = 937.0
-margin_right = 1187.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 250, 0 )
-theme_type_variation = "BottomButton"
-text = "Test"
-
-[node name="Retry" type="Button" parent="Bottom/H"]
-margin_left = 1190.0
-margin_right = 1440.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 250, 0 )
-theme_type_variation = "BottomButton"
-text = "Results"
+[connection signal="button_up" from="Bottom/H/Back" to="." method="back_button_pressed"]

@@ -1,4 +1,4 @@
-extends Node
+extends Scene
 
 ## Comment
 var _animation_tween := SceneTreeTween.new()

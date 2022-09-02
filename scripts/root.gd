@@ -13,10 +13,49 @@ signal late_early_changed
 signal offset_changed(difference)
 
 ## Comment
+var _background := $"Background" as TextureRect
+
+## Comment
+var bar_line_object := load("res://hitobjects/bar_line.tscn") as PackedScene
+
+## Comment
+var bars := load("res://scenes/bars.tscn") as PackedScene
+
+## Comment
 const CONFIG_PATH := "user://config.ini"
 
 ## Comment
+var gameplay := load("res://gameplay/gameplay.tscn") as PackedScene
+
+## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
+
+## Comment
+var menu_bg := load("res://temporary/menubg.png") as Texture
+
+## Comment
+var music := $Background/Music as AudioStreamPlayer
+
+## Comment
+var note_object := load("res://hitobjects/note.tscn") as PackedScene
+
+## Comment
+var results := load("res://scenes/results.tscn") as PackedScene
+
+## Comment
+var roll_object := load("res://hitobjects/roll.tscn") as PackedScene
+
+## Comment
+var settings_panel := load("res://scenes/settings_panel.tscn") as PackedScene
+
+## Comment
+var spinner_object := load("res://hitobjects/spinner.tscn") as PackedScene
+
+## Comment
+var spinner_warn_object := load("res://hitobjects/spinner_warn.tscn") as PackedScene
+
+## Comment
+var tick_object := load("res://hitobjects/tick.tscn") as PackedScene
 
 ## Comment
 var global_offset := 0
@@ -34,13 +73,16 @@ var accuracy: String
 var accurate_count: int
 
 ## Comment
-var bar_line_object: PackedScene
+var artist: String
 
 ## Comment
-var bars: PackedScene
+var charter: String
 
 ## Comment
 var combo: int
+
+## Comment
+var difficulty_name: String
 
 ## Comment
 var early_count: int
@@ -61,28 +103,10 @@ var late_count: int
 var max_combo: int
 
 ## Comment
-var menu_bg: Texture
-
-## Comment
 var miss_count: int
 
 ## Comment
-var music: AudioStreamPlayer
-
-## Comment
-var note_object: PackedScene
-
-## Comment
-var results: PackedScene
-
-## Comment
-var roll_object: PackedScene
-
-## Comment
 var score: int
-
-## Comment
-var settings_panel: PackedScene
 
 ## Comment
 var settings_save := false
@@ -91,16 +115,7 @@ var settings_save := false
 var skin: SkinManager
 
 ## Comment
-var spinner_object: PackedScene
-
-## Comment
-var spinner_warn_object: PackedScene
-
-## Comment
-var tick_object: PackedScene
-
-## Comment
-var _background := $"Background" as TextureRect
+var title: String
 
 ## Comment
 var _blackout := load("res://scenes/blackout.tscn") as PackedScene
@@ -112,27 +127,20 @@ var _next_scene := PackedScene.new()
 func _init() -> void:
 	accuracy = ""
 	accurate_count = 0
-	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://scenes/bars.tscn") as PackedScene
+	artist = ""
+	charter = ""
 	combo = 0
+	difficulty_name = ""
 	early_count = 0
 	f_accurate_count = 0
 	f_inaccurate_count = 0
 	inaccurate_count = 0
 	late_count = 0
 	max_combo = 0
-	menu_bg = load("res://temporary/menubg.png") as Texture
 	miss_count = 0
-	music = $Background/Music as AudioStreamPlayer
-	note_object = load("res://hitobjects/note.tscn") as PackedScene
-	results = load("res://scenes/results.tscn") as PackedScene
-	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
 	score = 0
-	settings_panel = load("res://scenes/settings_panel.tscn") as PackedScene
 	skin = SkinManager.new()
-	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
-	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
-	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
+	title = ""
 
 
 ## Comment
@@ -164,7 +172,11 @@ func add_blackout(next_scene: PackedScene) -> void:
 
 ## Comment
 func add_scene(new_scene: Node, parent_node := "") -> void:
-	add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
+	if has_node(new_scene.name):
+		new_scene.queue_free()
+
+	else:
+		add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
 
 
 ## Comment
