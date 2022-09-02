@@ -4,10 +4,10 @@ extends SceneTree
 ## Ran on startup, absolute root script of the project.
 
 ## Comment
-var _root := preload("res://scripts/root.gd")
+var _root := preload("res://root/root.gd")
 
 ## Comment
-var _volume_control := preload("res://scenes/volume_control.tscn")
+var _volume_control := preload("res://root/volume_control.tscn")
 
 
 func _init() -> void:

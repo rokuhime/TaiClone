@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://scenes/bars.gd" type="Script" id=1]
+[ext_resource path="res://root/bars.gd" type="Script" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
 
 [node name="Bars" type="Control"]

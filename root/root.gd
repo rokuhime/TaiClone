@@ -118,7 +118,7 @@ var title: String
 var _background := $"Background" as TextureRect
 
 ## Comment
-var _blackout := load("res://scenes/blackout.tscn") as PackedScene
+var _blackout := load("res://root/blackout.tscn") as PackedScene
 
 ## Comment
 var _next_scene := PackedScene.new()
@@ -129,7 +129,7 @@ func _init() -> void:
 	accurate_count = 0
 	artist = ""
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://scenes/bars.tscn") as PackedScene
+	bars = load("res://root/bars.tscn") as PackedScene
 	charter = ""
 	combo = 0
 	difficulty_name = ""
@@ -147,7 +147,7 @@ func _init() -> void:
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
 	score = 0
-	settings_panel = load("res://scenes/settings_panel.tscn") as PackedScene
+	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
 	skin = SkinManager.new()
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
