@@ -37,6 +37,9 @@ var accurate_count: int
 var bar_line_object: PackedScene
 
 ## Comment
+var bars: PackedScene
+
+## Comment
 var combo: int
 
 ## Comment
@@ -110,6 +113,7 @@ func _init() -> void:
 	accuracy = ""
 	accurate_count = 0
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
+	bars = load("res://scenes/bars.tscn") as PackedScene
 	combo = 0
 	early_count = 0
 	f_accurate_count = 0

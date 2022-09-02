@@ -59,6 +59,8 @@ func _ready() -> void:
 	## Comment
 	var _right_tween := _animation_tween.tween_property(right_bar, "rect_position:x", 591.0, 1).from(87.0)
 
+	root_viewport.add_scene(root_viewport.bars.instance())
+
 
 ##doesnt belong here but for now /shrug
 #func get_rank(accuracy: float, missCount: int, finishes: Array, rollsHit: bool) -> String:
