@@ -50,6 +50,9 @@ var _r_kat_tween := SceneTreeTween.new()
 var _score_indicator_tween := SceneTreeTween.new()
 
 ## Comment
+var _time_begin := 0.0
+
+## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
 onready var combo_break := $ComboBreakAudio as AudioStreamPlayer
@@ -81,8 +84,6 @@ onready var ui_score := $UI/Score as Label
 func _ready() -> void:
 	Root.send_signal(self, "late_early_changed", root_viewport, "late_early_changed")
 	late_early_changed()
-	Root.send_signal(self, "offset_changed", root_viewport, "offset_difference")
-	offset_difference(root_viewport.global_offset)
 	root_viewport.music.stop()
 	last_hit_score.modulate.a = 0
 	l_don_obj.modulate.a = 0
@@ -99,12 +100,12 @@ func _ready() -> void:
 		load_func(_fus)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
 	if _inactive:
 		return
 
-	_cur_time += delta
+	_cur_time = (Time.get_ticks_usec() - _time_begin - root_viewport.global_offset * 1000) / 1000000
 	song_progress.value = _cur_time * 100 / _last_note_time
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
@@ -576,11 +577,6 @@ func load_func(file_path := "") -> void:
 
 
 ## Comment
-func offset_difference(difference: int) -> void:
-	_cur_time -= difference / 1000.0
-
-
-## Comment
 func play_audio(key: String) -> void:
 	match key:
 		"FinisherDon":
@@ -609,8 +605,9 @@ func play_button_pressed() -> void:
 
 	else:
 		_reset(false)
-		_inactive = false
 		root_viewport.music.play()
+		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
+		_inactive = false
 
 
 ## Comment

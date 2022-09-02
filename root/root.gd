@@ -10,9 +10,6 @@ signal hit_error_changed
 signal late_early_changed
 
 ## Comment
-signal offset_changed(difference)
-
-## Comment
 const CONFIG_PATH := "user://config.ini"
 
 ## Comment
@@ -224,11 +221,6 @@ func new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
 		old_tween.kill()
 
 	return get_tree().create_tween()
-
-
-## Comment
-func offset_difference(difference: int) -> void:
-	emit_signal("offset_changed", difference)
 
 
 ## Comment
