@@ -41,7 +41,7 @@ func _ready() -> void:
 
 
 ## Comment
-func new_marker(type: int, timing: float) -> void:
+func new_marker(type: int, timing: float, indicate: bool) -> void:
 	## Comment
 	var marker_obj := middle_marker.duplicate() as ColorRect
 
@@ -93,7 +93,7 @@ func new_marker(type: int, timing: float) -> void:
 	anchor = avg / children if children else 0.5
 	avg_hit.anchor_left = anchor
 	avg_hit.anchor_right = anchor
-	if type == int(HitObject.Score.INACCURATE):
+	if indicate and type == int(HitObject.Score.INACCURATE):
 		emit_signal("indicator_changed", timing)
 
 

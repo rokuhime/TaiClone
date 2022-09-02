@@ -2,7 +2,7 @@ class_name Gameplay
 extends Scene
 
 ## Comment
-signal marker_added(type, timing)
+signal marker_added(type, timing, indicate)
 
 ## Comment
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
@@ -177,11 +177,12 @@ func add_marker(timing: float, previous_timing: float) -> void:
 	## Comment
 	var type := int(HitObject.Score.ACCURATE if abs(timing) < HitError.ACC_TIMING else HitObject.Score.INACCURATE if abs(timing) < HitError.INACC_TIMING else HitObject.Score.MISS)
 
-	emit_signal("marker_added", type, timing)
 	if previous_timing < 0:
+		emit_signal("marker_added", type, timing, true)
 		add_score(type)
 		return
 
+	emit_signal("marker_added", type, timing, false)
 	previous_timing -= HitError.INACC_TIMING
 	if abs(previous_timing) < HitError.ACC_TIMING:
 		root_viewport.f_accurate_count += 1
@@ -245,7 +246,7 @@ func add_score(type: int, marker := false) -> void:
 			judgement.texture = root_viewport.skin.miss_judgement
 			play_tween = false
 			if marker:
-				emit_signal("marker_added", type, HitError.INACC_TIMING)
+				emit_signal("marker_added", type, HitError.INACC_TIMING, true)
 
 		HitObject.Score.SPINNER:
 			score_value = 600
