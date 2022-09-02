@@ -64,6 +64,9 @@ var menu_bg: Texture
 var miss_count: int
 
 ## Comment
+var music: AudioStreamPlayer
+
+## Comment
 var note_object: PackedScene
 
 ## Comment
@@ -116,6 +119,7 @@ func _init() -> void:
 	max_combo = 0
 	menu_bg = load("res://temporary/menubg.png") as Texture
 	miss_count = 0
+	music = $Background/Music as AudioStreamPlayer
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene

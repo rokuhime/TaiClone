@@ -65,8 +65,8 @@ onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
 onready var l_kat_obj := $BarLeft/DrumVisual/LeftKat as CanvasItem
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
-onready var music := $Music as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
+onready var play_button := $Debug/TempLoadChart/PlayButton as Button
 onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
 onready var r_don_obj := $BarLeft/DrumVisual/RightDon as CanvasItem
 onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
@@ -103,8 +103,7 @@ func _process(delta: float) -> void:
 	_cur_time += delta
 	song_progress.value = _cur_time * 100 / _last_note_time
 	if _cur_time > _last_note_time + 1:
-		root_viewport.add_blackout(root_viewport.results)
-		_inactive = true
+		_end_chart()
 
 	## Comment
 	var check_auto := false
@@ -299,6 +298,7 @@ func late_early_changed() -> void:
 
 ## Comment
 func load_func(file_path := "") -> void:
+	_inactive = true
 	debug_text.text = "Loading... [Checking File]"
 	if file_path == "":
 		file_path = line_edit.text.replace("\\", "/")
@@ -489,7 +489,7 @@ func load_func(file_path := "") -> void:
 		newtexture.create_from_image(image, 0)
 		root_viewport.bg_changed(newtexture, Color("373737"))
 
-	music.stream = AudioLoader.loadfile(_f.get_line())
+	root_viewport.music.stream = AudioLoader.loadfile(_f.get_line())
 	_reset()
 
 	## Comment
@@ -541,9 +541,10 @@ func load_func(file_path := "") -> void:
 			NoteType.TIMING_POINT:
 				cur_bpm = float(line[1])
 
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "apply_skin", root_viewport.skin)
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "audio_played", self, "play_audio")
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "score_added", self, "add_score")
+	get_tree().call_group("HitObjects", "apply_skin", root_viewport.skin)
+	get_tree().call_group("HitObjects", "connect", "audio_played", self, "play_audio")
+	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
+	play_button.disabled = false
 	_load_finish("Done!")
 
 
@@ -575,19 +576,14 @@ func play_audio(key: String) -> void:
 
 
 ## Comment
-func play_chart() -> void:
-	_reset(music.playing)
-	_inactive = true
-	music.stop()
+func play_button_pressed() -> void:
+	if root_viewport.music.playing:
+		_end_chart()
 
-	if not music.playing:
+	else:
+		_reset(false)
 		_inactive = false
-		music.play()
-
-
-## Comment
-func text_debug(text: String) -> void:
-	debug_text.text = text
+		root_viewport.music.play()
 
 
 ## Comment
@@ -624,6 +620,12 @@ static func _find_value(value: String, line: String, key: String) -> String:
 
 
 ## Comment
+func _end_chart() -> void:
+	root_viewport.add_blackout(root_viewport.results)
+	_inactive = true
+
+
+## Comment
 func _hit_notify_animation() -> void:
 	_judgement_tween = root_viewport.new_tween(_judgement_tween).set_ease(Tween.EASE_OUT)
 
@@ -655,5 +657,7 @@ func _reset(dispose := true) -> void:
 	root_viewport.score = 0
 	_current_combo = 0
 	add_score(-1)
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
 	_cur_time = 0
+	play_button.disabled = dispose
+	play_button.text = "Play" if dispose else "Stop"
+	get_tree().call_group("HitObjects", "queue_free" if dispose else "activate")

@@ -4,3 +4,6 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 stretch_mode = 7
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+bus = "Music"
