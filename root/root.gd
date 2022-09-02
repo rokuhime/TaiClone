@@ -67,6 +67,9 @@ var inaccurate_count: int
 var late_count: int
 
 ## Comment
+var main_menu: PackedScene
+
+## Comment
 var max_combo: int
 
 ## Comment
@@ -136,6 +139,7 @@ func _init() -> void:
 	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
 	inaccurate_count = 0
 	late_count = 0
+	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
 	max_combo = 0
 	menu_bg = load("res://temporary/menubg.png") as Texture
 	miss_count = 0

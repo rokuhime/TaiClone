@@ -288,7 +288,7 @@ text = "Settings"
 
 [connection signal="marker_added" from="." to="HitError" method="new_marker"]
 [connection signal="indicator_changed" from="HitError" to="." method="change_indicator"]
-[connection signal="pressed" from="Debug/TempLoadChart/LoadButton" to="." method="load_func"]
-[connection signal="pressed" from="Debug/TempLoadChart/PlayButton" to="." method="play_button_pressed"]
+[connection signal="button_up" from="Debug/TempLoadChart/LoadButton" to="." method="load_func"]
+[connection signal="button_up" from="Debug/TempLoadChart/PlayButton" to="." method="play_button_pressed"]
 [connection signal="toggled" from="Debug/TempLoadChart/AutoToggle" to="." method="auto_toggled"]
-[connection signal="pressed" from="Debug/TempLoadChart/SettingsButton" to="." method="toggle_settings"]
+[connection signal="button_up" from="Debug/TempLoadChart/SettingsButton" to="." method="toggle_settings"]

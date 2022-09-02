@@ -25,5 +25,6 @@ func _ready() -> void:
 	var _bottom_tween := position_tween.tween_property(bottom, "rect_position:y", 980.0, 1).from(1080.0)
 
 
+## Comment
 func back_button_pressed() -> void:
-	root_viewport.add_blackout(root_viewport.gameplay)
+	root_viewport.add_blackout(root_viewport.main_menu)

@@ -59,7 +59,7 @@ func _init() -> void:
 	for i in range(AudioServer.bus_count):
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
-	root_viewport.add_scene(root_viewport.gameplay.instance())
+	root_viewport.add_scene(root_viewport.main_menu.instance())
 	root_viewport.settings_save = true
 
 

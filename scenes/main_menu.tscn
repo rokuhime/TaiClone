@@ -58,3 +58,7 @@ margin_right = 564.0
 margin_bottom = 881.0
 theme_type_variation = "MainButton"
 text = "Exit"
+
+[connection signal="button_up" from="Play" to="." method="play_button_pressed"]
+[connection signal="button_up" from="Options" to="." method="toggle_settings"]
+[connection signal="button_up" from="Exit" to="." method="exit_button_pressed"]
