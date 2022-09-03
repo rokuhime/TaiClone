@@ -35,7 +35,7 @@ var _inactive := true
 var _judgement_tween := SceneTreeTween.new()
 
 ## the time for the last note in the chart
-var _last_note_time := 0.0
+var _last_note_time := -1.0
 
 ## Comment
 var _score_indicator_tween := SceneTreeTween.new()
@@ -276,7 +276,7 @@ func change_late_early() -> void:
 func load_func(file_path := "") -> void:
 	_inactive = true
 	debug_text.text = "Loading... [Checking File]"
-	if file_path == "":
+	if not file_path:
 		file_path = line_edit.text.replace("\\", "/")
 
 	if ChartLoader.load_chart(file_path):
@@ -287,6 +287,10 @@ func load_func(file_path := "") -> void:
 		file_path = ChartLoader.FUS
 
 	debug_text.text = "Loading... [Reading File]"
+
+	if not _f.file_exists(file_path):
+		_load_finish("Invalid file!")
+		return
 
 	if _f.open(file_path, File.READ):
 		_load_finish("Unable to read temporary .fus file!")

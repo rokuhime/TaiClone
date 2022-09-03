@@ -12,7 +12,12 @@ const FUS_VERSION := "v0.0.3"
 
 ## Comment
 static func load_audio_file(file_path: String) -> AudioStream:
+	## Comment
 	var f := File.new()
+
+	if not f.file_exists(file_path):
+		return AudioStreamSample.new()
+
 	if f.open(file_path, File.READ):
 		f.close()
 		return load(file_path) as AudioStream
@@ -43,37 +48,49 @@ static func load_chart(file_path: String) -> bool:
 	## Comment
 	var f := File.new()
 
+	if not f.file_exists(file_path):
+		return true
+
 	if f.open(file_path, File.READ):
 		f.close()
 		return true
 
+	## Comment
+	var artist := ""
+
+	## Comment
+	var audio_filename := ""
+
+	## Comment
+	var bg_file_name := ""
+
+	## Comment
+	var charter := ""
+
+	## Comment
+	var cur_bpm := -1.0
+
+	## Comment
+	var current_kiai := false
+
+	## Comment
+	var current_meter := 4.0
+
+	## Comment
+	var difficulty_name := ""
+
+	## Comment
+	var map_sv_multiplier := ""
+
+	## Comment
+	var notes := []
+
+	## Comment
+	var title := ""
+
 	if file_path.ends_with(".osu"):
 		## Comment
-		var artist := ""
-
-		## Comment
-		var audio_filename := ""
-
-		## Comment
-		var bg_file_name := ""
-
-		## Comment
-		var charter := ""
-
-		## Comment
-		var cur_bpm := -1.0
-
-		## Comment
-		var current_meter := 0
-
-		## Comment
 		var current_timing_data := []
-
-		## Comment
-		var difficulty_name := ""
-
-		## Comment
-		var map_sv_multiplier := ""
 
 		## Comment
 		var next_barline := 0.0
@@ -82,16 +99,10 @@ static func load_chart(file_path: String) -> bool:
 		var next_timing := []
 
 		## Comment
-		var notes := []
-
-		## Comment
 		var section := ""
 
 		## Comment
 		var subsection := ""
-
-		## Comment
-		var title := ""
 
 		## Comment
 		var total_cur_sv := 0.0
@@ -131,6 +142,9 @@ static func load_chart(file_path: String) -> bool:
 
 					while not next_timing.empty():
 						## Comment
+						var kiai := int(next_timing[3])
+
+						## Comment
 						var meter := int(next_timing[1])
 
 						## Comment
@@ -155,13 +169,16 @@ static func load_chart(file_path: String) -> bool:
 							cur_bpm = timing
 							current_meter = meter
 							next_barline = next_time
-							_append_note(notes, [next_barline, cur_bpm, NoteType.TIMING_POINT])
 
 						else:
 							total_cur_sv = timing * float(map_sv_multiplier)
 
+						if meter or bool(kiai) != current_kiai:
+							_append_note(notes, [next_barline, cur_bpm, NoteType.TIMING_POINT, kiai])
+							current_kiai = bool(kiai)
+
 						if current_timing_data.empty():
-							next_timing = []
+							next_timing.clear()
 
 						else:
 							next_timing = str(current_timing_data.pop_front()).split(",")
@@ -192,28 +209,153 @@ static func load_chart(file_path: String) -> bool:
 					## Comment
 					var uninherited := bool(int(line_data[6]))
 
-					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1])])
+					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1]), 1 << 0 & int(line_data[7])])
 					if next_timing.empty():
 						next_timing = line_data
 
 					else:
 						current_timing_data.append(line_data.join(","))
 
-		f.close()
+	elif file_path.ends_with(".tja"):
+		## Comment
+		var balloons_string := ""
 
 		## Comment
-		var folder_path := file_path.get_base_dir()
+		var measure := []
 
-		file_path = FUS
-		if f.open(file_path, File.WRITE):
-			f.close()
-			return true
+		## Comment
+		var metadata := true
 
-		f.store_string(_csv_line([FUS_VERSION, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist, charter, difficulty_name, title] + notes).join("\n"))
+		## Comment
+		var notes_in_measure := 0
+
+		## Comment
+		var offset_string := "0"
+
+		## Comment
+		var starting_bpm := "120"
+
+		while f.get_position() < f.get_len():
+			## Comment
+			var line := f.get_line().strip_edges()
+
+			if line.empty() or line.begins_with("//"):
+				continue
+
+			if metadata:
+				if line == "#START":
+					metadata = false
+					match difficulty_name:
+						"0":
+							difficulty_name = "Easy"
+
+						"1":
+							difficulty_name = "Normal"
+
+						"2":
+							difficulty_name = "Hard"
+
+						"3":
+							difficulty_name = "Oni"
+
+						"4", "Edit":
+							difficulty_name = "Ura"
+
+						"5":
+							difficulty_name = "Tower"
+
+						"6":
+							difficulty_name = "Dan"
+
+				else:
+					artist = _find_value(artist, line, "SUBTITLE:").trim_prefix("++").trim_prefix("--")
+					artist = _find_value(artist, line, "SUBTITLEEN:", true)
+					audio_filename = _find_value(audio_filename, line, "WAVE:")
+					balloons_string = _find_value(balloons_string, line, "BALLOON:")
+					bg_file_name = _find_value(bg_file_name, line, "BGIMAGE:")
+					charter = _find_value(charter, line, "MAKER:")
+					difficulty_name = _find_value(difficulty_name, line, "COURSE:")
+					map_sv_multiplier = _find_value(map_sv_multiplier, line, "HEADSCROLL:")
+					offset_string = _find_value(offset_string, line, "OFFSET:")
+					starting_bpm = _find_value(starting_bpm, line, "BPM:")
+					title = _find_value(title, line, "TITLE:")
+					title = _find_value(title, line, "TITLEEN:", true)
+
+				continue
+
+			if line == "#END":
+				metadata = true
+				# TODO: Handle multiple charts in one file (once song select is implemented)
+				break
+
+			measure.append(line)
+			if line.begins_with("#"):
+				continue
+
+			notes_in_measure += line.trim_suffix(",").length()
+			if not line.ends_with(","):
+				continue
+
+			for i in measure.size():
+				line = str(measure[i])
+				match line:
+					"#BARLINEOFF":
+						pass
+
+					"#BARLINEON":
+						pass
+
+					"#BMSCROLL":
+						pass
+
+					"#BRANCHEND":
+						pass
+
+					"#E":
+						pass
+
+					"#GOGOEND":
+						pass
+
+					"#GOGOSTART":
+						pass
+
+					"#HBSCROLL":
+						pass
+
+					"#LEVELHOLD":
+						pass
+
+					"#M":
+						pass
+
+					"#N":
+						pass
+
+					"#SECTION":
+						pass
+
+					_:
+						print(line)
+
+			measure.clear()
+			notes_in_measure = 0
+
+	else:
 		f.close()
+		return not file_path.ends_with(".fus")
 
-	elif not file_path.ends_with(".fus"):
+	f.close()
+
+	if f.open(FUS, File.WRITE):
+		f.close()
 		return true
+
+	## Comment
+	var folder_path := file_path.get_base_dir()
+
+	f.store_string(_csv_line([FUS_VERSION, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist, charter, difficulty_name, title] + notes).join("\n"))
+	f.close()
 
 	return false
 
@@ -241,7 +383,7 @@ static func _append_note(notes: Array, line_data: Array) -> void:
 
 
 ## Comment
-static func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_meter: int, cur_bpm: float) -> float:
+static func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_meter: float, cur_bpm: float) -> float:
 	_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
 	return next_barline + 60 * current_meter / cur_bpm
 
@@ -258,5 +400,5 @@ static func _csv_line(line_data: Array) -> PoolStringArray:
 
 
 ## Comment
-static func _find_value(value: String, line: String, key: String) -> String:
-	return line.trim_prefix(key).strip_edges() if line.begins_with(key) else value
+static func _find_value(value: String, line: String, key: String, overwrite := false) -> String:
+	return line.trim_prefix(key).strip_edges() if line.begins_with(key) and not (overwrite and value) else value
