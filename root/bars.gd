@@ -6,6 +6,7 @@ onready var difficulty_name_label := $Top/V/Bottom/DifficultyName as Label
 onready var play_date := $Top/V/Bottom/PlayDate as Label
 onready var root_viewport := $"/root" as Root
 onready var song_name := $Top/V/Top/SongName as Label
+onready var texture_rect := $Top/V/Bottom/TextureRect as TextureRect
 onready var top := $Top
 
 
@@ -14,6 +15,7 @@ func _ready() -> void:
 	difficulty_name_label.text = root_viewport.difficulty_name
 	play_date.text = Time.get_datetime_string_from_system(false, true)
 	song_name.text = "%s - %s" % [root_viewport.artist, root_viewport.title]
+	texture_rect.texture = root_viewport.skin.big_circle
 
 	## Comment
 	var position_tween := root_viewport.new_tween(SceneTreeTween.new()).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()

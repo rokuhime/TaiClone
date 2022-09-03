@@ -8,6 +8,12 @@ signal object_added(hit_object, loaded)
 var _bpm := 1.0
 
 onready var root_viewport := $"/root" as Root
+onready var sprite := $Sprite as TextureRect
+
+
+## See [HitObject].
+func apply_skin() -> void:
+	sprite.texture = root_viewport.skin.spinner_warning
 
 
 ## Initialize [SpinnerWarn] variables.

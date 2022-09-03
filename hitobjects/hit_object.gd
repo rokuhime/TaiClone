@@ -63,8 +63,7 @@ func activate() -> void:
 
 
 ## Apply a skin to this [HitObject]. Intended to be implemented by child classes.
-## new_skin (SkinManager): The skin to apply.
-func apply_skin(_new_skin: SkinManager) -> void:
+func apply_skin() -> void:
 	pass
 
 

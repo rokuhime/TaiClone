@@ -13,12 +13,16 @@ var _is_kat := true
 ## Comment
 var _next_hit := ""
 
-onready var head := $Head as CanvasItem
+onready var head := $Head as TextureRect
+onready var head_overlay := $Head/Overlay as TextureRect
+onready var root_viewport := $"/root" as Root
 
 
 ## See [HitObject].
-func apply_skin(new_skin: SkinManager) -> void:
-	head.self_modulate = new_skin.kat_color if _is_kat else new_skin.don_color
+func apply_skin() -> void:
+	head.self_modulate = root_viewport.skin.kat_color if _is_kat else root_viewport.skin.don_color
+	head.texture = root_viewport.skin.big_circle
+	head_overlay.texture = root_viewport.skin.hit_circle_overlay
 
 
 ## See [HitObject].

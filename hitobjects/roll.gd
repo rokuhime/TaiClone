@@ -7,8 +7,10 @@ var _tick_distance := 0.0
 ## The number of [Tick]s in this [Roll].
 var _total_ticks := 0
 
-onready var body := $Body as Control
-onready var head := $Head as Control
+onready var body := $Body as TextureRect
+onready var body_end := $Body/End as TextureRect
+onready var head := $Head as TextureRect
+onready var head_overlay := $Head/Overlay as TextureRect
 onready var root_viewport := $"/root" as Root
 onready var tick_container := $TickContainer
 
@@ -30,9 +32,13 @@ func _ready() -> void:
 
 
 ## See [HitObject].
-func apply_skin(new_skin: SkinManager) -> void:
-	head.self_modulate = new_skin.roll_color
-	body.modulate = new_skin.roll_color
+func apply_skin() -> void:
+	body.modulate = root_viewport.skin.roll_color
+	body.texture = root_viewport.skin.roll_middle
+	body_end.texture = root_viewport.skin.roll_end
+	head.self_modulate = root_viewport.skin.roll_color
+	head.texture = root_viewport.skin.big_circle
+	head_overlay.texture = root_viewport.skin.hit_circle_overlay
 
 
 ## See [HitObject].

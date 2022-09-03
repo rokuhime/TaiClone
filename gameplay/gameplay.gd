@@ -46,9 +46,12 @@ var _time_begin := 0.0
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
+onready var bar_right := $BarRight as TextureRect
 onready var debug_text := $Debug/DebugText as Label
 onready var drum_visual := $BarRight/DrumVisual
 onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
+onready var hit_point := $BarRight/HitPointOffset/HitPoint as TextureRect
+onready var hit_point_rim := $BarRight/HitPointOffset/HitPoint/Rim as TextureRect
 onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
@@ -64,8 +67,11 @@ onready var ui_score := $UI/Score as Label
 func _ready() -> void:
 	Root.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
-	root_viewport.music.stop()
+	bar_right.texture = root_viewport.skin.bar_right_texture
+	hit_point.texture = root_viewport.skin.big_circle
+	hit_point_rim.texture = root_viewport.skin.approach_circle
 	last_hit_score.modulate.a = 0
+	root_viewport.music.stop()
 	_reset()
 
 	## Comment
@@ -167,7 +173,7 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 	if loaded:
 		return
 
-	hit_object.apply_skin(root_viewport.skin)
+	hit_object.apply_skin()
 	Root.send_signal(drum_visual, "audio_played", hit_object, "play_audio")
 	Root.send_signal(self, "score_added", hit_object, "add_score")
 
@@ -369,7 +375,7 @@ func load_func(file_path := "") -> void:
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])
 
-	get_tree().call_group("HitObjects", "apply_skin", root_viewport.skin)
+	get_tree().call_group("HitObjects", "apply_skin")
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	play_button.disabled = false
