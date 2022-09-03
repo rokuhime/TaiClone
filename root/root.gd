@@ -10,9 +10,6 @@ signal hit_error_changed
 signal late_early_changed
 
 ## Comment
-signal offset_changed(difference)
-
-## Comment
 const CONFIG_PATH := "user://config.ini"
 
 ## Comment
@@ -34,10 +31,22 @@ var accuracy: String
 var accurate_count: int
 
 ## Comment
+var artist: String
+
+## Comment
 var bar_line_object: PackedScene
 
 ## Comment
+var bars: PackedScene
+
+## Comment
+var charter: String
+
+## Comment
 var combo: int
+
+## Comment
+var difficulty_name: String
 
 ## Comment
 var early_count: int
@@ -49,10 +58,16 @@ var f_accurate_count: int
 var f_inaccurate_count: int
 
 ## Comment
+var gameplay: PackedScene
+
+## Comment
 var inaccurate_count: int
 
 ## Comment
 var late_count: int
+
+## Comment
+var main_menu: PackedScene
 
 ## Comment
 var max_combo: int
@@ -62,6 +77,9 @@ var menu_bg: Texture
 
 ## Comment
 var miss_count: int
+
+## Comment
+var music: AudioStreamPlayer
 
 ## Comment
 var note_object: PackedScene
@@ -94,10 +112,13 @@ var spinner_warn_object: PackedScene
 var tick_object: PackedScene
 
 ## Comment
+var title: String
+
+## Comment
 var _background := $"Background" as TextureRect
 
 ## Comment
-var _blackout := load("res://scenes/blackout.tscn") as PackedScene
+var _blackout := load("res://root/blackout.tscn") as PackedScene
 
 ## Comment
 var _next_scene := PackedScene.new()
@@ -106,25 +127,33 @@ var _next_scene := PackedScene.new()
 func _init() -> void:
 	accuracy = ""
 	accurate_count = 0
+	artist = ""
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
+	bars = load("res://root/bars.tscn") as PackedScene
+	charter = ""
 	combo = 0
+	difficulty_name = ""
 	early_count = 0
 	f_accurate_count = 0
 	f_inaccurate_count = 0
+	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
 	inaccurate_count = 0
 	late_count = 0
+	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
 	max_combo = 0
 	menu_bg = load("res://temporary/menubg.png") as Texture
 	miss_count = 0
+	music = $Background/Music as AudioStreamPlayer
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
 	score = 0
-	settings_panel = load("res://scenes/settings_panel.tscn") as PackedScene
+	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
 	skin = SkinManager.new()
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
+	title = ""
 
 
 ## Comment
@@ -156,7 +185,11 @@ func add_blackout(next_scene: PackedScene) -> void:
 
 ## Comment
 func add_scene(new_scene: Node, parent_node := "") -> void:
-	add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
+	if has_node(new_scene.name):
+		new_scene.queue_free()
+
+	else:
+		add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
 
 
 ## Comment
@@ -192,11 +225,6 @@ func new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
 		old_tween.kill()
 
 	return get_tree().create_tween()
-
-
-## Comment
-func offset_difference(difference: int) -> void:
-	emit_signal("offset_changed", difference)
 
 
 ## Comment

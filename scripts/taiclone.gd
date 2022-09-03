@@ -4,13 +4,10 @@ extends SceneTree
 ## Ran on startup, absolute root script of the project.
 
 ## Comment
-var _gameplay := preload("res://gameplay/gameplay.tscn")
+var _root := preload("res://root/root.gd")
 
 ## Comment
-var _root := preload("res://scripts/root.gd")
-
-## Comment
-var _volume_control := preload("res://scenes/volume_control.tscn")
+var _volume_control := preload("res://root/volume_control.tscn")
 
 
 func _init() -> void:
@@ -62,7 +59,7 @@ func _init() -> void:
 	for i in range(AudioServer.bus_count):
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
-	root_viewport.add_scene(_gameplay.instance())
+	root_viewport.add_scene(root_viewport.main_menu.instance())
 	root_viewport.settings_save = true
 
 

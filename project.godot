@@ -47,7 +47,7 @@ _global_script_classes=[ {
 "base": "Viewport",
 "class": "Root",
 "language": "GDScript",
-"path": "res://scripts/root.gd"
+"path": "res://root/root.gd"
 }, {
 "base": "CanvasItem",
 "class": "Scene",
@@ -57,7 +57,7 @@ _global_script_classes=[ {
 "base": "Scene",
 "class": "SettingsPanel",
 "language": "GDScript",
-"path": "res://scenes/settings_panel.gd"
+"path": "res://root/settings_panel.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
@@ -87,7 +87,7 @@ _global_script_classes=[ {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
-"path": "res://scenes/volume_control.gd"
+"path": "res://root/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -111,7 +111,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://scenes/taiclone.tscn"
+run/main_scene="res://root/root.tscn"
 run/main_loop_type="TaiClone"
 
 [debug]

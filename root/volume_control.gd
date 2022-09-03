@@ -38,6 +38,7 @@ onready var timer := get_tree().create_timer(0)
 
 func _ready() -> void:
 	Root.send_signal(root_viewport, "volume_changed", self, "save_settings", ["volume_changed"])
+	hide()
 
 
 func _input(event: InputEvent) -> void:
@@ -101,7 +102,10 @@ func change_channel(channel: int, needs_visible := true) -> void:
 				_sfx_modulate_tween = _modulate_tween(vol, _sfx_modulate_tween, new_color)
 
 	if modulate.a < 1:
-		_tween_self(1, 0.25)
+		show()
+
+		## Comment
+		var _tween := _tween_self(1, 0.25)
 
 	timer = get_tree().create_timer(2)
 	Root.send_signal(self, "timeout", timer, "timeout")
@@ -138,7 +142,7 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 ## Comment
 func timeout() -> void:
 	if timer.time_left <= 0:
-		_tween_self(0, 1)
+		Root.send_signal(self, "finished", _tween_self(0, 1), "hide")
 
 
 ## Comment
@@ -175,11 +179,9 @@ func _progress_tween(tween: SceneTreeTween, progress: Node, amount: float) -> Sc
 
 
 ## Comment
-func _tween_self(final_val: float, duration: float) -> void:
+func _tween_self(final_val: float, duration: float) -> PropertyTweener:
 	_self_tween = root_viewport.new_tween(_self_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
-
-	## Comment
-	var _tween := _self_tween.tween_property(self, "modulate:a", final_val, duration)
+	return _self_tween.tween_property(self, "modulate:a", final_val, duration)
 
 
 ## Comment

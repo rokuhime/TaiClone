@@ -2,7 +2,7 @@ class_name Gameplay
 extends Scene
 
 ## Comment
-signal marker_added(type, timing)
+signal marker_added(type, timing, indicate)
 
 ## Comment
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
@@ -50,6 +50,9 @@ var _r_kat_tween := SceneTreeTween.new()
 var _score_indicator_tween := SceneTreeTween.new()
 
 ## Comment
+var _time_begin := 0.0
+
+## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
 onready var combo_break := $ComboBreakAudio as AudioStreamPlayer
@@ -65,8 +68,8 @@ onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
 onready var l_kat_obj := $BarLeft/DrumVisual/LeftKat as CanvasItem
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
-onready var music := $Music as AudioStreamPlayer
 onready var obj_container := $BarLeft/ObjectContainer as Control
+onready var play_button := $Debug/TempLoadChart/PlayButton as Button
 onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
 onready var r_don_obj := $BarLeft/DrumVisual/RightDon as CanvasItem
 onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
@@ -81,8 +84,7 @@ onready var ui_score := $UI/Score as Label
 func _ready() -> void:
 	Root.send_signal(self, "late_early_changed", root_viewport, "late_early_changed")
 	late_early_changed()
-	Root.send_signal(self, "offset_changed", root_viewport, "offset_difference")
-	offset_difference(root_viewport.global_offset)
+	root_viewport.music.stop()
 	last_hit_score.modulate.a = 0
 	l_don_obj.modulate.a = 0
 	l_kat_obj.modulate.a = 0
@@ -90,21 +92,23 @@ func _ready() -> void:
 	r_kat_obj.modulate.a = 0
 	_reset()
 
+	## Comment
+	var _bars_removed := root_viewport.remove_scene("Bars")
+
 	# dev autoload map
 	if _f.file_exists(_fus):
 		load_func(_fus)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
 	if _inactive:
 		return
 
-	_cur_time += delta
+	_cur_time = (Time.get_ticks_usec() - _time_begin - root_viewport.global_offset * 1000) / 1000000
 	song_progress.value = _cur_time * 100 / _last_note_time
 	if _cur_time > _last_note_time + 1:
-		root_viewport.add_blackout(root_viewport.results)
-		_inactive = true
+		_end_chart()
 
 	## Comment
 	var check_auto := false
@@ -174,11 +178,12 @@ func add_marker(timing: float, previous_timing: float) -> void:
 	## Comment
 	var type := int(HitObject.Score.ACCURATE if abs(timing) < HitError.ACC_TIMING else HitObject.Score.INACCURATE if abs(timing) < HitError.INACC_TIMING else HitObject.Score.MISS)
 
-	emit_signal("marker_added", type, timing)
 	if previous_timing < 0:
+		emit_signal("marker_added", type, timing, true)
 		add_score(type)
 		return
 
+	emit_signal("marker_added", type, timing, false)
 	previous_timing -= HitError.INACC_TIMING
 	if abs(previous_timing) < HitError.ACC_TIMING:
 		root_viewport.f_accurate_count += 1
@@ -242,7 +247,7 @@ func add_score(type: int, marker := false) -> void:
 			judgement.texture = root_viewport.skin.miss_judgement
 			play_tween = false
 			if marker:
-				emit_signal("marker_added", type, HitError.INACC_TIMING)
+				emit_signal("marker_added", type, HitError.INACC_TIMING, true)
 
 		HitObject.Score.SPINNER:
 			score_value = 600
@@ -299,6 +304,7 @@ func late_early_changed() -> void:
 
 ## Comment
 func load_func(file_path := "") -> void:
+	_inactive = true
 	debug_text.text = "Loading... [Checking File]"
 	if file_path == "":
 		file_path = line_edit.text.replace("\\", "/")
@@ -310,14 +316,20 @@ func load_func(file_path := "") -> void:
 	debug_text.text = "Loading... [Reading File]"
 
 	## Comment
-	var fus_version := "v0.0.2"
+	var fus_version := "v0.0.3"
 
 	if file_path.ends_with(".osu"):
+		## Comment
+		var artist := ""
+
 		## Comment
 		var audio_filename := ""
 
 		## Comment
 		var bg_file_name := ""
+
+		## Comment
+		var charter := ""
 
 		## Comment
 		var cur_bpm := -1.0
@@ -327,6 +339,9 @@ func load_func(file_path := "") -> void:
 
 		## Comment
 		var current_timing_data := []
+
+		## Comment
+		var difficulty_name := ""
 
 		## Comment
 		var map_sv_multiplier := ""
@@ -345,6 +360,9 @@ func load_func(file_path := "") -> void:
 
 		## Comment
 		var subsection := ""
+
+		## Comment
+		var title := ""
 
 		## Comment
 		var total_cur_sv := 0.0
@@ -435,6 +453,12 @@ func load_func(file_path := "") -> void:
 					else:
 						_append_note(notes, [time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher])
 
+				"Metadata":
+					artist = _find_value(artist, line, "Artist:")
+					charter = _find_value(charter, line, "Creator:")
+					difficulty_name = _find_value(difficulty_name, line, "Version:")
+					title = _find_value(title, line, "Title:")
+
 				"TimingPoints":
 					## Comment
 					var uninherited := bool(int(line_data[6]))
@@ -458,7 +482,7 @@ func load_func(file_path := "") -> void:
 			_load_finish("Unable to create temporary .fus file!")
 			return
 
-		_f.store_string(_csv_line([fus_version, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename)] + notes).join("\n"))
+		_f.store_string(_csv_line([fus_version, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist, charter, difficulty_name, title] + notes).join("\n"))
 		_f.close()
 
 	if not file_path.ends_with(".fus"):
@@ -489,7 +513,11 @@ func load_func(file_path := "") -> void:
 		newtexture.create_from_image(image, 0)
 		root_viewport.bg_changed(newtexture, Color("373737"))
 
-	music.stream = AudioLoader.loadfile(_f.get_line())
+	root_viewport.music.stream = AudioLoader.loadfile(_f.get_line())
+	root_viewport.artist = _f.get_line()
+	root_viewport.charter = _f.get_line()
+	root_viewport.difficulty_name = _f.get_line()
+	root_viewport.title = _f.get_line()
 	_reset()
 
 	## Comment
@@ -541,15 +569,11 @@ func load_func(file_path := "") -> void:
 			NoteType.TIMING_POINT:
 				cur_bpm = float(line[1])
 
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "apply_skin", root_viewport.skin)
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "audio_played", self, "play_audio")
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "connect", "score_added", self, "add_score")
+	get_tree().call_group("HitObjects", "apply_skin", root_viewport.skin)
+	get_tree().call_group("HitObjects", "connect", "audio_played", self, "play_audio")
+	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
+	play_button.disabled = false
 	_load_finish("Done!")
-
-
-## Comment
-func offset_difference(difference: int) -> void:
-	_cur_time -= difference / 1000.0
 
 
 ## Comment
@@ -575,19 +599,15 @@ func play_audio(key: String) -> void:
 
 
 ## Comment
-func play_chart() -> void:
-	_reset(music.playing)
-	_inactive = true
-	music.stop()
+func play_button_pressed() -> void:
+	if root_viewport.music.playing:
+		_end_chart()
 
-	if not music.playing:
+	else:
+		_reset(false)
+		root_viewport.music.play()
+		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
 		_inactive = false
-		music.play()
-
-
-## Comment
-func text_debug(text: String) -> void:
-	debug_text.text = text
 
 
 ## Comment
@@ -624,6 +644,12 @@ static func _find_value(value: String, line: String, key: String) -> String:
 
 
 ## Comment
+func _end_chart() -> void:
+	root_viewport.add_blackout(root_viewport.results)
+	_inactive = true
+
+
+## Comment
 func _hit_notify_animation() -> void:
 	_judgement_tween = root_viewport.new_tween(_judgement_tween).set_ease(Tween.EASE_OUT)
 
@@ -655,5 +681,7 @@ func _reset(dispose := true) -> void:
 	root_viewport.score = 0
 	_current_combo = 0
 	add_score(-1)
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, "HitObjects", "queue_free" if dispose else "activate")
 	_cur_time = 0
+	play_button.disabled = dispose
+	play_button.text = "Play" if dispose else "Stop"
+	get_tree().call_group("HitObjects", "queue_free" if dispose else "activate")
