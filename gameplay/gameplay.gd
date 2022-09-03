@@ -296,22 +296,7 @@ func load_func(file_path := "") -> void:
 		_load_finish("Outdated .fus file!")
 		return
 
-	## Comment
-	var bg_file_name := _f.get_line()
-
-	## Comment
-	var image := Image.new()
-
-	if image.load(bg_file_name):
-		push_warning("Background failed to load: %s." % bg_file_name)
-
-	else:
-		## Comment
-		var new_texture := ImageTexture.new()
-
-		new_texture.create_from_image(image, 0)
-		root_viewport.bg_changed(new_texture, Color("373737"))
-
+	root_viewport.bg_changed(ChartLoader.texture_from_image(_f.get_line()), Color("373737"))
 	root_viewport.music.stream = ChartLoader.load_audio_file(_f.get_line())
 	root_viewport.artist = _f.get_line()
 	root_viewport.charter = _f.get_line()

@@ -219,6 +219,23 @@ static func load_chart(file_path: String) -> bool:
 
 
 ## Comment
+static func texture_from_image(file_path: String) -> Texture:
+	if file_path.begins_with("res://"):
+		return load(file_path) as Texture
+
+	## Comment
+	var image := Image.new()
+
+	## Comment
+	var new_texture := ImageTexture.new()
+
+	if not image.load(file_path):
+		new_texture.create_from_image(image)
+
+	return new_texture
+
+
+## Comment
 static func _append_note(notes: Array, line_data: Array) -> void:
 	notes.append(_csv_line(line_data).join(","))
 
