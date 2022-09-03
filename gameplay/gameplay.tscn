@@ -23,15 +23,15 @@ texture = ExtResource( 5 )
 
 [node name="BarRight" type="TextureRect" parent="."]
 anchor_right = 1.0
-margin_top = 300.0
-margin_bottom = 628.0
+margin_top = 304.0
+margin_bottom = 582.0
 expand = true
 
 [node name="HitPointOffset" type="Control" parent="BarRight"]
+anchor_top = 0.5
+anchor_bottom = 0.5
 margin_left = 361.0
-margin_top = 143.0
 margin_right = 361.0
-margin_bottom = 143.0
 
 [node name="HitPoint" type="TextureRect" parent="BarRight/HitPointOffset"]
 self_modulate = Color( 1, 1, 1, 0.435294 )

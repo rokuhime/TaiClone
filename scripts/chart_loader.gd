@@ -219,19 +219,23 @@ static func load_chart(file_path: String) -> bool:
 
 
 ## Comment
-static func texture_from_image(file_path: String) -> Texture:
-	if file_path.begins_with("res://"):
-		return load(file_path) as Texture
-
+static func texture_from_image(file_path: String, crop_transparent := true) -> Texture:
 	## Comment
 	var image := Image.new()
 
 	## Comment
 	var new_texture := ImageTexture.new()
 
-	if not image.load(file_path):
-		new_texture.create_from_image(image)
+	if file_path.begins_with("res://"):
+		image = (load(file_path) as Texture).get_data()
 
+	elif image.load(file_path):
+		return new_texture
+
+	if crop_transparent:
+		image = image.get_rect(image.get_used_rect())
+
+	new_texture.create_from_image(image)
 	return new_texture
 
 
