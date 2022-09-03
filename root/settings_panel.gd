@@ -9,11 +9,11 @@ var _currently_changing := ""
 ## Whether or not settings should be saved.
 var _settings_save := false
 
-onready var dropdown := $V/Resolution/Options as OptionButton
-onready var fullscreen_toggle := $V/Resolution/Fullscreen/Toggle as CheckBox
-onready var hit_error_toggle := $V/ExtraDisplays/HitError/Toggle as CheckBox
-onready var late_early_drop := $V/ExtraDisplays/LateEarly/Options as OptionButton
-onready var offset_text := $V/Offset/LineEdit as LineEdit
+onready var dropdown := $Panels/Scroll/Settings/V/Resolution/Options as OptionButton
+onready var fullscreen_toggle := $Panels/Scroll/Settings/V/Resolution/Fullscreen/Toggle as CheckBox
+onready var hit_error_toggle := $Panels/Scroll/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
+onready var late_early_drop := $Panels/Scroll/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
+onready var offset_text := $Panels/Scroll/Settings/V/Offset/LineEdit as LineEdit
 onready var root_viewport := $"/root" as Root
 
 
@@ -116,4 +116,4 @@ func _change_text(key: String, was_pressed := false) -> void:
 	## The action associated with this key-bind.
 	var event := Root.get_event(key)
 
-	(get_node("V/Keybinds/%s/Button" % key) as Button).text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
+	(get_node("Panels/Scroll/Settings/V/Keybinds/%s/Button" % key) as Button).text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
