@@ -361,7 +361,6 @@ func load_func(file_path := "") -> void:
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	play_button.disabled = false
-	root_viewport.max_combo = 0
 	_load_finish("Done!")
 
 
@@ -406,7 +405,12 @@ func _load_finish(new_text: String) -> void:
 ## Comment
 func _reset(dispose := true) -> void:
 	root_viewport.accurate_count = 0
+	root_viewport.early_count = 0
+	root_viewport.f_accurate_count = 0
+	root_viewport.f_inaccurate_count = 0
 	root_viewport.inaccurate_count = 0
+	root_viewport.late_count = 0
+	root_viewport.max_combo = 0
 	root_viewport.miss_count = 0
 	root_viewport.score = 0
 	_current_combo = 0
