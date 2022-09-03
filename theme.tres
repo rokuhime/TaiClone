@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=42 format=2]
+[gd_resource type="Theme" load_steps=45 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
@@ -32,6 +32,10 @@ font_data = ExtResource( 2 )
 size = 20
 use_filter = true
 font_data = ExtResource( 3 )
+
+[sub_resource type="StyleBoxLine" id=41]
+color = Color( 1, 1, 1, 1 )
+thickness = 2
 
 [sub_resource type="StyleBoxFlat" id=8]
 bg_color = Color( 1, 1, 1, 0 )
@@ -189,7 +193,23 @@ extra_spacing_top = 5
 font_data = ExtResource( 3 )
 
 [sub_resource type="StyleBoxFlat" id=28]
-bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
+bg_color = Color( 0.117647, 0.117647, 0.117647, 1 )
+border_width_left = 5
+border_width_top = 5
+border_width_bottom = 5
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=40]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 3
+border_width_top = 5
+border_width_right = 3
+
+[sub_resource type="DynamicFont" id=39]
+size = 45
+use_filter = true
+font_data = ExtResource( 3 )
 
 [sub_resource type="StyleBoxFlat" id=29]
 bg_color = Color( 0.0392157, 0.0392157, 0.0392157, 0.490196 )
@@ -269,6 +289,7 @@ BottomButton/styles/hover = SubResource( 4 )
 BottomButton/styles/normal = SubResource( 5 )
 Combo/fonts/font = SubResource( 6 )
 ErrorBar/fonts/font = SubResource( 7 )
+HSeparator/styles/separator = SubResource( 41 )
 HitCount/styles/panel = SubResource( 8 )
 HitCountLabel/fonts/font = SubResource( 9 )
 Keybinds/fonts/font = SubResource( 10 )
@@ -294,8 +315,9 @@ ResultsMax/colors/font_color = Color( 0.45098, 0.45098, 0.45098, 1 )
 ResultsMax/fonts/font = SubResource( 26 )
 ResultsText/fonts/font = SubResource( 27 )
 RightBar/constants/separation = 10
-Settings/styles/bg = SubResource( 28 )
 Settings/styles/panel = SubResource( 28 )
+SettingsButtons/styles/normal = SubResource( 40 )
+SettingsTitle/fonts/font = SubResource( 39 )
 SongProgress/styles/bg = SubResource( 29 )
 SongProgress/styles/fg = SubResource( 30 )
 SpecificLabel/fonts/font = SubResource( 31 )

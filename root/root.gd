@@ -154,6 +154,12 @@ func _init() -> void:
 	max_combo = 0
 	miss_count = 0
 	score = 0
+	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
+	skin = SkinManager.new("res://skins/test_skin")
+	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
+	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
+	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
+	title = ""
 
 
 ## Comment
