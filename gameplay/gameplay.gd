@@ -279,19 +279,12 @@ func load_func(file_path := "") -> void:
 	if file_path == "":
 		file_path = line_edit.text.replace("\\", "/")
 
-	if file_path.ends_with(".osu"):
-		## Comment
-		var load_error := ChartLoader.load_osu(file_path)
-
-		if load_error:
-			_load_finish(load_error)
-			return
-
-		file_path = ChartLoader.FUS
-
-	if not file_path.ends_with(".fus"):
+	if ChartLoader.load_chart(file_path):
 		_load_finish("Invalid file!")
 		return
+
+	if not file_path.ends_with(".fus"):
+		file_path = ChartLoader.FUS
 
 	debug_text.text = "Loading... [Reading File]"
 
@@ -319,7 +312,7 @@ func load_func(file_path := "") -> void:
 		new_texture.create_from_image(image, 0)
 		root_viewport.bg_changed(new_texture, Color("373737"))
 
-	root_viewport.music.stream = AudioLoader.load_file(_f.get_line())
+	root_viewport.music.stream = ChartLoader.load_audio_file(_f.get_line())
 	root_viewport.artist = _f.get_line()
 	root_viewport.charter = _f.get_line()
 	root_viewport.difficulty_name = _f.get_line()
