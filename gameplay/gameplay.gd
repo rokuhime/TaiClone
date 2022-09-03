@@ -46,6 +46,10 @@ var _time_begin := 0.0
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
+var _timing_points := {}
+
+var in_kiai := false
+
 onready var bar_right := $BarRight as TextureRect
 onready var debug_text := $Debug/DebugText as Label
 onready var drum_visual := $BarRight/DrumVisual
@@ -53,6 +57,7 @@ onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 onready var hit_point := $BarRight/HitPointOffset/HitPoint as TextureRect
 onready var hit_point_rim := $BarRight/HitPointOffset/HitPoint/Rim as TextureRect
 onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
+onready var kiai_glow := $BarRight/HitPointOffset/KiaiGlow as TextureRect
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
@@ -70,6 +75,7 @@ func _ready() -> void:
 	bar_right.texture = root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
 	hit_point_rim.texture = root_viewport.skin.approach_circle
+	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
 	last_hit_score.modulate.a = 0
 	root_viewport.music.stop()
 	_reset()
@@ -91,6 +97,19 @@ func _process(_delta: float) -> void:
 	song_progress.value = _cur_time * 100 / _last_note_time
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
+
+	# get timing point, see if its kiai
+	var timing_index = _timing_points.keys()
+	# if new timing point...
+	if _cur_time >= timing_index[0]:
+		#is it kiai or nah
+		if _timing_points.get(timing_index[0])[1]:
+			in_kiai = true
+			kiai_glow.self_modulate = Color.white
+		else:
+			in_kiai = false
+			kiai_glow.self_modulate = Color.transparent
+		_timing_points.erase(timing_index[0])
 
 	## Comment
 	var check_auto := false
@@ -352,6 +371,9 @@ func load_func(file_path := "") -> void:
 
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])
+				print(line_data)
+				print("kiai: ", str(bool(line_data[3])))
+				_timing_points[cur_bpm] =  bool(line_data[3])
 
 	get_tree().call_group("HitObjects", "apply_skin")
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")

@@ -389,7 +389,7 @@ valign = 1
 position = Vector2( 161, 293 )
 scale = Vector2( 0.771186, 0.771186 )
 frames = SubResource( 15 )
-frame = 10
+frame = 11
 playing = true
 
 [node name="Tabs" type="HBoxContainer" parent="."]

@@ -90,6 +90,9 @@ var spinner_warning: Texture
 ## Comment
 var tick_texture: Texture
 
+## Comment
+var kiai_glow_texture: Texture
+
 
 func _init(skin_path: String) -> void:
 	accurate_color = Color("52a6ff")
@@ -122,3 +125,4 @@ func _init(skin_path: String) -> void:
 	spinner_circle = ChartLoader.texture_from_image(skin_path.plus_file("spinner-circle.png"))
 	spinner_warning = ChartLoader.texture_from_image(skin_path.plus_file("spinner-warning.png"))
 	tick_texture = ChartLoader.texture_from_image(skin_path.plus_file("sliderscorepoint.png"))
+	kiai_glow_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-glow.png"))
