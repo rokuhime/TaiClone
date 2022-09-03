@@ -25,19 +25,19 @@ class_name AudioLoader
 # SOFTWARE.
 
 
-static func loadfile(filepath: String) -> AudioStream:
+static func load_file(file_path: String) -> AudioStream:
 	var stream := AudioStreamSample.new()
 
 	var file := File.new()
-	if file.open(filepath, File.READ):
-		push_warning("Error with file: %s." % filepath)
+	if file.open(file_path, File.READ):
+		push_warning("Error with file: %s." % file_path)
 		file.close()
 		return stream
 
 	var bytes := file.get_buffer(file.get_len())
 	file.close()
 
-	if filepath.ends_with(".wav"):
+	if file_path.ends_with(".wav"):
 		# ---------- REFERENCE ---------------
 		# note: typical values doesn't always match
 
@@ -118,18 +118,18 @@ static func loadfile(filepath: String) -> AudioStream:
 				_:
 					i += 1
 
-	elif filepath.ends_with(".ogg"):
-		var newstream := AudioStreamOGGVorbis.new()
-		newstream.data = bytes
-		return newstream
+	elif file_path.ends_with(".ogg"):
+		var new_stream := AudioStreamOGGVorbis.new()
+		new_stream.data = bytes
+		return new_stream
 
-	elif filepath.ends_with(".mp3"):
-		var newstream := AudioStreamMP3.new()
-		newstream.data = bytes
-		return newstream
+	elif file_path.ends_with(".mp3"):
+		var new_stream := AudioStreamMP3.new()
+		new_stream.data = bytes
+		return new_stream
 
 	else:
-		push_warning("Wrong filetype or format: %s." % filepath)
+		push_warning("Wrong filetype or format: %s." % file_path)
 
 	return stream
 

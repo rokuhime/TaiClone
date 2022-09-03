@@ -82,8 +82,8 @@ onready var ui_score := $UI/Score as Label
 
 
 func _ready() -> void:
-	Root.send_signal(self, "late_early_changed", root_viewport, "late_early_changed")
-	late_early_changed()
+	Root.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
+	change_late_early()
 	root_viewport.music.stop()
 	last_hit_score.modulate.a = 0
 	l_don_obj.modulate.a = 0
@@ -118,16 +118,16 @@ func _process(_delta: float) -> void:
 
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
-		var note := obj_container.get_child(i) as HitObject
+		var hit_object := obj_container.get_child(i) as HitObject
 
-		note.move(_cur_time)
-		if check_misses and note.miss_check(_cur_time - (HitError.INACC_TIMING if note is Note else 0.0)):
+		hit_object.move(_cur_time)
+		if check_misses and hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0)):
 			check_auto = true
 			check_misses = false
 
 		if _auto and check_auto:
 			## Comment
-			var hit_auto := note.auto_hit(_cur_time, _auto_left)
+			var hit_auto := hit_object.auto_hit(_cur_time, _auto_left)
 
 			if hit_auto == 1:
 				check_auto = false
@@ -136,7 +136,6 @@ func _process(_delta: float) -> void:
 				_auto_left = not _auto_left
 
 
-## Comment
 func _unhandled_input(event: InputEvent) -> void:
 	## Comment
 	var inputs := [2]
@@ -162,9 +161,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
-		var note := obj_container.get_child(i) as HitObject
+		var hit_object := obj_container.get_child(i) as HitObject
 
-		if note.hit(inputs, _cur_time + (HitError.INACC_TIMING if note is Note else 0.0)) or Root.inputs_empty(inputs):
+		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or Root.inputs_empty(inputs):
 			break
 
 	for key in inputs:
@@ -193,19 +192,19 @@ func add_marker(timing: float, previous_timing: float) -> void:
 
 
 ## Comment
-func add_object(obj: HitObject, loaded := true) -> void:
-	obj_container.add_child(obj)
+func add_object(hit_object: HitObject, loaded := true) -> void:
+	obj_container.add_child(hit_object)
 	for i in range(obj_container.get_child_count()):
-		if obj.end_time > (obj_container.get_child(i) as HitObject).end_time:
-			obj_container.move_child(obj, i)
+		if hit_object.end_time > (obj_container.get_child(i) as HitObject).end_time:
+			obj_container.move_child(hit_object, i)
 			break
 
 	if loaded:
 		return
 
-	obj.apply_skin(root_viewport.skin)
-	Root.send_signal(self, "audio_played", obj, "play_audio")
-	Root.send_signal(self, "score_added", obj, "add_score")
+	hit_object.apply_skin(root_viewport.skin)
+	Root.send_signal(self, "audio_played", hit_object, "play_audio")
+	Root.send_signal(self, "score_added", hit_object, "add_score")
 
 
 ## Comment
@@ -298,7 +297,7 @@ func change_indicator(timing: float) -> void:
 
 
 ## Comment
-func late_early_changed() -> void:
+func change_late_early() -> void:
 	timing_indicator.visible = root_viewport.late_early_simple_display > 0
 
 
@@ -445,13 +444,13 @@ func load_func(file_path := "") -> void:
 						continue
 
 					## Comment
-					var finisher := 1 << 2 & int(line_data[4])
+					var finisher_int := 1 << 2 & int(line_data[4])
 
 					if 1 << 1 & int(line_data[3]):
-						_append_note(notes, [time, total_cur_sv, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) * 0.6 / cur_bpm / total_cur_sv, finisher])
+						_append_note(notes, [time, total_cur_sv, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) * 0.6 / cur_bpm / total_cur_sv, finisher_int])
 
 					else:
-						_append_note(notes, [time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher])
+						_append_note(notes, [time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher_int])
 
 				"Metadata":
 					artist = _find_value(artist, line, "Artist:")
@@ -463,14 +462,12 @@ func load_func(file_path := "") -> void:
 					## Comment
 					var uninherited := bool(int(line_data[6]))
 
-					## Comment
-					var timing := _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1])])
-
+					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1])])
 					if next_timing.empty():
-						next_timing = timing
+						next_timing = line_data
 
 					else:
-						current_timing_data.append(timing.join(","))
+						current_timing_data.append(line_data.join(","))
 
 		_f.close()
 
@@ -498,22 +495,22 @@ func load_func(file_path := "") -> void:
 		return
 
 	## Comment
-	var bg_file_path := _f.get_line()
+	var bg_file_name := _f.get_line()
 
 	## Comment
 	var image := Image.new()
 
-	if image.load(bg_file_path):
-		push_warning("Background failed to load: %s." % bg_file_path)
+	if image.load(bg_file_name):
+		push_warning("Background failed to load: %s." % bg_file_name)
 
 	else:
 		## Comment
-		var newtexture := ImageTexture.new()
+		var new_texture := ImageTexture.new()
 
-		newtexture.create_from_image(image, 0)
-		root_viewport.bg_changed(newtexture, Color("373737"))
+		new_texture.create_from_image(image, 0)
+		root_viewport.bg_changed(new_texture, Color("373737"))
 
-	root_viewport.music.stream = AudioLoader.loadfile(_f.get_line())
+	root_viewport.music.stream = AudioLoader.load_file(_f.get_line())
 	root_viewport.artist = _f.get_line()
 	root_viewport.charter = _f.get_line()
 	root_viewport.difficulty_name = _f.get_line()
@@ -525,49 +522,49 @@ func load_func(file_path := "") -> void:
 
 	while _f.get_position() < _f.get_len():
 		## Comment
-		var line := _f.get_csv_line()
+		var line_data := _f.get_csv_line()
 
 		## Comment
-		var timing := float(line[0]) + root_viewport.global_offset / 1000.0
+		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
 
 		_last_note_time = timing
 
 		## Comment
-		var total_cur_sv := float(line[1]) * cur_bpm * 5.7
+		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
 
-		match int(line[2]):
+		match int(line_data[2]):
 			NoteType.BARLINE:
 				## Comment
-				var note_object := root_viewport.bar_line_object.instance() as BarLine
+				var hit_object := root_viewport.bar_line_object.instance() as BarLine
 
-				note_object.change_properties(timing, total_cur_sv)
-				add_object(note_object)
+				hit_object.change_properties(timing, total_cur_sv)
+				add_object(hit_object)
 
 			NoteType.DON, NoteType.KAT:
 				## Comment
-				var note_object := root_viewport.note_object.instance() as Note
+				var hit_object := root_viewport.note_object.instance() as Note
 
-				note_object.change_properties(timing, total_cur_sv, int(line[2]) == int(NoteType.KAT), bool(int(line[3])))
-				add_object(note_object)
-				Root.send_signal(self, "new_marker_added", note_object, "add_marker")
+				hit_object.change_properties(timing, total_cur_sv, int(line_data[2]) == int(NoteType.KAT), bool(int(line_data[3])))
+				add_object(hit_object)
+				Root.send_signal(self, "new_marker_added", hit_object, "add_marker")
 
 			NoteType.ROLL:
 				## Comment
-				var note_object := root_viewport.roll_object.instance() as Roll
+				var hit_object := root_viewport.roll_object.instance() as Roll
 
-				note_object.change_properties(timing, total_cur_sv, float(line[3]), bool(int(line[4])), cur_bpm)
-				add_object(note_object)
+				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), bool(int(line_data[4])), cur_bpm)
+				add_object(hit_object)
 
 			NoteType.SPINNER:
 				## Comment
-				var note_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
+				var hit_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
 
-				note_object.change_properties(timing, total_cur_sv, float(line[3]), cur_bpm)
-				add_object(note_object)
-				Root.send_signal(self, "object_added", note_object, "add_object")
+				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), cur_bpm)
+				add_object(hit_object)
+				Root.send_signal(self, "object_added", hit_object, "add_object")
 
 			NoteType.TIMING_POINT:
-				cur_bpm = float(line[1])
+				cur_bpm = float(line_data[1])
 
 	get_tree().call_group("HitObjects", "apply_skin", root_viewport.skin)
 	get_tree().call_group("HitObjects", "connect", "audio_played", self, "play_audio")
@@ -617,8 +614,8 @@ func toggle_settings() -> void:
 
 
 ## Comment
-static func _append_note(notes: Array, line: Array) -> void:
-	notes.append(_csv_line(line).join(","))
+static func _append_note(notes: Array, line_data: Array) -> void:
+	notes.append(_csv_line(line_data).join(","))
 
 
 ## Comment
@@ -628,11 +625,11 @@ static func _barline(total_cur_sv: float, notes: Array, next_barline: float, cur
 
 
 ## Comment
-static func _csv_line(line: Array) -> PoolStringArray:
+static func _csv_line(line_data: Array) -> PoolStringArray:
 	## Comment
 	var csv_line := []
 
-	for key in line:
+	for key in line_data:
 		csv_line.append(str(key))
 
 	return PoolStringArray(csv_line)
@@ -658,13 +655,13 @@ func _hit_notify_animation() -> void:
 
 
 ## Comment
-func _keypress_animation(tween: SceneTreeTween, obj: CanvasItem) -> SceneTreeTween:
-	tween = root_viewport.new_tween(tween).set_ease(Tween.EASE_OUT)
+func _keypress_animation(scene_tween: SceneTreeTween, drum_obj: CanvasItem) -> SceneTreeTween:
+	scene_tween = root_viewport.new_tween(scene_tween).set_ease(Tween.EASE_OUT)
 
 	## Comment
-	var _tween := tween.tween_property(obj, "modulate:a", 0.0, 0.2).from(1.0)
+	var _tween := scene_tween.tween_property(drum_obj, "modulate:a", 0.0, 0.2).from(1.0)
 
-	return tween
+	return scene_tween
 
 
 ## Comment

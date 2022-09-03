@@ -47,11 +47,10 @@ func auto_hit(_hit_time: float, _hit_left: bool) -> int:
 	if state != int(State.ACTIVE):
 		return 0
 
-	## Comment
-	var action_event: InputEventAction
-
 	for key in Root.KEYS:
-		action_event = InputEventAction.new()
+		## Comment
+		var action_event := InputEventAction.new()
+
 		action_event.action = str(key)
 		action_event.pressed = true
 		Input.parse_input_event(action_event)

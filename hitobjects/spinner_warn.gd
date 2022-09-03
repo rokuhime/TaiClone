@@ -2,7 +2,7 @@ class_name SpinnerWarn
 extends HitObject
 
 ## Signals [Gameplay] to add the [Spinner] object.
-signal object_added(obj, loaded)
+signal object_added(hit_object, loaded)
 
 ## The BPM of the chart when the [Spinner] starts. Used to determine the number of hits required.
 var _bpm := 1.0

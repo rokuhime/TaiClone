@@ -16,7 +16,7 @@ func _init() -> void:
 	## The root viewport that's used when requiring [Root]-specific functions.
 	var root_viewport := root as Root
 
-	Root.send_signal(root_viewport, "screen_resized", self, "save_settings", ["save_settings"])
+	Root.send_signal(root_viewport, "screen_resized", self, "save_settings")
 
 	## The configuration file that's used to load settings.
 	var config_file := ConfigFile.new()
@@ -33,12 +33,16 @@ func _init() -> void:
 
 		match new_event.left(1):
 			"J":
+				## Comment
 				var event := InputEventJoypadButton.new()
+
 				event.button_index = int(event_value)
 				root_viewport.change_key(event, str(key))
 
 			"K":
+				## Comment
 				var event := InputEventKey.new()
+
 				event.scancode = OS.find_scancode_from_string(event_value)
 				root_viewport.change_key(event, str(key))
 

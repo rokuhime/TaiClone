@@ -37,7 +37,7 @@ onready var timer := get_tree().create_timer(0)
 
 
 func _ready() -> void:
-	Root.send_signal(root_viewport, "volume_changed", self, "save_settings", ["volume_changed"])
+	Root.send_signal(root_viewport, "volume_changed", self, "save_settings")
 	hide()
 
 
@@ -93,13 +93,13 @@ func change_channel(channel: int, needs_visible := true) -> void:
 
 		match vol:
 			master_vol:
-				_master_modulate_tween = _modulate_tween(vol, _master_modulate_tween, new_color)
+				_master_modulate_tween = _modulate_vol_tween(vol, _master_modulate_tween, new_color)
 
 			music_vol:
-				_music_modulate_tween = _modulate_tween(vol, _music_modulate_tween, new_color)
+				_music_modulate_tween = _modulate_vol_tween(vol, _music_modulate_tween, new_color)
 
 			sfx_vol:
-				_sfx_modulate_tween = _modulate_tween(vol, _sfx_modulate_tween, new_color)
+				_sfx_modulate_tween = _modulate_vol_tween(vol, _sfx_modulate_tween, new_color)
 
 	if modulate.a < 1:
 		show()
@@ -159,23 +159,23 @@ func _change_volume(amount: float) -> void:
 
 
 ## Comment
-func _modulate_tween(vol: Node, tween: SceneTreeTween, new_color: float) -> SceneTreeTween:
-	tween = root_viewport.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+func _modulate_vol_tween(vol: CanvasItem, scene_tween: SceneTreeTween, new_color: float) -> SceneTreeTween:
+	scene_tween = root_viewport.new_tween(scene_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
-	var _tween = tween.tween_property(vol, "modulate:a", new_color, 0.2)
+	var _tween = scene_tween.tween_property(vol, "modulate:a", new_color, 0.2)
 
-	return tween
+	return scene_tween
 
 
 ## Comment
-func _progress_tween(tween: SceneTreeTween, progress: Node, amount: float) -> SceneTreeTween:
-	tween = root_viewport.new_tween(tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+func _progress_tween(scene_tween: SceneTreeTween, progress: TextureProgress, amount: float) -> SceneTreeTween:
+	scene_tween = root_viewport.new_tween(scene_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	## Comment
-	var _tween = tween.tween_property(progress, "value", amount, 0.2)
+	var _tween = scene_tween.tween_property(progress, "value", amount, 0.2)
 
-	return tween
+	return scene_tween
 
 
 ## Comment
