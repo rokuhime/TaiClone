@@ -1,241 +1,428 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://root/settings_panel.gd" type="Script" id=1]
+[ext_resource path="res://theme.tres" type="Theme" id=2]
+[ext_resource path="res://temporary/nyn.png" type="Texture" id=3]
 
-[node name="SettingsPanel" type="ScrollContainer"]
+[sub_resource type="AtlasTexture" id=1]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=2]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 498, 0, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=3]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 996, 0, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=4]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 1494, 0, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=5]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 1992, 0, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=6]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 0, 413, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=7]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 498, 413, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=8]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 996, 413, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=9]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 1494, 413, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=10]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 1992, 413, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=11]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 0, 826, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=12]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 498, 826, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=13]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 996, 826, 498, 413 )
+
+[sub_resource type="AtlasTexture" id=14]
+flags = 4
+atlas = ExtResource( 3 )
+region = Rect2( 1494, 826, 498, 413 )
+
+[sub_resource type="SpriteFrames" id=15]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ), SubResource( 13 ), SubResource( 14 ) ],
+"loop": true,
+"name": "default",
+"speed": 9.0
+} ]
+
+[node name="SettingsPanel" type="Panel"]
 anchor_left = 1.0
-anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -600.0
-margin_top = -500.0
-margin_right = -15.0
-margin_bottom = -94.0
+margin_left = -400.0
 grow_horizontal = 0
+theme = ExtResource( 2 )
 theme_type_variation = "Settings"
-scroll_horizontal_enabled = false
 script = ExtResource( 1 )
 
-[node name="V" type="VBoxContainer" parent="."]
-margin_right = 573.0
-margin_bottom = 727.0
+[node name="Panels" type="ScrollContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+scroll_vertical_enabled = false
+
+[node name="Scroll" type="HBoxContainer" parent="Panels"]
+margin_right = 800.0
+margin_bottom = 1068.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 0
+
+[node name="Settings" type="ScrollContainer" parent="Panels/Scroll"]
+margin_right = 400.0
+margin_bottom = 1068.0
+rect_min_size = Vector2( 400, 0 )
+
+[node name="V" type="VBoxContainer" parent="Panels/Scroll/Settings"]
+margin_right = 400.0
+margin_bottom = 814.0
 size_flags_horizontal = 3
 
-[node name="Keybinds" type="VBoxContainer" parent="V"]
-margin_left = 218.0
-margin_right = 355.0
-margin_bottom = 255.0
+[node name="Title" type="Label" parent="Panels/Scroll/Settings/V"]
+margin_right = 400.0
+margin_bottom = 66.0
+theme_type_variation = "SettingsTitle"
+text = "Settings"
+align = 1
+valign = 1
+
+[node name="Description" type="Label" parent="Panels/Scroll/Settings/V"]
+visible = false
+margin_top = 70.0
+margin_right = 400.0
+margin_bottom = 109.0
+text = "Change how the game runs."
+align = 1
+valign = 1
+
+[node name="Buffer1" type="HSeparator" parent="Panels/Scroll/Settings/V"]
+margin_left = 125.0
+margin_top = 70.0
+margin_right = 275.0
+margin_bottom = 103.0
+rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
-[node name="Label" type="Label" parent="V/Keybinds"]
+[node name="Keybinds" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
+margin_left = 131.0
+margin_top = 107.0
+margin_right = 268.0
+margin_bottom = 342.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds"]
 margin_right = 137.0
-margin_bottom = 59.0
-theme_type_variation = "Keybinds"
+margin_bottom = 39.0
 text = "Keybinds"
 align = 1
 
-[node name="LeftKat" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 63.0
+[node name="LeftKat" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Keybinds"]
+margin_top = 43.0
 margin_right = 137.0
-margin_bottom = 108.0
+margin_bottom = 88.0
 
-[node name="Label" type="Label" parent="V/Keybinds/LeftKat"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds/LeftKat"]
 margin_top = 3.0
 margin_right = 121.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Left Kat"
 
-[node name="Button" type="Button" parent="V/Keybinds/LeftKat"]
+[node name="Button" type="Button" parent="Panels/Scroll/Settings/V/Keybinds/LeftKat"]
 margin_left = 125.0
 margin_right = 137.0
 margin_bottom = 45.0
 
-[node name="LeftDon" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 112.0
+[node name="LeftDon" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Keybinds"]
+margin_top = 92.0
 margin_right = 137.0
-margin_bottom = 157.0
+margin_bottom = 137.0
 
-[node name="Label" type="Label" parent="V/Keybinds/LeftDon"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds/LeftDon"]
 margin_top = 3.0
 margin_right = 121.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Left Don"
 
-[node name="Button" type="Button" parent="V/Keybinds/LeftDon"]
+[node name="Button" type="Button" parent="Panels/Scroll/Settings/V/Keybinds/LeftDon"]
 margin_left = 125.0
 margin_right = 137.0
 margin_bottom = 45.0
 
-[node name="RightDon" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 161.0
+[node name="RightDon" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Keybinds"]
+margin_top = 141.0
 margin_right = 137.0
-margin_bottom = 206.0
+margin_bottom = 186.0
 
-[node name="Label" type="Label" parent="V/Keybinds/RightDon"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds/RightDon"]
 margin_top = 3.0
 margin_right = 121.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Right Don"
 
-[node name="Button" type="Button" parent="V/Keybinds/RightDon"]
+[node name="Button" type="Button" parent="Panels/Scroll/Settings/V/Keybinds/RightDon"]
 margin_left = 125.0
 margin_right = 137.0
 margin_bottom = 45.0
 
-[node name="RightKat" type="HBoxContainer" parent="V/Keybinds"]
-margin_top = 210.0
+[node name="RightKat" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Keybinds"]
+margin_top = 190.0
 margin_right = 137.0
-margin_bottom = 255.0
+margin_bottom = 235.0
 
-[node name="Label" type="Label" parent="V/Keybinds/RightKat"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds/RightKat"]
 margin_top = 3.0
 margin_right = 121.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Right Kat"
 
-[node name="Button" type="Button" parent="V/Keybinds/RightKat"]
+[node name="Button" type="Button" parent="Panels/Scroll/Settings/V/Keybinds/RightKat"]
 margin_left = 125.0
 margin_right = 137.0
 margin_bottom = 45.0
 
-[node name="Buffer1" type="HSeparator" parent="V"]
-margin_left = 211.0
-margin_top = 259.0
-margin_right = 361.0
-margin_bottom = 292.0
+[node name="Buffer2" type="HSeparator" parent="Panels/Scroll/Settings/V"]
+margin_left = 125.0
+margin_top = 346.0
+margin_right = 275.0
+margin_bottom = 379.0
 rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
-[node name="ExtraDisplays" type="VBoxContainer" parent="V"]
-margin_left = 178.0
-margin_top = 296.0
-margin_right = 394.0
-margin_bottom = 435.0
+[node name="ExtraDisplays" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
+margin_left = 92.0
+margin_top = 383.0
+margin_right = 308.0
+margin_bottom = 522.0
 size_flags_horizontal = 4
 
-[node name="Label" type="Label" parent="V/ExtraDisplays"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/ExtraDisplays"]
 margin_right = 216.0
 margin_bottom = 39.0
 text = "Extra Displays"
 align = 1
 
-[node name="LateEarly" type="HBoxContainer" parent="V/ExtraDisplays"]
+[node name="LateEarly" type="HBoxContainer" parent="Panels/Scroll/Settings/V/ExtraDisplays"]
 margin_top = 43.0
 margin_right = 216.0
 margin_bottom = 88.0
 
-[node name="Label" type="Label" parent="V/ExtraDisplays/LateEarly"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/ExtraDisplays/LateEarly"]
 margin_top = 3.0
 margin_right = 183.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "Late/Early Text"
 
-[node name="Options" type="OptionButton" parent="V/ExtraDisplays/LateEarly"]
+[node name="Options" type="OptionButton" parent="Panels/Scroll/Settings/V/ExtraDisplays/LateEarly"]
 margin_left = 187.0
 margin_right = 216.0
 margin_bottom = 45.0
 
-[node name="HitError" type="HBoxContainer" parent="V/ExtraDisplays"]
+[node name="HitError" type="HBoxContainer" parent="Panels/Scroll/Settings/V/ExtraDisplays"]
 margin_top = 92.0
 margin_right = 216.0
 margin_bottom = 139.0
 
-[node name="Label" type="Label" parent="V/ExtraDisplays/HitError"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/ExtraDisplays/HitError"]
 margin_top = 4.0
 margin_right = 188.0
 margin_bottom = 43.0
 size_flags_horizontal = 3
 text = "Hit Error Bar"
 
-[node name="Toggle" type="CheckBox" parent="V/ExtraDisplays/HitError"]
+[node name="Toggle" type="CheckBox" parent="Panels/Scroll/Settings/V/ExtraDisplays/HitError"]
 margin_left = 192.0
 margin_right = 216.0
 margin_bottom = 47.0
 
-[node name="Resolution" type="VBoxContainer" parent="V"]
-margin_left = 185.0
-margin_top = 439.0
-margin_right = 387.0
-margin_bottom = 594.0
+[node name="Resolution" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
+margin_left = 99.0
+margin_top = 526.0
+margin_right = 301.0
+margin_bottom = 681.0
 size_flags_horizontal = 4
 
-[node name="Label" type="Label" parent="V/Resolution"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Resolution"]
 margin_right = 202.0
 margin_bottom = 55.0
 theme_type_variation = "Resolution"
 text = "Resolution (WIP)"
 align = 1
 
-[node name="Options" type="OptionButton" parent="V/Resolution"]
+[node name="Options" type="OptionButton" parent="Panels/Scroll/Settings/V/Resolution"]
 margin_left = 86.0
 margin_top = 59.0
 margin_right = 115.0
 margin_bottom = 104.0
 size_flags_horizontal = 4
 
-[node name="Fullscreen" type="HBoxContainer" parent="V/Resolution"]
+[node name="Fullscreen" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Resolution"]
 margin_top = 108.0
 margin_right = 202.0
 margin_bottom = 155.0
 
-[node name="Label" type="Label" parent="V/Resolution/Fullscreen"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Resolution/Fullscreen"]
 margin_top = 4.0
 margin_right = 174.0
 margin_bottom = 43.0
 size_flags_horizontal = 3
 text = "Fullscreen"
 
-[node name="Toggle" type="CheckBox" parent="V/Resolution/Fullscreen"]
+[node name="Toggle" type="CheckBox" parent="Panels/Scroll/Settings/V/Resolution/Fullscreen"]
 margin_left = 178.0
 margin_right = 202.0
 margin_bottom = 47.0
 
-[node name="Buffer2" type="HSeparator" parent="V"]
-margin_left = 211.0
-margin_top = 598.0
-margin_right = 361.0
-margin_bottom = 631.0
+[node name="Buffer3" type="HSeparator" parent="Panels/Scroll/Settings/V"]
+margin_left = 125.0
+margin_top = 685.0
+margin_right = 275.0
+margin_bottom = 718.0
 rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
-[node name="AudioLabel" type="Label" parent="V"]
-margin_top = 635.0
-margin_right = 573.0
-margin_bottom = 674.0
+[node name="AudioLabel" type="Label" parent="Panels/Scroll/Settings/V"]
+margin_top = 722.0
+margin_right = 400.0
+margin_bottom = 761.0
 text = "Audio"
 align = 1
 
-[node name="Offset" type="HBoxContainer" parent="V"]
-margin_left = 208.0
-margin_top = 678.0
-margin_right = 365.0
-margin_bottom = 727.0
+[node name="Offset" type="HBoxContainer" parent="Panels/Scroll/Settings/V"]
+margin_left = 121.0
+margin_top = 765.0
+margin_right = 278.0
+margin_bottom = 814.0
 size_flags_horizontal = 4
 
-[node name="Label" type="Label" parent="V/Offset"]
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Offset"]
 margin_top = 5.0
 margin_right = 71.0
 margin_bottom = 44.0
 text = "Offset"
 
-[node name="LineEdit" type="LineEdit" parent="V/Offset"]
+[node name="LineEdit" type="LineEdit" parent="Panels/Scroll/Settings/V/Offset"]
 margin_left = 75.0
 margin_right = 157.0
 margin_bottom = 49.0
 align = 2
 placeholder_text = "0"
+caret_blink = true
+caret_blink_speed = 0.5
 
-[connection signal="pressed" from="V/Keybinds/LeftKat/Button" to="." method="button_pressed" binds= [ "LeftKat" ]]
-[connection signal="pressed" from="V/Keybinds/LeftDon/Button" to="." method="button_pressed" binds= [ "LeftDon" ]]
-[connection signal="pressed" from="V/Keybinds/RightDon/Button" to="." method="button_pressed" binds= [ "RightDon" ]]
-[connection signal="pressed" from="V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
-[connection signal="item_selected" from="V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
-[connection signal="toggled" from="V/ExtraDisplays/HitError/Toggle" to="." method="hit_error_func"]
-[connection signal="item_selected" from="V/Resolution/Options" to="." method="change_res"]
-[connection signal="toggled" from="V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
-[connection signal="text_changed" from="V/Offset/LineEdit" to="." method="change_offset"]
+[node name="Preferences" type="ScrollContainer" parent="Panels/Scroll"]
+margin_left = 400.0
+margin_right = 800.0
+margin_bottom = 1068.0
+rect_min_size = Vector2( 400, 0 )
+
+[node name="V" type="VBoxContainer" parent="Panels/Scroll/Preferences"]
+margin_right = 400.0
+margin_bottom = 146.0
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Panels/Scroll/Preferences/V"]
+margin_right = 400.0
+margin_bottom = 66.0
+theme_type_variation = "SettingsTitle"
+text = "Preferences"
+align = 1
+valign = 1
+
+[node name="Buffer1" type="HSeparator" parent="Panels/Scroll/Preferences/V"]
+margin_left = 125.0
+margin_top = 70.0
+margin_right = 275.0
+margin_bottom = 103.0
+rect_min_size = Vector2( 150, 33 )
+size_flags_horizontal = 4
+
+[node name="Description" type="Label" parent="Panels/Scroll/Preferences/V"]
+margin_top = 107.0
+margin_right = 400.0
+margin_bottom = 146.0
+text = "uhm... cheesed to meet you?"
+align = 1
+valign = 1
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Panels/Scroll/Preferences/V"]
+position = Vector2( 161, 293 )
+scale = Vector2( 0.771186, 0.771186 )
+frames = SubResource( 15 )
+frame = 10
+playing = true
+
+[node name="Tabs" type="HBoxContainer" parent="."]
+visible = false
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -50.0
+custom_constants/separation = 0
+
+[node name="Settings" type="Button" parent="Tabs"]
+margin_right = 200.0
+margin_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = "SettingsButtons"
+text = "Settings"
+
+[node name="Preferences" type="Button" parent="Tabs"]
+margin_left = 200.0
+margin_right = 400.0
+margin_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = "SettingsButtons"
+text = "Preferences"
+
+[connection signal="pressed" from="Panels/Scroll/Settings/V/Keybinds/LeftKat/Button" to="." method="button_pressed" binds= [ "LeftKat" ]]
+[connection signal="pressed" from="Panels/Scroll/Settings/V/Keybinds/LeftDon/Button" to="." method="button_pressed" binds= [ "LeftDon" ]]
+[connection signal="pressed" from="Panels/Scroll/Settings/V/Keybinds/RightDon/Button" to="." method="button_pressed" binds= [ "RightDon" ]]
+[connection signal="pressed" from="Panels/Scroll/Settings/V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
+[connection signal="item_selected" from="Panels/Scroll/Settings/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
+[connection signal="toggled" from="Panels/Scroll/Settings/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error_func"]
+[connection signal="item_selected" from="Panels/Scroll/Settings/V/Resolution/Options" to="." method="change_res"]
+[connection signal="toggled" from="Panels/Scroll/Settings/V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
+[connection signal="text_changed" from="Panels/Scroll/Settings/V/Offset/LineEdit" to="." method="change_offset"]

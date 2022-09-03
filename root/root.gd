@@ -125,36 +125,41 @@ var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
+	#references
+	skin = SkinManager.new("res://skins/test_skin")
+	music = $Background/Music as AudioStreamPlayer
+
+	#objects
+	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
+	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
+	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
+	results = load("res://scenes/results.tscn") as PackedScene
+
+	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
+	bars = load("res://root/bars.tscn") as PackedScene
+	note_object = load("res://hitobjects/note.tscn") as PackedScene
+	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
+	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
+	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
+	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
+	menu_bg = load("res://temporary/menubg.png") as Texture
+
+	#gameplay variables
 	accuracy = ""
 	accurate_count = 0
 	artist = ""
-	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://root/bars.tscn") as PackedScene
 	charter = ""
 	combo = 0
+	score = 0
 	difficulty_name = ""
 	early_count = 0
 	f_accurate_count = 0
 	f_inaccurate_count = 0
-	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
 	inaccurate_count = 0
 	late_count = 0
-	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
 	max_combo = 0
-	menu_bg = load("res://temporary/menubg.png") as Texture
 	miss_count = 0
-	music = $Background/Music as AudioStreamPlayer
-	note_object = load("res://hitobjects/note.tscn") as PackedScene
-	results = load("res://scenes/results.tscn") as PackedScene
-	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
-	score = 0
-	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
-	skin = SkinManager.new("res://skins/test_skin")
-	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
-	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
-	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
 	title = ""
-
 
 ## Comment
 static func get_event(key: String) -> InputEvent:
