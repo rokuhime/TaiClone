@@ -64,6 +64,9 @@ static func load_chart(file_path: String) -> bool:
 		var cur_bpm := -1.0
 
 		## Comment
+		var current_kiai := false
+
+		## Comment
 		var current_meter := 0
 
 		## Comment
@@ -131,6 +134,9 @@ static func load_chart(file_path: String) -> bool:
 
 					while not next_timing.empty():
 						## Comment
+						var kiai := int(next_timing[3])
+
+						## Comment
 						var meter := int(next_timing[1])
 
 						## Comment
@@ -155,10 +161,13 @@ static func load_chart(file_path: String) -> bool:
 							cur_bpm = timing
 							current_meter = meter
 							next_barline = next_time
-							_append_note(notes, [next_barline, cur_bpm, NoteType.TIMING_POINT])
 
 						else:
 							total_cur_sv = timing * float(map_sv_multiplier)
+
+						if meter or bool(kiai) != current_kiai:
+							_append_note(notes, [next_barline, cur_bpm, NoteType.TIMING_POINT, kiai])
+							current_kiai = bool(kiai)
 
 						if current_timing_data.empty():
 							next_timing = []
@@ -192,7 +201,7 @@ static func load_chart(file_path: String) -> bool:
 					## Comment
 					var uninherited := bool(int(line_data[6]))
 
-					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1])])
+					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1]), 1 << 0 & int(line_data[7])])
 					if next_timing.empty():
 						next_timing = line_data
 
