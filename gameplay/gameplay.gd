@@ -379,6 +379,7 @@ func load_func(file_path := "") -> void:
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	play_button.disabled = false
+	root_viewport.max_combo = 0
 	_load_finish("Done!")
 
 

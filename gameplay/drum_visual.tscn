@@ -3,9 +3,8 @@
 [ext_resource path="res://gameplay/drum_visual.gd" type="Script" id=1]
 
 [node name="DrumVisual" type="TextureRect"]
-margin_top = 4.0
+anchor_bottom = 1.0
 margin_right = 254.0
-margin_bottom = 282.0
 expand = true
 script = ExtResource( 1 )
 
