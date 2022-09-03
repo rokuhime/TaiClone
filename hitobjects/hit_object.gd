@@ -1,7 +1,7 @@
 class_name HitObject
 extends KinematicBody2D
 
-## Signals [Gameplay] when a hit sound should be played.
+## Signals DrumVisual when a hit sound should be played.
 signal audio_played(key)
 
 ## Signals [Gameplay] when a score should be added.

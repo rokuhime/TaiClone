@@ -1,6 +1,15 @@
 class_name Gameplay
 extends Scene
 
+## Signals DrumVisual when a sound should be played.
+signal audio_played(key)
+
+## Comment
+signal combo_changed(combo)
+
+## Comment
+signal key_pressed(key)
+
 ## Comment
 signal marker_added(type, timing, indicate)
 
@@ -31,20 +40,8 @@ var _inactive := true
 ## Comment
 var _judgement_tween := SceneTreeTween.new()
 
-## Comment
-var _l_don_tween := SceneTreeTween.new()
-
-## Comment
-var _l_kat_tween := SceneTreeTween.new()
-
 ## the time for the last note in the chart
 var _last_note_time := 0.0
-
-## Comment
-var _r_don_tween := SceneTreeTween.new()
-
-## Comment
-var _r_kat_tween := SceneTreeTween.new()
 
 ## Comment
 var _score_indicator_tween := SceneTreeTween.new()
@@ -55,28 +52,17 @@ var _time_begin := 0.0
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
-onready var combo_break := $ComboBreakAudio as AudioStreamPlayer
-onready var combo_label := $BarLeft/DrumVisual/Combo as Label
 onready var debug_text := $Debug/DebugText as Label
-onready var f_don_aud := $FinisherDonAudio as AudioStreamPlayer
-onready var f_kat_aud := $FinisherKatAudio as AudioStreamPlayer
+onready var drum_visual := $BarRight/DrumVisual
 onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
-onready var judgement := $BarLeft/Judgement as TextureRect
-onready var l_don_aud := $LeftDonAudio as AudioStreamPlayer
-onready var l_don_obj := $BarLeft/DrumVisual/LeftDon as CanvasItem
-onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
-onready var l_kat_obj := $BarLeft/DrumVisual/LeftKat as CanvasItem
+onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
-onready var obj_container := $BarLeft/ObjectContainer as Control
+onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
 onready var play_button := $Debug/TempLoadChart/PlayButton as Button
-onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
-onready var r_don_obj := $BarLeft/DrumVisual/RightDon as CanvasItem
-onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
-onready var r_kat_obj := $BarLeft/DrumVisual/RightKat as CanvasItem
 onready var root_viewport := $"/root" as Root
 onready var song_progress := $UI/SongProgress as ProgressBar
-onready var timing_indicator := $BarLeft/TimingIndicator as Label
+onready var timing_indicator := $BarRight/HitPointOffset/TimingIndicator as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var ui_score := $UI/Score as Label
 
@@ -86,10 +72,6 @@ func _ready() -> void:
 	change_late_early()
 	root_viewport.music.stop()
 	last_hit_score.modulate.a = 0
-	l_don_obj.modulate.a = 0
-	l_kat_obj.modulate.a = 0
-	r_don_obj.modulate.a = 0
-	r_kat_obj.modulate.a = 0
 	_reset()
 
 	## Comment
@@ -143,18 +125,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	for key in Root.KEYS:
 		if event.is_action_pressed(str(key)):
 			inputs.append(str(key))
-			match str(key):
-				"LeftDon":
-					_l_don_tween = _keypress_animation(_l_don_tween, l_don_obj)
-
-				"LeftKat":
-					_l_kat_tween = _keypress_animation(_l_kat_tween, l_kat_obj)
-
-				"RightDon":
-					_r_don_tween = _keypress_animation(_r_don_tween, r_don_obj)
-
-				"RightKat":
-					_r_kat_tween = _keypress_animation(_r_kat_tween, r_kat_obj)
+			emit_signal("key_pressed", str(key))
 
 	if Root.inputs_empty(inputs):
 		return
@@ -167,7 +138,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			break
 
 	for key in inputs:
-		play_audio(str(key))
+		emit_signal("audio_played", str(key))
 
 
 ## Comment
@@ -203,7 +174,7 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 		return
 
 	hit_object.apply_skin(root_viewport.skin)
-	Root.send_signal(self, "audio_played", hit_object, "play_audio")
+	Root.send_signal(drum_visual, "audio_played", hit_object, "play_audio")
 	Root.send_signal(self, "score_added", hit_object, "add_score")
 
 
@@ -237,7 +208,7 @@ func add_score(type: int, marker := false) -> void:
 
 		HitObject.Score.MISS:
 			if _current_combo >= 25:
-				combo_break.play()
+				emit_signal("audio_played", "ComboBreak")
 			root_viewport.miss_count += 1
 			root_viewport.max_combo += 1
 			_current_combo = 0
@@ -264,7 +235,7 @@ func add_score(type: int, marker := false) -> void:
 	## Comment
 	var hit_count := root_viewport.accurate_count + root_viewport.inaccurate_count / 2.0
 
-	combo_label.text = str(_current_combo)
+	emit_signal("combo_changed", _current_combo)
 	ui_score.text = "%010d" % root_viewport.score
 	root_viewport.accuracy = "%2.2f" % (hit_count * 100 / (root_viewport.accurate_count + root_viewport.inaccurate_count + root_viewport.miss_count) if hit_count else 0.0)
 	ui_accuracy.text = root_viewport.accuracy
@@ -567,32 +538,10 @@ func load_func(file_path := "") -> void:
 				cur_bpm = float(line_data[1])
 
 	get_tree().call_group("HitObjects", "apply_skin", root_viewport.skin)
-	get_tree().call_group("HitObjects", "connect", "audio_played", self, "play_audio")
+	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	play_button.disabled = false
 	_load_finish("Done!")
-
-
-## Comment
-func play_audio(key: String) -> void:
-	match key:
-		"FinisherDon":
-			f_don_aud.play()
-
-		"FinisherKat":
-			f_kat_aud.play()
-
-		"LeftDon":
-			l_don_aud.play()
-
-		"LeftKat":
-			l_kat_aud.play()
-
-		"RightDon":
-			r_don_aud.play()
-
-		"RightKat":
-			r_kat_aud.play()
 
 
 ## Comment
@@ -652,16 +601,6 @@ func _hit_notify_animation() -> void:
 
 	## Comment
 	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
-
-
-## Comment
-func _keypress_animation(scene_tween: SceneTreeTween, drum_obj: CanvasItem) -> SceneTreeTween:
-	scene_tween = root_viewport.new_tween(scene_tween).set_ease(Tween.EASE_OUT)
-
-	## Comment
-	var _tween := scene_tween.tween_property(drum_obj, "modulate:a", 0.0, 0.2).from(1.0)
-
-	return scene_tween
 
 
 ## Comment

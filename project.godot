@@ -54,11 +54,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/scene.gd"
 }, {
-"base": "Scene",
-"class": "SettingsPanel",
-"language": "GDScript",
-"path": "res://root/settings_panel.gd"
-}, {
 "base": "Reference",
 "class": "SkinManager",
 "language": "GDScript",
@@ -99,7 +94,6 @@ _global_script_class_icons={
 "Roll": "",
 "Root": "",
 "Scene": "",
-"SettingsPanel": "",
 "SkinManager": "",
 "Spinner": "",
 "SpinnerWarn": "",

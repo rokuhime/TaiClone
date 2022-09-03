@@ -1,4 +1,3 @@
-class_name SettingsPanel
 extends Scene
 
 ## The list of selectable resolutions.
