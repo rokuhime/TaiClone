@@ -1,7 +1,7 @@
 class_name HitObject
 extends KinematicBody2D
 
-## Signals [Gameplay] when a hit sound should be played.
+## Signals DrumVisual when a hit sound should be played.
 signal audio_played(key)
 
 ## Signals [Gameplay] when a score should be added.
@@ -63,8 +63,7 @@ func activate() -> void:
 
 
 ## Apply a skin to this [HitObject]. Intended to be implemented by child classes.
-## new_skin (SkinManager): The skin to apply.
-func apply_skin(_new_skin: SkinManager) -> void:
+func apply_skin() -> void:
 	pass
 
 
@@ -76,9 +75,9 @@ func auto_hit(_hit_time: float, _hit_left: bool) -> int:
 ## Perform a comprehensive check to see if this [HitObject] was correctly hit. Currently used by [Note]s and [Spinner]s.
 ## key ([String]): "Don" or "Kat"
 ## inputs ([Array]): The list of actions received.
-## play_audio ([bool]): Whether or not to play the corresponding hit sound.
+## hit_sound ([bool]): Whether or not to play the corresponding hit sound.
 ## return ([String]): The side hit. An empty string means this [HitObject] was not correctly hit.
-func check_hit(key: String, inputs: Array, play_audio := true) -> String:
+func check_hit(key: String, inputs: Array, hit_sound := true) -> String:
 	## Whether or not this [HitObject] was hit on the left side.
 	var left_hit := inputs.find("Left" + key)
 
@@ -89,25 +88,25 @@ func check_hit(key: String, inputs: Array, play_audio := true) -> String:
 		inputs.remove(left_hit)
 		inputs.remove(right_hit)
 		inputs.append(key)
-		if play_audio:
+		if hit_sound:
 			emit_signal("audio_played", "Left" + key)
 		return key
 
 	elif left_hit + 1:
 		inputs.remove(left_hit)
-		if play_audio:
+		if hit_sound:
 			emit_signal("audio_played", "Left" + key)
 		return "Left"
 
 	elif right_hit + 1:
 		inputs.remove(right_hit)
-		if play_audio:
+		if hit_sound:
 			emit_signal("audio_played", "Right" + key)
 		return "Right"
 
 	elif inputs.has(key):
 		inputs.remove(inputs.find(key))
-		if play_audio:
+		if hit_sound:
 			emit_signal("audio_played", "Right" + key)
 		return key
 

@@ -19,10 +19,11 @@ var _needed_hits := 0
 ## The [SceneTreeTween] used to tween this [Spinner]'s [member _current_speed].
 var _speed_tween := SceneTreeTween.new()
 
-onready var approach := $Approach as Control
+onready var approach := $Approach as TextureRect
 onready var label := $Label as Label
 onready var root_viewport := $"/root" as Root
 onready var rotation_obj := $RotationObj as Node2D
+onready var sprite := $RotationObj/Sprite as TextureRect
 
 
 func _ready() -> void:
@@ -43,15 +44,20 @@ func _process(_delta: float) -> void:
 
 
 ## See [HitObject].
+func apply_skin() -> void:
+	approach.texture = root_viewport.skin.spinner_approach
+	sprite.texture = root_viewport.skin.spinner_circle
+
+
+## See [HitObject].
 func auto_hit(_hit_time: float, _hit_left: bool) -> int:
 	if state != int(State.ACTIVE):
 		return 0
 
-	## Comment
-	var action_event: InputEventAction
-
 	for key in Root.KEYS:
-		action_event = InputEventAction.new()
+		## Comment
+		var action_event := InputEventAction.new()
+
 		action_event.action = str(key)
 		action_event.pressed = true
 		Input.parse_input_event(action_event)

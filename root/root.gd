@@ -149,7 +149,7 @@ func _init() -> void:
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
 	score = 0
 	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
-	skin = SkinManager.new()
+	skin = SkinManager.new("res://skins/test_skin")
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
@@ -172,8 +172,8 @@ static func item_resolution(item: Array) -> Vector2:
 
 
 ## Comment
-static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String, binds := []) -> void:
-	if obj.connect(signal_name, signal_target, method, binds):
+static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
+	if obj.connect(signal_name, signal_target, method):
 		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
 
 
@@ -202,21 +202,21 @@ func bg_changed(new_texture: Texture, new_modulate := Color.white) -> void:
 func change_key(event: InputEvent, button: String) -> void:
 	InputMap.action_erase_events(str(button))
 	InputMap.action_add_event(str(button), event)
-	save_settings("change_key")
+	save_settings()
 
 
 ## Comment
 func hit_error_toggled(new_visible: bool) -> void:
 	hit_error = new_visible
 	emit_signal("hit_error_changed")
-	save_settings("hit_error_toggled")
+	save_settings()
 
 
 ## Comment
 func late_early(new_value: int) -> void:
 	late_early_simple_display = new_value
 	emit_signal("late_early_changed")
-	save_settings("late_early")
+	save_settings()
 
 
 ## Comment
@@ -252,11 +252,11 @@ func res_changed(new_size: Vector2) -> void:
 	OS.window_resizable = false
 	OS.window_size = new_size
 	OS.window_resizable = true
-	save_settings("res_changed")
+	save_settings()
 
 
 ## Comment
-func save_settings(debug: String) -> void:
+func save_settings() -> void:
 	if not settings_save:
 		return
 
@@ -285,11 +285,8 @@ func save_settings(debug: String) -> void:
 	if config_file.save(CONFIG_PATH):
 		push_warning("Attempted to save configuration file.")
 
-	else:
-		print_debug(debug)
-
 
 ## Comment
 func toggle_fullscreen(new_visible: bool) -> void:
 	OS.window_fullscreen = new_visible
-	save_settings("toggle_fullscreen")
+	save_settings()

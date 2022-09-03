@@ -1,8 +1,6 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://hitobjects/spinner.gd" type="Script" id=1]
-[ext_resource path="res://skins/test_skin/spinner-approachcircle.png" type="Texture" id=2]
-[ext_resource path="res://skins/test_skin/spinner-circle.png" type="Texture" id=3]
 
 [node name="Spinner" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -12,12 +10,11 @@ rect = Rect2( -420, -420, 840, 840 )
 
 [node name="RotationObj" type="Node2D" parent="."]
 
-[node name="SpinnerCircle" type="TextureRect" parent="RotationObj"]
+[node name="Sprite" type="TextureRect" parent="RotationObj"]
 margin_left = -420.0
 margin_top = -420.0
 margin_right = 420.0
 margin_bottom = 420.0
-texture = ExtResource( 3 )
 expand = true
 stretch_mode = 6
 
@@ -27,7 +24,6 @@ margin_top = -280.0
 margin_right = 280.0
 margin_bottom = 280.0
 rect_pivot_offset = Vector2( 280, 280 )
-texture = ExtResource( 2 )
 expand = true
 
 [node name="Label" type="Label" parent="."]

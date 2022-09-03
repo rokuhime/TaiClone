@@ -1,4 +1,3 @@
-class_name SettingsPanel
 extends Scene
 
 ## The list of selectable resolutions.
@@ -74,7 +73,7 @@ func change_offset(new_text: String) -> void:
 	offset_text.caret_position = text_position
 	if _settings_save:
 		root_viewport.global_offset = new_offset
-		root_viewport.save_settings("change_offset")
+		root_viewport.save_settings()
 
 
 ## Called when a different resolution is selected.

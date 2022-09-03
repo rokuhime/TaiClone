@@ -2,11 +2,12 @@ class_name BarLine
 extends HitObject
 
 onready var color_rect := $ColorRect as CanvasItem
+onready var root_viewport := $"/root" as Root
 
 
 ## See [HitObject].
-func apply_skin(new_skin: SkinManager) -> void:
-	color_rect.self_modulate = new_skin.barline_color
+func apply_skin() -> void:
+	color_rect.self_modulate = root_viewport.skin.barline_color
 
 
 ## Initialize [BarLine] variables.

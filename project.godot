@@ -9,15 +9,15 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Reference",
-"class": "AudioLoader",
-"language": "GDScript",
-"path": "res://scripts/gd_script_audio_import.gd"
-}, {
 "base": "HitObject",
 "class": "BarLine",
 "language": "GDScript",
 "path": "res://hitobjects/bar_line.gd"
+}, {
+"base": "Reference",
+"class": "ChartLoader",
+"language": "GDScript",
+"path": "res://scripts/chart_loader.gd"
 }, {
 "base": "Scene",
 "class": "Gameplay",
@@ -54,11 +54,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/scene.gd"
 }, {
-"base": "Scene",
-"class": "SettingsPanel",
-"language": "GDScript",
-"path": "res://root/settings_panel.gd"
-}, {
 "base": "Reference",
 "class": "SkinManager",
 "language": "GDScript",
@@ -90,8 +85,8 @@ _global_script_classes=[ {
 "path": "res://root/volume_control.gd"
 } ]
 _global_script_class_icons={
-"AudioLoader": "",
 "BarLine": "",
+"ChartLoader": "",
 "Gameplay": "",
 "HitError": "",
 "HitObject": "",
@@ -99,7 +94,6 @@ _global_script_class_icons={
 "Roll": "",
 "Root": "",
 "Scene": "",
-"SettingsPanel": "",
 "SkinManager": "",
 "Spinner": "",
 "SpinnerWarn": "",
