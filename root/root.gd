@@ -25,13 +25,10 @@ var hit_error := true
 var late_early_simple_display := 1
 
 ## Comment
-var accuracy: String
+var settings_save := false
 
 ## Comment
-var accurate_count: int
-
-## Comment
-var artist: String
+var music: AudioStreamPlayer
 
 ## Comment
 var bar_line_object: PackedScene
@@ -40,46 +37,10 @@ var bar_line_object: PackedScene
 var bars: PackedScene
 
 ## Comment
-var charter: String
-
-## Comment
-var combo: int
-
-## Comment
-var difficulty_name: String
-
-## Comment
-var early_count: int
-
-## Comment
-var f_accurate_count: int
-
-## Comment
-var f_inaccurate_count: int
-
-## Comment
 var gameplay: PackedScene
 
 ## Comment
-var inaccurate_count: int
-
-## Comment
-var late_count: int
-
-## Comment
 var main_menu: PackedScene
-
-## Comment
-var max_combo: int
-
-## Comment
-var menu_bg: Texture
-
-## Comment
-var miss_count: int
-
-## Comment
-var music: AudioStreamPlayer
 
 ## Comment
 var note_object: PackedScene
@@ -91,16 +52,7 @@ var results: PackedScene
 var roll_object: PackedScene
 
 ## Comment
-var score: int
-
-## Comment
 var settings_panel: PackedScene
-
-## Comment
-var settings_save := false
-
-## Comment
-var skin: SkinManager
 
 ## Comment
 var spinner_object: PackedScene
@@ -112,7 +64,55 @@ var spinner_warn_object: PackedScene
 var tick_object: PackedScene
 
 ## Comment
+var skin: SkinManager
+
+## Comment
+var accuracy: String
+
+## Comment
+var artist: String
+
+## Comment
+var charter: String
+
+## Comment
+var difficulty_name: String
+
+## Comment
 var title: String
+
+## Comment
+var menu_bg: Texture
+
+## Comment
+var accurate_count: int
+
+## Comment
+var combo: int
+
+## Comment
+var early_count: int
+
+## Comment
+var f_accurate_count: int
+
+## Comment
+var f_inaccurate_count: int
+
+## Comment
+var inaccurate_count: int
+
+## Comment
+var late_count: int
+
+## Comment
+var max_combo: int
+
+## Comment
+var miss_count: int
+
+## Comment
+var score: int
 
 ## Comment
 var _background := $"Background" as TextureRect
@@ -125,35 +125,35 @@ var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
-	accuracy = ""
-	accurate_count = 0
-	artist = ""
+	music = $Background/Music as AudioStreamPlayer
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
 	bars = load("res://root/bars.tscn") as PackedScene
-	charter = ""
-	combo = 0
-	difficulty_name = ""
-	early_count = 0
-	f_accurate_count = 0
-	f_inaccurate_count = 0
 	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
-	inaccurate_count = 0
-	late_count = 0
 	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
-	max_combo = 0
-	menu_bg = load("res://temporary/menubg.png") as Texture
-	miss_count = 0
-	music = $Background/Music as AudioStreamPlayer
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
-	score = 0
 	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
-	skin = SkinManager.new("res://skins/test_skin")
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
+	skin = SkinManager.new()
+	menu_bg = load("res://temporary/menubg.png") as Texture
+	accuracy = ""
+	artist = ""
+	charter = ""
+	difficulty_name = ""
 	title = ""
+	accurate_count = 0
+	combo = 0
+	early_count = 0
+	f_accurate_count = 0
+	f_inaccurate_count = 0
+	inaccurate_count = 0
+	late_count = 0
+	max_combo = 0
+	miss_count = 0
+	score = 0
 
 
 ## Comment
