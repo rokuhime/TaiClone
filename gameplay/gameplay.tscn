@@ -50,6 +50,15 @@ margin_right = 16.0
 margin_bottom = 16.0
 expand = true
 
+[node name="KiaiGlow" type="TextureRect" parent="BarRight/HitPointOffset"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -196.0
+margin_top = -196.0
+margin_right = 196.0
+margin_bottom = 196.0
+stretch_mode = 6
+
 [node name="Judgement" type="TextureRect" parent="BarRight/HitPointOffset"]
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -72,6 +72,9 @@ var inaccurate_judgement: Texture
 ## Comment
 var kat_texture: Texture
 
+## Comment
+var kiai_glow_texture: Texture
+
 ## The texture of a judgement with a MISS [member HitObject.Score].
 var miss_judgement: Texture
 
@@ -171,6 +174,9 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"taiko-drum-outer":
 				kat_texture = ChartLoader.texture_from_image(file_path, false)
 
+			"taiko-glow":
+				kiai_glow_texture = ChartLoader.texture_from_image(file_path, false)
+
 			"taiko-hit0":
 				miss_judgement = ChartLoader.texture_from_image(file_path, false)
 
@@ -212,6 +218,7 @@ func _default_skin() -> void:
 	hit_circle_overlay = ChartLoader.texture_from_image(skin_path.plus_file("taikohitcircleoverlay-0.png"))
 	inaccurate_judgement = ChartLoader.texture_from_image(skin_path.plus_file("taiko-hit100.png"), false)
 	kat_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-drum-outer.png"), false)
+	kiai_glow_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-glow.png"), false)
 	miss_judgement = ChartLoader.texture_from_image(skin_path.plus_file("taiko-hit0.png"), false)
 	roll_end = ChartLoader.texture_from_image(skin_path.plus_file("taiko-roll-end.png"))
 	roll_middle = ChartLoader.texture_from_image(skin_path.plus_file("taiko-roll-middle.png"))

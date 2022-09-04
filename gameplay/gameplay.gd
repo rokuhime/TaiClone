@@ -14,54 +14,67 @@ signal key_pressed(key)
 signal marker_added(type, timing, indicate)
 
 ## Comment
+var _kiai_timing_points := []
+
+## Comment
+var _f := File.new()
+
+## Comment
+var _judgement_tween := SceneTreeTween.new()
+
+## Comment
+var _kiai_tween := SceneTreeTween.new()
+
+## Comment
+var _score_indicator_tween := SceneTreeTween.new()
+
+## Comment
+var _timing_indicator_tween := SceneTreeTween.new()
+
+## Comment
 var _auto := false
 
 ## Comment
 var _auto_left := true
 
 ## Comment
-var _cur_time := 0.0
-
-## Comment
-var _current_combo := 0
-
-## Comment
-var _f := File.new()
-
-## Comment
 var _inactive := true
 
 ## Comment
-var _judgement_tween := SceneTreeTween.new()
+var _in_kiai := false
+
+## Comment
+var _cur_time := 0.0
 
 ## the time for the last note in the chart
 var _last_note_time := -1.0
 
 ## Comment
-var _score_indicator_tween := SceneTreeTween.new()
+var _next_kiai := -1.0
 
 ## Comment
 var _time_begin := 0.0
 
 ## Comment
-var _timing_indicator_tween := SceneTreeTween.new()
+var _current_combo := 0
 
+onready var root_viewport := $"/root" as Root
 onready var bar_right := $BarRight as TextureRect
-onready var debug_text := $Debug/DebugText as Label
-onready var drum_visual := $BarRight/DrumVisual
-onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 onready var hit_point := $BarRight/HitPointOffset/HitPoint as TextureRect
 onready var hit_point_rim := $BarRight/HitPointOffset/HitPoint/Rim as TextureRect
+onready var kiai_glow := $BarRight/HitPointOffset/KiaiGlow as TextureRect
 onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
-onready var last_hit_score := $UI/LastHitScore as Label
-onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
-onready var play_button := $Debug/TempLoadChart/PlayButton as Button
-onready var root_viewport := $"/root" as Root
-onready var song_progress := $UI/SongProgress as ProgressBar
 onready var timing_indicator := $BarRight/HitPointOffset/TimingIndicator as Label
-onready var ui_accuracy := $UI/Accuracy/Label as Label
+onready var drum_visual := $BarRight/DrumVisual
 onready var ui_score := $UI/Score as Label
+onready var last_hit_score := $UI/LastHitScore as Label
+onready var ui_accuracy := $UI/Accuracy/Label as Label
+onready var song_progress := $UI/SongProgress as ProgressBar
+onready var debug_text := $Debug/DebugText as Label
+onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
+onready var play_button := $Debug/TempLoadChart/PlayButton as Button
+onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 
 
 func _ready() -> void:
@@ -70,6 +83,8 @@ func _ready() -> void:
 	bar_right.texture = root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
 	hit_point_rim.texture = root_viewport.skin.approach_circle
+	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+	kiai_glow.modulate.a = 0
 	last_hit_score.modulate.a = 0
 	root_viewport.music.stop()
 	_reset()
@@ -91,6 +106,14 @@ func _process(_delta: float) -> void:
 	song_progress.value = _cur_time * 100 / _last_note_time
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
+
+	while _cur_time > _next_kiai and _next_kiai > 0:
+		_in_kiai = not _in_kiai
+		_next_kiai = -1.0 if _kiai_timing_points.empty() else float(_kiai_timing_points.pop_front())
+		_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
+
+		## Comment
+		var _tween := _kiai_tween.tween_property(kiai_glow, "modulate:a", float(_in_kiai), 0.1)
 
 	## Comment
 	var check_auto := false
@@ -223,7 +246,7 @@ func add_score(type: int, marker := false) -> void:
 			score_value = 600
 
 	root_viewport.combo = int(max(root_viewport.combo, _current_combo))
-	score_value = int(score_value * (1 + min(1, _current_combo / 300.0)))
+	score_value = int(score_value * (1 + min(1, _current_combo / 300.0) + float(_in_kiai) / 4))
 	root_viewport.score += score_value
 	last_hit_score.text = str(score_value)
 	if play_tween:
@@ -321,6 +344,9 @@ func load_func(file_path := "") -> void:
 		_last_note_time = timing
 
 		## Comment
+		var current_kiai := false
+
+		## Comment
 		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
 
 		match int(line_data[2]):
@@ -356,6 +382,13 @@ func load_func(file_path := "") -> void:
 
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])
+				if bool(int(line_data[3])) != current_kiai:
+					current_kiai = not current_kiai
+					if _next_kiai < 0:
+						_next_kiai = timing
+
+					else:
+						_kiai_timing_points.append(timing)
 
 	get_tree().call_group("HitObjects", "apply_skin")
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
@@ -413,9 +446,12 @@ func _reset(dispose := true) -> void:
 	root_viewport.max_combo = 0
 	root_viewport.miss_count = 0
 	root_viewport.score = 0
-	_current_combo = 0
-	add_score(-1)
 	_cur_time = 0
+	_current_combo = 0
+	_next_kiai = -1
+	_in_kiai = false
+	_kiai_timing_points.clear()
+	add_score(-1)
 	play_button.disabled = dispose
 	play_button.text = "Play" if dispose else "Stop"
 	get_tree().call_group("HitObjects", "queue_free" if dispose else "activate")
