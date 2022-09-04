@@ -21,7 +21,7 @@ func _init() -> void:
 	## The configuration file that's used to load settings.
 	var config_file := ConfigFile.new()
 
-	if config_file.load(Root.CONFIG_PATH):
+	if config_file.load(_root_viewport.CONFIG_PATH + "config.ini"):
 		print_debug("Config file not found.")
 
 	for key in Root.KEYS:

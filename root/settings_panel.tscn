@@ -98,24 +98,24 @@ anchor_bottom = 1.0
 scroll_vertical_enabled = false
 
 [node name="Scroll" type="HBoxContainer" parent="Panels"]
-margin_right = 800.0
+margin_right = 795.0
 margin_bottom = 1068.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 0
 
 [node name="Settings" type="ScrollContainer" parent="Panels/Scroll"]
-margin_right = 400.0
+margin_right = 395.0
 margin_bottom = 1068.0
-rect_min_size = Vector2( 400, 0 )
+rect_min_size = Vector2( 395, 0 )
 
 [node name="V" type="VBoxContainer" parent="Panels/Scroll/Settings"]
-margin_right = 400.0
-margin_bottom = 814.0
+margin_right = 383.0
+margin_bottom = 1071.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="Panels/Scroll/Settings/V"]
-margin_right = 400.0
+margin_right = 383.0
 margin_bottom = 66.0
 theme_type_variation = "SettingsTitle"
 text = "Settings"
@@ -123,32 +123,32 @@ align = 1
 valign = 1
 
 [node name="Description" type="Label" parent="Panels/Scroll/Settings/V"]
-visible = false
 margin_top = 70.0
-margin_right = 400.0
+margin_right = 383.0
 margin_bottom = 109.0
 text = "Change how the game runs."
 align = 1
 valign = 1
 
 [node name="Buffer1" type="HSeparator" parent="Panels/Scroll/Settings/V"]
-margin_left = 125.0
-margin_top = 70.0
-margin_right = 275.0
-margin_bottom = 103.0
+margin_left = 116.0
+margin_top = 113.0
+margin_right = 266.0
+margin_bottom = 146.0
 rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
 [node name="Keybinds" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
-margin_left = 131.0
-margin_top = 107.0
-margin_right = 268.0
-margin_bottom = 342.0
+margin_left = 123.0
+margin_top = 150.0
+margin_right = 260.0
+margin_bottom = 385.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds"]
 margin_right = 137.0
 margin_bottom = 39.0
+theme_type_variation = "PlayName"
 text = "Keybinds"
 align = 1
 
@@ -221,23 +221,122 @@ margin_right = 137.0
 margin_bottom = 45.0
 
 [node name="Buffer2" type="HSeparator" parent="Panels/Scroll/Settings/V"]
-margin_left = 125.0
-margin_top = 346.0
-margin_right = 275.0
-margin_bottom = 379.0
+margin_left = 116.0
+margin_top = 389.0
+margin_right = 266.0
+margin_bottom = 422.0
+rect_min_size = Vector2( 150, 33 )
+size_flags_horizontal = 4
+
+[node name="Resolution" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
+margin_left = 84.0
+margin_top = 426.0
+margin_right = 299.0
+margin_bottom = 565.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Resolution"]
+margin_right = 215.0
+margin_bottom = 39.0
+theme_type_variation = "PlayName"
+text = "Resolution (WIP)"
+align = 1
+
+[node name="Options" type="OptionButton" parent="Panels/Scroll/Settings/V/Resolution"]
+margin_left = 93.0
+margin_top = 43.0
+margin_right = 122.0
+margin_bottom = 88.0
+size_flags_horizontal = 4
+
+[node name="Fullscreen" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Resolution"]
+margin_top = 92.0
+margin_right = 215.0
+margin_bottom = 139.0
+
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Resolution/Fullscreen"]
+margin_top = 4.0
+margin_right = 187.0
+margin_bottom = 43.0
+size_flags_horizontal = 3
+text = "Fullscreen"
+
+[node name="Toggle" type="CheckBox" parent="Panels/Scroll/Settings/V/Resolution/Fullscreen"]
+margin_left = 191.0
+margin_right = 215.0
+margin_bottom = 47.0
+
+[node name="Buffer3" type="HSeparator" parent="Panels/Scroll/Settings/V"]
+margin_left = 116.0
+margin_top = 569.0
+margin_right = 266.0
+margin_bottom = 602.0
+rect_min_size = Vector2( 150, 33 )
+size_flags_horizontal = 4
+
+[node name="AudioLabel" type="Label" parent="Panels/Scroll/Settings/V"]
+margin_top = 606.0
+margin_right = 383.0
+margin_bottom = 645.0
+theme_type_variation = "PlayName"
+text = "Audio"
+align = 1
+
+[node name="Offset" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
+margin_top = 649.0
+margin_right = 383.0
+margin_bottom = 715.0
+size_flags_horizontal = 3
+
+[node name="Offset" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Offset"]
+margin_left = 113.0
+margin_right = 270.0
+margin_bottom = 49.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Offset/Offset"]
+margin_top = 5.0
+margin_right = 71.0
+margin_bottom = 44.0
+text = "Offset"
+
+[node name="LineEdit" type="LineEdit" parent="Panels/Scroll/Settings/V/Offset/Offset"]
+margin_left = 75.0
+margin_right = 157.0
+margin_bottom = 49.0
+align = 2
+placeholder_text = "0"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="HSlider" type="HSlider" parent="Panels/Scroll/Settings/V/Offset"]
+margin_top = 53.0
+margin_right = 383.0
+margin_bottom = 66.0
+min_value = -200.0
+max_value = 200.0
+allow_greater = true
+allow_lesser = true
+
+[node name="Buffer4" type="HSeparator" parent="Panels/Scroll/Settings/V"]
+margin_left = 116.0
+margin_top = 719.0
+margin_right = 266.0
+margin_bottom = 752.0
 rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
 [node name="ExtraDisplays" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
-margin_left = 92.0
-margin_top = 383.0
-margin_right = 308.0
-margin_bottom = 522.0
+margin_left = 83.0
+margin_top = 756.0
+margin_right = 299.0
+margin_bottom = 895.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="Panels/Scroll/Settings/V/ExtraDisplays"]
 margin_right = 216.0
 margin_bottom = 39.0
+theme_type_variation = "PlayName"
 text = "Extra Displays"
 align = 1
 
@@ -275,84 +374,51 @@ margin_left = 192.0
 margin_right = 216.0
 margin_bottom = 47.0
 
-[node name="Resolution" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
-margin_left = 99.0
-margin_top = 526.0
-margin_right = 301.0
-margin_bottom = 681.0
-size_flags_horizontal = 4
-
-[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Resolution"]
-margin_right = 202.0
-margin_bottom = 55.0
-theme_type_variation = "Resolution"
-text = "Resolution (WIP)"
-align = 1
-
-[node name="Options" type="OptionButton" parent="Panels/Scroll/Settings/V/Resolution"]
-margin_left = 86.0
-margin_top = 59.0
-margin_right = 115.0
-margin_bottom = 104.0
-size_flags_horizontal = 4
-
-[node name="Fullscreen" type="HBoxContainer" parent="Panels/Scroll/Settings/V/Resolution"]
-margin_top = 108.0
-margin_right = 202.0
-margin_bottom = 155.0
-
-[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Resolution/Fullscreen"]
-margin_top = 4.0
-margin_right = 174.0
-margin_bottom = 43.0
-size_flags_horizontal = 3
-text = "Fullscreen"
-
-[node name="Toggle" type="CheckBox" parent="Panels/Scroll/Settings/V/Resolution/Fullscreen"]
-margin_left = 178.0
-margin_right = 202.0
-margin_bottom = 47.0
-
-[node name="Buffer3" type="HSeparator" parent="Panels/Scroll/Settings/V"]
-margin_left = 125.0
-margin_top = 685.0
-margin_right = 275.0
-margin_bottom = 718.0
+[node name="Buffer5" type="HSeparator" parent="Panels/Scroll/Settings/V"]
+margin_left = 116.0
+margin_top = 899.0
+margin_right = 266.0
+margin_bottom = 932.0
 rect_min_size = Vector2( 150, 33 )
 size_flags_horizontal = 4
 
-[node name="AudioLabel" type="Label" parent="Panels/Scroll/Settings/V"]
-margin_top = 722.0
-margin_right = 400.0
-margin_bottom = 761.0
-text = "Audio"
+[node name="Keybinds2" type="VBoxContainer" parent="Panels/Scroll/Settings/V"]
+margin_top = 936.0
+margin_right = 383.0
+margin_bottom = 1071.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds2"]
+margin_right = 383.0
+margin_bottom = 39.0
+theme_type_variation = "PlayName"
+text = "Debug"
 align = 1
 
-[node name="Offset" type="HBoxContainer" parent="Panels/Scroll/Settings/V"]
-margin_left = 121.0
-margin_top = 765.0
-margin_right = 278.0
-margin_bottom = 814.0
-size_flags_horizontal = 4
+[node name="GamePath" type="VBoxContainer" parent="Panels/Scroll/Settings/V/Keybinds2"]
+margin_top = 43.0
+margin_right = 383.0
+margin_bottom = 135.0
+size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Offset"]
-margin_top = 5.0
-margin_right = 71.0
-margin_bottom = 44.0
-text = "Offset"
+[node name="Label" type="Label" parent="Panels/Scroll/Settings/V/Keybinds2/GamePath"]
+margin_right = 383.0
+margin_bottom = 39.0
+text = "Game Path"
+align = 1
 
-[node name="LineEdit" type="LineEdit" parent="Panels/Scroll/Settings/V/Offset"]
-margin_left = 75.0
-margin_right = 157.0
-margin_bottom = 49.0
-align = 2
-placeholder_text = "0"
+[node name="LineEdit" type="LineEdit" parent="Panels/Scroll/Settings/V/Keybinds2/GamePath"]
+margin_top = 43.0
+margin_right = 383.0
+margin_bottom = 92.0
+size_flags_horizontal = 3
+placeholder_text = "%appdata%\\Godot\\app_userdata\\TaiClone"
 caret_blink = true
 caret_blink_speed = 0.5
 
 [node name="Preferences" type="ScrollContainer" parent="Panels/Scroll"]
-margin_left = 400.0
-margin_right = 800.0
+margin_left = 395.0
+margin_right = 795.0
 margin_bottom = 1068.0
 rect_min_size = Vector2( 400, 0 )
 
@@ -386,14 +452,13 @@ align = 1
 valign = 1
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Panels/Scroll/Preferences/V"]
-position = Vector2( 161, 293 )
+position = Vector2( 161, 295 )
 scale = Vector2( 0.771186, 0.771186 )
 frames = SubResource( 15 )
-frame = 11
+frame = 4
 playing = true
 
 [node name="Tabs" type="HBoxContainer" parent="."]
-visible = false
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -421,8 +486,9 @@ text = "Preferences"
 [connection signal="pressed" from="Panels/Scroll/Settings/V/Keybinds/LeftDon/Button" to="." method="button_pressed" binds= [ "LeftDon" ]]
 [connection signal="pressed" from="Panels/Scroll/Settings/V/Keybinds/RightDon/Button" to="." method="button_pressed" binds= [ "RightDon" ]]
 [connection signal="pressed" from="Panels/Scroll/Settings/V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
-[connection signal="item_selected" from="Panels/Scroll/Settings/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
-[connection signal="toggled" from="Panels/Scroll/Settings/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error_func"]
 [connection signal="item_selected" from="Panels/Scroll/Settings/V/Resolution/Options" to="." method="change_res"]
 [connection signal="toggled" from="Panels/Scroll/Settings/V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
-[connection signal="text_changed" from="Panels/Scroll/Settings/V/Offset/LineEdit" to="." method="change_offset"]
+[connection signal="text_changed" from="Panels/Scroll/Settings/V/Offset/Offset/LineEdit" to="." method="change_offset_from_string"]
+[connection signal="value_changed" from="Panels/Scroll/Settings/V/Offset/HSlider" to="." method="change_offset"]
+[connection signal="item_selected" from="Panels/Scroll/Settings/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
+[connection signal="toggled" from="Panels/Scroll/Settings/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error_func"]

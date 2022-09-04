@@ -13,7 +13,7 @@ onready var dropdown := $Panels/Scroll/Settings/V/Resolution/Options as OptionBu
 onready var fullscreen_toggle := $Panels/Scroll/Settings/V/Resolution/Fullscreen/Toggle as CheckBox
 onready var hit_error_toggle := $Panels/Scroll/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
 onready var late_early_drop := $Panels/Scroll/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
-onready var offset_text := $Panels/Scroll/Settings/V/Offset/LineEdit as LineEdit
+onready var offset_text := $Panels/Scroll/Settings/V/Offset/Offset/LineEdit as LineEdit
 onready var root_viewport := $"/root" as Root
 
 
@@ -39,7 +39,7 @@ func _ready() -> void:
 				dropdown.select(int(i))
 
 	toggle_fullscreen(OS.window_fullscreen)
-	change_offset(str(root_viewport.global_offset))
+	change_offset(root_viewport.global_offset)
 	_settings_save = true
 
 
@@ -59,22 +59,21 @@ func button_pressed(key: String) -> void:
 
 ## Called when [member offset_text] changes.
 ## new_text ([String]): The new value entered.
-func change_offset(new_text: String) -> void:
+func change_offset_from_string(new_text: String) -> void:
 	if new_text == "-":
 		return
 
 	## The position of the cursor in [member offset_text].
 	var text_position := offset_text.caret_position
 
-	## The new offset value that's being applied.
-	var new_offset := int(new_text)
-
-	offset_text.text = str(new_offset) if new_offset else ""
+	change_offset(int(new_text))
 	offset_text.caret_position = text_position
+
+func change_offset(new_offset: float) -> void:
+	offset_text.text = str(new_offset) if new_offset else ""
 	if _settings_save:
 		root_viewport.global_offset = new_offset
 		root_viewport.save_settings()
-
 
 ## Called when a different resolution is selected.
 ## index ([int]): The index of the resolution in [member RESOLUTIONS].

@@ -9,8 +9,11 @@ signal hit_error_changed
 ## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
 signal late_early_changed
 
-## Comment
-const CONFIG_PATH := "user://config.ini"
+## the actual location of the game; where the .exe and other files are kept
+var GAME_PATH : String
+
+## the backup saving folder for temporary/mandatory-to-write files
+var CONFIG_PATH := "user://"
 
 ## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
@@ -125,6 +128,8 @@ var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
+	GAME_PATH = OS.get_executable_path()
+	
 	music = $Background/Music as AudioStreamPlayer
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
 	bars = load("res://root/bars.tscn") as PackedScene
@@ -288,7 +293,7 @@ func save_settings() -> void:
 	for i in range(AudioServer.bus_count):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
-	if config_file.save(CONFIG_PATH):
+	if config_file.save(CONFIG_PATH + "config.ini"):
 		push_warning("Attempted to save configuration file.")
 
 
