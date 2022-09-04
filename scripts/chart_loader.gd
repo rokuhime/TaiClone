@@ -166,6 +166,7 @@ static func load_chart(file_path: String) -> bool:
 							cur_bpm = timing
 							current_meter = meter
 							next_barline = next_time
+							total_cur_sv = float(map_sv_multiplier)
 
 						else:
 							total_cur_sv = timing * float(map_sv_multiplier)
@@ -173,6 +174,9 @@ static func load_chart(file_path: String) -> bool:
 						if meter or bool(kiai) != current_kiai:
 							_append_note(notes, [next_barline, cur_bpm, NoteType.TIMING_POINT, kiai])
 							current_kiai = bool(kiai)
+
+						if int(next_timing[4]):
+							next_barline = _barline(0, notes, next_barline, current_meter, cur_bpm)
 
 						if current_timing_data.empty():
 							next_timing.clear()
@@ -206,7 +210,7 @@ static func load_chart(file_path: String) -> bool:
 					## Comment
 					var uninherited := bool(int(line_data[6]))
 
-					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1]), 1 << 0 & int(line_data[7])])
+					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1]), 1 << 0 & int(line_data[7]), 1 << 3 & int(line_data[7])])
 					if next_timing.empty():
 						next_timing = line_data
 
@@ -391,7 +395,6 @@ static func load_chart(file_path: String) -> bool:
 		return not file_path.ends_with(".fus")
 
 	f.close()
-	notes.sort()
 	if f.open(FUS, File.WRITE):
 		f.close()
 		return true
@@ -433,7 +436,9 @@ static func _append_note(notes: Array, line_data: Array) -> void:
 
 ## Comment
 static func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_meter: float, cur_bpm: float) -> float:
-	_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
+	if total_cur_sv > 0:
+		_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
+
 	return next_barline + 60 * current_meter / cur_bpm
 
 
