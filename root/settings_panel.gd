@@ -35,7 +35,7 @@ func _ready() -> void:
 
 		else:
 			dropdown.add_item("%s | %sx%s" % Array(resolution))
-			if Root.item_resolution(resolution) == OS.window_size:
+			if _item_resolution(resolution) == OS.window_size:
 				dropdown.select(int(i))
 
 	toggle_fullscreen(OS.window_fullscreen)
@@ -79,7 +79,7 @@ func change_offset(new_text: String) -> void:
 ## Called when a different resolution is selected.
 ## index ([int]): The index of the resolution in [member RESOLUTIONS].
 func change_res(index: int) -> void:
-	root_viewport.res_changed(Root.item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
+	root_viewport.res_changed(_item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
 
 
 ## Called when [member hit_error_toggle] is toggled.
@@ -109,11 +109,16 @@ func toggle_fullscreen(new_visible: bool) -> void:
 		root_viewport.toggle_fullscreen(new_visible)
 
 
+## Comment
+static func _item_resolution(item: Array) -> Vector2:
+	return Vector2(int(item[1]), int(item[2]))
+
+
 ## Changes the label of a key-bind button.
 ## key ([String]): The key-bind being changed.
 ## was_pressed ([bool]): Whether or not the button was pressed.
 func _change_text(key: String, was_pressed := false) -> void:
 	## The action associated with this key-bind.
-	var event := Root.get_event(key)
+	var event := GlobalTools.get_event(key)
 
 	(get_node("V/Keybinds/%s/Button" % key) as Button).text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""

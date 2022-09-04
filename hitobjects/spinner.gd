@@ -88,7 +88,7 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 	## Whether or not this [Spinner] was hit.
 	var not_hit := true
 
-	while not Root.inputs_empty(inputs):
+	while not GlobalTools.inputs_empty(inputs):
 		## Comment
 		var key := "Don" if _cur_hit_count % 2 == int(_first_hit_is_kat) else "Kat"
 
@@ -136,7 +136,7 @@ func _spinner_finished(type: int) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
 		emit_signal("score_added", type, false)
-		Root.send_signal(self, "finished", _tween_modulate(0), "queue_free")
+		GlobalTools.send_signal(self, "finished", _tween_modulate(0), "queue_free")
 
 
 ## Fade this [Spinner] in and out.

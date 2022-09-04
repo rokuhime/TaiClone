@@ -37,7 +37,7 @@ onready var timer := get_tree().create_timer(0)
 
 
 func _ready() -> void:
-	Root.send_signal(root_viewport, "volume_changed", self, "save_settings")
+	GlobalTools.send_signal(root_viewport, "volume_changed", self, "save_settings")
 	hide()
 
 
@@ -108,7 +108,7 @@ func change_channel(channel: int, needs_visible := true) -> void:
 		var _tween := _tween_self(1, 0.25)
 
 	timer = get_tree().create_timer(2)
-	Root.send_signal(self, "timeout", timer, "timeout")
+	GlobalTools.send_signal(self, "timeout", timer, "timeout")
 
 
 ## Comment
@@ -142,7 +142,7 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 ## Comment
 func timeout() -> void:
 	if timer.time_left <= 0:
-		Root.send_signal(self, "finished", _tween_self(0, 1), "hide")
+		GlobalTools.send_signal(self, "finished", _tween_self(0, 1), "hide")
 
 
 ## Comment

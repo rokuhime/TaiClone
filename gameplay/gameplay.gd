@@ -78,7 +78,7 @@ onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 
 
 func _ready() -> void:
-	Root.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
+	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
 	bar_right.texture = root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
@@ -150,14 +150,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			inputs.append(str(key))
 			emit_signal("key_pressed", str(key))
 
-	if Root.inputs_empty(inputs):
+	if GlobalTools.inputs_empty(inputs):
 		return
 
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
 		var hit_object := obj_container.get_child(i) as HitObject
 
-		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or Root.inputs_empty(inputs):
+		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or GlobalTools.inputs_empty(inputs):
 			break
 
 	for key in inputs:
@@ -197,8 +197,8 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 		return
 
 	hit_object.apply_skin()
-	Root.send_signal(drum_visual, "audio_played", hit_object, "play_audio")
-	Root.send_signal(self, "score_added", hit_object, "add_score")
+	GlobalTools.send_signal(drum_visual, "audio_played", hit_object, "play_audio")
+	GlobalTools.send_signal(self, "score_added", hit_object, "add_score")
 
 
 ## Comment
@@ -323,8 +323,8 @@ func load_func(file_path := "") -> void:
 		_load_finish("Outdated .fus file!")
 		return
 
-	root_viewport.bg_changed(ChartLoader.texture_from_image(_f.get_line()), Color("373737"))
-	root_viewport.music.stream = ChartLoader.load_audio_file(_f.get_line())
+	root_viewport.bg_changed(GlobalTools.texture_from_image(_f.get_line()), Color("373737"))
+	root_viewport.music.stream = GlobalTools.load_audio_file(_f.get_line())
 	root_viewport.artist = _f.get_line()
 	root_viewport.charter = _f.get_line()
 	root_viewport.difficulty_name = _f.get_line()
@@ -363,7 +363,7 @@ func load_func(file_path := "") -> void:
 
 				hit_object.change_properties(timing, total_cur_sv, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
 				add_object(hit_object)
-				Root.send_signal(self, "new_marker_added", hit_object, "add_marker")
+				GlobalTools.send_signal(self, "new_marker_added", hit_object, "add_marker")
 
 			ChartLoader.NoteType.ROLL:
 				## Comment
@@ -378,7 +378,7 @@ func load_func(file_path := "") -> void:
 
 				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), cur_bpm)
 				add_object(hit_object)
-				Root.send_signal(self, "object_added", hit_object, "add_object")
+				GlobalTools.send_signal(self, "object_added", hit_object, "add_object")
 
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])

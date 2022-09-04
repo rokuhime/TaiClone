@@ -16,7 +16,7 @@ var _volume_control := preload("res://root/volume_control.tscn")
 func _init() -> void:
 	root.set_script(_root)
 	_root_viewport = root as Root
-	Root.send_signal(_root_viewport, "screen_resized", self, "save_settings")
+	GlobalTools.send_signal(_root_viewport, "screen_resized", self, "save_settings")
 
 	## The configuration file that's used to load settings.
 	var config_file := ConfigFile.new()
@@ -47,7 +47,7 @@ func _init() -> void:
 				_root_viewport.change_key(event, str(key))
 
 			_:
-				_root_viewport.change_key(Root.get_event(str(key)), str(key))
+				_root_viewport.change_key(GlobalTools.get_event(str(key)), str(key))
 
 	_root_viewport.late_early_simple_display = int(config_file.get_value("Display", "LateEarly", 1))
 	_root_viewport.hit_error = bool(config_file.get_value("Display", "HitError", 1))

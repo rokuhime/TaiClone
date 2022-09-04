@@ -11,39 +11,6 @@ const FUS_VERSION := "v0.0.4"
 
 
 ## Comment
-static func load_audio_file(file_path: String) -> AudioStream:
-	## Comment
-	var f := File.new()
-
-	if not f.file_exists(file_path):
-		return AudioStreamSample.new()
-
-	if f.open(file_path, File.READ):
-		f.close()
-		return load(file_path) as AudioStream
-
-	## Comment
-	var bytes := f.get_buffer(f.get_len())
-
-	f.close()
-	if file_path.ends_with(".mp3"):
-		## Comment
-		var new_stream := AudioStreamMP3.new()
-
-		new_stream.data = bytes
-		return new_stream
-
-	if file_path.ends_with(".ogg"):
-		## Comment
-		var new_stream := AudioStreamOGGVorbis.new()
-
-		new_stream.data = bytes
-		return new_stream
-
-	return load(file_path) as AudioStream
-
-
-## Comment
 static func load_chart(file_path: String) -> bool:
 	## Comment
 	var f := File.new()
@@ -406,27 +373,6 @@ static func load_chart(file_path: String) -> bool:
 	f.close()
 
 	return false
-
-
-## Comment
-static func texture_from_image(file_path: String, crop_transparent := true) -> Texture:
-	## Comment
-	var image := Image.new()
-
-	## Comment
-	var new_texture := ImageTexture.new()
-
-	if file_path.begins_with("res://"):
-		image = (load(file_path) as Texture).get_data()
-
-	elif image.load(file_path):
-		return new_texture
-
-	if crop_transparent:
-		image = image.get_rect(image.get_used_rect())
-
-	new_texture.create_from_image(image)
-	return new_texture
 
 
 ## Comment

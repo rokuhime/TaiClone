@@ -46,8 +46,8 @@ onready var visibility_notifier := $VisibilityNotifier2D as VisibilityNotifier2D
 
 func _ready() -> void:
 	hide()
-	Root.send_signal(self, "screen_entered", visibility_notifier, "show")
-	Root.send_signal(self, "screen_exited", visibility_notifier, "hide")
+	GlobalTools.send_signal(self, "screen_entered", visibility_notifier, "show")
+	GlobalTools.send_signal(self, "screen_exited", visibility_notifier, "hide")
 	if finisher:
 		(get_child(1) as Control).rect_scale *= 1.6
 		visibility_notifier.scale *= 1.6

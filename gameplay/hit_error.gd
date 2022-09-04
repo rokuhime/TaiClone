@@ -20,7 +20,7 @@ onready var root_viewport := $"/root" as Root
 
 
 func _ready() -> void:
-	Root.send_signal(self, "hit_error_changed", root_viewport, "visibility_toggled")
+	GlobalTools.send_signal(self, "hit_error_changed", root_viewport, "visibility_toggled")
 	visibility_toggled()
 
 	## Comment

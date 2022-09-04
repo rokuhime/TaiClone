@@ -138,7 +138,7 @@ func _init() -> void:
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
 	skin = SkinManager.new()
-	menu_bg = load("res://temporary/menubg.png") as Texture
+	menu_bg = GlobalTools.texture_from_image("res://temporary/menubg.png")
 	accuracy = ""
 	artist = ""
 	charter = ""
@@ -154,27 +154,6 @@ func _init() -> void:
 	max_combo = 0
 	miss_count = 0
 	score = 0
-
-
-## Comment
-static func get_event(key: String) -> InputEvent:
-	return InputMap.get_action_list(key)[0]
-
-
-## Comment
-static func inputs_empty(inputs: Array) -> bool:
-	return int(inputs[0]) > inputs.size()
-
-
-## Comment
-static func item_resolution(item: Array) -> Vector2:
-	return Vector2(int(item[1]), int(item[2]))
-
-
-## Comment
-static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
-	if obj.connect(signal_name, signal_target, method):
-		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
 
 
 ## Comment
@@ -265,7 +244,7 @@ func save_settings() -> void:
 
 	for key in KEYS:
 		## Comment
-		var event := get_event(str(key))
+		var event := GlobalTools.get_event(str(key))
 
 		config_file.set_value("Keybinds", str(key), ("J%s" % (event as InputEventJoypadButton).button_index) if event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((event as InputEventKey).scancode)) if event is InputEventKey else "")
 

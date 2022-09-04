@@ -88,7 +88,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 			finish()
 
 		emit_signal("new_marker_added", hit_time, -1)
-		if Root.inputs_empty(inputs):
+		if GlobalTools.inputs_empty(inputs):
 			return true
 
 	if not finisher:
