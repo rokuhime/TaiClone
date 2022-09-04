@@ -40,13 +40,15 @@ var _last_note_time := 0.0
 ## Comment
 var _score_indicator_tween := SceneTreeTween.new()
 
+var _kiai_tween := SceneTreeTween.new()
+
 ## Comment
 var _time_begin := 0.0
 
 ## Comment
 var _timing_indicator_tween := SceneTreeTween.new()
 
-var _timing_points := {}
+var _kiai_timing_points := []
 
 var in_kiai := false
 
@@ -99,17 +101,23 @@ func _process(_delta: float) -> void:
 		_end_chart()
 
 	# get timing point, see if its kiai
-	var timing_index = _timing_points.keys()
+	
 	# if new timing point...
-	if _cur_time >= timing_index[0]:
-		#is it kiai or nah
-		if _timing_points.get(timing_index[0])[1]:
-			in_kiai = true
-			kiai_glow.self_modulate = Color.white
-		else:
-			in_kiai = false
-			kiai_glow.self_modulate = Color.transparent
-		_timing_points.erase(timing_index[0])
+	if _kiai_timing_points.size() != 0:
+		if _cur_time >= _kiai_timing_points[0]:
+			var target_alpha := 0.0
+			#is it kiai or nah
+			if in_kiai:
+				in_kiai = false
+			else:
+				in_kiai = true
+				target_alpha = 1.0
+
+			# tween alpha of kiai
+			_kiai_tween = root_viewport.new_tween(_kiai_tween)
+			var _tween := _kiai_tween.tween_property(kiai_glow, "self_modulate:a", target_alpha, 0.1).from(kiai_glow.self_modulate.a).set_trans(Tween.TRANS_QUART)
+
+			_kiai_timing_points.remove(0)
 
 	## Comment
 	var check_auto := false
@@ -242,7 +250,7 @@ func add_score(type: int, marker := false) -> void:
 			score_value = 600
 
 	root_viewport.combo = int(max(root_viewport.combo, _current_combo))
-	score_value = int(score_value * (1 + min(1, _current_combo / 300.0)))
+	score_value = int(score_value * ((1 + min(1, _current_combo / 300.0)) + (0.25  * int(in_kiai))))
 	root_viewport.score += score_value
 	last_hit_score.text = str(score_value)
 	if play_tween:
@@ -371,15 +379,16 @@ func load_func(file_path := "") -> void:
 
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])
-				print(line_data)
-				print("kiai: ", str(bool(line_data[3])))
-				_timing_points[cur_bpm] =  bool(line_data[3])
+				if bool(int(line_data[3])) != in_kiai:
+					_kiai_timing_points.append(timing)
+					in_kiai = !in_kiai
 
 	get_tree().call_group("HitObjects", "apply_skin")
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	play_button.disabled = false
 	root_viewport.max_combo = 0
+	in_kiai = false
 	_load_finish("Done!")
 
 

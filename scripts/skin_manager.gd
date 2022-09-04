@@ -222,4 +222,4 @@ func _default_skin() -> void:
 	spinner_circle = ChartLoader.texture_from_image(skin_path.plus_file("spinner-circle.png"), false)
 	spinner_warning = ChartLoader.texture_from_image(skin_path.plus_file("spinner-warning.png"))
 	tick_texture = ChartLoader.texture_from_image(skin_path.plus_file("sliderscorepoint.png"))
-	kiai_glow_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-glow.png"))
+	kiai_glow_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-glow.png"), false)
