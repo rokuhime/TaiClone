@@ -35,7 +35,7 @@ var _inactive := true
 var _judgement_tween := SceneTreeTween.new()
 
 ## the time for the last note in the chart
-var _last_note_time := 0.0
+var _last_note_time := -1.0
 
 ## Comment
 var _score_indicator_tween := SceneTreeTween.new()
@@ -276,7 +276,7 @@ func change_late_early() -> void:
 func load_func(file_path := "") -> void:
 	_inactive = true
 	debug_text.text = "Loading... [Checking File]"
-	if file_path == "":
+	if not file_path:
 		file_path = line_edit.text.replace("\\", "/")
 
 	if ChartLoader.load_chart(file_path):
@@ -287,6 +287,10 @@ func load_func(file_path := "") -> void:
 		file_path = ChartLoader.FUS
 
 	debug_text.text = "Loading... [Reading File]"
+
+	if not _f.file_exists(file_path):
+		_load_finish("Invalid file!")
+		return
 
 	if _f.open(file_path, File.READ):
 		_load_finish("Unable to read temporary .fus file!")
@@ -357,7 +361,6 @@ func load_func(file_path := "") -> void:
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	play_button.disabled = false
-	root_viewport.max_combo = 0
 	_load_finish("Done!")
 
 
@@ -402,7 +405,12 @@ func _load_finish(new_text: String) -> void:
 ## Comment
 func _reset(dispose := true) -> void:
 	root_viewport.accurate_count = 0
+	root_viewport.early_count = 0
+	root_viewport.f_accurate_count = 0
+	root_viewport.f_inaccurate_count = 0
 	root_viewport.inaccurate_count = 0
+	root_viewport.late_count = 0
+	root_viewport.max_combo = 0
 	root_viewport.miss_count = 0
 	root_viewport.score = 0
 	_current_combo = 0
