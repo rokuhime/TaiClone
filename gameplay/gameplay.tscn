@@ -85,7 +85,7 @@ anchor_right = 0.5
 margin_top = -203.0
 margin_bottom = -130.0
 grow_horizontal = 2
-theme_type_variation = "TimingIndicator"
+theme_type_variation = "FontBold50"
 
 [node name="DrumVisual" parent="BarRight" instance=ExtResource( 1 )]
 
@@ -101,26 +101,26 @@ grow_horizontal = 0
 [node name="Score" type="Label" parent="UI"]
 margin_right = 26.0
 margin_bottom = 64.0
-theme_type_variation = "UI"
+theme_type_variation = "FontBold65Outlined"
 
 [node name="LastHitScore" type="Label" parent="UI"]
 modulate = Color( 1, 0.227451, 0.227451, 1 )
 margin_top = 68.0
 margin_right = 26.0
 margin_bottom = 132.0
-theme_type_variation = "UI"
+theme_type_variation = "FontBold65Outlined"
 align = 2
 
 [node name="Accuracy" type="HBoxContainer" parent="UI"]
 margin_top = 136.0
 margin_right = 26.0
 margin_bottom = 200.0
-theme_type_variation = "Accuracy"
+theme_type_variation = "SeparationP01"
 
 [node name="Label" type="Label" parent="UI/Accuracy"]
 margin_bottom = 64.0
 size_flags_horizontal = 3
-theme_type_variation = "UI"
+theme_type_variation = "FontBold65Outlined"
 align = 2
 
 [node name="Percent" type="Label" parent="UI/Accuracy"]
@@ -129,7 +129,7 @@ margin_top = 34.0
 margin_right = 26.0
 margin_bottom = 64.0
 size_flags_vertical = 8
-theme_type_variation = "Percent"
+theme_type_variation = "FontBold26Outlined"
 text = "%"
 
 [node name="SongProgress" type="ProgressBar" parent="UI"]
@@ -137,7 +137,6 @@ margin_top = 204.0
 margin_right = 26.0
 margin_bottom = 219.0
 rect_min_size = Vector2( 0, 15 )
-theme_type_variation = "SongProgress"
 percent_visible = false
 
 [node name="BreakProgress" type="TextureProgress" parent="UI/SongProgress"]
@@ -176,7 +175,7 @@ margin_top = 43.0
 margin_right = 1421.0
 margin_bottom = 125.0
 size_flags_vertical = 3
-theme_type_variation = "TempLoadChart"
+theme_type_variation = "SeparationP08"
 
 [node name="LineEdit" type="LineEdit" parent="Debug/TempLoadChart"]
 margin_right = 370.0

@@ -9,7 +9,7 @@ anchor_right = 0.5
 anchor_bottom = 1.0
 margin_left = -282.0
 margin_right = 282.0
-theme_type_variation = "Main"
+theme_type_variation = "SeparationP15"
 alignment = 1
 script = ExtResource( 1 )
 
@@ -26,14 +26,14 @@ stretch_mode = 5
 margin_top = 406.0
 margin_right = 564.0
 margin_bottom = 489.0
-theme_type_variation = "MainButton"
+theme_type_variation = "_MainMenu"
 text = "Play"
 
 [node name="Edit" type="Button" parent="."]
 margin_top = 504.0
 margin_right = 564.0
 margin_bottom = 587.0
-theme_type_variation = "MainButton"
+theme_type_variation = "_MainMenu"
 disabled = true
 text = "Edit"
 
@@ -41,7 +41,7 @@ text = "Edit"
 margin_top = 602.0
 margin_right = 564.0
 margin_bottom = 685.0
-theme_type_variation = "MainButton"
+theme_type_variation = "_MainMenu"
 disabled = true
 text = "Training"
 
@@ -49,14 +49,14 @@ text = "Training"
 margin_top = 700.0
 margin_right = 564.0
 margin_bottom = 783.0
-theme_type_variation = "MainButton"
+theme_type_variation = "_MainMenu"
 text = "Options"
 
 [node name="Exit" type="Button" parent="."]
 margin_top = 798.0
 margin_right = 564.0
 margin_bottom = 881.0
-theme_type_variation = "MainButton"
+theme_type_variation = "_MainMenu"
 text = "Exit"
 
 [connection signal="button_up" from="Play" to="." method="play_button_pressed"]
