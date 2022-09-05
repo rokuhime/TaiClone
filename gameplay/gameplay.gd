@@ -32,19 +32,22 @@ var _score_indicator_tween := SceneTreeTween.new()
 var _timing_indicator_tween := SceneTreeTween.new()
 
 ## Comment
+var _active := false
+
+## Comment
 var _auto := false
 
 ## Comment
 var _auto_left := true
 
 ## Comment
-var _inactive := true
-
-## Comment
 var _in_kiai := false
 
 ## Comment
 var _cur_time := 0.0
+
+## the time for the first note in the chart
+var _first_note_time := -1.0
 
 ## the time for the last note in the chart
 var _last_note_time := -1.0
@@ -71,6 +74,7 @@ onready var ui_score := $UI/Score as Label
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var song_progress := $UI/SongProgress as ProgressBar
+onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
 onready var debug_text := $Debug/DebugText as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var play_button := $Debug/TempLoadChart/PlayButton as Button
@@ -181,18 +185,19 @@ func _ready() -> void:
 						_kiai_timing_points.append(timing)
 
 	get_tree().call_group("HitObjects", "apply_skin")
-	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
+	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	_load_finish("Done!")
 
 
 func _process(_delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
-	if _inactive:
+	if not _active:
 		return
 
 	_cur_time = (Time.get_ticks_usec() - _time_begin - root_viewport.global_offset * 1000) / 1000000
-	song_progress.value = _cur_time * 100 / _last_note_time
+	break_progress.value = 100 - (_cur_time * 100 / _first_note_time)
+	song_progress.value = (_cur_time - _first_note_time) * 100 / (_last_note_time - _first_note_time)
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
 
@@ -231,6 +236,14 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _active and event is InputEventKey:
+		## Comment
+		var k_event := event as InputEventKey
+
+		if k_event.is_pressed() and k_event.scancode == KEY_SPACE:
+			skip_break()
+			return
+
 	## Comment
 	var inputs := [2]
 
@@ -249,6 +262,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or GlobalTools.inputs_empty(inputs):
 			break
 
+	inputs.remove(0)
 	for key in inputs:
 		emit_signal("audio_played", str(key))
 
@@ -276,6 +290,10 @@ func add_marker(timing: float, previous_timing: float) -> void:
 
 ## Comment
 func add_object(hit_object: HitObject, loaded := true) -> void:
+	if not hit_object is BarLine:
+		_first_note_time = min(_first_note_time if _first_note_time + 1 else hit_object.timing, hit_object.timing)
+		_last_note_time = max(_last_note_time if _last_note_time + 1 else hit_object.timing, hit_object.timing)
+
 	obj_container.add_child(hit_object)
 	for i in range(obj_container.get_child_count()):
 		if hit_object.end_time > (obj_container.get_child(i) as HitObject).end_time:
@@ -399,7 +417,7 @@ func play_button_pressed() -> void:
 		play_button.text = "Stop"
 		root_viewport.music.play()
 		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
-		_inactive = false
+		_active = true
 		get_tree().call_group("HitObjects", "activate")
 
 
@@ -411,7 +429,7 @@ func toggle_settings() -> void:
 ## Comment
 func _end_chart() -> void:
 	root_viewport.add_blackout(root_viewport.results)
-	_inactive = true
+	_active = false
 
 
 ## Comment
@@ -426,3 +444,10 @@ func _hit_notify_animation() -> void:
 func _load_finish(new_text: String) -> void:
 	_f.close()
 	debug_text.text = new_text
+
+
+## attempts to skip waiting at the beginning of charts, going right before the first note
+func skip_break() -> void:
+	print("attempted to skip break")
+	root_viewport.music.seek(_first_note_time - 1)
+	_time_begin -= (_first_note_time - _cur_time - 1) * 1000000

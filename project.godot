@@ -112,6 +112,7 @@ _global_script_class_icons={
 
 config/name="TaiClone"
 run/main_scene="res://root/root.tscn"
+boot_splash/show_image=false
 run/main_loop_type="TaiClone"
 
 [debug]

@@ -10,10 +10,13 @@ signal hit_error_changed
 signal late_early_changed
 
 ## Comment
-const CONFIG_PATH := "user://config.ini"
+const CONFIG_PATH := "config.ini"
 
 ## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
+
+## Comment
+var game_path := "user://"
 
 ## Comment
 var global_offset := 0
@@ -261,7 +264,7 @@ func save_settings() -> void:
 	for i in range(AudioServer.bus_count):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
-	if config_file.save(CONFIG_PATH):
+	if config_file.save(game_path.plus_file(CONFIG_PATH)):
 		push_warning("Attempted to save configuration file.")
 
 
