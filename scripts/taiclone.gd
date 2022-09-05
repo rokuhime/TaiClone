@@ -68,11 +68,5 @@ func _init() -> void:
 
 
 func _drop_files(files: PoolStringArray, _from_screen: int) -> void:
-	if ChartLoader.load_chart(files[0]):
-		return
-
-	if root.has_node("Gameplay"):
-		(root.get_node("Gameplay") as Gameplay).load_func(ChartLoader.FUS)
-
-	else:
-		_root_viewport.add_blackout(_root_viewport.gameplay)
+	ChartLoader.load_chart(files[0])
+	_root_viewport.add_blackout(_root_viewport.gameplay)

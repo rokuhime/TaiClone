@@ -175,6 +175,7 @@ margin_left = 466.0
 margin_right = 538.0
 margin_bottom = 82.0
 rect_min_size = Vector2( 72, 0 )
+text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="Debug/TempLoadChart"]
 margin_left = 546.0

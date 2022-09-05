@@ -87,14 +87,103 @@ func _ready() -> void:
 	kiai_glow.modulate.a = 0
 	last_hit_score.modulate.a = 0
 	root_viewport.music.stop()
-	_reset()
+	root_viewport.accurate_count = 0
+	root_viewport.combo = 0
+	root_viewport.early_count = 0
+	root_viewport.f_accurate_count = 0
+	root_viewport.f_inaccurate_count = 0
+	root_viewport.inaccurate_count = 0
+	root_viewport.late_count = 0
+	root_viewport.max_combo = 0
+	root_viewport.miss_count = 0
+	root_viewport.score = 0
+	add_score(-1)
 
 	## Comment
 	var _bars_removed := root_viewport.remove_scene("Bars")
 
-	# dev autoload map
-	if _f.file_exists(ChartLoader.FUS):
-		load_func(ChartLoader.FUS)
+	if not _f.file_exists(ChartLoader.FUS):
+		_load_finish("Invalid file!")
+		return
+
+	if _f.open(ChartLoader.FUS, File.READ):
+		_load_finish("Unable to read temporary .fus file!")
+		return
+
+	if _f.get_line() != ChartLoader.FUS_VERSION:
+		_load_finish("Outdated .fus file!")
+		return
+
+	root_viewport.bg_changed(GlobalTools.texture_from_image(_f.get_line()), Color("373737"))
+	root_viewport.music.stream = GlobalTools.load_audio_file(_f.get_line())
+	root_viewport.artist = _f.get_line()
+	root_viewport.charter = _f.get_line()
+	root_viewport.difficulty_name = _f.get_line()
+	root_viewport.title = _f.get_line()
+
+	## Comment
+	var cur_bpm := -1.0
+
+	while _f.get_position() < _f.get_len():
+		## Comment
+		var line_data := _f.get_csv_line()
+
+		## Comment
+		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
+
+		_last_note_time = timing
+
+		## Comment
+		var current_kiai := false
+
+		## Comment
+		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
+
+		match int(line_data[2]):
+			ChartLoader.NoteType.BARLINE:
+				## Comment
+				var hit_object := root_viewport.bar_line_object.instance() as BarLine
+
+				hit_object.change_properties(timing, total_cur_sv)
+				add_object(hit_object)
+
+			ChartLoader.NoteType.DON, ChartLoader.NoteType.KAT:
+				## Comment
+				var hit_object := root_viewport.note_object.instance() as Note
+
+				hit_object.change_properties(timing, total_cur_sv, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
+				add_object(hit_object)
+				GlobalTools.send_signal(self, "new_marker_added", hit_object, "add_marker")
+
+			ChartLoader.NoteType.ROLL:
+				## Comment
+				var hit_object := root_viewport.roll_object.instance() as Roll
+
+				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), bool(int(line_data[4])), cur_bpm)
+				add_object(hit_object)
+
+			ChartLoader.NoteType.SPINNER:
+				## Comment
+				var hit_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
+
+				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), cur_bpm)
+				add_object(hit_object)
+				GlobalTools.send_signal(self, "object_added", hit_object, "add_object")
+
+			ChartLoader.NoteType.TIMING_POINT:
+				cur_bpm = float(line_data[1])
+				if bool(int(line_data[3])) != current_kiai:
+					current_kiai = not current_kiai
+					if _next_kiai < 0:
+						_next_kiai = timing
+
+					else:
+						_kiai_timing_points.append(timing)
+
+	get_tree().call_group("HitObjects", "apply_skin")
+	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
+	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
+	_load_finish("Done!")
 
 
 func _process(_delta: float) -> void:
@@ -296,105 +385,9 @@ func change_late_early() -> void:
 
 
 ## Comment
-func load_func(file_path := "") -> void:
-	_inactive = true
-	debug_text.text = "Loading... [Checking File]"
-	if not file_path:
-		file_path = line_edit.text.replace("\\", "/")
-
-	if ChartLoader.load_chart(file_path):
-		_load_finish("Invalid file!")
-		return
-
-	if not file_path.ends_with(".fus"):
-		file_path = ChartLoader.FUS
-
-	debug_text.text = "Loading... [Reading File]"
-
-	if not _f.file_exists(file_path):
-		_load_finish("Invalid file!")
-		return
-
-	if _f.open(file_path, File.READ):
-		_load_finish("Unable to read temporary .fus file!")
-		return
-
-	if _f.get_line() != ChartLoader.FUS_VERSION:
-		_load_finish("Outdated .fus file!")
-		return
-
-	root_viewport.bg_changed(GlobalTools.texture_from_image(_f.get_line()), Color("373737"))
-	root_viewport.music.stream = GlobalTools.load_audio_file(_f.get_line())
-	root_viewport.artist = _f.get_line()
-	root_viewport.charter = _f.get_line()
-	root_viewport.difficulty_name = _f.get_line()
-	root_viewport.title = _f.get_line()
-	_reset()
-
-	## Comment
-	var cur_bpm := -1.0
-
-	while _f.get_position() < _f.get_len():
-		## Comment
-		var line_data := _f.get_csv_line()
-
-		## Comment
-		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
-
-		_last_note_time = timing
-
-		## Comment
-		var current_kiai := false
-
-		## Comment
-		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
-
-		match int(line_data[2]):
-			ChartLoader.NoteType.BARLINE:
-				## Comment
-				var hit_object := root_viewport.bar_line_object.instance() as BarLine
-
-				hit_object.change_properties(timing, total_cur_sv)
-				add_object(hit_object)
-
-			ChartLoader.NoteType.DON, ChartLoader.NoteType.KAT:
-				## Comment
-				var hit_object := root_viewport.note_object.instance() as Note
-
-				hit_object.change_properties(timing, total_cur_sv, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
-				add_object(hit_object)
-				GlobalTools.send_signal(self, "new_marker_added", hit_object, "add_marker")
-
-			ChartLoader.NoteType.ROLL:
-				## Comment
-				var hit_object := root_viewport.roll_object.instance() as Roll
-
-				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), bool(int(line_data[4])), cur_bpm)
-				add_object(hit_object)
-
-			ChartLoader.NoteType.SPINNER:
-				## Comment
-				var hit_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
-
-				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), cur_bpm)
-				add_object(hit_object)
-				GlobalTools.send_signal(self, "object_added", hit_object, "add_object")
-
-			ChartLoader.NoteType.TIMING_POINT:
-				cur_bpm = float(line_data[1])
-				if bool(int(line_data[3])) != current_kiai:
-					current_kiai = not current_kiai
-					if _next_kiai < 0:
-						_next_kiai = timing
-
-					else:
-						_kiai_timing_points.append(timing)
-
-	get_tree().call_group("HitObjects", "apply_skin")
-	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
-	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
-	play_button.disabled = false
-	_load_finish("Done!")
+func load_func() -> void:
+	ChartLoader.load_chart(line_edit.text.replace("\\", "/"))
+	root_viewport.add_blackout(root_viewport.gameplay)
 
 
 ## Comment
@@ -403,10 +396,11 @@ func play_button_pressed() -> void:
 		_end_chart()
 
 	else:
-		_reset(false)
+		play_button.text = "Stop"
 		root_viewport.music.play()
 		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
 		_inactive = false
+		get_tree().call_group("HitObjects", "activate")
 
 
 ## Comment
@@ -432,25 +426,3 @@ func _hit_notify_animation() -> void:
 func _load_finish(new_text: String) -> void:
 	_f.close()
 	debug_text.text = new_text
-
-
-## Comment
-func _reset(dispose := true) -> void:
-	root_viewport.accurate_count = 0
-	root_viewport.early_count = 0
-	root_viewport.f_accurate_count = 0
-	root_viewport.f_inaccurate_count = 0
-	root_viewport.inaccurate_count = 0
-	root_viewport.late_count = 0
-	root_viewport.max_combo = 0
-	root_viewport.miss_count = 0
-	root_viewport.score = 0
-	_cur_time = 0
-	_current_combo = 0
-	_next_kiai = -1
-	_in_kiai = false
-	_kiai_timing_points.clear()
-	add_score(-1)
-	play_button.disabled = dispose
-	play_button.text = "Play" if dispose else "Stop"
-	get_tree().call_group("HitObjects", "queue_free" if dispose else "activate")

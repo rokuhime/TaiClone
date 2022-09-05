@@ -164,7 +164,7 @@ func add_blackout(next_scene: PackedScene) -> void:
 
 ## Comment
 func add_scene(new_scene: Node, parent_node := "") -> void:
-	if has_node(new_scene.name):
+	if has_node(new_scene.name) and new_scene.name != "Gameplay":
 		new_scene.queue_free()
 
 	else:

@@ -11,16 +11,16 @@ const FUS_VERSION := "v0.0.4"
 
 
 ## Comment
-static func load_chart(file_path: String) -> bool:
+static func load_chart(file_path: String) -> void:
 	## Comment
 	var f := File.new()
 
 	if not f.file_exists(file_path):
-		return true
+		return
 
 	if f.open(file_path, File.READ):
 		f.close()
-		return true
+		return
 
 	## Comment
 	var artist := ""
@@ -359,12 +359,12 @@ static func load_chart(file_path: String) -> bool:
 
 	else:
 		f.close()
-		return not file_path.ends_with(".fus")
+		return
 
 	f.close()
 	if f.open(FUS, File.WRITE):
 		f.close()
-		return true
+		return
 
 	## Comment
 	var folder_path := file_path.get_base_dir()
@@ -372,7 +372,7 @@ static func load_chart(file_path: String) -> bool:
 	f.store_string(_csv_line([FUS_VERSION, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist, charter, difficulty_name, title] + notes).join("\n"))
 	f.close()
 
-	return false
+	return
 
 
 ## Comment
