@@ -411,8 +411,7 @@ func play_button_pressed() -> void:
 
 ## Comment
 func toggle_settings() -> void:
-	if not root_viewport.remove_scene("SettingsPanel"):
-		root_viewport.add_scene(root_viewport.settings_panel.instance(), name)
+	root_viewport.toggle_settings(name)
 
 
 ## Comment

@@ -290,3 +290,9 @@ func save_settings() -> void:
 func toggle_fullscreen(new_visible: bool) -> void:
 	OS.window_fullscreen = new_visible
 	save_settings()
+
+
+## Comment
+func toggle_settings(node_name: String) -> void:
+	if not remove_scene("SettingsPanel"):
+		add_scene(settings_panel.instance(), node_name)
