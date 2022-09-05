@@ -5,9 +5,6 @@ extends CanvasItem
 signal volume_changed
 
 ## Comment
-var _cur_changing := 0
-
-## Comment
 var _master_modulate_tween := SceneTreeTween.new()
 
 ## Comment
@@ -28,12 +25,15 @@ var _sfx_modulate_tween := SceneTreeTween.new()
 ## Comment
 var _sfx_progress_tween := SceneTreeTween.new()
 
-onready var change_sound := $ChangeSound as AudioStreamPlayer
-onready var master_vol := $Bars/Master as CanvasItem
-onready var music_vol := $Bars/Specifics/Music as CanvasItem
-onready var root_viewport := $"/root" as Root
-onready var sfx_vol := $Bars/Specifics/SFX as CanvasItem
+## Comment
+var _cur_changing := 0
+
 onready var timer := get_tree().create_timer(0)
+onready var root_viewport := $"/root" as Root
+onready var change_sound := $ChangeSound as AudioStreamPlayer
+onready var music_vol := $Bars/Specifics/Music as CanvasItem
+onready var sfx_vol := $Bars/Specifics/SFX as CanvasItem
+onready var master_vol := $Bars/Master as CanvasItem
 
 
 func _ready() -> void:

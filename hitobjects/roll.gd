@@ -7,11 +7,11 @@ var _tick_distance := 0.0
 ## The number of [Tick]s in this [Roll].
 var _total_ticks := 0
 
+onready var root_viewport := $"/root" as Root
 onready var body := $Body as TextureRect
 onready var body_end := $Body/End as TextureRect
 onready var head := $Head as TextureRect
 onready var head_overlay := $Head/Overlay as TextureRect
-onready var root_viewport := $"/root" as Root
 onready var tick_container := $TickContainer
 
 

@@ -23,11 +23,11 @@ enum Score {ACCURATE, INACCURATE, MISS, FINISHER, ROLL, SPINNER}
 ## 3 (FINISHED): This [HitObject] has been fully hit or missed. It will be disposed of once all animations finish.
 enum State {READY = 1, ACTIVE, FINISHED}
 
-## The time when this [HitObject] completes. It's used to sort [HitObject]s. Applies to all [HitObject]s.
-var end_time := 0.0
-
 ## Whether or not this [HitObject] is a finisher. Only applies to [Note]s and [Roll]s.
 var finisher := false
+
+## The time when this [HitObject] completes. It's used to sort [HitObject]s. Applies to all [HitObject]s.
+var end_time := 0.0
 
 ## The length of this [HitObject]. Only applies to [Roll]s, [Spinner]s, and [SpinnerWarn]s.
 var length := 0.0
@@ -35,11 +35,11 @@ var length := 0.0
 ## The slider velocity of this [HitObject]. Applies to all [HitObject]s.
 var speed := 0.0
 
-## The [member State] of this [HitObject]. Applies to all [HitObject]s.
-var state := 0
-
 ## The hit time of this [HitObject]. Applies to all [HitObject]s.
 var timing := 0.0
+
+## The [member State] of this [HitObject]. Applies to all [HitObject]s.
+var state := 0
 
 onready var visibility_notifier := $VisibilityNotifier2D as VisibilityNotifier2D
 

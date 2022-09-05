@@ -12,36 +12,36 @@ var _r_don_tween := SceneTreeTween.new()
 ## Comment
 var _r_kat_tween := SceneTreeTween.new()
 
+onready var root_viewport := $"/root" as Root
 onready var combo_break_aud := $ComboBreakAudio as AudioStreamPlayer
-onready var combo_label := $Combo as Label
 onready var f_don_aud := $FinisherDonAudio as AudioStreamPlayer
 onready var f_kat_aud := $FinisherKatAudio as AudioStreamPlayer
 onready var l_don_aud := $LeftDonAudio as AudioStreamPlayer
-onready var l_don_obj := $LeftDon as TextureRect
 onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
-onready var l_kat_obj := $LeftKat as TextureRect
 onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
-onready var r_don_obj := $RightDon as TextureRect
 onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
+onready var l_don_obj := $LeftDon as TextureRect
+onready var l_kat_obj := $LeftKat as TextureRect
+onready var r_don_obj := $RightDon as TextureRect
 onready var r_kat_obj := $RightKat as TextureRect
-onready var root_viewport := $"/root" as Root
+onready var combo_label := $Combo as Label
 
 
 func _ready() -> void:
+	l_don_obj.modulate.a = 0
+	l_kat_obj.modulate.a = 0
+	r_don_obj.modulate.a = 0
+	r_kat_obj.modulate.a = 0
 	combo_break_aud.stream = root_viewport.skin.combo_break
 	f_don_aud.stream = root_viewport.skin.hit_finish
 	f_kat_aud.stream = root_viewport.skin.hit_whistle
 	l_don_aud.stream = root_viewport.skin.hit_normal
-	l_don_obj.modulate.a = 0
-	l_don_obj.texture = root_viewport.skin.don_texture
 	l_kat_aud.stream = root_viewport.skin.hit_clap
-	l_kat_obj.modulate.a = 0
-	l_kat_obj.texture = root_viewport.skin.kat_texture
 	r_don_aud.stream = root_viewport.skin.hit_normal
-	r_don_obj.modulate.a = 0
-	r_don_obj.texture = root_viewport.skin.don_texture
 	r_kat_aud.stream = root_viewport.skin.hit_clap
-	r_kat_obj.modulate.a = 0
+	l_don_obj.texture = root_viewport.skin.don_texture
+	l_kat_obj.texture = root_viewport.skin.kat_texture
+	r_don_obj.texture = root_viewport.skin.don_texture
 	r_kat_obj.texture = root_viewport.skin.kat_texture
 	texture = root_viewport.skin.bar_left_texture
 

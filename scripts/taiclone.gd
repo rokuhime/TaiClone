@@ -4,13 +4,13 @@ extends SceneTree
 ## Ran on startup, absolute root script of the project.
 
 ## Comment
+var _volume_control := preload("res://root/volume_control.tscn")
+
+## Comment
 var _root := preload("res://root/root.gd")
 
 ## The root viewport that's used when requiring [Root]-specific functions.
 var _root_viewport: Root
-
-## Comment
-var _volume_control := preload("res://root/volume_control.tscn")
 
 
 func _init() -> void:
