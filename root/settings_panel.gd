@@ -30,4 +30,4 @@ func _tween_position() -> void:
 	var _right_tween := _position_tween.tween_property(self, "margin_right", 0.0 if _active else rect_size.x, 1)
 
 	if not _active:
-		Root.send_signal(self, "finished", _position_tween, "queue_free")
+		GlobalTools.send_signal(self, "finished", _position_tween, "queue_free")

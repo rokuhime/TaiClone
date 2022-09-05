@@ -133,70 +133,70 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 				return
 
 			"approachcircle":
-				approach_circle = ChartLoader.texture_from_image(file_path, false)
+				approach_circle = GlobalTools.texture_from_image(file_path, false)
 
 			"combobreak":
-				combo_break = ChartLoader.load_audio_file(file_path)
+				combo_break = GlobalTools.load_audio_file(file_path)
 
 			"sliderscorepoint":
-				tick_texture = ChartLoader.texture_from_image(file_path)
+				tick_texture = GlobalTools.texture_from_image(file_path)
 
 			"spinner-approachcircle":
-				spinner_approach = ChartLoader.texture_from_image(file_path)
+				spinner_approach = GlobalTools.texture_from_image(file_path)
 
 			"spinner-circle":
-				approach_circle = ChartLoader.texture_from_image(file_path, false)
+				approach_circle = GlobalTools.texture_from_image(file_path, false)
 
 			"spinner-warning":
-				spinner_warning = ChartLoader.texture_from_image(file_path)
+				spinner_warning = GlobalTools.texture_from_image(file_path)
 
 			"taiko-bar-left":
-				bar_left_texture = ChartLoader.texture_from_image(file_path)
+				bar_left_texture = GlobalTools.texture_from_image(file_path)
 
 			"taiko-bar-right":
-				bar_right_texture = ChartLoader.texture_from_image(file_path)
+				bar_right_texture = GlobalTools.texture_from_image(file_path)
 
 			"taiko-drum-hitclap":
-				hit_clap = ChartLoader.load_audio_file(file_path)
+				hit_clap = GlobalTools.load_audio_file(file_path)
 
 			"taiko-drum-hitfinish":
-				hit_finish = ChartLoader.load_audio_file(file_path)
+				hit_finish = GlobalTools.load_audio_file(file_path)
 
 			"taiko-drum-hitnormal":
-				hit_normal = ChartLoader.load_audio_file(file_path)
+				hit_normal = GlobalTools.load_audio_file(file_path)
 
 			"taiko-drum-hitwhistle":
-				hit_whistle = ChartLoader.load_audio_file(file_path)
+				hit_whistle = GlobalTools.load_audio_file(file_path)
 
 			"taiko-drum-inner":
-				don_texture = ChartLoader.texture_from_image(file_path, false)
+				don_texture = GlobalTools.texture_from_image(file_path, false)
 
 			"taiko-drum-outer":
-				kat_texture = ChartLoader.texture_from_image(file_path, false)
+				kat_texture = GlobalTools.texture_from_image(file_path, false)
 
 			"taiko-glow":
-				kiai_glow_texture = ChartLoader.texture_from_image(file_path, false)
+				kiai_glow_texture = GlobalTools.texture_from_image(file_path, false)
 
 			"taiko-hit0":
-				miss_judgement = ChartLoader.texture_from_image(file_path, false)
+				miss_judgement = GlobalTools.texture_from_image(file_path, false)
 
 			"taiko-hit100":
-				inaccurate_judgement = ChartLoader.texture_from_image(file_path, false)
+				inaccurate_judgement = GlobalTools.texture_from_image(file_path, false)
 
 			"taiko-hit300":
-				accurate_judgement = ChartLoader.texture_from_image(file_path, false)
+				accurate_judgement = GlobalTools.texture_from_image(file_path, false)
 
 			"taiko-roll-end":
-				roll_end = ChartLoader.texture_from_image(file_path)
+				roll_end = GlobalTools.texture_from_image(file_path)
 
 			"taiko-roll-middle":
-				roll_middle = ChartLoader.texture_from_image(file_path)
+				roll_middle = GlobalTools.texture_from_image(file_path)
 
 			"taikobigcircle":
-				big_circle = ChartLoader.texture_from_image(file_path)
+				big_circle = GlobalTools.texture_from_image(file_path)
 
 			"taikohitcircleoverlay-0":
-				hit_circle_overlay = ChartLoader.texture_from_image(file_path)
+				hit_circle_overlay = GlobalTools.texture_from_image(file_path)
 
 
 ## Comment
@@ -204,25 +204,25 @@ func _default_skin() -> void:
 	## Comment
 	var skin_path := DEFAULT_SKIN_PATH
 
-	combo_break = load(skin_path.plus_file("combobreak.wav")) as AudioStream
-	hit_clap = load(skin_path.plus_file("taiko-drum-hitclap.wav")) as AudioStream
-	hit_finish = load(skin_path.plus_file("taiko-drum-hitfinish.wav")) as AudioStream
-	hit_normal = load(skin_path.plus_file("taiko-drum-hitnormal.wav")) as AudioStream
-	hit_whistle = load(skin_path.plus_file("taiko-drum-hitwhistle.wav")) as AudioStream
-	accurate_judgement = ChartLoader.texture_from_image(skin_path.plus_file("taiko-hit300.png"), false)
-	approach_circle = ChartLoader.texture_from_image(skin_path.plus_file("approachcircle.png"), false)
-	bar_left_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-bar-left.png"))
-	bar_right_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-bar-right.png"))
-	big_circle = ChartLoader.texture_from_image(skin_path.plus_file("taikobigcircle.png"))
-	don_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-drum-inner.png"), false)
-	hit_circle_overlay = ChartLoader.texture_from_image(skin_path.plus_file("taikohitcircleoverlay-0.png"))
-	inaccurate_judgement = ChartLoader.texture_from_image(skin_path.plus_file("taiko-hit100.png"), false)
-	kat_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-drum-outer.png"), false)
-	kiai_glow_texture = ChartLoader.texture_from_image(skin_path.plus_file("taiko-glow.png"), false)
-	miss_judgement = ChartLoader.texture_from_image(skin_path.plus_file("taiko-hit0.png"), false)
-	roll_end = ChartLoader.texture_from_image(skin_path.plus_file("taiko-roll-end.png"))
-	roll_middle = ChartLoader.texture_from_image(skin_path.plus_file("taiko-roll-middle.png"))
-	spinner_approach = ChartLoader.texture_from_image(skin_path.plus_file("spinner-approachcircle.png"))
-	spinner_circle = ChartLoader.texture_from_image(skin_path.plus_file("spinner-circle.png"), false)
-	spinner_warning = ChartLoader.texture_from_image(skin_path.plus_file("spinner-warning.png"))
-	tick_texture = ChartLoader.texture_from_image(skin_path.plus_file("sliderscorepoint.png"))
+	combo_break = GlobalTools.load_audio_file(skin_path.plus_file("combobreak.wav"))
+	hit_clap = GlobalTools.load_audio_file(skin_path.plus_file("taiko-drum-hitclap.wav"))
+	hit_finish = GlobalTools.load_audio_file(skin_path.plus_file("taiko-drum-hitfinish.wav"))
+	hit_normal = GlobalTools.load_audio_file(skin_path.plus_file("taiko-drum-hitnormal.wav"))
+	hit_whistle = GlobalTools.load_audio_file(skin_path.plus_file("taiko-drum-hitwhistle.wav"))
+	accurate_judgement = GlobalTools.texture_from_image(skin_path.plus_file("taiko-hit300.png"), false)
+	approach_circle = GlobalTools.texture_from_image(skin_path.plus_file("approachcircle.png"), false)
+	bar_left_texture = GlobalTools.texture_from_image(skin_path.plus_file("taiko-bar-left.png"))
+	bar_right_texture = GlobalTools.texture_from_image(skin_path.plus_file("taiko-bar-right.png"))
+	big_circle = GlobalTools.texture_from_image(skin_path.plus_file("taikobigcircle.png"))
+	don_texture = GlobalTools.texture_from_image(skin_path.plus_file("taiko-drum-inner.png"), false)
+	hit_circle_overlay = GlobalTools.texture_from_image(skin_path.plus_file("taikohitcircleoverlay-0.png"))
+	inaccurate_judgement = GlobalTools.texture_from_image(skin_path.plus_file("taiko-hit100.png"), false)
+	kat_texture = GlobalTools.texture_from_image(skin_path.plus_file("taiko-drum-outer.png"), false)
+	kiai_glow_texture = GlobalTools.texture_from_image(skin_path.plus_file("taiko-glow.png"), false)
+	miss_judgement = GlobalTools.texture_from_image(skin_path.plus_file("taiko-hit0.png"), false)
+	roll_end = GlobalTools.texture_from_image(skin_path.plus_file("taiko-roll-end.png"))
+	roll_middle = GlobalTools.texture_from_image(skin_path.plus_file("taiko-roll-middle.png"))
+	spinner_approach = GlobalTools.texture_from_image(skin_path.plus_file("spinner-approachcircle.png"))
+	spinner_circle = GlobalTools.texture_from_image(skin_path.plus_file("spinner-circle.png"), false)
+	spinner_warning = GlobalTools.texture_from_image(skin_path.plus_file("spinner-warning.png"))
+	tick_texture = GlobalTools.texture_from_image(skin_path.plus_file("sliderscorepoint.png"))

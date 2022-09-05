@@ -59,7 +59,7 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 ## See [HitObject].
 func hit(inputs: Array, hit_time: float) -> bool:
 	for tick_idx in range(tick_container.get_child_count() - 1, -1, -1):
-		if (tick_container.get_child(tick_idx) as Tick).hit(inputs, (hit_time - timing + _tick_distance / 2) * speed) or Root.inputs_empty(inputs):
+		if (tick_container.get_child(tick_idx) as Tick).hit(inputs, (hit_time - timing + _tick_distance / 2) * speed) or GlobalTools.inputs_empty(inputs):
 			break
 
 	return false
