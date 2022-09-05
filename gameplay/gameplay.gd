@@ -34,6 +34,9 @@ var _inactive := true
 ## Comment
 var _judgement_tween := SceneTreeTween.new()
 
+## the time for the first note in the chart
+var _first_note_time := 100.0
+
 ## the time for the last note in the chart
 var _last_note_time := -1.0
 
@@ -96,7 +99,16 @@ func _process(_delta: float) -> void:
 		return
 
 	_cur_time = (Time.get_ticks_usec() - _time_begin - root_viewport.global_offset * 1000) / 1000000
-	song_progress.value = _cur_time * 100 / _last_note_time
+	
+	# set current time for progress bar
+	if _cur_time > _first_note_time:
+		song_progress.value = (_cur_time - _first_note_time) * 100 / (_last_note_time - _first_note_time)
+	
+	# set break progress bar for the beginning of the map
+	else:
+		song_progress.get_child(0).value = 100 - (_cur_time * 100 / _first_note_time)
+	
+	# end chart when last note hit (with a little delay :^D)
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
 
@@ -337,7 +349,8 @@ func load_func(file_path := "") -> void:
 
 	## Comment
 	var cur_bpm := -1.0
-
+	_first_note_time = 100.0
+	
 	while _f.get_position() < _f.get_len():
 		## Comment
 		var line_data := _f.get_csv_line()
@@ -345,10 +358,12 @@ func load_func(file_path := "") -> void:
 		## Comment
 		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
 
-		_last_note_time = timing
-
 		## Comment
 		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
+
+		if int(line_data[2]) != ChartLoader.NoteType.BARLINE and int(line_data[2]) != ChartLoader.NoteType.TIMING_POINT:
+			_first_note_time = min(_first_note_time, timing)
+			_last_note_time = timing
 
 		match int(line_data[2]):
 			ChartLoader.NoteType.BARLINE:
@@ -393,6 +408,7 @@ func load_func(file_path := "") -> void:
 	play_button.disabled = false
 	root_viewport.max_combo = 0
 	in_kiai = false
+	print(_first_note_time)
 	_load_finish("Done!")
 
 
@@ -436,6 +452,7 @@ func _load_finish(new_text: String) -> void:
 
 ## Comment
 func _reset(dispose := true) -> void:
+	print("reset called")
 	root_viewport.accurate_count = 0
 	root_viewport.early_count = 0
 	root_viewport.f_accurate_count = 0
