@@ -225,7 +225,7 @@ margin_top = 43.0
 margin_right = 602.0
 margin_bottom = 82.0
 size_flags_vertical = 3
-text = "v0.3 - The Big One(tm)"
+text = "v0.3.1 - does audio work?"
 align = 2
 valign = 1
 

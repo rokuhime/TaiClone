@@ -161,6 +161,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	## Comment
 	var inputs := [2]
 
+	# bad but thats how i hard coded it lol
+	if event is InputEventKey:
+		if event.is_pressed() and event.scancode == KEY_SPACE and not _inactive:
+			skip_break()
+			return
+
 	for key in Root.KEYS:
 		if event.is_action_pressed(str(key)):
 			inputs.append(str(key))
@@ -403,7 +409,7 @@ func load_func(file_path := "") -> void:
 					in_kiai = !in_kiai
 
 	get_tree().call_group("HitObjects", "apply_skin")
-	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio")
+	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	play_button.disabled = false
 	root_viewport.max_combo = 0
@@ -449,6 +455,11 @@ func _load_finish(new_text: String) -> void:
 	_f.close()
 	debug_text.text = new_text
 
+## attempts to skip waiting at the beginning of charts, going right before the first note
+func skip_break() -> void:
+	print("attempted to skip break")
+	root_viewport.music.seek(_first_note_time - 1)
+	_time_begin -= (_first_note_time - _cur_time - 1) * 1000000
 
 ## Comment
 func _reset(dispose := true) -> void:

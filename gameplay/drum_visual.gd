@@ -90,6 +90,8 @@ func keypress_animation(key: String) -> SceneTreeTween:
 
 ## Comment
 func play_audio(key: String) -> void:
+	if key != "2":
+		get_node("../../Debug/DebugText").text = key
 	match key:
 		"ComboBreak":
 			combo_break_aud.play()
