@@ -1,8 +1,9 @@
-[gd_resource type="Theme" load_steps=45 format=2]
+[gd_resource type="Theme" load_steps=48 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
 [ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
+[ext_resource path="res://skins/test_skin/sliderscorepoint.png" type="Texture" id=4]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 1, 1, 1, 0.392157 )
@@ -36,6 +37,28 @@ font_data = ExtResource( 3 )
 [sub_resource type="StyleBoxLine" id=8]
 color = Color( 1, 1, 1, 1 )
 thickness = 2
+
+[sub_resource type="StyleBoxFlat" id=42]
+bg_color = Color( 0.631373, 0.631373, 0.631373, 1 )
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_top = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id=43]
+bg_color = Color( 0, 0, 0, 0.490196 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_top = 4.0
+expand_margin_bottom = 4.0
 
 [sub_resource type="StyleBoxFlat" id=9]
 bg_color = Color( 1, 1, 1, 0 )
@@ -285,6 +308,11 @@ BottomButton/styles/normal = SubResource( 5 )
 Combo/fonts/font = SubResource( 6 )
 ErrorBar/fonts/font = SubResource( 7 )
 HSeparator/styles/separator = SubResource( 8 )
+HSlider/icons/grabber = ExtResource( 4 )
+HSlider/icons/grabber_highlight = ExtResource( 4 )
+HSlider/styles/grabber_area = SubResource( 42 )
+HSlider/styles/grabber_area_highlight = SubResource( 42 )
+HSlider/styles/slider = SubResource( 43 )
 HitCount/styles/panel = SubResource( 9 )
 HitCountLabel/fonts/font = SubResource( 10 )
 Keybinds/fonts/font = SubResource( 11 )

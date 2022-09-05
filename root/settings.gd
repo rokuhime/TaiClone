@@ -13,7 +13,7 @@ onready var dropdown := $V/Resolution/Options as OptionButton
 onready var fullscreen_toggle := $V/Resolution/Fullscreen/Toggle as CheckBox
 onready var hit_error_toggle := $V/ExtraDisplays/HitError/Toggle as CheckBox
 onready var late_early_drop := $V/ExtraDisplays/LateEarly/Options as OptionButton
-onready var offset_text := $V/Offset/LineEdit as LineEdit
+#onready var offset_text := $V/Offset/LineEdit as LineEdit
 onready var root_viewport := $"/root" as Root
 
 
@@ -64,13 +64,13 @@ func change_offset(new_text: String) -> void:
 		return
 
 	## The position of the cursor in [member offset_text].
-	var text_position := offset_text.caret_position
+	#var text_position := offset_text.caret_position
 
 	## The new offset value that's being applied.
 	var new_offset := int(new_text)
 
-	offset_text.text = str(new_offset) if new_offset else ""
-	offset_text.caret_position = text_position
+	#offset_text.text = str(new_offset) if new_offset else ""
+	#offset_text.caret_position = text_position
 	if _settings_save:
 		root_viewport.global_offset = new_offset
 		root_viewport.save_settings()

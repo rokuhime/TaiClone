@@ -240,7 +240,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		## Comment
 		var k_event := event as InputEventKey
 
-		if k_event.is_pressed() and k_event.scancode == KEY_SPACE:
+		if k_event.pressed and k_event.scancode == KEY_SPACE:
 			skip_break()
 			return
 
