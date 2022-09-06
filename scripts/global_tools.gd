@@ -64,7 +64,7 @@ static func texture_from_image(file_path: String, crop_transparent := true) -> T
 	elif image.load(file_path):
 		return new_texture
 
-	if crop_transparent:
+	if crop_transparent and not image.is_invisible():
 		image = image.get_rect(image.get_used_rect())
 
 	new_texture.create_from_image(image)

@@ -64,6 +64,7 @@ margin_left = -196.0
 margin_top = -196.0
 margin_right = 196.0
 margin_bottom = 196.0
+expand = true
 stretch_mode = 6
 
 [node name="Judgement" type="TextureRect" parent="BarRight/HitPointOffset"]
@@ -73,6 +74,7 @@ margin_left = -196.0
 margin_top = -196.0
 margin_right = 196.0
 margin_bottom = 196.0
+expand = true
 stretch_mode = 6
 
 [node name="ObjectContainer" type="Control" parent="BarRight/HitPointOffset"]
