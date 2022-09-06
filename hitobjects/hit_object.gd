@@ -41,18 +41,14 @@ var timing := 0.0
 ## The [member State] of this [HitObject]. Applies to all [HitObject]s.
 var state := 0
 
-onready var visibility_notifier := $VisibilityNotifier2D as VisibilityNotifier2D
-
 
 func _ready() -> void:
 	hide()
-	GlobalTools.send_signal(self, "screen_entered", visibility_notifier, "show")
-	GlobalTools.send_signal(self, "screen_exited", visibility_notifier, "hide")
 	if finisher:
 		(get_child(1) as Control).rect_scale *= 1.6
-		visibility_notifier.scale *= 1.6
 
 	add_to_group("HitObjects")
+	move(1, timing)
 	state = int(State.READY)
 
 
@@ -151,6 +147,6 @@ func miss_check(_hit_time: float) -> bool:
 
 
 ## Comment
-func move(cur_time: float) -> void:
-	if state > int(State.READY):
-		position.x = speed * (timing - cur_time)
+func move(visible_x: float, cur_time: float) -> void:
+	position.x = speed * (timing - cur_time)
+	visible = -visible_x < position.x and position.x < visible_x

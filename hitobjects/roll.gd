@@ -17,7 +17,6 @@ onready var tick_container := $TickContainer
 
 func _ready() -> void:
 	body.rect_size.x = speed * length
-	visibility_notifier.rect.size.x += speed * length
 
 	if finisher:
 		head.rect_scale *= 1.6

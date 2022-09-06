@@ -219,7 +219,7 @@ func _process(_delta: float) -> void:
 		## Comment
 		var hit_object := obj_container.get_child(i) as HitObject
 
-		hit_object.move(_cur_time)
+		hit_object.move(bar_right.rect_size.x, _cur_time)
 		if check_misses and hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0)):
 			check_auto = true
 			check_misses = false
