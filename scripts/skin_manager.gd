@@ -91,6 +91,9 @@ var kiai_glow_texture: Texture
 ## Comment
 var lighting_texture: Texture
 
+## Comment
+var menu_bg: Texture
+
 ## The texture of a judgement with a MISS [member HitObject.Score].
 var miss_judgement: Texture
 
@@ -147,7 +150,7 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 					break
 
 	files.sort()
-	for key in ["approachcircle", "combobreak", "lighting", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_hitclap", "taiko_drum_hitfinish", "taiko_drum_hitnormal", "taiko_drum_hitwhistle", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
+	for key in ["approachcircle", "combobreak", "lighting", "menu_background", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_hitclap", "taiko_drum_hitfinish", "taiko_drum_hitnormal", "taiko_drum_hitwhistle", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
 		## Comment
 		var cur_files := []
 
@@ -178,6 +181,9 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 			"lighting":
 				lighting_texture = _get_texture(skin_path, str(key), cur_files, 0)
+
+			"menu_background":
+				menu_bg = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
 
 			"sliderscorepoint":
 				tick_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
