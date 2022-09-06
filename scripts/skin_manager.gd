@@ -147,7 +147,7 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 					break
 
 	files.sort()
-	for key in ["approachcircle", "lighting", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
+	for key in ["approachcircle", "combobreak", "lighting", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_hitclap", "taiko_drum_hitfinish", "taiko_drum_hitnormal", "taiko_drum_hitwhistle", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
 		## Comment
 		var cur_files := []
 
@@ -173,6 +173,9 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"approachcircle":
 				approach_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
 
+			"combobreak":
+				combo_break = _get_audio(skin_path, str(key), cur_files, [".wav"])
+
 			"lighting":
 				lighting_texture = _get_texture(skin_path, str(key), cur_files, 0)
 
@@ -196,6 +199,18 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 			"taiko_bar_right_glow":
 				bar_right_glow = _get_texture(skin_path, str(key), cur_files, 0)
+
+			"taiko_drum_hitclap":
+				hit_clap = _get_audio(skin_path, str(key), cur_files, [".wav"])
+
+			"taiko_drum_hitfinish":
+				hit_finish = _get_audio(skin_path, str(key), cur_files, [".wav"])
+
+			"taiko_drum_hitnormal":
+				hit_normal = _get_audio(skin_path, str(key), cur_files, [".wav"])
+
+			"taiko_drum_hitwhistle":
+				hit_whistle = _get_audio(skin_path, str(key), cur_files, [".wav"])
 
 			"taiko_drum_inner":
 				don_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
@@ -233,11 +248,14 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"taikohitcircleoverlay":
 				hit_circle_overlay = _get_texture(skin_path, str(key), cur_files, 1, ["-0.png"])
 
-	combo_break = GlobalTools.load_audio_file(DEFAULT_SKIN_PATH.plus_file("combobreak.wav"))
-	hit_clap = GlobalTools.load_audio_file(DEFAULT_SKIN_PATH.plus_file("taiko-drum-hitclap.wav"))
-	hit_finish = GlobalTools.load_audio_file(DEFAULT_SKIN_PATH.plus_file("taiko-drum-hitfinish.wav"))
-	hit_normal = GlobalTools.load_audio_file(DEFAULT_SKIN_PATH.plus_file("taiko-drum-hitnormal.wav"))
-	hit_whistle = GlobalTools.load_audio_file(DEFAULT_SKIN_PATH.plus_file("taiko-drum-hitwhistle.wav"))
+
+## Comment
+func _get_audio(skin_path: String, key: String, cur_files: Array, default_files := []) -> AudioStream:
+	if cur_files.empty():
+		skin_path = DEFAULT_SKIN_PATH
+		cur_files = default_files
+
+	return AudioLoader.load_file(skin_path.plus_file((key + str(cur_files[0])).replace("_", "-")))
 
 
 ## Comment
