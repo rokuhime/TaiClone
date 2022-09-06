@@ -13,7 +13,6 @@ var _is_kat := true
 ## Comment
 var _first_hit := -1.0
 
-onready var root_viewport := $"/root" as Root
 onready var head := $Head as TextureRect
 onready var head_overlay := $Head/Overlay as TextureRect
 

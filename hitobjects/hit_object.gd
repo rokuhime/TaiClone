@@ -1,5 +1,5 @@
 class_name HitObject
-extends KinematicBody2D
+extends Control
 
 ## Signals DrumVisual when a hit sound should be played.
 signal audio_played(key)
@@ -41,11 +41,13 @@ var timing := 0.0
 ## The [member State] of this [HitObject]. Applies to all [HitObject]s.
 var state := 0
 
+onready var root_viewport := $"/root" as Root
+
 
 func _ready() -> void:
 	hide()
 	if finisher:
-		(get_child(1) as Control).rect_scale *= 1.6
+		(get_child(0) as Control).rect_scale *= 1.6
 
 	add_to_group("HitObjects")
 	move(1, timing)
@@ -60,7 +62,7 @@ func activate() -> void:
 
 ## Apply a skin to this [HitObject]. Intended to be implemented by child classes.
 func apply_skin() -> void:
-	pass
+	modulate = root_viewport.skin.barline_color
 
 
 ## Comment
@@ -148,5 +150,5 @@ func miss_check(_hit_time: float) -> bool:
 
 ## Comment
 func move(visible_x: float, cur_time: float) -> void:
-	position.x = speed * (timing - cur_time)
-	visible = -visible_x < position.x and position.x < visible_x
+	rect_position.x = speed * (timing - cur_time)
+	visible = -visible_x < rect_position.x and rect_position.x < visible_x

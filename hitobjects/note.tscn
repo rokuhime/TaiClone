@@ -3,10 +3,7 @@
 [ext_resource path="res://hitobjects/hit_object.tscn" type="PackedScene" id=1]
 [ext_resource path="res://hitobjects/note.gd" type="Script" id=2]
 
-[node name="Note" type="KinematicBody2D"]
+[node name="Note" type="Control"]
 script = ExtResource( 2 )
-
-[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
-rect = Rect2( -67, -67, 134, 134 )
 
 [node name="Head" parent="." instance=ExtResource( 1 )]

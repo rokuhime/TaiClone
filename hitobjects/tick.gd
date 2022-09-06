@@ -1,14 +1,13 @@
 class_name Tick
 extends HitObject
 
-onready var root_viewport := $"/root" as Root
 onready var sprite := $Sprite as TextureRect
 
 
 ## See [HitObject].
 func activate() -> void:
 	.activate()
-	position.x = timing
+	rect_position.x = timing
 
 
 ## See [HitObject].

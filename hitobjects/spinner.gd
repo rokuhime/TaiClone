@@ -19,7 +19,6 @@ var _cur_hit_count := 0
 ## The number of hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
 var _needed_hits := 0
 
-onready var root_viewport := $"/root" as Root
 onready var rotation_obj := $RotationObj as Node2D
 onready var sprite := $RotationObj/Sprite as TextureRect
 onready var approach := $Approach as TextureRect
