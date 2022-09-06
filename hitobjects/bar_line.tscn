@@ -2,9 +2,13 @@
 
 [ext_resource path="res://hitobjects/bar_line.gd" type="Script" id=1]
 
-[node name="ColorRect" type="ColorRect"]
+[node name="BarLine" type="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
 margin_left = -1.0
 margin_top = -139.0
 margin_right = 1.0
 margin_bottom = 139.0
-script = ExtResource( 1 )

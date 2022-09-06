@@ -57,7 +57,7 @@ func keypress_animation(key: String) -> SceneTreeTween:
 	var drum_obj: Node
 
 	## Comment
-	var scene_tween := SceneTreeTween.new()
+	var scene_tween: SceneTreeTween
 
 	match key:
 		"LeftDon":

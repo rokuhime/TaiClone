@@ -5,25 +5,32 @@
 [node name="Spinner" type="Control"]
 script = ExtResource( 1 )
 
-[node name="RotationObj" type="Node2D" parent="."]
+[node name="Approach" type="TextureRect" parent="."]
+margin_left = -16.0
+margin_top = -224.0
+margin_right = 734.0
+margin_bottom = 526.0
+expand = true
 
-[node name="Sprite" type="TextureRect" parent="RotationObj"]
-margin_left = -420.0
-margin_top = -420.0
-margin_right = 420.0
-margin_bottom = 420.0
+[node name="Sprite" type="TextureRect" parent="Approach"]
+show_behind_parent = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -375.0
+margin_top = -375.0
+margin_right = 375.0
+margin_bottom = 375.0
+rect_pivot_offset = Vector2( 375, 375 )
 expand = true
 stretch_mode = 6
 
-[node name="Approach" type="TextureRect" parent="."]
-margin_left = -280.0
-margin_top = -280.0
-margin_right = 280.0
-margin_bottom = 280.0
-rect_pivot_offset = Vector2( 280, 280 )
-expand = true
-
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="Approach"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 margin_top = 105.0
 margin_bottom = 214.0
 grow_horizontal = 2

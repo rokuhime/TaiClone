@@ -17,6 +17,12 @@ onready var head := $Head as TextureRect
 onready var head_overlay := $Head/Overlay as TextureRect
 
 
+func _ready() -> void:
+	if finisher:
+		head.rect_position *= FINISHER_SCALE
+		head.rect_size *= FINISHER_SCALE
+
+
 ## See [HitObject].
 func apply_skin() -> void:
 	head.self_modulate = root_viewport.skin.kat_color if _is_kat else root_viewport.skin.don_color

@@ -7,6 +7,9 @@ signal audio_played(key)
 ## Signals [Gameplay] when a score should be added.
 signal score_added(type, marker)
 
+## Comment
+const FINISHER_SCALE := 1.6
+
 ## The possible scores of a [HitObject]:
 ## 0 (ACCURATE): 300 points and 100% accuracy. Applies to all [HitObject]s.
 ## 1 (INACCURATE): 150 points and 50% accuracy. Applies to all [HitObject]s.
@@ -46,9 +49,6 @@ onready var root_viewport := $"/root" as Root
 
 func _ready() -> void:
 	hide()
-	if finisher:
-		(get_child(0) as Control).rect_scale *= 1.6
-
 	add_to_group("HitObjects")
 	move(1, timing)
 	state = int(State.READY)
