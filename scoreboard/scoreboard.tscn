@@ -11,7 +11,7 @@ margin_left = -704.0
 margin_top = -325.0
 margin_right = -304.0
 margin_bottom = 325.0
-theme_type_variation = "Results"
+theme_type_variation = "_Results"
 
 [node name="V" type="VBoxContainer" parent="."]
 margin_left = 10.0

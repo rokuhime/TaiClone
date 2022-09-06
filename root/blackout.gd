@@ -7,12 +7,12 @@ onready var root_viewport := $"/root" as Root
 
 
 func _ready() -> void:
-	Root.send_signal(root_viewport, "finished", _tween_modulate(1), "remove_blackout")
+	GlobalTools.send_signal(root_viewport, "finished", _tween_modulate(1), "remove_blackout")
 
 
 ## See [Scene].
 func scene_removed() -> void:
-	Root.send_signal(self, "finished", _tween_modulate(0), "queue_free")
+	GlobalTools.send_signal(self, "finished", _tween_modulate(0), "queue_free")
 
 
 ## Comment

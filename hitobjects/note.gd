@@ -5,17 +5,17 @@ extends HitObject
 signal new_marker_added(timing, previous_timing)
 
 ## Comment
-var _first_hit := -1.0
+var _next_hit := ""
 
 ## Whether or not this [Note] is a don or kat.
 var _is_kat := true
 
 ## Comment
-var _next_hit := ""
+var _first_hit := -1.0
 
+onready var root_viewport := $"/root" as Root
 onready var head := $Head as TextureRect
 onready var head_overlay := $Head/Overlay as TextureRect
-onready var root_viewport := $"/root" as Root
 
 
 ## See [HitObject].
@@ -88,7 +88,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 			finish()
 
 		emit_signal("new_marker_added", hit_time, -1)
-		if Root.inputs_empty(inputs):
+		if GlobalTools.inputs_empty(inputs):
 			return true
 
 	if not finisher:

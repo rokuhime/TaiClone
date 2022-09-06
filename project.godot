@@ -24,6 +24,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gameplay/gameplay.gd"
 }, {
+"base": "Reference",
+"class": "GlobalTools",
+"language": "GDScript",
+"path": "res://scripts/global_tools.gd"
+}, {
 "base": "Control",
 "class": "HitError",
 "language": "GDScript",
@@ -49,7 +54,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://root/root.gd"
 }, {
-"base": "CanvasItem",
+"base": "Control",
 "class": "Scene",
 "language": "GDScript",
 "path": "res://scripts/scene.gd"
@@ -88,6 +93,7 @@ _global_script_class_icons={
 "BarLine": "",
 "ChartLoader": "",
 "Gameplay": "",
+"GlobalTools": "",
 "HitError": "",
 "HitObject": "",
 "Note": "",
@@ -124,10 +130,6 @@ window/size/height=1080
 window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
-
-[global]
-
-debug=false
 
 [gui]
 

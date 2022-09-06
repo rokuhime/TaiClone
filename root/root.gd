@@ -9,14 +9,14 @@ signal hit_error_changed
 ## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
 signal late_early_changed
 
-## the actual location of the game; where the .exe and other files are kept
-var GAME_PATH : String
-
-## the backup saving folder for temporary/mandatory-to-write files
-var CONFIG_PATH := "user://"
+## Comment
+const CONFIG_PATH := "config.ini"
 
 ## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
+
+## Comment
+var game_path := "user://"
 
 ## Comment
 var global_offset := 0
@@ -128,8 +128,6 @@ var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
-	GAME_PATH = OS.get_executable_path()
-	
 	music = $Background/Music as AudioStreamPlayer
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
 	bars = load("res://root/bars.tscn") as PackedScene
@@ -143,7 +141,7 @@ func _init() -> void:
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
 	skin = SkinManager.new()
-	menu_bg = load("res://temporary/menubg.png") as Texture
+	menu_bg = GlobalTools.texture_from_image("res://temporary/menubg.png")
 	accuracy = ""
 	artist = ""
 	charter = ""
@@ -159,33 +157,6 @@ func _init() -> void:
 	max_combo = 0
 	miss_count = 0
 	score = 0
-	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
-	skin = SkinManager.new("res://skins/test_skin")
-	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
-	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
-	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
-	title = ""
-
-
-## Comment
-static func get_event(key: String) -> InputEvent:
-	return InputMap.get_action_list(key)[0]
-
-
-## Comment
-static func inputs_empty(inputs: Array) -> bool:
-	return int(inputs[0]) > inputs.size()
-
-
-## Comment
-static func item_resolution(item: Array) -> Vector2:
-	return Vector2(int(item[1]), int(item[2]))
-
-
-## Comment
-static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
-	if obj.connect(signal_name, signal_target, method):
-		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
 
 
 ## Comment
@@ -196,7 +167,7 @@ func add_blackout(next_scene: PackedScene) -> void:
 
 ## Comment
 func add_scene(new_scene: Node, parent_node := "") -> void:
-	if has_node(new_scene.name):
+	if has_node(new_scene.name) and new_scene.name != "Gameplay":
 		new_scene.queue_free()
 
 	else:
@@ -276,7 +247,7 @@ func save_settings() -> void:
 
 	for key in KEYS:
 		## Comment
-		var event := get_event(str(key))
+		var event := GlobalTools.get_event(str(key))
 
 		config_file.set_value("Keybinds", str(key), ("J%s" % (event as InputEventJoypadButton).button_index) if event is InputEventJoypadButton else ("K%s" % OS.get_scancode_string((event as InputEventKey).scancode)) if event is InputEventKey else "")
 
@@ -293,7 +264,7 @@ func save_settings() -> void:
 	for i in range(AudioServer.bus_count):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
-	if config_file.save(CONFIG_PATH + "config.ini"):
+	if config_file.save(game_path.plus_file(CONFIG_PATH)):
 		push_warning("Attempted to save configuration file.")
 
 
@@ -301,3 +272,9 @@ func save_settings() -> void:
 func toggle_fullscreen(new_visible: bool) -> void:
 	OS.window_fullscreen = new_visible
 	save_settings()
+
+
+## Comment
+func toggle_settings(node_name: String) -> void:
+	if not remove_scene("SettingsPanel"):
+		add_scene(settings_panel.instance(), node_name)

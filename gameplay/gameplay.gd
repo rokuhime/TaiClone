@@ -14,122 +14,200 @@ signal key_pressed(key)
 signal marker_added(type, timing, indicate)
 
 ## Comment
+var _kiai_timing_points := []
+
+## Comment
+var _f := File.new()
+
+## Comment
+var _judgement_tween := SceneTreeTween.new()
+
+## Comment
+var _kiai_tween := SceneTreeTween.new()
+
+## Comment
+var _score_indicator_tween := SceneTreeTween.new()
+
+## Comment
+var _timing_indicator_tween := SceneTreeTween.new()
+
+## Comment
+var _active := false
+
+## Comment
 var _auto := false
 
 ## Comment
 var _auto_left := true
 
 ## Comment
+var _in_kiai := false
+
+## Comment
 var _cur_time := 0.0
 
-## Comment
-var _current_combo := 0
-
-## Comment
-var _f := File.new()
-
-## Comment
-var _inactive := true
-
-## Comment
-var _judgement_tween := SceneTreeTween.new()
-
 ## the time for the first note in the chart
-var _first_note_time := 100.0
+var _first_note_time := -1.0
 
 ## the time for the last note in the chart
 var _last_note_time := -1.0
 
 ## Comment
-var _score_indicator_tween := SceneTreeTween.new()
-
-var _kiai_tween := SceneTreeTween.new()
+var _next_kiai := -1.0
 
 ## Comment
 var _time_begin := 0.0
 
 ## Comment
-var _timing_indicator_tween := SceneTreeTween.new()
+var _current_combo := 0
 
-var _kiai_timing_points := []
-
-var in_kiai := false
-
+onready var root_viewport := $"/root" as Root
 onready var bar_right := $BarRight as TextureRect
-onready var debug_text := $Debug/DebugText as Label
-onready var drum_visual := $BarRight/DrumVisual
-onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 onready var hit_point := $BarRight/HitPointOffset/HitPoint as TextureRect
 onready var hit_point_rim := $BarRight/HitPointOffset/HitPoint/Rim as TextureRect
-onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var kiai_glow := $BarRight/HitPointOffset/KiaiGlow as TextureRect
-onready var last_hit_score := $UI/LastHitScore as Label
-onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
+onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
-onready var play_button := $Debug/TempLoadChart/PlayButton as Button
-onready var root_viewport := $"/root" as Root
-onready var song_progress := $UI/SongProgress as ProgressBar
 onready var timing_indicator := $BarRight/HitPointOffset/TimingIndicator as Label
-onready var ui_accuracy := $UI/Accuracy/Label as Label
+onready var drum_visual := $BarRight/DrumVisual
 onready var ui_score := $UI/Score as Label
+onready var last_hit_score := $UI/LastHitScore as Label
+onready var ui_accuracy := $UI/Accuracy/Label as Label
+onready var song_progress := $UI/SongProgress as ProgressBar
+onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
+onready var debug_text := $Debug/DebugText as Label
+onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
+onready var play_button := $Debug/TempLoadChart/PlayButton as Button
+onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 
 
 func _ready() -> void:
-	Root.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
+	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
 	bar_right.texture = root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
 	hit_point_rim.texture = root_viewport.skin.approach_circle
 	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+	kiai_glow.modulate.a = 0
 	last_hit_score.modulate.a = 0
 	root_viewport.music.stop()
-	_reset()
+	root_viewport.accurate_count = 0
+	root_viewport.combo = 0
+	root_viewport.early_count = 0
+	root_viewport.f_accurate_count = 0
+	root_viewport.f_inaccurate_count = 0
+	root_viewport.inaccurate_count = 0
+	root_viewport.late_count = 0
+	root_viewport.max_combo = 0
+	root_viewport.miss_count = 0
+	root_viewport.score = 0
+	add_score(-1)
 
 	## Comment
 	var _bars_removed := root_viewport.remove_scene("Bars")
 
-	# dev autoload map
-	if _f.file_exists(ChartLoader.FUS):
-		load_func(ChartLoader.FUS)
+	if not _f.file_exists(ChartLoader.FUS):
+		_load_finish("Invalid file!")
+		return
+
+	if _f.open(ChartLoader.FUS, File.READ):
+		_load_finish("Unable to read temporary .fus file!")
+		return
+
+	if _f.get_line() != ChartLoader.FUS_VERSION:
+		_load_finish("Outdated .fus file!")
+		return
+
+	root_viewport.bg_changed(GlobalTools.texture_from_image(_f.get_line()), Color("373737"))
+	root_viewport.music.stream = GlobalTools.load_audio_file(_f.get_line())
+	root_viewport.artist = _f.get_line()
+	root_viewport.charter = _f.get_line()
+	root_viewport.difficulty_name = _f.get_line()
+	root_viewport.title = _f.get_line()
+
+	## Comment
+	var cur_bpm := -1.0
+
+	while _f.get_position() < _f.get_len():
+		## Comment
+		var line_data := _f.get_csv_line()
+
+		## Comment
+		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
+
+		_last_note_time = timing
+
+		## Comment
+		var current_kiai := false
+
+		## Comment
+		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
+
+		match int(line_data[2]):
+			ChartLoader.NoteType.BARLINE:
+				## Comment
+				var hit_object := root_viewport.bar_line_object.instance() as BarLine
+
+				hit_object.change_properties(timing, total_cur_sv)
+				add_object(hit_object)
+
+			ChartLoader.NoteType.DON, ChartLoader.NoteType.KAT:
+				## Comment
+				var hit_object := root_viewport.note_object.instance() as Note
+
+				hit_object.change_properties(timing, total_cur_sv, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
+				add_object(hit_object)
+				GlobalTools.send_signal(self, "new_marker_added", hit_object, "add_marker")
+
+			ChartLoader.NoteType.ROLL:
+				## Comment
+				var hit_object := root_viewport.roll_object.instance() as Roll
+
+				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), bool(int(line_data[4])), cur_bpm)
+				add_object(hit_object)
+
+			ChartLoader.NoteType.SPINNER:
+				## Comment
+				var hit_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
+
+				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), cur_bpm)
+				add_object(hit_object)
+				GlobalTools.send_signal(self, "object_added", hit_object, "add_object")
+
+			ChartLoader.NoteType.TIMING_POINT:
+				cur_bpm = float(line_data[1])
+				if bool(int(line_data[3])) != current_kiai:
+					current_kiai = not current_kiai
+					if _next_kiai < 0:
+						_next_kiai = timing
+
+					else:
+						_kiai_timing_points.append(timing)
+
+	get_tree().call_group("HitObjects", "apply_skin")
+	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
+	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
+	_load_finish("Done!")
 
 
 func _process(_delta: float) -> void:
 	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
-	if _inactive:
+	if not _active:
 		return
 
 	_cur_time = (Time.get_ticks_usec() - _time_begin - root_viewport.global_offset * 1000) / 1000000
-	
-	# set current time for progress bar
-	if _cur_time > _first_note_time:
-		song_progress.value = (_cur_time - _first_note_time) * 100 / (_last_note_time - _first_note_time)
-	
-	# set break progress bar for the beginning of the map
-	else:
-		song_progress.get_child(0).value = 100 - (_cur_time * 100 / _first_note_time)
-	
-	# end chart when last note hit (with a little delay :^D)
+	break_progress.value = 100 - (_cur_time * 100 / _first_note_time)
+	song_progress.value = (_cur_time - _first_note_time) * 100 / (_last_note_time - _first_note_time)
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
 
-	# get timing point, see if its kiai
-	
-	# if new timing point...
-	if _kiai_timing_points.size() != 0:
-		if _cur_time >= _kiai_timing_points[0]:
-			var target_alpha := 0.0
-			#is it kiai or nah
-			if in_kiai:
-				in_kiai = false
-			else:
-				in_kiai = true
-				target_alpha = 1.0
+	while _cur_time > _next_kiai and _next_kiai > 0:
+		_in_kiai = not _in_kiai
+		_next_kiai = -1.0 if _kiai_timing_points.empty() else float(_kiai_timing_points.pop_front())
+		_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
 
-			# tween alpha of kiai
-			_kiai_tween = root_viewport.new_tween(_kiai_tween)
-			var _tween := _kiai_tween.tween_property(kiai_glow, "self_modulate:a", target_alpha, 0.1).from(kiai_glow.self_modulate.a).set_trans(Tween.TRANS_QUART)
-
-			_kiai_timing_points.remove(0)
+		## Comment
+		var _tween := _kiai_tween.tween_property(kiai_glow, "modulate:a", float(_in_kiai), 0.1)
 
 	## Comment
 	var check_auto := false
@@ -158,30 +236,33 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	## Comment
-	var inputs := [2]
+	if _active and event is InputEventKey:
+		## Comment
+		var k_event := event as InputEventKey
 
-	# bad but thats how i hard coded it lol
-	if event is InputEventKey:
-		if event.is_pressed() and event.scancode == KEY_SPACE and not _inactive:
+		if k_event.pressed and k_event.scancode == KEY_SPACE:
 			skip_break()
 			return
+
+	## Comment
+	var inputs := [2]
 
 	for key in Root.KEYS:
 		if event.is_action_pressed(str(key)):
 			inputs.append(str(key))
 			emit_signal("key_pressed", str(key))
 
-	if Root.inputs_empty(inputs):
+	if GlobalTools.inputs_empty(inputs):
 		return
 
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
 		var hit_object := obj_container.get_child(i) as HitObject
 
-		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or Root.inputs_empty(inputs):
+		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or GlobalTools.inputs_empty(inputs):
 			break
 
+	inputs.remove(0)
 	for key in inputs:
 		emit_signal("audio_played", str(key))
 
@@ -209,6 +290,10 @@ func add_marker(timing: float, previous_timing: float) -> void:
 
 ## Comment
 func add_object(hit_object: HitObject, loaded := true) -> void:
+	if not hit_object is BarLine:
+		_first_note_time = min(_first_note_time if _first_note_time + 1 else hit_object.timing, hit_object.timing)
+		_last_note_time = max(_last_note_time if _last_note_time + 1 else hit_object.timing, hit_object.timing)
+
 	obj_container.add_child(hit_object)
 	for i in range(obj_container.get_child_count()):
 		if hit_object.end_time > (obj_container.get_child(i) as HitObject).end_time:
@@ -219,8 +304,8 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 		return
 
 	hit_object.apply_skin()
-	Root.send_signal(drum_visual, "audio_played", hit_object, "play_audio")
-	Root.send_signal(self, "score_added", hit_object, "add_score")
+	GlobalTools.send_signal(drum_visual, "audio_played", hit_object, "play_audio")
+	GlobalTools.send_signal(self, "score_added", hit_object, "add_score")
 
 
 ## Comment
@@ -268,7 +353,7 @@ func add_score(type: int, marker := false) -> void:
 			score_value = 600
 
 	root_viewport.combo = int(max(root_viewport.combo, _current_combo))
-	score_value = int(score_value * ((1 + min(1, _current_combo / 300.0)) + (0.25  * int(in_kiai))))
+	score_value = int(score_value * (1 + min(1, _current_combo / 300.0) + float(_in_kiai) / 4))
 	root_viewport.score += score_value
 	last_hit_score.text = str(score_value)
 	if play_tween:
@@ -318,104 +403,9 @@ func change_late_early() -> void:
 
 
 ## Comment
-func load_func(file_path := "") -> void:
-	_inactive = true
-	debug_text.text = "Loading... [Checking File]"
-	if not file_path:
-		file_path = line_edit.text.replace("\\", "/")
-
-	if ChartLoader.load_chart(file_path):
-		_load_finish("Invalid file!")
-		return
-
-	if not file_path.ends_with(".fus"):
-		file_path = ChartLoader.FUS
-
-	debug_text.text = "Loading... [Reading File]"
-
-	if not _f.file_exists(file_path):
-		_load_finish("Invalid file!")
-		return
-
-	if _f.open(file_path, File.READ):
-		_load_finish("Unable to read temporary .fus file!")
-		return
-
-	if _f.get_line() != ChartLoader.FUS_VERSION:
-		_load_finish("Outdated .fus file!")
-		return
-
-	root_viewport.bg_changed(ChartLoader.texture_from_image(_f.get_line()), Color("373737"))
-	root_viewport.music.stream = ChartLoader.load_audio_file(_f.get_line())
-	root_viewport.artist = _f.get_line()
-	root_viewport.charter = _f.get_line()
-	root_viewport.difficulty_name = _f.get_line()
-	root_viewport.title = _f.get_line()
-	_reset()
-
-	## Comment
-	var cur_bpm := -1.0
-	_first_note_time = 100.0
-	
-	while _f.get_position() < _f.get_len():
-		## Comment
-		var line_data := _f.get_csv_line()
-
-		## Comment
-		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
-
-		## Comment
-		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
-
-		if int(line_data[2]) != ChartLoader.NoteType.BARLINE and int(line_data[2]) != ChartLoader.NoteType.TIMING_POINT:
-			_first_note_time = min(_first_note_time, timing)
-			_last_note_time = timing
-
-		match int(line_data[2]):
-			ChartLoader.NoteType.BARLINE:
-				## Comment
-				var hit_object := root_viewport.bar_line_object.instance() as BarLine
-
-				hit_object.change_properties(timing, total_cur_sv)
-				add_object(hit_object)
-
-			ChartLoader.NoteType.DON, ChartLoader.NoteType.KAT:
-				## Comment
-				var hit_object := root_viewport.note_object.instance() as Note
-
-				hit_object.change_properties(timing, total_cur_sv, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
-				add_object(hit_object)
-				Root.send_signal(self, "new_marker_added", hit_object, "add_marker")
-
-			ChartLoader.NoteType.ROLL:
-				## Comment
-				var hit_object := root_viewport.roll_object.instance() as Roll
-
-				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), bool(int(line_data[4])), cur_bpm)
-				add_object(hit_object)
-
-			ChartLoader.NoteType.SPINNER:
-				## Comment
-				var hit_object := root_viewport.spinner_warn_object.instance() as SpinnerWarn
-
-				hit_object.change_properties(timing, total_cur_sv, float(line_data[3]), cur_bpm)
-				add_object(hit_object)
-				Root.send_signal(self, "object_added", hit_object, "add_object")
-
-			ChartLoader.NoteType.TIMING_POINT:
-				cur_bpm = float(line_data[1])
-				if bool(int(line_data[3])) != in_kiai:
-					_kiai_timing_points.append(timing)
-					in_kiai = !in_kiai
-
-	get_tree().call_group("HitObjects", "apply_skin")
-	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
-	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
-	play_button.disabled = false
-	root_viewport.max_combo = 0
-	in_kiai = false
-	print(_first_note_time)
-	_load_finish("Done!")
+func load_func() -> void:
+	ChartLoader.load_chart(line_edit.text.replace("\\", "/"))
+	root_viewport.add_blackout(root_viewport.gameplay)
 
 
 ## Comment
@@ -424,22 +414,22 @@ func play_button_pressed() -> void:
 		_end_chart()
 
 	else:
-		_reset(false)
+		play_button.text = "Stop"
 		root_viewport.music.play()
 		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
-		_inactive = false
+		_active = true
+		get_tree().call_group("HitObjects", "activate")
 
 
 ## Comment
 func toggle_settings() -> void:
-	if not root_viewport.remove_scene("SettingsPanel"):
-		root_viewport.add_scene(root_viewport.settings_panel.instance(), name)
+	root_viewport.toggle_settings(name)
 
 
 ## Comment
 func _end_chart() -> void:
 	root_viewport.add_blackout(root_viewport.results)
-	_inactive = true
+	_active = false
 
 
 ## Comment
@@ -455,27 +445,9 @@ func _load_finish(new_text: String) -> void:
 	_f.close()
 	debug_text.text = new_text
 
+
 ## attempts to skip waiting at the beginning of charts, going right before the first note
 func skip_break() -> void:
 	print("attempted to skip break")
 	root_viewport.music.seek(_first_note_time - 1)
 	_time_begin -= (_first_note_time - _cur_time - 1) * 1000000
-
-## Comment
-func _reset(dispose := true) -> void:
-	print("reset called")
-	root_viewport.accurate_count = 0
-	root_viewport.early_count = 0
-	root_viewport.f_accurate_count = 0
-	root_viewport.f_inaccurate_count = 0
-	root_viewport.inaccurate_count = 0
-	root_viewport.late_count = 0
-	root_viewport.max_combo = 0
-	root_viewport.miss_count = 0
-	root_viewport.score = 0
-	_current_combo = 0
-	add_score(-1)
-	_cur_time = 0
-	play_button.disabled = dispose
-	play_button.text = "Play" if dispose else "Stop"
-	get_tree().call_group("HitObjects", "queue_free" if dispose else "activate")

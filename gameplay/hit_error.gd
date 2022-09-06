@@ -10,17 +10,17 @@ const ACC_TIMING := 0.03
 ## Comment
 const INACC_TIMING := 0.07
 
-onready var accurate := $HitPoints/Inaccurate/Accurate as ColorRect
-onready var avg_hit := $AverageHit as Control
+onready var root_viewport := $"/root" as Root
+onready var miss := $Miss as ColorRect
 onready var hit_points := $HitPoints as Control
 onready var inaccurate := $HitPoints/Inaccurate as ColorRect
+onready var accurate := $HitPoints/Inaccurate/Accurate as ColorRect
 onready var middle_marker := $MiddleMarker
-onready var miss := $Miss as ColorRect
-onready var root_viewport := $"/root" as Root
+onready var avg_hit := $AverageHit as Control
 
 
 func _ready() -> void:
-	Root.send_signal(self, "hit_error_changed", root_viewport, "visibility_toggled")
+	GlobalTools.send_signal(self, "hit_error_changed", root_viewport, "visibility_toggled")
 	visibility_toggled()
 
 	## Comment

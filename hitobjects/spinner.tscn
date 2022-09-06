@@ -30,5 +30,5 @@ expand = true
 margin_top = 105.0
 margin_bottom = 214.0
 grow_horizontal = 2
-theme_type_variation = "Combo"
+theme_type_variation = "FontBold75Outlined"
 align = 1

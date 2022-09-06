@@ -7,11 +7,11 @@ var _tick_distance := 0.0
 ## The number of [Tick]s in this [Roll].
 var _total_ticks := 0
 
+onready var root_viewport := $"/root" as Root
 onready var body := $Body as TextureRect
 onready var body_end := $Body/End as TextureRect
 onready var head := $Head as TextureRect
 onready var head_overlay := $Head/Overlay as TextureRect
-onready var root_viewport := $"/root" as Root
 onready var tick_container := $TickContainer
 
 
@@ -59,7 +59,7 @@ func change_properties(new_timing: float, new_speed: float, new_length: float, n
 ## See [HitObject].
 func hit(inputs: Array, hit_time: float) -> bool:
 	for tick_idx in range(tick_container.get_child_count() - 1, -1, -1):
-		if (tick_container.get_child(tick_idx) as Tick).hit(inputs, (hit_time - timing + _tick_distance / 2) * speed) or Root.inputs_empty(inputs):
+		if (tick_container.get_child(tick_idx) as Tick).hit(inputs, (hit_time - timing + _tick_distance / 2) * speed) or GlobalTools.inputs_empty(inputs):
 			break
 
 	return false

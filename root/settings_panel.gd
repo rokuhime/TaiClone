@@ -3,18 +3,29 @@ extends Scene
 ## The list of selectable resolutions.
 const RESOLUTIONS := ["16:9,1920,1080", "16:9,1280,720", "16:9,1024,576", "", "4:3,1440,1080", "4:3,1024,768", "", "5:4,1280,1024", "5:4,1025,820"]
 
+## Comment
+var _position_tween := SceneTreeTween.new()
+
 ## The key-bind that's currently being changed.
 var _currently_changing := ""
+
+## Comment
+var _active := false
 
 ## Whether or not settings should be saved.
 var _settings_save := false
 
-onready var dropdown := $Panels/Scroll/Settings/V/Resolution/Options as OptionButton
-onready var fullscreen_toggle := $Panels/Scroll/Settings/V/Resolution/Fullscreen/Toggle as CheckBox
-onready var hit_error_toggle := $Panels/Scroll/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
-onready var late_early_drop := $Panels/Scroll/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
-onready var offset_text := $Panels/Scroll/Settings/V/Offset/Offset/LineEdit as LineEdit
 onready var root_viewport := $"/root" as Root
+onready var left_kat_butt := $V/Settings/V/Keybinds/LeftKat/Button as Button
+onready var left_don_butt := $V/Settings/V/Keybinds/LeftDon/Button as Button
+onready var right_don_butt := $V/Settings/V/Keybinds/RightDon/Button as Button
+onready var right_kat_butt := $V/Settings/V/Keybinds/RightKat/Button as Button
+onready var dropdown := $V/Settings/V/Resolution/Options as OptionButton
+onready var fullscreen_toggle := $V/Settings/V/Resolution/Fullscreen/Toggle as CheckBox
+onready var offset_text := $V/Settings/V/Offset/LineEdit as SpinBox
+onready var offset_slider := $V/Settings/V/HSlider as HSlider
+onready var late_early_drop := $V/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
+onready var hit_error_toggle := $V/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
 
 
 func _ready() -> void:
@@ -35,12 +46,13 @@ func _ready() -> void:
 
 		else:
 			dropdown.add_item("%s | %sx%s" % Array(resolution))
-			if Root.item_resolution(resolution) == OS.window_size:
+			if _item_resolution(resolution) == OS.window_size:
 				dropdown.select(int(i))
 
 	toggle_fullscreen(OS.window_fullscreen)
 	change_offset(root_viewport.global_offset)
 	_settings_save = true
+	_tween_position()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -58,27 +70,19 @@ func button_pressed(key: String) -> void:
 
 
 ## Called when [member offset_text] changes.
-## new_text ([String]): The new value entered.
-func change_offset_from_string(new_text: String) -> void:
-	if new_text == "-":
-		return
-
-	## The position of the cursor in [member offset_text].
-	var text_position := offset_text.caret_position
-
-	change_offset(int(new_text))
-	offset_text.caret_position = text_position
-
+## new_offset ([float]): The new value entered.
 func change_offset(new_offset: float) -> void:
-	offset_text.text = str(new_offset) if new_offset else ""
+	offset_slider.value = new_offset
+	offset_text.value = new_offset
 	if _settings_save:
-		root_viewport.global_offset = new_offset
+		root_viewport.global_offset = int(new_offset)
 		root_viewport.save_settings()
+
 
 ## Called when a different resolution is selected.
 ## index ([int]): The index of the resolution in [member RESOLUTIONS].
 func change_res(index: int) -> void:
-	root_viewport.res_changed(Root.item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
+	root_viewport.res_changed(_item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
 
 
 ## Called when [member hit_error_toggle] is toggled.
@@ -97,6 +101,12 @@ func late_early(new_value: int) -> void:
 		root_viewport.late_early(new_value)
 
 
+
+## See [Scene].
+func scene_removed() -> void:
+	_tween_position()
+
+
 ## Called when [member fullscreen_toggle] is toggled.
 ## new_visible ([bool]): Whether or not the window should be fullscreen.
 func toggle_fullscreen(new_visible: bool) -> void:
@@ -108,11 +118,51 @@ func toggle_fullscreen(new_visible: bool) -> void:
 		root_viewport.toggle_fullscreen(new_visible)
 
 
+## Comment
+static func _item_resolution(item: Array) -> Vector2:
+	return Vector2(int(item[1]), int(item[2]))
+
+
 ## Changes the label of a key-bind button.
 ## key ([String]): The key-bind being changed.
 ## was_pressed ([bool]): Whether or not the button was pressed.
 func _change_text(key: String, was_pressed := false) -> void:
-	## The action associated with this key-bind.
-	var event := Root.get_event(key)
+	## Comment
+	var button_obj: Button
 
-	(get_node("Panels/Scroll/Settings/V/Keybinds/%s/Button" % key) as Button).text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
+	match key:
+		"LeftDon":
+			button_obj = left_don_butt
+
+		"LeftKat":
+			button_obj = left_kat_butt
+
+		"RightDon":
+			button_obj = right_don_butt
+
+		"RightKat":
+			button_obj = right_kat_butt
+
+		_:
+			push_warning("Unknown keybind button.")
+			return
+
+	## The action associated with this key-bind.
+	var event := GlobalTools.get_event(key)
+
+	button_obj.text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
+
+
+## Comment
+func _tween_position() -> void:
+	_position_tween = root_viewport.new_tween(_position_tween).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
+	_active = not _active
+
+	## Comment
+	var _left_tween := _position_tween.tween_property(self, "margin_left", -rect_size.x if _active else 0.0, 1)
+
+	## Comment
+	var _right_tween := _position_tween.tween_property(self, "margin_right", 0.0 if _active else rect_size.x, 1)
+
+	if not _active:
+		GlobalTools.send_signal(self, "finished", _position_tween, "queue_free")

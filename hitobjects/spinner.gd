@@ -1,29 +1,29 @@
 class_name Spinner
 extends HitObject
 
-## The number of hits received by this [Spinner].
-var _cur_hit_count := 0
-
-## The current rotational speed of this [Spinner].
-var _current_speed := 0.0
-
-## Whether or not this [Spinner]'s first hit is a don or kat.
-var _first_hit_is_kat := false
-
 ## The [SceneTreeTween] used to fade this [Spinner] in and out.
 var _modulate_tween := SceneTreeTween.new()
-
-## The number of hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
-var _needed_hits := 0
 
 ## The [SceneTreeTween] used to tween this [Spinner]'s [member _current_speed].
 var _speed_tween := SceneTreeTween.new()
 
-onready var approach := $Approach as TextureRect
-onready var label := $Label as Label
+## Whether or not this [Spinner]'s first hit is a don or kat.
+var _first_hit_is_kat := false
+
+## The current rotational speed of this [Spinner].
+var _current_speed := 0.0
+
+## The number of hits received by this [Spinner].
+var _cur_hit_count := 0
+
+## The number of hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
+var _needed_hits := 0
+
 onready var root_viewport := $"/root" as Root
 onready var rotation_obj := $RotationObj as Node2D
 onready var sprite := $RotationObj/Sprite as TextureRect
+onready var approach := $Approach as TextureRect
+onready var label := $Label as Label
 
 
 func _ready() -> void:
@@ -88,7 +88,7 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 	## Whether or not this [Spinner] was hit.
 	var not_hit := true
 
-	while not Root.inputs_empty(inputs):
+	while not GlobalTools.inputs_empty(inputs):
 		## Comment
 		var key := "Don" if _cur_hit_count % 2 == int(_first_hit_is_kat) else "Kat"
 
@@ -136,7 +136,7 @@ func _spinner_finished(type: int) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
 		emit_signal("score_added", type, false)
-		Root.send_signal(self, "finished", _tween_modulate(0), "queue_free")
+		GlobalTools.send_signal(self, "finished", _tween_modulate(0), "queue_free")
 
 
 ## Fade this [Spinner] in and out.

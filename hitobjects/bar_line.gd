@@ -1,8 +1,8 @@
 class_name BarLine
 extends HitObject
 
-onready var color_rect := $ColorRect as CanvasItem
 onready var root_viewport := $"/root" as Root
+onready var color_rect := $ColorRect as CanvasItem
 
 
 ## See [HitObject].

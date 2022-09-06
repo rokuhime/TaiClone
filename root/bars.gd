@@ -1,13 +1,13 @@
 extends Scene
 
-onready var bottom := $Bottom
+onready var root_viewport := $"/root" as Root
+onready var top := $Top
+onready var song_name := $Top/V/Top/SongName as Label
 onready var charter_name := $Top/V/Bottom/CharterName as Label
+onready var texture_rect := $Top/V/Bottom/TextureRect as TextureRect
 onready var difficulty_name_label := $Top/V/Bottom/DifficultyName as Label
 onready var play_date := $Top/V/Bottom/PlayDate as Label
-onready var root_viewport := $"/root" as Root
-onready var song_name := $Top/V/Top/SongName as Label
-onready var texture_rect := $Top/V/Bottom/TextureRect as TextureRect
-onready var top := $Top
+onready var bottom := $Bottom
 
 
 func _ready() -> void:

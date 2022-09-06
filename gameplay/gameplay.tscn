@@ -58,14 +58,12 @@ margin_bottom = 16.0
 expand = true
 
 [node name="KiaiGlow" type="TextureRect" parent="BarRight/HitPointOffset"]
-self_modulate = Color( 1, 1, 1, 0 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -196.0
 margin_top = -196.0
 margin_right = 196.0
 margin_bottom = 196.0
-expand = true
 stretch_mode = 6
 
 [node name="Judgement" type="TextureRect" parent="BarRight/HitPointOffset"]
@@ -87,7 +85,7 @@ anchor_right = 0.5
 margin_top = -203.0
 margin_bottom = -130.0
 grow_horizontal = 2
-theme_type_variation = "TimingIndicator"
+theme_type_variation = "FontBold50"
 
 [node name="DrumVisual" parent="BarRight" instance=ExtResource( 1 )]
 
@@ -103,26 +101,26 @@ grow_horizontal = 0
 [node name="Score" type="Label" parent="UI"]
 margin_right = 26.0
 margin_bottom = 64.0
-theme_type_variation = "UI"
+theme_type_variation = "FontBold65Outlined"
 
 [node name="LastHitScore" type="Label" parent="UI"]
 modulate = Color( 1, 0.227451, 0.227451, 1 )
 margin_top = 68.0
 margin_right = 26.0
 margin_bottom = 132.0
-theme_type_variation = "UI"
+theme_type_variation = "FontBold65Outlined"
 align = 2
 
 [node name="Accuracy" type="HBoxContainer" parent="UI"]
 margin_top = 136.0
 margin_right = 26.0
 margin_bottom = 200.0
-theme_type_variation = "Accuracy"
+theme_type_variation = "SeparationP01"
 
 [node name="Label" type="Label" parent="UI/Accuracy"]
 margin_bottom = 64.0
 size_flags_horizontal = 3
-theme_type_variation = "UI"
+theme_type_variation = "FontBold65Outlined"
 align = 2
 
 [node name="Percent" type="Label" parent="UI/Accuracy"]
@@ -131,7 +129,7 @@ margin_top = 34.0
 margin_right = 26.0
 margin_bottom = 64.0
 size_flags_vertical = 8
-theme_type_variation = "Percent"
+theme_type_variation = "FontBold26Outlined"
 text = "%"
 
 [node name="SongProgress" type="ProgressBar" parent="UI"]
@@ -139,7 +137,6 @@ margin_top = 204.0
 margin_right = 26.0
 margin_bottom = 219.0
 rect_min_size = Vector2( 0, 15 )
-theme_type_variation = "SongProgress"
 percent_visible = false
 
 [node name="BreakProgress" type="TextureProgress" parent="UI/SongProgress"]
@@ -149,8 +146,6 @@ margin_left = 2.0
 margin_top = 2.0
 margin_right = -2.0
 margin_bottom = -2.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
 step = 0.01
 texture_progress = SubResource( 2 )
 fill_mode = 1
@@ -180,7 +175,7 @@ margin_top = 43.0
 margin_right = 1421.0
 margin_bottom = 125.0
 size_flags_vertical = 3
-theme_type_variation = "TempLoadChart"
+theme_type_variation = "SeparationP08"
 
 [node name="LineEdit" type="LineEdit" parent="Debug/TempLoadChart"]
 margin_right = 370.0
@@ -200,6 +195,7 @@ margin_left = 466.0
 margin_right = 538.0
 margin_bottom = 82.0
 rect_min_size = Vector2( 72, 0 )
+text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="Debug/TempLoadChart"]
 margin_left = 546.0

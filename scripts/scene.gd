@@ -1,5 +1,5 @@
 class_name Scene
-extends CanvasItem
+extends Control
 
 
 ## Comment
