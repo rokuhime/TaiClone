@@ -122,6 +122,8 @@ static func load_chart(file_path: String) -> void:
 
 						if cur_bpm == -1 and meter:
 							next_barline = next_time
+							while next_time > time:
+								next_time -= 60 * meter / timing
 
 						if next_time > time:
 							break
