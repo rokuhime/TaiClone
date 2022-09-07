@@ -80,3 +80,13 @@ func miss_check(hit_time: float) -> bool:
 			return true
 
 	return false
+
+
+## Comment
+func move(visible_x: float, cur_time: float) -> void:
+	rect_position.x = speed * (timing - cur_time)
+	if visible:
+		visible = -visible_x < rect_position.x + body.rect_size.x and rect_position.x < visible_x
+
+	else:
+		visible = -visible_x < rect_position.x and rect_position.x < visible_x

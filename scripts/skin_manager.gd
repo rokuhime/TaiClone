@@ -172,7 +172,7 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 	files.sort()
 	# Both of these lists MUST be in alphabetical order to function
-	for key in ["approachcircle", "combobreak", "lighting", "menu_background", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_hitclap", "taiko_drum_hitfinish", "taiko_drum_hitnormal", "taiko_drum_hitwhistle", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
+	for key in ["approachcircle", "combobreak", "lighting", "menu_background", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_normal_hitclap", "taiko_normal_hitfinish", "taiko_normal_hitnormal", "taiko_normal_hitwhistle", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
 		## Comment
 		var cur_files := []
 
@@ -244,18 +244,6 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"taiko_bar_right_glow":
 				bar_right_glow = _get_texture(skin_path, str(key), cur_files, 0)
 
-			"taiko_drum_hitclap":
-				hit_clap = _get_audio(skin_path, str(key), cur_files, [".wav"])
-
-			"taiko_drum_hitfinish":
-				hit_finish = _get_audio(skin_path, str(key), cur_files, [".wav"])
-
-			"taiko_drum_hitnormal":
-				hit_normal = _get_audio(skin_path, str(key), cur_files, [".wav"])
-
-			"taiko_drum_hitwhistle":
-				hit_whistle = _get_audio(skin_path, str(key), cur_files, [".wav"])
-
 			"taiko_drum_inner":
 				don_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
 
@@ -282,6 +270,19 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 			"taiko_hit300k":
 				f_accurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [], false)
+
+			"taiko_normal_hitclap":
+				print(cur_files)
+				hit_clap = _get_audio(skin_path, str(key), cur_files, [".wav"])
+
+			"taiko_normal_hitfinish":
+				hit_finish = _get_audio(skin_path, str(key), cur_files, [".wav"])
+
+			"taiko_normal_hitnormal":
+				hit_normal = _get_audio(skin_path, str(key), cur_files, [".wav"])
+
+			"taiko_normal_hitwhistle":
+				hit_whistle = _get_audio(skin_path, str(key), cur_files, [".wav"])
 
 			"taiko_roll_end":
 				roll_end = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
