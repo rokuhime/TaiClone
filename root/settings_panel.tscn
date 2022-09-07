@@ -23,7 +23,7 @@ scroll_horizontal_enabled = false
 
 [node name="V" type="VBoxContainer" parent="V/Settings"]
 margin_right = 388.0
-margin_bottom = 1071.0
+margin_bottom = 1110.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="V/Settings/V"]
@@ -292,14 +292,21 @@ size_flags_horizontal = 3
 text = "Game Path"
 align = 1
 
-[node name="GamePath" type="LineEdit" parent="V/Settings/V"]
+[node name="GamePathText" type="Label" parent="V/Settings/V"]
 margin_top = 1022.0
 margin_right = 388.0
-margin_bottom = 1071.0
-editable = false
-placeholder_text = "%appdata%\\Godot\\app_userdata\\TaiClone"
-caret_blink = true
-caret_blink_speed = 0.5
+margin_bottom = 1061.0
+size_flags_horizontal = 3
+align = 1
+autowrap = true
+
+[node name="GamePathButton" type="Button" parent="V/Settings/V"]
+margin_left = 71.0
+margin_top = 1065.0
+margin_right = 316.0
+margin_bottom = 1110.0
+size_flags_horizontal = 4
+text = "Change Game Path"
 
 [node name="Preferences" type="ScrollContainer" parent="V"]
 visible = false
@@ -370,3 +377,4 @@ text = "Preferences"
 [connection signal="value_changed" from="V/Settings/V/HSlider" to="." method="change_offset"]
 [connection signal="item_selected" from="V/Settings/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
 [connection signal="toggled" from="V/Settings/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error_func"]
+[connection signal="pressed" from="V/Settings/V/GamePathButton" to="." method="game_path_button_pressed"]

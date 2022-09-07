@@ -4,14 +4,14 @@ class_name ChartLoader
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 
 ## Comment
-const FUS := "user://debug.fus"
+const FUS := "debug.fus"
 
 ## Comment
 const FUS_VERSION := "v0.0.4"
 
 
 ## Comment
-static func load_chart(file_path: String) -> void:
+static func load_chart(game_path: String, file_path: String) -> void:
 	## Comment
 	var f := File.new()
 
@@ -364,7 +364,7 @@ static func load_chart(file_path: String) -> void:
 		return
 
 	f.close()
-	if f.open(FUS, File.WRITE):
+	if f.open(game_path.plus_file(FUS), File.WRITE):
 		f.close()
 		return
 

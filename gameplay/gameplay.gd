@@ -106,11 +106,11 @@ func _ready() -> void:
 	## Comment
 	var _bars_removed := root_viewport.remove_scene("Bars")
 
-	if not _f.file_exists(ChartLoader.FUS):
+	if not _f.file_exists(root_viewport.game_path.plus_file(ChartLoader.FUS)):
 		_load_finish("Invalid file!")
 		return
 
-	if _f.open(ChartLoader.FUS, File.READ):
+	if _f.open(root_viewport.game_path.plus_file(ChartLoader.FUS), File.READ):
 		_load_finish("Unable to read temporary .fus file!")
 		return
 
@@ -404,7 +404,7 @@ func change_late_early() -> void:
 
 ## Comment
 func load_func() -> void:
-	ChartLoader.load_chart(line_edit.text.replace("\\", "/"))
+	ChartLoader.load_chart(root_viewport.game_path, line_edit.text.replace("\\", "/"))
 	root_viewport.add_blackout(root_viewport.gameplay)
 
 

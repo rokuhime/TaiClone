@@ -26,6 +26,7 @@ onready var offset_text := $V/Settings/V/Offset/LineEdit as SpinBox
 onready var offset_slider := $V/Settings/V/HSlider as HSlider
 onready var late_early_drop := $V/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
 onready var hit_error_toggle := $V/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
+onready var game_path_text := $V/Settings/V/GamePathText as Label
 
 
 func _ready() -> void:
@@ -51,6 +52,7 @@ func _ready() -> void:
 
 	toggle_fullscreen(OS.window_fullscreen)
 	change_offset(root_viewport.global_offset)
+	change_game_path(root_viewport.game_path, false)
 	_settings_save = true
 	_tween_position()
 
@@ -69,6 +71,31 @@ func button_pressed(key: String) -> void:
 	_currently_changing = "" if _currently_changing else key
 
 
+## Comment
+func change_game_path(new_text: String, move_folder := true) -> void:
+	if move_folder:
+		## Comment
+		var directory := Directory.new()
+
+		if directory.rename(root_viewport.game_path, new_text):
+			push_warning("Unable to move game directory.")
+			return
+
+		assert(not directory.make_dir_recursive(root_viewport.game_path), "Unable to recreate old game path directory.")
+		if directory.dir_exists(new_text.plus_file("logs")):
+			assert(not OS.move_to_trash(new_text.plus_file("logs")), "Unable to remove logs folder.")
+
+		## Comment
+		var storage_file := File.new()
+
+		assert(not storage_file.open(Root.STORAGE_PATH, File.WRITE), "Unable to write storage.ini file.")
+		storage_file.store_string(new_text)
+		storage_file.close()
+		root_viewport.game_path = new_text
+
+	game_path_text.text = new_text
+
+
 ## Called when [member offset_text] changes.
 ## new_offset ([float]): The new value entered.
 func change_offset(new_offset: float) -> void:
@@ -83,6 +110,23 @@ func change_offset(new_offset: float) -> void:
 ## index ([int]): The index of the resolution in [member RESOLUTIONS].
 func change_res(index: int) -> void:
 	root_viewport.res_changed(_item_resolution(str(RESOLUTIONS.slice(index, index)[0]).split(",", false)))
+
+
+## Comment
+func game_path_button_pressed() -> void:
+	## Comment
+	var file_dialog := FileDialog.new()
+
+	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.mode = FileDialog.MODE_OPEN_DIR
+	file_dialog.current_dir = root_viewport.game_path
+	file_dialog.show_hidden_files = true
+	file_dialog.window_title = ""
+	GlobalTools.send_signal(self, "dir_selected", file_dialog, "change_game_path")
+	GlobalTools.send_signal(file_dialog, "popup_hide", file_dialog, "queue_free")
+	root_viewport.add_scene(file_dialog, "VolumeControl")
+	file_dialog.popup_centered_ratio(1)
+	file_dialog.set_anchors_and_margins_preset(Control.PRESET_WIDE)
 
 
 ## Called when [member hit_error_toggle] is toggled.

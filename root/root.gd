@@ -10,13 +10,16 @@ signal hit_error_changed
 signal late_early_changed
 
 ## Comment
-const CONFIG_PATH := "config.ini"
-
-## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 ## Comment
-var game_path := "user://"
+const CONFIG_PATH := "config.ini"
+
+## Comment
+const STORAGE_PATH := "user://storage.ini"
+
+## Comment
+var game_path := OS.get_user_data_dir()
 
 ## Comment
 var global_offset := 0
@@ -125,6 +128,13 @@ var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
+	## Comment
+	var storage_file := File.new()
+
+	if not storage_file.open(STORAGE_PATH, File.READ):
+		game_path = storage_file.get_as_text()
+		storage_file.close()
+
 	music = $Background/Music as AudioStreamPlayer
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
 	bars = load("res://root/bars.tscn") as PackedScene
