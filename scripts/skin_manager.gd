@@ -49,92 +49,101 @@ var miss_color: Color
 ## The color of [Roll]s.
 var roll_color: Color
 
-## The texture of a judgement with an ACCURATE [member HitObject.Score].
-var accurate_judgement: Texture
+## Comment
+#var pippidon_clear: Texture
 
 ## Comment
-var approach_circle: Texture
+#var pippidon_fail: Texture
 
 ## Comment
-var bar_left_texture: Texture
+#var pippidon_idle: Texture
 
 ## Comment
-var bar_right_glow: Texture
+#var pippidon_kiai: Texture
 
-## Comment
-var bar_right_texture: Texture
-
-## Comment
-var big_circle: Texture
-
-## Comment
-var don_texture: Texture
-
-## Comment
-var f_accurate_judgement: Texture
-
-## Comment
-var f_inaccurate_judgement: Texture
-
-## Comment
-var flower_group: Texture
-
-## Comment
-var hit_circle_overlay: Texture
+## The texture of a judgement with a MISS [member HitObject.Score].
+var miss_judgement: Texture
 
 ## The texture of a judgement with an INACCURATE [member HitObject.Score].
 var inaccurate_judgement: Texture
 
 ## Comment
-var kat_texture: Texture
+var f_inaccurate_judgement: Texture
+
+## The texture of a judgement with an ACCURATE [member HitObject.Score].
+var accurate_judgement: Texture
+
+## Comment
+var f_accurate_judgement: Texture
+
+## Comment
+#var f_accurate_results: Texture
+
+## Comment
+var big_circle: Texture
+
+## Comment
+var big_circle_overlay: Texture
+
+## Comment
+var hit_circle: Texture
+
+## Comment
+var hit_circle_overlay: Texture
+
+## Comment
+var approach_circle: Texture
 
 ## Comment
 var kiai_glow_texture: Texture
 
 ## Comment
-var lighting_texture: Texture
+#var lighting_texture: Texture
 
 ## Comment
-var menu_bg: Texture
-
-## The texture of a judgement with a MISS [member HitObject.Score].
-var miss_judgement: Texture
+#var slider_pass: Texture
 
 ## Comment
-var pippidon_clear: Texture
+#var slider_fail: Texture
 
 ## Comment
-var pippidon_fail: Texture
+#var flower_group: Texture
 
 ## Comment
-var pippidon_idle: Texture
+var bar_left_texture: Texture
 
 ## Comment
-var pippidon_kiai: Texture
+var don_texture: Texture
 
 ## Comment
-var roll_end: Texture
+var kat_texture: Texture
+
+## Comment
+var bar_right_texture: Texture
+
+## Comment
+#var bar_right_glow: Texture
 
 ## Comment
 var roll_middle: Texture
 
 ## Comment
-var slider_fail: Texture
+var roll_end: Texture
 
 ## Comment
-var slider_pass: Texture
-
-## Comment
-var spinner_approach: Texture
-
-## Comment
-var spinner_circle: Texture
+var tick_texture: Texture
 
 ## Comment
 var spinner_warning: Texture
 
 ## Comment
-var tick_texture: Texture
+var spinner_circle: Texture
+
+## Comment
+var spinner_approach: Texture
+
+## Comment
+var menu_bg: Texture
 
 
 func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
@@ -172,7 +181,7 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 	files.sort()
 	# Both of these lists MUST be in alphabetical order to function
-	for key in ["approachcircle", "combobreak", "lighting", "menu_background", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_normal_hitclap", "taiko_normal_hitfinish", "taiko_normal_hitnormal", "taiko_normal_hitwhistle", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
+	for key in ["approachcircle", "combobreak", "lighting", "menu_background", "pippidonclear", "pippidonfail", "pippidonidle", "pippidonkiai", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_inner", "taiko_drum_outer", "taiko_flower_group", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300g", "taiko_hit300k", "taiko_normal_hitclap", "taiko_normal_hitfinish", "taiko_normal_hitnormal", "taiko_normal_hitwhistle", "taiko_roll_end", "taiko_roll_middle", "taiko_slider", "taiko_slider_fail", "taikobigcircle", "taikobigcircleoverlay", "taikohitcircle", "taikohitcircleoverlay"]:
 		## Comment
 		var cur_files := []
 
@@ -196,8 +205,8 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 		match str(key):
 			# "base_file_name_with_dashes_replaces_with_underscores":
-			#     audio_variable = _get_audio(skin_ath, str(key), cur_files, ["default_skin_file_extension"])
-			#     texture_variable = _get_texture(skin_path, str(key), cur_files, int(can_be_animated), ["default_skin_file_extension"], crop_out_transparent_edges)
+			#     audio_variable = _get_audio(skin_path, str(key), cur_files, ["default_skin_file_extension"])
+			#     texture_variable = _get_texture(skin_path, str(key), cur_files, animation_style, ["default_skin_file_extension"], crop_out_transparent_edges)
 
 			"approachcircle":
 				approach_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
@@ -205,23 +214,23 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"combobreak":
 				combo_break = _get_audio(skin_path, str(key), cur_files, [".wav"])
 
-			"lighting":
-				lighting_texture = _get_texture(skin_path, str(key), cur_files, 0)
+			#"lighting":
+			#	lighting_texture = _get_texture(skin_path, str(key), cur_files, 0)
 
 			"menu_background":
 				menu_bg = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
 
-			"pippidonclear":
-				pippidon_clear = _get_texture(skin_path, str(key), cur_files, 2)
+			#"pippidonclear":
+			#	pippidon_clear = _get_texture(skin_path, str(key), cur_files, 2)
 
-			"pippidonfail":
-				pippidon_fail = _get_texture(skin_path, str(key), cur_files, 2)
+			#"pippidonfail":
+			#	pippidon_fail = _get_texture(skin_path, str(key), cur_files, 2)
 
-			"pippidonidle":
-				pippidon_idle = _get_texture(skin_path, str(key), cur_files, 2)
+			#"pippidonidle":
+			#	pippidon_idle = _get_texture(skin_path, str(key), cur_files, 2)
 
-			"pippidonkiai":
-				pippidon_kiai = _get_texture(skin_path, str(key), cur_files, 2)
+			#"pippidonkiai":
+			#	pippidon_kiai = _get_texture(skin_path, str(key), cur_files, 2)
 
 			"sliderscorepoint":
 				tick_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
@@ -241,8 +250,8 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"taiko_bar_right":
 				bar_right_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
 
-			"taiko_bar_right_glow":
-				bar_right_glow = _get_texture(skin_path, str(key), cur_files, 0)
+			#"taiko_bar_right_glow":
+			#	bar_right_glow = _get_texture(skin_path, str(key), cur_files, 0)
 
 			"taiko_drum_inner":
 				don_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
@@ -250,8 +259,8 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"taiko_drum_outer":
 				kat_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
 
-			"taiko_flower_group":
-				flower_group = _get_texture(skin_path, str(key), cur_files, 1)
+			#"taiko_flower_group":
+			#	flower_group = _get_texture(skin_path, str(key), cur_files, 1)
 
 			"taiko_glow":
 				kiai_glow_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
@@ -263,13 +272,16 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 				inaccurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
 
 			"taiko_hit100k":
-				f_inaccurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [], false)
+				f_inaccurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
 
 			"taiko_hit300":
 				accurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
 
+			#"taiko_hit300g":
+			#	f_accurate_results = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+
 			"taiko_hit300k":
-				f_accurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [], false)
+				f_accurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
 
 			"taiko_normal_hitclap":
 				hit_clap = _get_audio(skin_path, str(key), cur_files, [".wav"])
@@ -289,14 +301,20 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"taiko_roll_middle":
 				roll_middle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
 
-			"taiko_slider":
-				slider_pass = _get_texture(skin_path, str(key), cur_files, 0)
+			#"taiko_slider":
+			#	slider_pass = _get_texture(skin_path, str(key), cur_files, 0)
 
-			"taiko_slider_fail":
-				slider_fail = _get_texture(skin_path, str(key), cur_files, 0)
+			#"taiko_slider_fail":
+			#	slider_fail = _get_texture(skin_path, str(key), cur_files, 0)
+
+			"taikobigcircle":
+				big_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+
+			"taikobigcircleoverlay":
+				big_circle_overlay = _get_texture(skin_path, str(key), cur_files, 1, ["-0.png"])
 
 			"taikohitcircle":
-				big_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				hit_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
 
 			"taikohitcircleoverlay":
 				hit_circle_overlay = _get_texture(skin_path, str(key), cur_files, 1, ["-0.png"])

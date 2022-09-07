@@ -27,8 +27,8 @@ func _ready() -> void:
 ## See [HitObject].
 func apply_skin() -> void:
 	self_modulate = root_viewport.skin.kat_color if _is_kat else root_viewport.skin.don_color
-	texture = root_viewport.skin.big_circle
-	head_overlay.texture = root_viewport.skin.hit_circle_overlay
+	texture = root_viewport.skin.big_circle if finisher else root_viewport.skin.hit_circle
+	head_overlay.texture = root_viewport.skin.big_circle_overlay if finisher else root_viewport.skin.hit_circle_overlay
 
 
 ## See [HitObject].

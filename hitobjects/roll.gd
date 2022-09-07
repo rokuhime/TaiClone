@@ -39,8 +39,8 @@ func apply_skin() -> void:
 	body_end.self_modulate = root_viewport.skin.roll_color
 	body_end.texture = root_viewport.skin.roll_end
 	head.self_modulate = root_viewport.skin.roll_color
-	head.texture = root_viewport.skin.big_circle
-	head_overlay.texture = root_viewport.skin.hit_circle_overlay
+	head.texture = root_viewport.skin.big_circle if finisher else root_viewport.skin.hit_circle
+	head_overlay.texture = root_viewport.skin.big_circle_overlay if finisher else root_viewport.skin.hit_circle_overlay
 
 
 ## See [HitObject].
