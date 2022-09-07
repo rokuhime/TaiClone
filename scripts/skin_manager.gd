@@ -1,8 +1,8 @@
 class_name SkinManager
 
 # TODO:
-# Pippidon
-# Playfield (upper half)
+# Interface skinning
+# Sounds skinning
 
 ## Comment
 const DEFAULT_SKIN_PATH := "res://skins/test_skin"
@@ -77,6 +77,9 @@ var f_accurate_judgement: Texture
 var f_inaccurate_judgement: Texture
 
 ## Comment
+var flower_group: Texture
+
+## Comment
 var hit_circle_overlay: Texture
 
 ## The texture of a judgement with an INACCURATE [member HitObject.Score].
@@ -98,10 +101,28 @@ var menu_bg: Texture
 var miss_judgement: Texture
 
 ## Comment
+var pippidon_clear: Texture
+
+## Comment
+var pippidon_fail: Texture
+
+## Comment
+var pippidon_idle: Texture
+
+## Comment
+var pippidon_kiai: Texture
+
+## Comment
 var roll_end: Texture
 
 ## Comment
 var roll_middle: Texture
+
+## Comment
+var slider_fail: Texture
+
+## Comment
+var slider_pass: Texture
 
 ## Comment
 var spinner_approach: Texture
@@ -150,6 +171,7 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 					break
 
 	files.sort()
+	# Both of these lists MUST be in alphabetical order to function
 	for key in ["approachcircle", "combobreak", "lighting", "menu_background", "sliderscorepoint", "spinner_approachcircle", "spinner_circle", "spinner_warning", "taiko_bar_left", "taiko_bar_right", "taiko_bar_right_glow", "taiko_drum_hitclap", "taiko_drum_hitfinish", "taiko_drum_hitnormal", "taiko_drum_hitwhistle", "taiko_drum_inner", "taiko_drum_outer", "taiko_glow", "taiko_hit0", "taiko_hit100", "taiko_hit100k", "taiko_hit300", "taiko_hit300k", "taiko_roll_end", "taiko_roll_middle", "taikohitcircle", "taikohitcircleoverlay"]:
 		## Comment
 		var cur_files := []
@@ -164,7 +186,7 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			## Comment
 			var extension := file_name.trim_prefix(str(key))
 
-			if file_name.begins_with(str(key)) and not (extension[0].is_subsequence_of("gko") or extension.begins_with("_g")):
+			if file_name.begins_with(str(key)) and not (extension[0].is_subsequence_of("gko") or extension.begins_with("_f") or extension.begins_with("_g")):
 				cur_files.append(extension)
 
 			elif not cur_files.empty() or file_name > str(key):
@@ -173,6 +195,10 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			files.remove(0)
 
 		match str(key):
+			# "base_file_name_with_dashes_replaces_with_underscores":
+			#     audio_variable = _get_audio(skin_ath, str(key), cur_files, ["default_skin_file_extension"])
+			#     texture_variable = _get_texture(skin_path, str(key), cur_files, int(can_be_animated), ["default_skin_file_extension"], crop_out_transparent_edges)
+
 			"approachcircle":
 				approach_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
 
@@ -184,6 +210,18 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 			"menu_background":
 				menu_bg = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+
+			"pippidonclear":
+				pippidon_clear = _get_texture(skin_path, str(key), cur_files, 2)
+
+			"pippidonfail":
+				pippidon_fail = _get_texture(skin_path, str(key), cur_files, 2)
+
+			"pippidonidle":
+				pippidon_idle = _get_texture(skin_path, str(key), cur_files, 2)
+
+			"pippidonkiai":
+				pippidon_kiai = _get_texture(skin_path, str(key), cur_files, 2)
 
 			"sliderscorepoint":
 				tick_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
@@ -224,6 +262,9 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 			"taiko_drum_outer":
 				kat_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
 
+			"taiko_flower_group":
+				flower_group = _get_texture(skin_path, str(key), cur_files, 1)
+
 			"taiko_glow":
 				kiai_glow_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
 
@@ -247,6 +288,12 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 
 			"taiko_roll_middle":
 				roll_middle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+
+			"taiko_slider":
+				slider_pass = _get_texture(skin_path, str(key), cur_files, 0)
+
+			"taiko_slider_fail":
+				slider_fail = _get_texture(skin_path, str(key), cur_files, 0)
 
 			"taikohitcircle":
 				big_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
@@ -283,7 +330,7 @@ func _get_texture(skin_path: String, key: String, cur_files: Array, animatable :
 
 		new_texture.set_frame_texture(new_texture.frames - 1, GlobalTools.texture_from_image(skin_path.plus_file((key + str(file_name)).replace("_", "-")), crop_transparent))
 
-	if not animatable or new_texture.frames == 1:
-		return new_texture.get_frame_texture(0)
+	if not animatable:
+		new_texture.frames = 1
 
 	return new_texture
