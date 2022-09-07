@@ -19,6 +19,9 @@ const CONFIG_PATH := "config.ini"
 const STORAGE_PATH := "user://storage.ini"
 
 ## Comment
+var skin := SkinManager.new()
+
+## Comment
 var game_path := OS.get_user_data_dir()
 
 ## Comment
@@ -68,9 +71,6 @@ var spinner_warn_object: PackedScene
 
 ## Comment
 var tick_object: PackedScene
-
-## Comment
-var skin: SkinManager
 
 ## Comment
 var accuracy: String
@@ -147,7 +147,6 @@ func _init() -> void:
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
-	skin = SkinManager.new()
 	accuracy = ""
 	artist = ""
 	charter = ""
@@ -191,6 +190,12 @@ func change_key(event: InputEvent, button: String) -> void:
 	InputMap.action_erase_events(str(button))
 	InputMap.action_add_event(str(button), event)
 	save_settings()
+
+
+## Comment
+func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
+	skin = SkinManager.new(new_text)
+	get_tree().call_group("Skinnables", "apply_skin")
 
 
 ## Comment

@@ -84,10 +84,8 @@ onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 func _ready() -> void:
 	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
-	bar_right.texture = root_viewport.skin.bar_right_texture
-	hit_point.texture = root_viewport.skin.big_circle
-	hit_point_rim.texture = root_viewport.skin.approach_circle
-	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+	add_to_group("Skinnables")
+	apply_skin()
 	kiai_glow.modulate.a = 0
 	last_hit_score.modulate.a = 0
 	root_viewport.music.stop()
@@ -369,6 +367,14 @@ func add_score(type: int, marker := false) -> void:
 	ui_score.text = "%010d" % root_viewport.score
 	root_viewport.accuracy = "%2.2f" % (hit_count * 100 / (root_viewport.accurate_count + root_viewport.inaccurate_count + root_viewport.miss_count) if hit_count else 0.0)
 	ui_accuracy.text = root_viewport.accuracy
+
+
+## Comment
+func apply_skin() -> void:
+	bar_right.texture = root_viewport.skin.bar_right_texture
+	hit_point.texture = root_viewport.skin.big_circle
+	hit_point_rim.texture = root_viewport.skin.approach_circle
+	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
 
 
 ## Comment

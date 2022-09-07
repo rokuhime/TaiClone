@@ -114,19 +114,7 @@ func change_res(index: int) -> void:
 
 ## Comment
 func game_path_button_pressed() -> void:
-	## Comment
-	var file_dialog := FileDialog.new()
-
-	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	file_dialog.mode = FileDialog.MODE_OPEN_DIR
-	file_dialog.current_dir = root_viewport.game_path
-	file_dialog.show_hidden_files = true
-	file_dialog.window_title = ""
-	GlobalTools.send_signal(self, "dir_selected", file_dialog, "change_game_path")
-	GlobalTools.send_signal(file_dialog, "popup_hide", file_dialog, "queue_free")
-	root_viewport.add_scene(file_dialog, "VolumeControl")
-	file_dialog.popup_centered_ratio(1)
-	file_dialog.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+	_file_dialog(self, "change_game_path")
 
 
 ## Called when [member hit_error_toggle] is toggled.
@@ -145,10 +133,20 @@ func late_early(new_value: int) -> void:
 		root_viewport.late_early(new_value)
 
 
+## Comment
+func remove_skin() -> void:
+	root_viewport.change_skin()
+
+
 
 ## See [Scene].
 func scene_removed() -> void:
 	_tween_position()
+
+
+## Comment
+func skin_button_pressed() -> void:
+	_file_dialog(root_viewport, "change_skin")
 
 
 ## Called when [member fullscreen_toggle] is toggled.
@@ -195,6 +193,23 @@ func _change_text(key: String, was_pressed := false) -> void:
 	var event := GlobalTools.get_event(key)
 
 	button_obj.text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
+
+
+## Comment
+func _file_dialog(signal_target: Node, method: String) -> void:
+	## Comment
+	var file_dialog := FileDialog.new()
+
+	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.mode = FileDialog.MODE_OPEN_DIR
+	file_dialog.current_dir = root_viewport.game_path
+	file_dialog.show_hidden_files = true
+	file_dialog.window_title = ""
+	GlobalTools.send_signal(signal_target, "dir_selected", file_dialog, method)
+	GlobalTools.send_signal(file_dialog, "popup_hide", file_dialog, "queue_free")
+	root_viewport.add_scene(file_dialog, "VolumeControl")
+	file_dialog.popup_centered_ratio(1)
+	file_dialog.set_anchors_and_margins_preset(Control.PRESET_WIDE)
 
 
 ## Comment

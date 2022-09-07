@@ -22,15 +22,14 @@ onready var avg_hit := $AverageHit as Control
 func _ready() -> void:
 	GlobalTools.send_signal(self, "hit_error_changed", root_viewport, "visibility_toggled")
 	visibility_toggled()
+	add_to_group("Skinnables")
+	apply_skin()
 
 	## Comment
 	var self_modulate_color := Color("c8c8c8")
 
-	miss.color = root_viewport.skin.miss_color
 	miss.self_modulate = self_modulate_color
-	inaccurate.color = root_viewport.skin.inaccurate_color
 	inaccurate.self_modulate = self_modulate_color
-	accurate.color = root_viewport.skin.accurate_color
 	accurate.self_modulate = self_modulate_color
 
 	## Comment
@@ -38,6 +37,13 @@ func _ready() -> void:
 
 	accurate.anchor_left = 0.5 - anchor
 	accurate.anchor_right = 0.5 + anchor
+
+
+## Comment
+func apply_skin() -> void:
+	miss.color = root_viewport.skin.miss_color
+	inaccurate.color = root_viewport.skin.inaccurate_color
+	accurate.color = root_viewport.skin.accurate_color
 
 
 ## Comment
@@ -81,7 +87,7 @@ func new_marker(type: int, timing: float, indicate: bool) -> void:
 		else:
 			marker_obj.queue_free()
 
-		if marker_obj.modulate == root_viewport.skin.miss_color:
+		if marker_obj.modulate == miss.color:
 			misses += 1
 
 		else:

@@ -11,11 +11,12 @@ onready var bottom := $Bottom
 
 
 func _ready() -> void:
+	add_to_group("Skinnables")
+	apply_skin()
 	charter_name.text = root_viewport.charter
 	difficulty_name_label.text = root_viewport.difficulty_name
 	play_date.text = Time.get_datetime_string_from_system(false, true)
 	song_name.text = "%s - %s" % [root_viewport.artist, root_viewport.title]
-	texture_rect.texture = root_viewport.skin.big_circle
 
 	## Comment
 	var position_tween := root_viewport.new_tween(SceneTreeTween.new()).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
@@ -25,6 +26,11 @@ func _ready() -> void:
 
 	## Comment
 	var _bottom_tween := position_tween.tween_property(bottom, "rect_position:y", 980.0, 1).from(1080.0)
+
+
+## Comment
+func apply_skin() -> void:
+	texture_rect.texture = root_viewport.skin.big_circle
 
 
 ## Comment
