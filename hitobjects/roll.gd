@@ -7,19 +7,18 @@ var _tick_distance := 0.0
 ## The number of [Tick]s in this [Roll].
 var _total_ticks := 0
 
-onready var body := $Body as TextureRect
-onready var body_end := $Body/End as TextureRect
-onready var head := $Body/Head as TextureRect
-onready var head_overlay := $Body/Head/Overlay as TextureRect
-onready var tick_container := $Body/TickContainer
+onready var body_end := $End as TextureRect
+onready var head := $Head as TextureRect
+onready var head_overlay := $Head/Overlay as TextureRect
+onready var tick_container := $TickContainer
 
 
 func _ready() -> void:
-	body.rect_size.x = speed * length
+	rect_size.x = speed * length
 
 	if finisher:
-		body.rect_position.y *= FINISHER_SCALE
-		body.rect_size.y *= FINISHER_SCALE
+		rect_position.y *= FINISHER_SCALE
+		rect_size.y *= FINISHER_SCALE
 		body_end.rect_size.x *= FINISHER_SCALE
 		head.rect_position *= FINISHER_SCALE
 		head.rect_size *= FINISHER_SCALE
@@ -35,8 +34,8 @@ func _ready() -> void:
 
 ## See [HitObject].
 func apply_skin() -> void:
-	body.self_modulate = root_viewport.skin.roll_color
-	body.texture = root_viewport.skin.roll_middle
+	self_modulate = root_viewport.skin.roll_color
+	texture = root_viewport.skin.roll_middle
 	body_end.self_modulate = root_viewport.skin.roll_color
 	body_end.texture = root_viewport.skin.roll_end
 	head.self_modulate = root_viewport.skin.roll_color
@@ -80,13 +79,3 @@ func miss_check(hit_time: float) -> bool:
 			return true
 
 	return false
-
-
-## Comment
-func move(visible_x: float, cur_time: float) -> void:
-	rect_position.x = speed * (timing - cur_time)
-	if visible:
-		visible = -visible_x < rect_position.x + body.rect_size.x and rect_position.x < visible_x
-
-	else:
-		visible = -visible_x < rect_position.x and rect_position.x < visible_x

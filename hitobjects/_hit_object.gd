@@ -1,5 +1,5 @@
 class_name HitObject
-extends Control
+extends TextureRect
 
 ## Signals DrumVisual when a hit sound should be played.
 signal audio_played(key)
@@ -31,6 +31,9 @@ var finisher := false
 
 ## The time when this [HitObject] completes. It's used to sort [HitObject]s. Applies to all [HitObject]s.
 var end_time := 0.0
+
+## Comment
+var left_margin := margin_left
 
 ## The length of this [HitObject]. Only applies to [Roll]s, [Spinner]s, and [SpinnerWarn]s.
 var length := 0.0
@@ -151,5 +154,5 @@ func miss_check(_hit_time: float) -> bool:
 
 ## Comment
 func move(visible_x: float, cur_time: float) -> void:
-	rect_position.x = speed * (timing - cur_time)
-	visible = -visible_x < rect_position.x and rect_position.x < visible_x
+	rect_position.x = speed * (timing - cur_time) + left_margin
+	visible = -visible_x < rect_position.x + rect_size.x and rect_position.x < visible_x

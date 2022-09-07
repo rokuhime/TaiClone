@@ -16,9 +16,8 @@ var _cur_hit_count := 0
 ## The number of hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
 var _needed_hits := 0
 
-onready var approach := $Approach as TextureRect
-onready var sprite := $Approach/Sprite as TextureRect
-onready var label := $Approach/Label as Label
+onready var sprite := $Sprite as TextureRect
+onready var label := $Label as Label
 
 
 func _ready() -> void:
@@ -28,10 +27,10 @@ func _ready() -> void:
 	var approach_tween := root_viewport.new_tween(SceneTreeTween.new()).set_ease(Tween.EASE_OUT).set_parallel()
 
 	## Comment
-	var _size_tween := approach_tween.tween_property(approach, "rect_size", approach.rect_size * 0.1, length)
+	var _size_tween := approach_tween.tween_property(self, "rect_size", rect_size * 0.1, length)
 
 	## Comment
-	var _position_tween := approach_tween.tween_property(approach, "rect_position", approach.rect_position + approach.rect_size * 0.45, length)
+	var _position_tween := approach_tween.tween_property(self, "rect_position", rect_position + rect_size * 0.45, length)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
 	var _tween := _tween_modulate(1)
@@ -41,7 +40,7 @@ func _ready() -> void:
 
 ## See [HitObject].
 func apply_skin() -> void:
-	approach.texture = root_viewport.skin.spinner_approach
+	texture = root_viewport.skin.spinner_approach
 	sprite.texture = root_viewport.skin.spinner_circle
 
 

@@ -272,7 +272,6 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 				f_accurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [], false)
 
 			"taiko_normal_hitclap":
-				print(cur_files)
 				hit_clap = _get_audio(skin_path, str(key), cur_files, [".wav"])
 
 			"taiko_normal_hitfinish":
