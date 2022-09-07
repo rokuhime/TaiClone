@@ -81,7 +81,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		var this_hit := check_hit(key, inputs, not finisher)
 
 		if not this_hit:
-			finish(int(Score.MISS), true)
+			finish(int(Score.MISS))
 			return true
 
 		_next_hit = "Right" if this_hit == "Left" else "Left" if this_hit == "Right" else ""
@@ -113,7 +113,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 	elif not check_hit(key, inputs, false):
 		return true
 
-	finish(int(Score.FINISHER))
+	finish(int(Score.FINISHER), false)
 	return false
 
 

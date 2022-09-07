@@ -119,7 +119,7 @@ func check_hit(key: String, inputs: Array, hit_sound := true) -> String:
 ## Sets this [HitObject] to the FINISHED [member State].
 ## type ([int]): The optional type of [member Score] to score. If -1, no score will be added.
 ## marker ([bool]): Whether or not a marker on the hit error bar should be added.
-func finish(type := -1, marker := false) -> void:
+func finish(type := -1, marker := true) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
 		queue_free()

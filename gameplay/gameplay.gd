@@ -309,7 +309,7 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 
 
 ## Comment
-func add_score(type: int, marker := false) -> void:
+func add_score(type: int, marker := true) -> void:
 	## Comment
 	var play_tween := true
 
@@ -349,18 +349,30 @@ func add_score(type: int, marker := false) -> void:
 			if marker:
 				emit_signal("marker_added", type, HitError.INACC_TIMING, true)
 
+		HitObject.Score.FINISHER:
+			play_tween = false
+			if judgement.texture == root_viewport.skin.accurate_judgement:
+				judgement.texture = root_viewport.skin.f_accurate_judgement
+
+			if judgement.texture == root_viewport.skin.inaccurate_judgement:
+				judgement.texture = root_viewport.skin.f_inaccurate_judgement
+
 		HitObject.Score.SPINNER:
 			score_value = 600
 
 	root_viewport.combo = int(max(root_viewport.combo, _current_combo))
 	score_value = int(score_value * (1 + min(1, _current_combo / 300.0) + float(_in_kiai) / 4))
 	root_viewport.score += score_value
-	last_hit_score.text = str(score_value)
-	if play_tween:
-		_score_indicator_tween = root_viewport.new_tween(_score_indicator_tween)
+	if not marker:
+		score_value += int(last_hit_score.text)
 
-		## Comment
-		var _tween := _score_indicator_tween.tween_property(last_hit_score, "modulate:a", 0.0, 1).from(1.0)
+	if score_value:
+		last_hit_score.text = str(score_value)
+		if play_tween:
+			_score_indicator_tween = root_viewport.new_tween(_score_indicator_tween)
+
+			## Comment
+			var _tween := _score_indicator_tween.tween_property(last_hit_score, "modulate:a", 0.0, 1).from(1.0)
 
 	## Comment
 	var hit_count := root_viewport.accurate_count + root_viewport.inaccurate_count / 2.0

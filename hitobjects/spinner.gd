@@ -94,10 +94,10 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 			break
 
 		_cur_hit_count += 1
-		emit_signal("score_added", Score.SPINNER, false)
+		emit_signal("score_added", Score.SPINNER, true)
 		not_hit = false
 		if _cur_hit_count == _needed_hits:
-			_spinner_finished(int(Score.ACCURATE))
+			_spinner_finished(int(Score.ACCURATE), false)
 			break
 
 	if not_hit:
@@ -115,7 +115,7 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 ## See [HitObject].
 func miss_check(hit_time: float) -> bool:
 	if hit_time > end_time:
-		_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE))
+		_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE), true)
 		return false
 
 	return true
@@ -127,10 +127,10 @@ func _count_text() -> void:
 
 
 ## Set this [Spinner] to the FINISHED [member HitObject.State].
-func _spinner_finished(type: int) -> void:
+func _spinner_finished(type: int, marker: bool) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
-		emit_signal("score_added", type, false)
+		emit_signal("score_added", type, marker)
 		GlobalTools.send_signal(self, "finished", _tween_modulate(0), "queue_free")
 
 
