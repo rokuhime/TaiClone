@@ -60,5 +60,4 @@ theme_type_variation = "_MainMenu"
 text = "Exit"
 
 [connection signal="button_up" from="Play" to="." method="play_button_pressed"]
-[connection signal="button_up" from="Options" to="." method="toggle_settings"]
 [connection signal="button_up" from="Exit" to="." method="exit_button_pressed"]

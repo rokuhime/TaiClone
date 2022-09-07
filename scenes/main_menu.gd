@@ -1,9 +1,11 @@
 extends Scene
 
 onready var root_viewport := $"/root" as Root
+onready var settings_button := $Options as Button
 
 
 func _ready() -> void:
+	GlobalTools.send_signal(root_viewport, "button_up", settings_button, "toggle_settings")
 	add_to_group("Skinnables")
 	apply_skin()
 	root_viewport.music.stop()
@@ -25,8 +27,3 @@ func exit_button_pressed() -> void:
 ## Comment
 func play_button_pressed() -> void:
 	root_viewport.add_blackout(root_viewport.gameplay)
-
-
-## Comment
-func toggle_settings() -> void:
-	root_viewport.toggle_settings(name)

@@ -8,6 +8,7 @@ script = ExtResource( 1 )
 [node name="Sprite" type="TextureRect" parent="."]
 margin_left = -96.0
 margin_top = -96.0
-margin_right = 96.0
+margin_right = 480.0
 margin_bottom = 96.0
 expand = true
+stretch_mode = 5

@@ -189,7 +189,7 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 				tick_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
 
 			"spinner_approachcircle":
-				spinner_approach = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				spinner_approach = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
 
 			"spinner_circle":
 				spinner_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)

@@ -286,6 +286,6 @@ func toggle_fullscreen(new_visible: bool) -> void:
 
 
 ## Comment
-func toggle_settings(node_name: String) -> void:
+func toggle_settings() -> void:
 	if not remove_scene("SettingsPanel"):
-		add_scene(settings_panel.instance(), node_name)
+		add_scene(settings_panel.instance(), get_child(1).name)

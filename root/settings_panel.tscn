@@ -383,16 +383,16 @@ size_flags_horizontal = 3
 theme_type_variation = "_Settings"
 text = "Preferences"
 
-[connection signal="pressed" from="V/Settings/V/Keybinds/LeftKat/Button" to="." method="button_pressed" binds= [ "LeftKat" ]]
-[connection signal="pressed" from="V/Settings/V/Keybinds/LeftDon/Button" to="." method="button_pressed" binds= [ "LeftDon" ]]
-[connection signal="pressed" from="V/Settings/V/Keybinds/RightDon/Button" to="." method="button_pressed" binds= [ "RightDon" ]]
-[connection signal="pressed" from="V/Settings/V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
+[connection signal="button_up" from="V/Settings/V/Keybinds/LeftKat/Button" to="." method="button_pressed" binds= [ "LeftKat" ]]
+[connection signal="button_up" from="V/Settings/V/Keybinds/LeftDon/Button" to="." method="button_pressed" binds= [ "LeftDon" ]]
+[connection signal="button_up" from="V/Settings/V/Keybinds/RightDon/Button" to="." method="button_pressed" binds= [ "RightDon" ]]
+[connection signal="button_up" from="V/Settings/V/Keybinds/RightKat/Button" to="." method="button_pressed" binds= [ "RightKat" ]]
 [connection signal="item_selected" from="V/Settings/V/Resolution/Options" to="." method="change_res"]
 [connection signal="toggled" from="V/Settings/V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
 [connection signal="value_changed" from="V/Settings/V/Offset/LineEdit" to="." method="change_offset"]
 [connection signal="value_changed" from="V/Settings/V/HSlider" to="." method="change_offset"]
 [connection signal="item_selected" from="V/Settings/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
 [connection signal="toggled" from="V/Settings/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error_func"]
-[connection signal="pressed" from="V/Settings/V/GamePathButton" to="." method="game_path_button_pressed"]
-[connection signal="pressed" from="V/Settings/V/ChangeSkinButton" to="." method="skin_button_pressed"]
-[connection signal="pressed" from="V/Settings/V/RemoveSkinButton" to="." method="remove_skin"]
+[connection signal="button_up" from="V/Settings/V/GamePathButton" to="." method="game_path_button_pressed"]
+[connection signal="button_up" from="V/Settings/V/ChangeSkinButton" to="." method="skin_button_pressed"]
+[connection signal="button_up" from="V/Settings/V/RemoveSkinButton" to="." method="remove_skin"]

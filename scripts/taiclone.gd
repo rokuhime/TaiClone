@@ -70,3 +70,13 @@ func _init() -> void:
 func _drop_files(files: PoolStringArray, _from_screen: int) -> void:
 	ChartLoader.load_chart(_root_viewport.game_path, files[0])
 	_root_viewport.add_blackout(_root_viewport.gameplay)
+
+
+func _input_event(event: InputEvent) -> void:
+	if event is InputEventKey:
+		## Comment
+		var k_event := event as InputEventKey
+
+		if k_event.pressed and k_event.control and k_event.scancode == KEY_O:
+			_root_viewport.toggle_settings()
+			return

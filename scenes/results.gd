@@ -52,9 +52,6 @@ func _ready() -> void:
 	## Comment
 	var _right_tween := _animation_tween.tween_property(right_bar, "rect_position:x", 591.0, 1).from(87.0)
 
-	## Comment
-	var _settings_removed := root_viewport.remove_scene("SettingsPanel")
-
 	root_viewport.add_scene(root_viewport.bars.instance())
 
 

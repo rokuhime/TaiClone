@@ -79,9 +79,11 @@ onready var debug_text := $Debug/DebugText as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var play_button := $Debug/TempLoadChart/PlayButton as Button
 onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
+onready var settings_button := $Debug/TempLoadChart/SettingsButton as Button
 
 
 func _ready() -> void:
+	GlobalTools.send_signal(root_viewport, "button_up", settings_button, "toggle_settings")
 	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
 	add_to_group("Skinnables")
@@ -425,11 +427,6 @@ func play_button_pressed() -> void:
 		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
 		_active = true
 		get_tree().call_group("HitObjects", "activate")
-
-
-## Comment
-func toggle_settings() -> void:
-	root_viewport.toggle_settings(name)
 
 
 ## Comment
