@@ -85,9 +85,6 @@ var difficulty_name: String
 var title: String
 
 ## Comment
-var menu_bg: Texture
-
-## Comment
 var accurate_count: int
 
 ## Comment
@@ -141,7 +138,6 @@ func _init() -> void:
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
 	skin = SkinManager.new()
-	menu_bg = GlobalTools.texture_from_image("res://temporary/menubg.png")
 	accuracy = ""
 	artist = ""
 	charter = ""

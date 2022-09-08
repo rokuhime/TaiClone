@@ -119,7 +119,7 @@ func _ready() -> void:
 		return
 
 	root_viewport.bg_changed(GlobalTools.texture_from_image(_f.get_line()), Color("373737"))
-	root_viewport.music.stream = GlobalTools.load_audio_file(_f.get_line())
+	root_viewport.music.stream = AudioLoader.load_file(_f.get_line())
 	root_viewport.artist = _f.get_line()
 	root_viewport.charter = _f.get_line()
 	root_viewport.difficulty_name = _f.get_line()

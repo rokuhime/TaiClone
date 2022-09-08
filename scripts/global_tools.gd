@@ -12,39 +12,6 @@ static func inputs_empty(inputs: Array) -> bool:
 
 
 ## Comment
-static func load_audio_file(file_path: String) -> AudioStream:
-	## Comment
-	var f := File.new()
-
-	if not f.file_exists(file_path):
-		return AudioStreamSample.new()
-
-	if f.open(file_path, File.READ):
-		f.close()
-		return load(file_path) as AudioStream
-
-	## Comment
-	var bytes := f.get_buffer(f.get_len())
-
-	f.close()
-	if file_path.ends_with(".mp3"):
-		## Comment
-		var new_stream := AudioStreamMP3.new()
-
-		new_stream.data = bytes
-		return new_stream
-
-	if file_path.ends_with(".ogg"):
-		## Comment
-		var new_stream := AudioStreamOGGVorbis.new()
-
-		new_stream.data = bytes
-		return new_stream
-
-	return load(file_path) as AudioStream
-
-
-## Comment
 static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
 	if obj.connect(signal_name, signal_target, method):
 		push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
@@ -64,7 +31,7 @@ static func texture_from_image(file_path: String, crop_transparent := true) -> T
 	elif image.load(file_path):
 		return new_texture
 
-	if crop_transparent:
+	if crop_transparent and not image.is_invisible():
 		image = image.get_rect(image.get_used_rect())
 
 	new_texture.create_from_image(image)
