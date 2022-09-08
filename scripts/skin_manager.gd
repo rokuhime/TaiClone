@@ -50,31 +50,31 @@ var miss_color: Color
 var roll_color: Color
 
 ## Comment
-#var pippidon_clear: Texture
+#var pippidon_clear: AnimatedTexture
 
 ## Comment
-#var pippidon_fail: Texture
+#var pippidon_fail: AnimatedTexture
 
 ## Comment
-#var pippidon_idle: Texture
+#var pippidon_idle: AnimatedTexture
 
 ## Comment
-#var pippidon_kiai: Texture
+#var pippidon_kiai: AnimatedTexture
 
 ## The texture of a judgement with a MISS [member HitObject.Score].
-var miss_judgement: Texture
+var miss_judgement: AnimatedTexture
 
 ## The texture of a judgement with an INACCURATE [member HitObject.Score].
-var inaccurate_judgement: Texture
+var inaccurate_judgement: AnimatedTexture
 
 ## Comment
-var f_inaccurate_judgement: Texture
+var f_inaccurate_judgement: AnimatedTexture
 
 ## The texture of a judgement with an ACCURATE [member HitObject.Score].
-var accurate_judgement: Texture
+var accurate_judgement: AnimatedTexture
 
 ## Comment
-var f_accurate_judgement: Texture
+var f_accurate_judgement: AnimatedTexture
 
 ## Comment
 #var f_accurate_results: Texture
@@ -83,13 +83,13 @@ var f_accurate_judgement: Texture
 var big_circle: Texture
 
 ## Comment
-var big_circle_overlay: Texture
+var big_circle_overlay: AnimatedTexture
 
 ## Comment
 var hit_circle: Texture
 
 ## Comment
-var hit_circle_overlay: Texture
+var hit_circle_overlay: AnimatedTexture
 
 ## Comment
 var approach_circle: Texture
@@ -107,7 +107,7 @@ var kiai_glow_texture: Texture
 #var slider_fail: Texture
 
 ## Comment
-#var flower_group: Texture
+#var flower_group: AnimatedTexture
 
 ## Comment
 var bar_left_texture: Texture
@@ -190,98 +190,101 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 				break
 
 			## Comment
-			var file_name := str(files[0])
+			var file_name := str(files[0]).trim_prefix(str(key))
 
 			## Comment
-			var extension := file_name.trim_prefix(str(key))
+			var extension := file_name.get_basename().trim_suffix("@2x").replace("_", "-")
 
-			if file_name.begins_with(str(key)) and not (extension[0].is_subsequence_of("gko") or extension.begins_with("_f") or extension.begins_with("_g")):
-				cur_files.append(extension)
+			if extension.is_valid_integer() or not extension:
+				cur_files.append(file_name)
 
 			elif not cur_files.empty() or file_name > str(key):
 				break
 
 			files.remove(0)
 
+		print(str(key), " | ", cur_files)
 		match str(key):
-			# "base_file_name_with_dashes_replaces_with_underscores":
+			# "base_file_name":
 			#     audio_variable = _get_audio(skin_path, str(key), cur_files, ["default_skin_file_extension"])
-			#     texture_variable = _get_texture(skin_path, str(key), cur_files, animation_style, ["default_skin_file_extension"], crop_out_transparent_edges)
+			#     texture_variable = _get_texture(skin_path, str(key), cur_files, ["default_skin_file_extensions"], "-", crop_out_transparent_edges).get_frame_texture(0)
+			#     texture_animation = _get_texture(skin_path, str(key), cur_files, ["default_skin_file_extensions"], animation_prefix, crop_out_transparent_edges, maximum_animation_frames)
 
 			"approachcircle":
-				approach_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+				approach_circle = _get_texture(skin_path, str(key), cur_files, [".png"], "-", false).get_frame_texture(0)
 
 			"combobreak":
 				combo_break = _get_audio(skin_path, str(key), cur_files, [".wav"])
 
 			#"lighting":
-			#	lighting_texture = _get_texture(skin_path, str(key), cur_files, 0)
+			#	lighting_texture = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			"menu_background":
-				menu_bg = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				menu_bg = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			#"pippidonclear":
-			#	pippidon_clear = _get_texture(skin_path, str(key), cur_files, 2)
+			#	pippidon_clear = _get_texture(skin_path, str(key), cur_files, [], "", true, 7)
+			#	# ZMTT TODO: Special Animation
 
 			#"pippidonfail":
-			#	pippidon_fail = _get_texture(skin_path, str(key), cur_files, 2)
+			#	pippidon_fail = _get_texture(skin_path, str(key), cur_files, [], "")
 
 			#"pippidonidle":
-			#	pippidon_idle = _get_texture(skin_path, str(key), cur_files, 2)
+			#	pippidon_idle = _get_texture(skin_path, str(key), cur_files, [], "")
 
 			#"pippidonkiai":
-			#	pippidon_kiai = _get_texture(skin_path, str(key), cur_files, 2)
+			#	pippidon_kiai = _get_texture(skin_path, str(key), cur_files, [], "")
 
 			"sliderscorepoint":
-				tick_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				tick_texture = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			"spinner_approachcircle":
-				spinner_approach = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+				spinner_approach = _get_texture(skin_path, str(key), cur_files, [".png"], "-", false).get_frame_texture(0)
 
 			"spinner_circle":
-				spinner_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+				spinner_circle = _get_texture(skin_path, str(key), cur_files, [".png"], "-", false).get_frame_texture(0)
 
 			"spinner_warning":
-				spinner_warning = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				spinner_warning = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			"taiko_bar_left":
-				bar_left_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				bar_left_texture = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			"taiko_bar_right":
-				bar_right_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				bar_right_texture = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			#"taiko_bar_right_glow":
-			#	bar_right_glow = _get_texture(skin_path, str(key), cur_files, 0)
+			#	bar_right_glow = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			"taiko_drum_inner":
-				don_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+				don_texture = _get_texture(skin_path, str(key), cur_files, [".png"], "-", false).get_frame_texture(0)
 
 			"taiko_drum_outer":
-				kat_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+				kat_texture = _get_texture(skin_path, str(key), cur_files, [".png"], "-", false).get_frame_texture(0)
 
 			#"taiko_flower_group":
-			#	flower_group = _get_texture(skin_path, str(key), cur_files, 1)
+			#	flower_group = _get_texture(skin_path, str(key), cur_files, [], "_")
 
 			"taiko_glow":
-				kiai_glow_texture = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+				kiai_glow_texture = _get_texture(skin_path, str(key), cur_files, [".png"], "-", false).get_frame_texture(0)
 
 			"taiko_hit0":
-				miss_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
+				miss_judgement = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false)
 
 			"taiko_hit100":
-				inaccurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
+				inaccurate_judgement = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false)
 
 			"taiko_hit100k":
-				f_inaccurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
+				f_inaccurate_judgement = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false)
 
 			"taiko_hit300":
-				accurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
+				accurate_judgement = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false)
 
 			#"taiko_hit300g":
-			#	f_accurate_results = _get_texture(skin_path, str(key), cur_files, 0, [".png"], false)
+			#	f_accurate_results = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false).get_frame_texture(0)
 
 			"taiko_hit300k":
-				f_accurate_judgement = _get_texture(skin_path, str(key), cur_files, 1, [".png"], false)
+				f_accurate_judgement = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false)
 
 			"taiko_normal_hitclap":
 				hit_clap = _get_audio(skin_path, str(key), cur_files, [".wav"])
@@ -296,28 +299,28 @@ func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
 				hit_whistle = _get_audio(skin_path, str(key), cur_files, [".wav"])
 
 			"taiko_roll_end":
-				roll_end = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				roll_end = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			"taiko_roll_middle":
-				roll_middle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				roll_middle = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			#"taiko_slider":
-			#	slider_pass = _get_texture(skin_path, str(key), cur_files, 0)
+			#	slider_pass = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			#"taiko_slider_fail":
-			#	slider_fail = _get_texture(skin_path, str(key), cur_files, 0)
+			#	slider_fail = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			"taikobigcircle":
-				big_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				big_circle = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			"taikobigcircleoverlay":
-				big_circle_overlay = _get_texture(skin_path, str(key), cur_files, 1, ["-0.png"])
+				big_circle_overlay = _get_texture(skin_path, str(key), cur_files, ["_0.png"], "_", true, 2)
 
 			"taikohitcircle":
-				hit_circle = _get_texture(skin_path, str(key), cur_files, 0, [".png"])
+				hit_circle = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			"taikohitcircleoverlay":
-				hit_circle_overlay = _get_texture(skin_path, str(key), cur_files, 1, ["-0.png"])
+				hit_circle_overlay = _get_texture(skin_path, str(key), cur_files, ["_0.png"], "_", true, 2)
 
 
 ## Comment
@@ -330,7 +333,7 @@ func _get_audio(skin_path: String, key: String, cur_files: Array, default_files 
 
 
 ## Comment
-func _get_texture(skin_path: String, key: String, cur_files: Array, animatable := 0, default_files := [], crop_transparent := true) -> Texture:
+func _get_texture(skin_path: String, key: String, cur_files: Array, default_files := [], animation_prefix := "-", crop_transparent := true, max_frames := AnimatedTexture.MAX_FRAMES) -> AnimatedTexture:
 	if cur_files.empty():
 		skin_path = DEFAULT_SKIN_PATH
 		cur_files = default_files
@@ -342,13 +345,19 @@ func _get_texture(skin_path: String, key: String, cur_files: Array, animatable :
 	var new_texture := AnimatedTexture.new()
 
 	for file_name in cur_files:
-		if str(file_name).begins_with("_%s" % frame_idx):
+		## Comment
+		var extension := str(file_name)
+
+		if animation_prefix == "-":
+			extension = extension.trim_prefix("_")
+			max_frames = 1
+			animation_prefix = ""
+
+		if extension.begins_with(animation_prefix + str(frame_idx)):
 			frame_idx += 1
-			new_texture.frames = frame_idx
 
-		new_texture.set_frame_texture(new_texture.frames - 1, GlobalTools.texture_from_image(skin_path.plus_file((key + str(file_name)).replace("_", "-")), crop_transparent))
-
-	if not animatable:
-		new_texture.frames = 1
+		if frame_idx <= max_frames:
+			new_texture.frames = int(max(1, frame_idx))
+			new_texture.set_frame_texture(new_texture.frames - 1, GlobalTools.texture_from_image(skin_path.plus_file((key + extension).replace("_", "-")), crop_transparent))
 
 	return new_texture
