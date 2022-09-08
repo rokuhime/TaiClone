@@ -458,7 +458,7 @@ var menu_bg: Texture
 
 
 # ZMTT TODO: Sounds skinning
-func _init(skin_path := DEFAULT_SKIN_PATH) -> void:
+func _init(skin_path: String) -> void:
 	accurate_color = Color("52a6ff")
 	barline_color = Color.white
 	don_color = Color("eb452c")
