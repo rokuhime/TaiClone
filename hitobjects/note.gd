@@ -13,21 +13,22 @@ var _is_kat := true
 ## Comment
 var _first_hit := -1.0
 
-onready var head := $Head as TextureRect
-onready var head_overlay := $Head/Overlay as TextureRect
+onready var head_overlay := $Overlay as TextureRect
 
 
 func _ready() -> void:
 	if finisher:
-		head.rect_position *= FINISHER_SCALE
-		head.rect_size *= FINISHER_SCALE
+		rect_position *= FINISHER_SCALE
+		rect_size *= FINISHER_SCALE
+
+	left_margin = margin_left
 
 
 ## See [HitObject].
 func apply_skin() -> void:
-	head.self_modulate = root_viewport.skin.kat_color if _is_kat else root_viewport.skin.don_color
-	head.texture = root_viewport.skin.big_circle
-	head_overlay.texture = root_viewport.skin.hit_circle_overlay
+	self_modulate = root_viewport.skin.kat_color if _is_kat else root_viewport.skin.don_color
+	texture = root_viewport.skin.big_circle if finisher else root_viewport.skin.hit_circle
+	head_overlay.texture = root_viewport.skin.big_circle_overlay if finisher else root_viewport.skin.hit_circle_overlay
 
 
 ## See [HitObject].
@@ -80,7 +81,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 		var this_hit := check_hit(key, inputs, not finisher)
 
 		if not this_hit:
-			finish(int(Score.MISS), true)
+			finish(int(Score.MISS))
 			return true
 
 		_next_hit = "Right" if this_hit == "Left" else "Left" if this_hit == "Right" else ""
@@ -112,7 +113,7 @@ func hit(inputs: Array, hit_time: float) -> bool:
 	elif not check_hit(key, inputs, false):
 		return true
 
-	finish(int(Score.FINISHER))
+	finish(int(Score.FINISHER), false)
 	return false
 
 

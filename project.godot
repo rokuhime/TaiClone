@@ -39,10 +39,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gameplay/hit_error.gd"
 }, {
-"base": "Control",
+"base": "TextureRect",
 "class": "HitObject",
 "language": "GDScript",
-"path": "res://hitobjects/hit_object.gd"
+"path": "res://hitobjects/_hit_object.gd"
 }, {
 "base": "HitObject",
 "class": "Note",

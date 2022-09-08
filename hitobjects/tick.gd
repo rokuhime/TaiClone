@@ -1,18 +1,16 @@
 class_name Tick
 extends HitObject
 
-onready var sprite := $Sprite as TextureRect
-
 
 ## See [HitObject].
 func activate() -> void:
 	.activate()
-	rect_position.x = timing
+	rect_position.x = timing + margin_left
 
 
 ## See [HitObject].
 func apply_skin() -> void:
-	sprite.texture = root_viewport.skin.tick_texture
+	texture = root_viewport.skin.tick_texture
 
 
 ## See [HitObject].

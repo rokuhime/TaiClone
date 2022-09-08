@@ -16,9 +16,8 @@ var _cur_hit_count := 0
 ## The number of hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
 var _needed_hits := 0
 
-onready var approach := $Approach as TextureRect
-onready var sprite := $Approach/Sprite as TextureRect
-onready var label := $Approach/Label as Label
+onready var sprite := $Sprite as TextureRect
+onready var label := $Label as Label
 
 
 func _ready() -> void:
@@ -28,10 +27,10 @@ func _ready() -> void:
 	var approach_tween := root_viewport.new_tween(SceneTreeTween.new()).set_ease(Tween.EASE_OUT).set_parallel()
 
 	## Comment
-	var _size_tween := approach_tween.tween_property(approach, "rect_size", approach.rect_size * 0.1, length)
+	var _size_tween := approach_tween.tween_property(self, "rect_size", rect_size * 0.1, length)
 
 	## Comment
-	var _position_tween := approach_tween.tween_property(approach, "rect_position", approach.rect_position + approach.rect_size * 0.45, length)
+	var _position_tween := approach_tween.tween_property(self, "rect_position", rect_position + rect_size * 0.45, length)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
 	var _tween := _tween_modulate(1)
@@ -41,7 +40,7 @@ func _ready() -> void:
 
 ## See [HitObject].
 func apply_skin() -> void:
-	approach.texture = root_viewport.skin.spinner_approach
+	texture = root_viewport.skin.spinner_approach
 	sprite.texture = root_viewport.skin.spinner_circle
 
 
@@ -95,10 +94,10 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 			break
 
 		_cur_hit_count += 1
-		emit_signal("score_added", Score.SPINNER, false)
+		emit_signal("score_added", Score.SPINNER, true)
 		not_hit = false
 		if _cur_hit_count == _needed_hits:
-			_spinner_finished(int(Score.ACCURATE))
+			_spinner_finished(int(Score.ACCURATE), false)
 			break
 
 	if not_hit:
@@ -116,7 +115,7 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 ## See [HitObject].
 func miss_check(hit_time: float) -> bool:
 	if hit_time > end_time:
-		_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE))
+		_spinner_finished(int(Score.MISS if _needed_hits / 2.0 > _cur_hit_count else Score.INACCURATE), true)
 		return false
 
 	return true
@@ -128,10 +127,10 @@ func _count_text() -> void:
 
 
 ## Set this [Spinner] to the FINISHED [member HitObject.State].
-func _spinner_finished(type: int) -> void:
+func _spinner_finished(type: int, marker: bool) -> void:
 	if state != int(State.FINISHED):
 		state = int(State.FINISHED)
-		emit_signal("score_added", type, false)
+		emit_signal("score_added", type, marker)
 		GlobalTools.send_signal(self, "finished", _tween_modulate(0), "queue_free")
 
 
