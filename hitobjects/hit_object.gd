@@ -1,11 +1,14 @@
 class_name HitObject
-extends KinematicBody2D
+extends Control
 
 ## Signals DrumVisual when a hit sound should be played.
 signal audio_played(key)
 
 ## Signals [Gameplay] when a score should be added.
 signal score_added(type, marker)
+
+## Comment
+const FINISHER_SCALE := 1.6
 
 ## The possible scores of a [HitObject]:
 ## 0 (ACCURATE): 300 points and 100% accuracy. Applies to all [HitObject]s.
@@ -41,18 +44,14 @@ var timing := 0.0
 ## The [member State] of this [HitObject]. Applies to all [HitObject]s.
 var state := 0
 
-onready var visibility_notifier := $VisibilityNotifier2D as VisibilityNotifier2D
+onready var root_viewport := $"/root" as Root
 
 
 func _ready() -> void:
 	hide()
-	GlobalTools.send_signal(self, "screen_entered", visibility_notifier, "show")
-	GlobalTools.send_signal(self, "screen_exited", visibility_notifier, "hide")
-	if finisher:
-		(get_child(1) as Control).rect_scale *= 1.6
-		visibility_notifier.scale *= 1.6
-
 	add_to_group("HitObjects")
+	add_to_group("Skinnables")
+	move(1, timing)
 	state = int(State.READY)
 
 
@@ -64,7 +63,7 @@ func activate() -> void:
 
 ## Apply a skin to this [HitObject]. Intended to be implemented by child classes.
 func apply_skin() -> void:
-	pass
+	modulate = root_viewport.skin.barline_color
 
 
 ## Comment
@@ -151,6 +150,6 @@ func miss_check(_hit_time: float) -> bool:
 
 
 ## Comment
-func move(cur_time: float) -> void:
-	if state > int(State.READY):
-		position.x = speed * (timing - cur_time)
+func move(visible_x: float, cur_time: float) -> void:
+	rect_position.x = speed * (timing - cur_time)
+	visible = -visible_x < rect_position.x and rect_position.x < visible_x

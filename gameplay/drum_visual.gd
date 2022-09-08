@@ -28,10 +28,16 @@ onready var combo_label := $Combo as Label
 
 
 func _ready() -> void:
+	add_to_group("Skinnables")
+	apply_skin()
 	l_don_obj.modulate.a = 0
 	l_kat_obj.modulate.a = 0
 	r_don_obj.modulate.a = 0
 	r_kat_obj.modulate.a = 0
+
+
+## Comment
+func apply_skin() -> void:
 	combo_break_aud.stream = root_viewport.skin.combo_break
 	f_don_aud.stream = root_viewport.skin.hit_finish
 	f_kat_aud.stream = root_viewport.skin.hit_whistle
@@ -57,7 +63,7 @@ func keypress_animation(key: String) -> SceneTreeTween:
 	var drum_obj: Node
 
 	## Comment
-	var scene_tween := SceneTreeTween.new()
+	var scene_tween: SceneTreeTween
 
 	match key:
 		"LeftDon":

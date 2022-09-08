@@ -10,13 +10,19 @@ signal hit_error_changed
 signal late_early_changed
 
 ## Comment
-const CONFIG_PATH := "config.ini"
-
-## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 ## Comment
-var game_path := "user://"
+const CONFIG_PATH := "config.ini"
+
+## Comment
+const STORAGE_PATH := "user://storage.ini"
+
+## Comment
+var skin := SkinManager.new()
+
+## Comment
+var game_path := OS.get_user_data_dir()
 
 ## Comment
 var global_offset := 0
@@ -65,9 +71,6 @@ var spinner_warn_object: PackedScene
 
 ## Comment
 var tick_object: PackedScene
-
-## Comment
-var skin: SkinManager
 
 ## Comment
 var accuracy: String
@@ -125,6 +128,13 @@ var _next_scene := PackedScene.new()
 
 
 func _init() -> void:
+	## Comment
+	var storage_file := File.new()
+
+	if not storage_file.open(STORAGE_PATH, File.READ):
+		game_path = storage_file.get_as_text()
+		storage_file.close()
+
 	music = $Background/Music as AudioStreamPlayer
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
 	bars = load("res://root/bars.tscn") as PackedScene
@@ -137,7 +147,6 @@ func _init() -> void:
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
-	skin = SkinManager.new()
 	accuracy = ""
 	artist = ""
 	charter = ""
@@ -181,6 +190,12 @@ func change_key(event: InputEvent, button: String) -> void:
 	InputMap.action_erase_events(str(button))
 	InputMap.action_add_event(str(button), event)
 	save_settings()
+
+
+## Comment
+func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
+	skin = SkinManager.new(new_text)
+	get_tree().call_group("Skinnables", "apply_skin")
 
 
 ## Comment
@@ -271,6 +286,6 @@ func toggle_fullscreen(new_visible: bool) -> void:
 
 
 ## Comment
-func toggle_settings(node_name: String) -> void:
+func toggle_settings() -> void:
 	if not remove_scene("SettingsPanel"):
-		add_scene(settings_panel.instance(), node_name)
+		add_scene(settings_panel.instance(), get_child(1).name)

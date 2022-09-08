@@ -39,7 +39,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gameplay/hit_error.gd"
 }, {
-"base": "KinematicBody2D",
+"base": "Control",
 "class": "HitObject",
 "language": "GDScript",
 "path": "res://hitobjects/hit_object.gd"

@@ -4,14 +4,11 @@ extends HitObject
 ## The [SceneTreeTween] used to fade this [Spinner] in and out.
 var _modulate_tween := SceneTreeTween.new()
 
-## The [SceneTreeTween] used to tween this [Spinner]'s [member _current_speed].
+## The [SceneTreeTween] used to tween this [Spinner]'s rotational speed.
 var _speed_tween := SceneTreeTween.new()
 
 ## Whether or not this [Spinner]'s first hit is a don or kat.
 var _first_hit_is_kat := false
-
-## The current rotational speed of this [Spinner].
-var _current_speed := 0.0
 
 ## The number of hits received by this [Spinner].
 var _cur_hit_count := 0
@@ -19,28 +16,27 @@ var _cur_hit_count := 0
 ## The number of hits required for an ACCURATE [member HitObject.Score] for this [Spinner].
 var _needed_hits := 0
 
-onready var root_viewport := $"/root" as Root
-onready var rotation_obj := $RotationObj as Node2D
-onready var sprite := $RotationObj/Sprite as TextureRect
 onready var approach := $Approach as TextureRect
-onready var label := $Label as Label
+onready var sprite := $Approach/Sprite as TextureRect
+onready var label := $Approach/Label as Label
 
 
 func _ready() -> void:
 	_count_text()
 
-	## The [PropertyTweener] that's used to tween the approach circle of this [Spinner].
-	var _approach_tween := root_viewport.new_tween(SceneTreeTween.new()).tween_property(approach, "rect_scale", Vector2(0.1, 0.1), length).set_ease(Tween.EASE_OUT)
+	## Comment
+	var approach_tween := root_viewport.new_tween(SceneTreeTween.new()).set_ease(Tween.EASE_OUT).set_parallel()
+
+	## Comment
+	var _size_tween := approach_tween.tween_property(approach, "rect_size", approach.rect_size * 0.1, length)
+
+	## Comment
+	var _position_tween := approach_tween.tween_property(approach, "rect_position", approach.rect_position + approach.rect_size * 0.45, length)
 
 	## The [PropertyTweener] used to fade in this [Spinner].
 	var _tween := _tween_modulate(1)
 
 	.activate()
-
-
-func _process(_delta: float) -> void:
-	if state == int(State.ACTIVE):
-		rotation_obj.rotation_degrees += _current_speed
 
 
 ## See [HitObject].
@@ -71,9 +67,9 @@ func change_properties(new_timing: float, new_length: float, new_hits: int) -> v
 	_needed_hits = int(max(1, new_hits))
 
 
-## Change this [Spinner]'s [member _current_speed].
+## Change this [Spinner]'s rotational speed.
 func change_speed(new_speed: float) -> void:
-	_current_speed = new_speed
+	sprite.rect_rotation += new_speed
 
 
 ## See [HitObject].
@@ -111,7 +107,7 @@ func hit(inputs: Array, _hit_time: float) -> bool:
 	_count_text()
 	_speed_tween = root_viewport.new_tween(_speed_tween).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
 
-	## The [MethodTweener] that's used to tween this [Spinner]'s [member _current_speed].
+	## The [MethodTweener] that's used to tween this [Spinner]'s rotational speed.
 	var _tween := _speed_tween.tween_method(self, "change_speed", 3, 0, 1)
 
 	return false

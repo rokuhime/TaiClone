@@ -3,18 +3,13 @@
 [ext_resource path="res://hitobjects/hit_object.tscn" type="PackedScene" id=1]
 [ext_resource path="res://hitobjects/roll.gd" type="Script" id=2]
 
-[node name="RollObject" type="KinematicBody2D"]
+[node name="Roll" type="Control"]
 script = ExtResource( 2 )
 
-[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
-rect = Rect2( -67, -67, 198, 134 )
-
 [node name="Body" type="TextureRect" parent="."]
-modulate = Color( 1, 1, 1, 0.490196 )
 margin_top = -64.0
 margin_right = 128.0
 margin_bottom = 64.0
-rect_pivot_offset = Vector2( 0, 64 )
 expand = true
 
 [node name="End" type="TextureRect" parent="Body"]
@@ -24,6 +19,10 @@ anchor_bottom = 1.0
 margin_right = 64.0
 expand = true
 
-[node name="Head" parent="." instance=ExtResource( 1 )]
+[node name="Head" parent="Body" instance=ExtResource( 1 )]
+margin_top = 0.0
+margin_bottom = 128.0
 
-[node name="TickContainer" type="Control" parent="."]
+[node name="TickContainer" type="Control" parent="Body"]
+anchor_top = 0.5
+anchor_bottom = 0.5

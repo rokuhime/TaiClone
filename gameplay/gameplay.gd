@@ -79,15 +79,15 @@ onready var debug_text := $Debug/DebugText as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var play_button := $Debug/TempLoadChart/PlayButton as Button
 onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
+onready var settings_button := $Debug/TempLoadChart/SettingsButton as Button
 
 
 func _ready() -> void:
+	GlobalTools.send_signal(root_viewport, "button_up", settings_button, "toggle_settings")
 	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
-	bar_right.texture = root_viewport.skin.bar_right_texture
-	hit_point.texture = root_viewport.skin.big_circle
-	hit_point_rim.texture = root_viewport.skin.approach_circle
-	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+	add_to_group("Skinnables")
+	apply_skin()
 	kiai_glow.modulate.a = 0
 	last_hit_score.modulate.a = 0
 	root_viewport.music.stop()
@@ -106,11 +106,11 @@ func _ready() -> void:
 	## Comment
 	var _bars_removed := root_viewport.remove_scene("Bars")
 
-	if not _f.file_exists(ChartLoader.FUS):
+	if not _f.file_exists(root_viewport.game_path.plus_file(ChartLoader.FUS)):
 		_load_finish("Invalid file!")
 		return
 
-	if _f.open(ChartLoader.FUS, File.READ):
+	if _f.open(root_viewport.game_path.plus_file(ChartLoader.FUS), File.READ):
 		_load_finish("Unable to read temporary .fus file!")
 		return
 
@@ -219,7 +219,7 @@ func _process(_delta: float) -> void:
 		## Comment
 		var hit_object := obj_container.get_child(i) as HitObject
 
-		hit_object.move(_cur_time)
+		hit_object.move(bar_right.rect_size.x, _cur_time)
 		if check_misses and hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0)):
 			check_auto = true
 			check_misses = false
@@ -372,6 +372,14 @@ func add_score(type: int, marker := false) -> void:
 
 
 ## Comment
+func apply_skin() -> void:
+	bar_right.texture = root_viewport.skin.bar_right_texture
+	hit_point.texture = root_viewport.skin.big_circle
+	hit_point_rim.texture = root_viewport.skin.approach_circle
+	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+
+
+## Comment
 func auto_toggled(new_auto: bool) -> void:
 	_auto = new_auto
 
@@ -404,7 +412,7 @@ func change_late_early() -> void:
 
 ## Comment
 func load_func() -> void:
-	ChartLoader.load_chart(line_edit.text.replace("\\", "/"))
+	ChartLoader.load_chart(root_viewport.game_path, line_edit.text.replace("\\", "/"))
 	root_viewport.add_blackout(root_viewport.gameplay)
 
 
@@ -419,11 +427,6 @@ func play_button_pressed() -> void:
 		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
 		_active = true
 		get_tree().call_group("HitObjects", "activate")
-
-
-## Comment
-func toggle_settings() -> void:
-	root_viewport.toggle_settings(name)
 
 
 ## Comment

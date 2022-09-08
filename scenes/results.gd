@@ -29,10 +29,8 @@ onready var early_error_bar := $RightBar/ErrorBar/Early as CanvasItem
 
 
 func _ready() -> void:
-	early_error_bar.modulate = root_viewport.skin.early_color
-	early_hit_count.modulate = root_viewport.skin.early_color
-	late_error_bar.modulate = root_viewport.skin.late_color
-	late_hit_count.modulate = root_viewport.skin.late_color
+	add_to_group("Skinnables")
+	apply_skin()
 	accuracy_label.text = root_viewport.accuracy + "%"
 	accurate_amount.text = str(root_viewport.accurate_count - root_viewport.f_accurate_count)
 	combo_label.text = str(root_viewport.combo)
@@ -43,11 +41,6 @@ func _ready() -> void:
 	late_hit_count_amount.text = str(root_viewport.late_count)
 	max_combo_label.text = "/" + str(root_viewport.max_combo)
 	miss_amount.text = str(root_viewport.miss_count)
-	accurate_texture.texture = root_viewport.skin.accurate_judgement
-	f_accurate_texture.texture = root_viewport.skin.accurate_judgement
-	f_inaccurate_texture.texture = root_viewport.skin.inaccurate_judgement
-	inaccurate_texture.texture = root_viewport.skin.inaccurate_judgement
-	miss_texture.texture = root_viewport.skin.miss_judgement
 	_animation_tween = root_viewport.new_tween(_animation_tween).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
 
 	## Comment
@@ -59,10 +52,20 @@ func _ready() -> void:
 	## Comment
 	var _right_tween := _animation_tween.tween_property(right_bar, "rect_position:x", 591.0, 1).from(87.0)
 
-	## Comment
-	var _settings_removed := root_viewport.remove_scene("SettingsPanel")
-
 	root_viewport.add_scene(root_viewport.bars.instance())
+
+
+## Comment
+func apply_skin() -> void:
+	early_error_bar.modulate = root_viewport.skin.early_color
+	early_hit_count.modulate = root_viewport.skin.early_color
+	late_error_bar.modulate = root_viewport.skin.late_color
+	late_hit_count.modulate = root_viewport.skin.late_color
+	accurate_texture.texture = root_viewport.skin.accurate_judgement
+	f_accurate_texture.texture = root_viewport.skin.accurate_judgement
+	f_inaccurate_texture.texture = root_viewport.skin.inaccurate_judgement
+	inaccurate_texture.texture = root_viewport.skin.inaccurate_judgement
+	miss_texture.texture = root_viewport.skin.miss_judgement
 
 
 ##doesnt belong here but for now /shrug
