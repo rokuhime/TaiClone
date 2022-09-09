@@ -5,7 +5,7 @@ extends HitObject
 signal object_added(hit_object, loaded)
 
 ## The BPM of the chart when the [Spinner] starts. Used to determine the number of hits required.
-var _bpm := 1.0
+var _bpm := -1.0
 
 
 ## See [HitObject].

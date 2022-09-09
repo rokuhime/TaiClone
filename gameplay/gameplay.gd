@@ -176,6 +176,12 @@ func _ready() -> void:
 
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])
+
+				## Comment
+				var hit_object := root_viewport.timing_point_object.instance() as TimingPoint
+
+				hit_object.change_properties(timing, int(line_data[3]), cur_bpm)
+				add_object(hit_object)
 				if bool(int(line_data[3])) != current_kiai:
 					current_kiai = not current_kiai
 					if _next_kiai < 0:
@@ -255,6 +261,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if GlobalTools.inputs_empty(inputs):
 		return
 
+	# ZMTT TODO: Fix kiai
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
 		var hit_object := obj_container.get_child(i) as HitObject

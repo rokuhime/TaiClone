@@ -73,6 +73,9 @@ var spinner_warn_object: PackedScene
 var tick_object: PackedScene
 
 ## Comment
+var timing_point_object: PackedScene
+
+## Comment
 var skin: SkinManager
 
 ## Comment
@@ -150,6 +153,7 @@ func _init() -> void:
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
+	timing_point_object = load("res://hitobjects/timing_point.tscn") as PackedScene
 	accuracy = ""
 	artist = ""
 	charter = ""

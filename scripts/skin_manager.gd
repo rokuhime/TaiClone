@@ -954,12 +954,14 @@ func _init(skin_path: String) -> void:
 
 			"taikobigcircleoverlay":
 				big_circle_overlay = _get_texture(skin_path, str(key), cur_files, ["_0.png"], "_", true, 2)
+				big_circle_overlay.pause = true
 
 			"taikohitcircle":
 				hit_circle = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			"taikohitcircleoverlay":
 				hit_circle_overlay = _get_texture(skin_path, str(key), cur_files, ["_0.png"], "_", true, 2)
+				hit_circle_overlay.pause = true
 
 			#"welcome_text":
 			#	welcome_text = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
