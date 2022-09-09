@@ -75,7 +75,7 @@ onready var ui_score := $UI/Score as Label
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var song_progress := $UI/SongProgress as ProgressBar
-onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
+#onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
 onready var debug_text := $Debug/DebugText as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var play_button := $Debug/TempLoadChart/PlayButton as Button
@@ -134,7 +134,7 @@ func _ready() -> void:
 		var line_data := _f.get_csv_line()
 
 		## Comment
-		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
+		var timing := float(line_data[0])
 
 		## Comment
 		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
@@ -197,8 +197,8 @@ func _process(_delta: float) -> void:
 	if not _active:
 		return
 
-	_cur_time = (Time.get_ticks_usec() - _time_begin - root_viewport.global_offset * 1000) / 1000000
-	break_progress.value = 100 - (_cur_time * 100 / _first_note_time)
+	_cur_time = (Time.get_ticks_usec() / 1000.0 - root_viewport.global_offset) / 1000 - _time_begin
+	#break_progress.value = 100 - (_cur_time * 100 / _first_note_time)
 	song_progress.value = (_cur_time - _first_note_time) * 100 / (_last_note_time - _first_note_time)
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
@@ -269,7 +269,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		if k_event.pressed and k_event.scancode == KEY_SPACE and _cur_time < _first_note_time - 1:
 			root_viewport.music.seek(_first_note_time - 1)
-			_time_begin -= (_first_note_time - 1 - _cur_time) * 1000000
+			_time_begin -= _first_note_time - 1 - _cur_time
 
 	## Comment
 	var inputs := [2]
@@ -460,8 +460,14 @@ func play_button_pressed() -> void:
 
 	else:
 		play_button.text = "Stop"
-		root_viewport.music.play()
-		_time_begin += Time.get_ticks_usec() + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
+		_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+		if _first_note_time < 1:
+			_time_begin += 1 - _first_note_time
+			GlobalTools.send_signal(root_viewport.music, "timeout", get_tree().create_timer(1 - _first_note_time), "play")
+
+		else:
+			root_viewport.music.play()
+
 		_active = true
 		get_tree().call_group("HitObjects", "activate")
 
