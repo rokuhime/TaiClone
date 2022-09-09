@@ -84,6 +84,7 @@ onready var settings_button := $Debug/TempLoadChart/SettingsButton as Button
 
 
 func _ready() -> void:
+	Engine.target_fps = 0
 	GlobalTools.send_signal(root_viewport, "button_up", settings_button, "toggle_settings")
 	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()

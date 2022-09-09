@@ -124,7 +124,9 @@ _global_script_class_icons={
 
 config/name="TaiClone"
 run/main_scene="res://root/root.tscn"
-boot_splash/show_image=false
+boot_splash/image="res://temporary/sdsddsd.png"
+boot_splash/fullsize=false
+boot_splash/bg_color=Color( 1, 1, 1, 1 )
 run/main_loop_type="TaiClone"
 
 [debug]
