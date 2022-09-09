@@ -225,12 +225,9 @@ func _process(_delta: float) -> void:
 				_cur_spb = 60 / timing_point.bpm
 				_cur_animation_time = timing_point.timing + _cur_spb
 
-				## Comment
-				var pippidon_texture := pippidon.texture as AnimatedTexture
-
 				if _in_kiai != timing_point.is_kiai:
 					_in_kiai = timing_point.is_kiai
-					pippidon_texture = root_viewport.skin.pippidon_kiai if _in_kiai else root_viewport.skin.pippidon_idle
+					apply_skin()
 					_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
 
 					## Comment
@@ -239,6 +236,10 @@ func _process(_delta: float) -> void:
 				check_auto = false
 				root_viewport.skin.big_circle_overlay.current_frame = 0
 				root_viewport.skin.hit_circle_overlay.current_frame = 0
+
+				## Comment
+				var pippidon_texture := pippidon.texture as AnimatedTexture
+
 				pippidon_texture.current_frame = 0
 				pippidon.texture = pippidon_texture
 
@@ -410,11 +411,11 @@ func add_score(type: int, marker := true) -> void:
 
 ## Comment
 func apply_skin() -> void:
-	bar_right.texture = root_viewport.skin.bar_right_texture
+	bar_right.texture = root_viewport.skin.bar_right_glow if _in_kiai else root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
 	hit_point_rim.texture = root_viewport.skin.approach_circle
 	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
-	pippidon.texture = root_viewport.skin.pippidon_idle
+	pippidon.texture = root_viewport.skin.pippidon_kiai if _in_kiai else root_viewport.skin.pippidon_idle
 
 
 ## Comment

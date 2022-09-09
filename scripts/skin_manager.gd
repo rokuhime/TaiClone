@@ -73,7 +73,7 @@ var accurate_judgement: AnimatedTexture
 var f_accurate_judgement: AnimatedTexture
 
 ## Comment
-#var f_accurate_results: Texture
+var f_accurate_results: Texture
 
 ## Comment
 var big_circle: Texture
@@ -118,7 +118,7 @@ var kat_texture: Texture
 var bar_right_texture: Texture
 
 ## Comment
-#var bar_right_glow: Texture
+var bar_right_glow: Texture
 
 ## Comment
 var roll_middle: Texture
@@ -889,8 +889,12 @@ func _init(skin_path: String) -> void:
 			"taiko_bar_right":
 				bar_right_texture = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
-			#"taiko_bar_right_glow":
-			#	bar_right_glow = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
+			"taiko_bar_right_glow":
+				if cur_files.empty():
+					bar_right_glow = bar_right_texture
+
+				else:
+					bar_right_glow = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			"taiko_drum_inner":
 				don_texture = _get_texture(skin_path, str(key), cur_files, [".png"], "-", false).get_frame_texture(0)
@@ -920,8 +924,12 @@ func _init(skin_path: String) -> void:
 				accurate_judgement = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false)
 				accurate_judgement.oneshot = true
 
-			#"taiko_hit300g":
-			#	f_accurate_results = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false).get_frame_texture(0)
+			"taiko_hit300g":
+				if cur_files.empty():
+					f_accurate_results = accurate_judgement.get_frame_texture(0)
+
+				else:
+					f_accurate_results = _get_texture(skin_path, str(key), cur_files, [], "_", false).get_frame_texture(0)
 
 			"taiko_hit300k":
 				f_accurate_judgement = _get_texture(skin_path, str(key), cur_files, [".png"], "_", false)
