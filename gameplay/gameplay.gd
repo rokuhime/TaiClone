@@ -14,9 +14,6 @@ signal key_pressed(key)
 signal marker_added(type, timing, indicate)
 
 ## Comment
-var _kiai_timing_points := []
-
-## Comment
 var _f := File.new()
 
 ## Comment
@@ -44,6 +41,12 @@ var _auto_left := true
 var _in_kiai := false
 
 ## Comment
+var _cur_animation_time := 0.0
+
+## Comment
+var _cur_bpm := 0.0
+
+## Comment
 var _cur_time := 0.0
 
 ## the time for the first note in the chart
@@ -51,9 +54,6 @@ var _first_note_time := -1.0
 
 ## the time for the last note in the chart
 var _last_note_time := -1.0
-
-## Comment
-var _next_kiai := -1.0
 
 ## Comment
 var _time_begin := 0.0
@@ -135,11 +135,6 @@ func _ready() -> void:
 		## Comment
 		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
 
-		_last_note_time = timing
-
-		## Comment
-		var current_kiai := false
-
 		## Comment
 		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
 
@@ -182,13 +177,6 @@ func _ready() -> void:
 
 				hit_object.change_properties(timing, int(line_data[3]), cur_bpm)
 				add_object(hit_object)
-				if bool(int(line_data[3])) != current_kiai:
-					current_kiai = not current_kiai
-					if _next_kiai < 0:
-						_next_kiai = timing
-
-					else:
-						_kiai_timing_points.append(timing)
 
 	get_tree().call_group("HitObjects", "apply_skin")
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
@@ -207,14 +195,6 @@ func _process(_delta: float) -> void:
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
 
-	while _cur_time > _next_kiai and _next_kiai > 0:
-		_in_kiai = not _in_kiai
-		_next_kiai = -1.0 if _kiai_timing_points.empty() else float(_kiai_timing_points.pop_front())
-		_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
-
-		## Comment
-		var _tween := _kiai_tween.tween_property(kiai_glow, "modulate:a", float(_in_kiai), 0.1)
-
 	## Comment
 	var check_auto := false
 
@@ -226,9 +206,23 @@ func _process(_delta: float) -> void:
 		var hit_object := obj_container.get_child(i) as HitObject
 
 		hit_object.move(bar_right.rect_size.x, _cur_time)
-		if check_misses and hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0)):
-			check_auto = true
-			check_misses = false
+		if check_misses:
+			check_auto = hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0))
+			check_misses = not check_auto
+			if check_misses and hit_object is TimingPoint:
+				## Comment
+				var timing_point := hit_object as TimingPoint
+
+				_cur_animation_time = timing_point.timing
+				_cur_bpm = timing_point.bpm
+				if _in_kiai != timing_point.is_kiai:
+					_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
+
+					## Comment
+					var _tween := _kiai_tween.tween_property(kiai_glow, "modulate:a", float(_in_kiai), 0.1)
+
+				_in_kiai = timing_point.is_kiai
+				check_auto = false
 
 		if _auto and check_auto:
 			## Comment
@@ -239,6 +233,11 @@ func _process(_delta: float) -> void:
 
 			elif hit_auto:
 				_auto_left = not _auto_left
+
+	while _cur_bpm and _cur_time >= _cur_animation_time:
+		root_viewport.skin.big_circle_overlay.current_frame = (root_viewport.skin.big_circle_overlay.current_frame + 1) % root_viewport.skin.big_circle_overlay.frames
+		root_viewport.skin.hit_circle_overlay.current_frame = (root_viewport.skin.hit_circle_overlay.current_frame + 1) % root_viewport.skin.hit_circle_overlay.frames
+		_cur_animation_time += 60 / _cur_bpm
 
 
 func _unhandled_input(event: InputEvent) -> void:
