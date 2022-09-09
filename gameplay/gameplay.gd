@@ -70,6 +70,7 @@ onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
 onready var timing_indicator := $BarRight/HitPointOffset/TimingIndicator as Label
 onready var drum_visual := $BarRight/DrumVisual
+onready var pippidon := $Pippidon as TextureRect
 onready var ui_score := $UI/Score as Label
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
@@ -215,7 +216,12 @@ func _process(_delta: float) -> void:
 
 				_cur_animation_time = timing_point.timing
 				_cur_bpm = timing_point.bpm
+
+				## Comment
+				var pippidon_texture := pippidon.texture as AnimatedTexture
+
 				if _in_kiai != timing_point.is_kiai:
+					pippidon_texture = root_viewport.skin.pippidon_kiai if _in_kiai else root_viewport.skin.pippidon_idle
 					_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
 
 					## Comment
@@ -223,6 +229,10 @@ func _process(_delta: float) -> void:
 
 				_in_kiai = timing_point.is_kiai
 				check_auto = false
+				root_viewport.skin.big_circle_overlay.current_frame = root_viewport.skin.big_circle_overlay.frames - 1
+				root_viewport.skin.hit_circle_overlay.current_frame = root_viewport.skin.hit_circle_overlay.frames - 1
+				pippidon_texture.current_frame = pippidon_texture.frames - 1
+				pippidon.texture = pippidon_texture
 
 		if _auto and check_auto:
 			## Comment
@@ -237,6 +247,11 @@ func _process(_delta: float) -> void:
 	while _cur_bpm and _cur_time >= _cur_animation_time:
 		root_viewport.skin.big_circle_overlay.current_frame = (root_viewport.skin.big_circle_overlay.current_frame + 1) % root_viewport.skin.big_circle_overlay.frames
 		root_viewport.skin.hit_circle_overlay.current_frame = (root_viewport.skin.hit_circle_overlay.current_frame + 1) % root_viewport.skin.hit_circle_overlay.frames
+
+		## Comment
+		var pippidon_texture := pippidon.texture as AnimatedTexture
+
+		pippidon_texture.current_frame = (pippidon_texture.current_frame + 1) % pippidon_texture.frames
 		_cur_animation_time += 60 / _cur_bpm
 
 
@@ -395,6 +410,7 @@ func apply_skin() -> void:
 	hit_point.texture = root_viewport.skin.big_circle
 	hit_point_rim.texture = root_viewport.skin.approach_circle
 	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+	pippidon.texture = root_viewport.skin.pippidon_idle
 
 
 ## Comment

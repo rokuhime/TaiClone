@@ -52,10 +52,10 @@ var roll_color: Color
 #var pippidon_fail: AnimatedTexture
 
 ## Comment
-#var pippidon_idle: AnimatedTexture
+var pippidon_idle: AnimatedTexture
 
 ## Comment
-#var pippidon_kiai: AnimatedTexture
+var pippidon_kiai: AnimatedTexture
 
 ## The texture of a judgement with a MISS [member HitObject.Score].
 var miss_judgement: AnimatedTexture
@@ -632,17 +632,19 @@ func _init(skin_path: String) -> void:
 			#	pause_retry = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			#"pippidonclear":
-			#	pippidon_clear = _get_texture(skin_path, str(key), cur_files, [], "", true, 7)
+			#	pippidon_clear = _get_texture(skin_path, str(key), cur_files, [], "", false, 7)
 			#	# ZMTT TODO: Special Animation
 
 			#"pippidonfail":
-			#	pippidon_fail = _get_texture(skin_path, str(key), cur_files, [], "")
+			#	pippidon_fail = _get_texture(skin_path, str(key), cur_files, [], "", false)
 
-			#"pippidonidle":
-			#	pippidon_idle = _get_texture(skin_path, str(key), cur_files, [], "")
+			"pippidonidle":
+				pippidon_idle = _get_texture(skin_path, str(key), cur_files, ["0.png", "1.png"], "", false)
+				pippidon_idle.pause = true
 
-			#"pippidonkiai":
-			#	pippidon_kiai = _get_texture(skin_path, str(key), cur_files, [], "")
+			"pippidonkiai":
+				pippidon_kiai = _get_texture(skin_path, str(key), cur_files, ["0.png", "1.png"], "", false)
+				pippidon_kiai.pause = true
 
 			#"play_skip":
 			#	play_skip = _get_texture(skin_path, str(key), cur_files, [], "_")
