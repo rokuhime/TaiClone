@@ -127,7 +127,7 @@ var score: int
 var _background := $"Background" as TextureRect
 
 ## Comment
-var _blackout := load("res://root/blackout.tscn") as PackedScene
+var _blackout := load("res://scenes/blackout.tscn") as PackedScene
 
 ## Comment
 var _next_scene := PackedScene.new()
@@ -149,7 +149,7 @@ func _init() -> void:
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
-	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
+	settings_panel = load("res://settings_panel/settings_panel.tscn") as PackedScene
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene

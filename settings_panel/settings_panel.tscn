@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://gui/buffer.tscn" type="PackedScene" id=1]
-[ext_resource path="res://root/settings_panel.gd" type="Script" id=2]
+[ext_resource path="res://settings_panel/buffer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://settings_panel/settings_panel.gd" type="Script" id=2]
 
 [node name="SettingsPanel" type="PanelContainer"]
 anchor_left = 1.0
