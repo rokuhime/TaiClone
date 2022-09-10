@@ -19,7 +19,7 @@ const CONFIG_PATH := "config.ini"
 const STORAGE_PATH := "user://storage.ini"
 
 ## Comment
-var skin := SkinManager.new()
+var skin_path := SkinManager.DEFAULT_SKIN_PATH
 
 ## Comment
 var game_path := OS.get_user_data_dir()
@@ -71,6 +71,12 @@ var spinner_warn_object: PackedScene
 
 ## Comment
 var tick_object: PackedScene
+
+## Comment
+var timing_point_object: PackedScene
+
+## Comment
+var skin: SkinManager
 
 ## Comment
 var accuracy: String
@@ -147,6 +153,7 @@ func _init() -> void:
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
+	timing_point_object = load("res://hitobjects/timing_point.tscn") as PackedScene
 	accuracy = ""
 	artist = ""
 	charter = ""
@@ -195,6 +202,8 @@ func change_key(event: InputEvent, button: String) -> void:
 ## Comment
 func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
 	skin = SkinManager.new(new_text)
+	skin_path = new_text
+	save_settings()
 	get_tree().call_group("Skinnables", "apply_skin")
 
 
@@ -271,6 +280,7 @@ func save_settings() -> void:
 	config_file.set_value("Display", "ResolutionX", res.x)
 	config_file.set_value("Display", "ResolutionY", res.y)
 	config_file.set_value("Display", "Fullscreen", int(OS.window_fullscreen))
+	config_file.set_value("Display", "SkinPath", skin_path)
 	config_file.set_value("Audio", "GlobalOffset", global_offset)
 	for i in range(AudioServer.bus_count):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))

@@ -89,6 +89,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://hitobjects/tick.gd"
 }, {
+"base": "HitObject",
+"class": "TimingPoint",
+"language": "GDScript",
+"path": "res://hitobjects/timing_point.gd"
+}, {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
@@ -111,6 +116,7 @@ _global_script_class_icons={
 "SpinnerWarn": "",
 "TaiClone": "",
 "Tick": "",
+"TimingPoint": "",
 "VolumeControl": ""
 }
 
@@ -118,7 +124,9 @@ _global_script_class_icons={
 
 config/name="TaiClone"
 run/main_scene="res://root/root.tscn"
-boot_splash/show_image=false
+boot_splash/image="res://temporary/sdsddsd.png"
+boot_splash/fullsize=false
+boot_splash/bg_color=Color( 1, 1, 1, 1 )
 run/main_loop_type="TaiClone"
 
 [debug]

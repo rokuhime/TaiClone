@@ -14,9 +14,6 @@ signal key_pressed(key)
 signal marker_added(type, timing, indicate)
 
 ## Comment
-var _kiai_timing_points := []
-
-## Comment
 var _f := File.new()
 
 ## Comment
@@ -44,6 +41,12 @@ var _auto_left := true
 var _in_kiai := false
 
 ## Comment
+var _cur_animation_time := 0.0
+
+## Comment
+var _cur_spb := 0.0
+
+## Comment
 var _cur_time := 0.0
 
 ## the time for the first note in the chart
@@ -51,9 +54,6 @@ var _first_note_time := -1.0
 
 ## the time for the last note in the chart
 var _last_note_time := -1.0
-
-## Comment
-var _next_kiai := -1.0
 
 ## Comment
 var _time_begin := 0.0
@@ -70,11 +70,12 @@ onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
 onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
 onready var timing_indicator := $BarRight/HitPointOffset/TimingIndicator as Label
 onready var drum_visual := $BarRight/DrumVisual
+onready var pippidon := $Pippidon as TextureRect
 onready var ui_score := $UI/Score as Label
 onready var last_hit_score := $UI/LastHitScore as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var song_progress := $UI/SongProgress as ProgressBar
-onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
+#onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
 onready var debug_text := $Debug/DebugText as Label
 onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var play_button := $Debug/TempLoadChart/PlayButton as Button
@@ -83,6 +84,7 @@ onready var settings_button := $Debug/TempLoadChart/SettingsButton as Button
 
 
 func _ready() -> void:
+	Engine.target_fps = 0
 	GlobalTools.send_signal(root_viewport, "button_up", settings_button, "toggle_settings")
 	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
@@ -133,17 +135,19 @@ func _ready() -> void:
 		var line_data := _f.get_csv_line()
 
 		## Comment
-		var timing := float(line_data[0]) + root_viewport.global_offset / 1000.0
-
-		_last_note_time = timing
-
-		## Comment
-		var current_kiai := false
+		var timing := float(line_data[0])
 
 		## Comment
 		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
 
-		match int(line_data[2]):
+		## Comment
+		var note_type := int(line_data[2])
+
+		if note_type > ChartLoader.NoteType.BARLINE:
+			_first_note_time = min(_first_note_time if _first_note_time + 1 else timing, timing)
+			_last_note_time = max(_last_note_time if _last_note_time + 1 else timing, timing)
+
+		match note_type:
 			ChartLoader.NoteType.BARLINE:
 				## Comment
 				var hit_object := root_viewport.bar_line_object.instance() as BarLine
@@ -176,13 +180,12 @@ func _ready() -> void:
 
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])
-				if bool(int(line_data[3])) != current_kiai:
-					current_kiai = not current_kiai
-					if _next_kiai < 0:
-						_next_kiai = timing
 
-					else:
-						_kiai_timing_points.append(timing)
+				## Comment
+				var hit_object := root_viewport.timing_point_object.instance() as TimingPoint
+
+				hit_object.change_properties(timing, int(line_data[3]), cur_bpm)
+				add_object(hit_object)
 
 	get_tree().call_group("HitObjects", "apply_skin")
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
@@ -195,19 +198,11 @@ func _process(_delta: float) -> void:
 	if not _active:
 		return
 
-	_cur_time = (Time.get_ticks_usec() - _time_begin - root_viewport.global_offset * 1000) / 1000000
-	break_progress.value = 100 - (_cur_time * 100 / _first_note_time)
+	_cur_time = (Time.get_ticks_usec() / 1000.0 - root_viewport.global_offset) / 1000 - _time_begin
+	#break_progress.value = 100 - (_cur_time * 100 / _first_note_time)
 	song_progress.value = (_cur_time - _first_note_time) * 100 / (_last_note_time - _first_note_time)
 	if _cur_time > _last_note_time + 1:
 		_end_chart()
-
-	while _cur_time > _next_kiai and _next_kiai > 0:
-		_in_kiai = not _in_kiai
-		_next_kiai = -1.0 if _kiai_timing_points.empty() else float(_kiai_timing_points.pop_front())
-		_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
-
-		## Comment
-		var _tween := _kiai_tween.tween_property(kiai_glow, "modulate:a", float(_in_kiai), 0.1)
 
 	## Comment
 	var check_auto := false
@@ -220,9 +215,33 @@ func _process(_delta: float) -> void:
 		var hit_object := obj_container.get_child(i) as HitObject
 
 		hit_object.move(bar_right.rect_size.x, _cur_time)
-		if check_misses and hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0)):
-			check_auto = true
-			check_misses = false
+		if check_misses:
+			check_auto = hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0))
+			check_misses = not check_auto
+			if check_misses and hit_object is TimingPoint:
+				## Comment
+				var timing_point := hit_object as TimingPoint
+
+				_cur_spb = 60 / timing_point.bpm
+				_cur_animation_time = timing_point.timing + _cur_spb
+
+				if _in_kiai != timing_point.is_kiai:
+					_in_kiai = timing_point.is_kiai
+					apply_skin()
+					_kiai_tween = root_viewport.new_tween(_kiai_tween).set_trans(Tween.TRANS_QUART)
+
+					## Comment
+					var _tween := _kiai_tween.tween_property(kiai_glow, "modulate:a", float(_in_kiai), 0.1)
+
+				check_auto = false
+				root_viewport.skin.big_circle_overlay.current_frame = 0
+				root_viewport.skin.hit_circle_overlay.current_frame = 0
+
+				## Comment
+				var pippidon_texture := pippidon.texture as AnimatedTexture
+
+				pippidon_texture.current_frame = 0
+				pippidon.texture = pippidon_texture
 
 		if _auto and check_auto:
 			## Comment
@@ -234,15 +253,25 @@ func _process(_delta: float) -> void:
 			elif hit_auto:
 				_auto_left = not _auto_left
 
+	while _cur_spb and _cur_time >= _cur_animation_time:
+		root_viewport.skin.big_circle_overlay.current_frame = (root_viewport.skin.big_circle_overlay.current_frame + 1) % root_viewport.skin.big_circle_overlay.frames
+		root_viewport.skin.hit_circle_overlay.current_frame = (root_viewport.skin.hit_circle_overlay.current_frame + 1) % root_viewport.skin.hit_circle_overlay.frames
+
+		## Comment
+		var pippidon_texture := pippidon.texture as AnimatedTexture
+
+		pippidon_texture.current_frame = (pippidon_texture.current_frame + 1) % pippidon_texture.frames
+		_cur_animation_time += _cur_spb
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _active and event is InputEventKey:
 		## Comment
 		var k_event := event as InputEventKey
 
-		if k_event.pressed and k_event.scancode == KEY_SPACE:
-			skip_break()
-			return
+		if k_event.pressed and k_event.scancode == KEY_SPACE and _cur_time < _first_note_time - 1:
+			root_viewport.music.seek(_first_note_time - 1)
+			_time_begin -= _first_note_time - 1 - _cur_time
 
 	## Comment
 	var inputs := [2]
@@ -255,6 +284,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if GlobalTools.inputs_empty(inputs):
 		return
 
+	# ZMTT TODO: Fix kiai
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		## Comment
 		var hit_object := obj_container.get_child(i) as HitObject
@@ -290,10 +320,6 @@ func add_marker(timing: float, previous_timing: float) -> void:
 
 ## Comment
 func add_object(hit_object: HitObject, loaded := true) -> void:
-	if not hit_object is BarLine:
-		_first_note_time = min(_first_note_time if _first_note_time + 1 else hit_object.timing, hit_object.timing)
-		_last_note_time = max(_last_note_time if _last_note_time + 1 else hit_object.timing, hit_object.timing)
-
 	obj_container.add_child(hit_object)
 	for i in range(obj_container.get_child_count()):
 		if hit_object.end_time > (obj_container.get_child(i) as HitObject).end_time:
@@ -385,10 +411,11 @@ func add_score(type: int, marker := true) -> void:
 
 ## Comment
 func apply_skin() -> void:
-	bar_right.texture = root_viewport.skin.bar_right_texture
+	bar_right.texture = root_viewport.skin.bar_right_glow if _in_kiai else root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
 	hit_point_rim.texture = root_viewport.skin.approach_circle
 	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+	pippidon.texture = root_viewport.skin.pippidon_kiai if _in_kiai else root_viewport.skin.pippidon_idle
 
 
 ## Comment
@@ -435,8 +462,14 @@ func play_button_pressed() -> void:
 
 	else:
 		play_button.text = "Stop"
-		root_viewport.music.play()
-		_time_begin += Time.get_ticks_usec() - root_viewport.global_offset * 1000 + (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000000
+		_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+		if _first_note_time < 1:
+			_time_begin += 1 - _first_note_time
+			GlobalTools.send_signal(root_viewport.music, "timeout", get_tree().create_timer(1 - _first_note_time), "play")
+
+		else:
+			root_viewport.music.play()
+
 		_active = true
 		get_tree().call_group("HitObjects", "activate")
 
@@ -459,10 +492,3 @@ func _hit_notify_animation() -> void:
 func _load_finish(new_text: String) -> void:
 	_f.close()
 	debug_text.text = new_text
-
-
-## attempts to skip waiting at the beginning of charts, going right before the first note
-func skip_break() -> void:
-	print("attempted to skip break")
-	root_viewport.music.seek(_first_note_time - 1)
-	_time_begin -= (_first_note_time - _cur_time - 1) * 1000000

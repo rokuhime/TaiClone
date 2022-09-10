@@ -53,6 +53,7 @@ func _init() -> void:
 	_root_viewport.hit_error = bool(config_file.get_value("Display", "HitError", 1))
 	_root_viewport.res_changed(Vector2(config_file.get_value("Display", "ResolutionX", 1920), config_file.get_value("Display", "ResolutionY", 1080)))
 	_root_viewport.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
+	_root_viewport.change_skin(str(config_file.get_value("Display", "SkinPath", SkinManager.DEFAULT_SKIN_PATH)))
 	_root_viewport.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
 
 	## The [VolumeControl] instance. It requires initialization before being added as a scene.

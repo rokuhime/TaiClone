@@ -29,6 +29,7 @@ onready var early_error_bar := $RightBar/ErrorBar/Early as CanvasItem
 
 
 func _ready() -> void:
+	Engine.target_fps = 120
 	add_to_group("Skinnables")
 	apply_skin()
 	accuracy_label.text = root_viewport.accuracy + "%"
@@ -62,7 +63,7 @@ func apply_skin() -> void:
 	late_error_bar.modulate = root_viewport.skin.late_color
 	late_hit_count.modulate = root_viewport.skin.late_color
 	accurate_texture.texture = root_viewport.skin.accurate_judgement
-	f_accurate_texture.texture = root_viewport.skin.f_accurate_judgement
+	f_accurate_texture.texture = root_viewport.skin.f_accurate_results
 	f_inaccurate_texture.texture = root_viewport.skin.f_inaccurate_judgement
 	inaccurate_texture.texture = root_viewport.skin.inaccurate_judgement
 	miss_texture.texture = root_viewport.skin.miss_judgement
