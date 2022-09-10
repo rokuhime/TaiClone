@@ -143,7 +143,7 @@ func _init() -> void:
 
 	music = $Background/Music as AudioStreamPlayer
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://root/bars.tscn") as PackedScene
+	bars = load("res://bars/_bars.tscn") as PackedScene
 	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
 	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
 	note_object = load("res://hitobjects/note.tscn") as PackedScene

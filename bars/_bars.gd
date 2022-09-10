@@ -4,10 +4,12 @@ onready var root_viewport := $"/root" as Root
 onready var top := $Top
 onready var song_name := $Top/V/Top/SongName as Label
 onready var charter_name := $Top/V/Bottom/CharterName as Label
-onready var texture_rect := $Top/V/Bottom/TextureRect as TextureRect
+onready var top_texture := $Top/V/Bottom/TextureRect as TextureRect
 onready var difficulty_name_label := $Top/V/Bottom/DifficultyName as Label
 onready var play_date := $Top/V/Bottom/PlayDate as Label
 onready var bottom := $Bottom
+onready var profile_picture := $Bottom/Profile/Organizer/ProfilePicture as TextureRect
+onready var bottom_texture := $Bottom/Profile/Organizer/Info/Level/TextureRect as TextureRect
 
 
 func _ready() -> void:
@@ -30,7 +32,9 @@ func _ready() -> void:
 
 ## Comment
 func apply_skin() -> void:
-	texture_rect.texture = root_viewport.skin.big_circle
+	bottom_texture.texture = root_viewport.skin.tick_texture
+	profile_picture.texture = root_viewport.skin.mod_sudden_death
+	top_texture.texture = root_viewport.skin.big_circle
 
 
 ## Comment

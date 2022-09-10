@@ -683,7 +683,7 @@ func _init(skin_path: String) -> void:
 			#	ranking_s = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			"ranking_S_small":
-				ranking_s_small = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
+				ranking_s_small = _get_texture(skin_path, str(key), cur_files, ["@2x.png"]).get_frame_texture(0)
 
 			#"ranking_SH":
 			#	ranking_sh = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
@@ -832,7 +832,7 @@ func _init(skin_path: String) -> void:
 			#	mod_score = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
 			"selection_mod_suddendeath":
-				mod_sudden_death = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
+				mod_sudden_death = _get_texture(skin_path, str(key), cur_files, ["@2x.png"]).get_frame_texture(0)
 
 			#"selection_mod_touchdevice":
 			#	mod_touch_device = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
