@@ -17,37 +17,52 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "BarLine",
 "language": "GDScript",
-"path": "res://scripts/gameplay/bar_line.gd"
+"path": "res://hitobjects/bar_line.gd"
 }, {
-"base": "Node",
+"base": "Reference",
+"class": "ChartLoader",
+"language": "GDScript",
+"path": "res://scripts/chart_loader.gd"
+}, {
+"base": "Scene",
 "class": "Gameplay",
 "language": "GDScript",
-"path": "res://scripts/gameplay/gameplay.gd"
+"path": "res://gameplay/gameplay.gd"
 }, {
-"base": "KinematicBody2D",
+"base": "Reference",
+"class": "GlobalTools",
+"language": "GDScript",
+"path": "res://scripts/global_tools.gd"
+}, {
+"base": "Control",
+"class": "HitError",
+"language": "GDScript",
+"path": "res://gameplay/hit_error.gd"
+}, {
+"base": "TextureRect",
 "class": "HitObject",
 "language": "GDScript",
-"path": "res://scripts/gameplay/hit_object.gd"
+"path": "res://hitobjects/_hit_object.gd"
 }, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
-"path": "res://scripts/gameplay/note.gd"
+"path": "res://hitobjects/note.gd"
 }, {
 "base": "HitObject",
 "class": "Roll",
 "language": "GDScript",
-"path": "res://scripts/gameplay/roll.gd"
+"path": "res://hitobjects/roll.gd"
 }, {
 "base": "Viewport",
 "class": "Root",
 "language": "GDScript",
-"path": "res://scripts/root.gd"
+"path": "res://root/root.gd"
 }, {
-"base": "CanvasItem",
-"class": "SettingsPanel",
+"base": "Control",
+"class": "Scene",
 "language": "GDScript",
-"path": "res://scripts/root/settings_panel.gd"
+"path": "res://scripts/scene.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
@@ -57,12 +72,12 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "Spinner",
 "language": "GDScript",
-"path": "res://scripts/gameplay/spinner.gd"
+"path": "res://hitobjects/spinner.gd"
 }, {
 "base": "HitObject",
 "class": "SpinnerWarn",
 "language": "GDScript",
-"path": "res://scripts/gameplay/spinner_warn.gd"
+"path": "res://hitobjects/spinner_warn.gd"
 }, {
 "base": "SceneTree",
 "class": "TaiClone",
@@ -72,34 +87,46 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "Tick",
 "language": "GDScript",
-"path": "res://scripts/gameplay/tick.gd"
+"path": "res://hitobjects/tick.gd"
+}, {
+"base": "HitObject",
+"class": "TimingPoint",
+"language": "GDScript",
+"path": "res://hitobjects/timing_point.gd"
 }, {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
-"path": "res://scripts/root/volume_control.gd"
+"path": "res://root/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
 "BarLine": "",
+"ChartLoader": "",
 "Gameplay": "",
+"GlobalTools": "",
+"HitError": "",
 "HitObject": "",
 "Note": "",
 "Roll": "",
 "Root": "",
-"SettingsPanel": "",
+"Scene": "",
 "SkinManager": "",
 "Spinner": "",
 "SpinnerWarn": "",
 "TaiClone": "",
 "Tick": "",
+"TimingPoint": "",
 "VolumeControl": ""
 }
 
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://scenes/root/taiclone.tscn"
+run/main_scene="res://root/root.tscn"
+boot_splash/image="res://temporary/sdsddsd.png"
+boot_splash/fullsize=false
+boot_splash/bg_color=Color( 1, 1, 1, 1 )
 run/main_loop_type="TaiClone"
 
 [debug]
@@ -117,6 +144,10 @@ window/size/height=1080
 window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
+
+[gui]
+
+theme/custom="res://theme.tres"
 
 [input]
 
