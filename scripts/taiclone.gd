@@ -68,6 +68,9 @@ func _init() -> void:
 	_root_viewport.add_scene(preload("res://scenes/song_select.tscn").instance())
 	_root_viewport.settings_save = true
 
+	#dev
+	_root_viewport.bg_changed(_root_viewport.skin.menu_bg)
+
 
 func _drop_files(files: PoolStringArray, _from_screen: int) -> void:
 	ChartLoader.load_chart(_root_viewport.game_path, files[0])

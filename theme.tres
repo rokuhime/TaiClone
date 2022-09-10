@@ -1,18 +1,9 @@
-[gd_resource type="Theme" load_steps=47 format=2]
+[gd_resource type="Theme" load_steps=50 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
 [ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
 [ext_resource path="res://skins/test_skin/sliderscorepoint.png" type="Texture" id=4]
-
-[sub_resource type="StyleBoxFlat" id=41]
-bg_color = Color( 0, 0, 0, 0.490196 )
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-corner_radius_top_left = 10
-corner_radius_bottom_left = 10
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -169,6 +160,38 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 1, 1, 1, 0 )
 
+[sub_resource type="StyleBoxFlat" id=45]
+bg_color = Color( 1, 1, 1, 0.196078 )
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=43]
+bg_color = Color( 0.392157, 0.392157, 0.392157, 0.784314 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=41]
+bg_color = Color( 0, 0, 0, 0.784314 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=44]
+bg_color = Color( 0.490196, 0.490196, 0.490196, 0.921569 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="StyleBoxLine" id=42]
 color = Color( 1, 1, 1, 1 )
 grow_begin = -4.0
@@ -287,7 +310,7 @@ border_width_top = 5
 border_width_right = 3
 
 [sub_resource type="StyleBoxFlat" id=39]
-bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
+bg_color = Color( 0.0980392, 0.0980392, 0.0980392, 0.921569 )
 
 [sub_resource type="DynamicFont" id=40]
 size = 26
@@ -296,7 +319,6 @@ font_data = ExtResource( 3 )
 
 [resource]
 default_font = SubResource( 40 )
-Button/styles/normal = SubResource( 41 )
 FontBlack20/fonts/font = SubResource( 1 )
 FontBlack28/fonts/font = SubResource( 2 )
 FontBold26/fonts/font = SubResource( 3 )
@@ -332,6 +354,10 @@ SeparationP07/constants/separation = 7
 SeparationP08/constants/separation = 8
 SeparationP10/constants/separation = 10
 SeparationP15/constants/separation = 15
+SongSelect/styles/focus = SubResource( 45 )
+SongSelect/styles/hover = SubResource( 43 )
+SongSelect/styles/normal = SubResource( 41 )
+SongSelect/styles/pressed = SubResource( 44 )
 VSeparator/styles/separator = SubResource( 42 )
 _Bottom/fonts/font = SubResource( 24 )
 _Bottom/styles/disabled = SubResource( 25 )

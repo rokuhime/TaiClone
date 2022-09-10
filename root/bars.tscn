@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://root/bars.gd" type="Script" id=1]
 [ext_resource path="res://temporary/selection-mod-suddendeath@2x.png" type="Texture" id=2]
 [ext_resource path="res://skins/test_skin/sliderscorepoint.png" type="Texture" id=3]
 [ext_resource path="res://temporary/brehd.png" type="Texture" id=4]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=5]
+[ext_resource path="res://temporary/circle.png" type="Texture" id=6]
 
 [sub_resource type="StyleBoxFlat" id=3]
 
@@ -38,13 +39,14 @@ anchor_bottom = 1.0
 margin_left = 10.0
 margin_right = -10.0
 theme_type_variation = "SeparationP00"
+custom_constants/separation = -6
 
 [node name="Top" type="HBoxContainer" parent="Top/V"]
 margin_right = 1420.0
 margin_bottom = 49.0
 theme_type_variation = "SeparationP07"
 
-[node name="SongName" type="Label" parent="Top/V/Top"]
+[node name="SongInfo" type="Label" parent="Top/V/Top"]
 margin_right = 1173.0
 margin_bottom = 49.0
 size_flags_horizontal = 3
@@ -65,28 +67,28 @@ theme_type_variation = "FontBold30"
 text = "Player"
 
 [node name="Bottom" type="HBoxContainer" parent="Top/V"]
-margin_top = 49.0
+margin_top = 43.0
 margin_right = 1420.0
-margin_bottom = 98.0
+margin_bottom = 92.0
 theme_type_variation = "SeparationP07"
 
-[node name="CharterName" type="Label" parent="Top/V/Bottom"]
+[node name="DifficultyRating" type="Label" parent="Top/V/Bottom"]
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
 
-[node name="TextureRect" type="TextureRect" parent="Top/V/Bottom"]
-modulate = Color( 0.921569, 0.313726, 0.215686, 1 )
+[node name="DifficultyIcon" type="TextureRect" parent="Top/V/Bottom"]
 margin_left = 7.0
 margin_top = 12.0
-margin_right = 64.0
+margin_right = 32.0
 margin_bottom = 37.0
-rect_min_size = Vector2( 57, 25 )
+rect_min_size = Vector2( 25, 25 )
 size_flags_vertical = 4
+texture = ExtResource( 6 )
 expand = true
 stretch_mode = 6
 
-[node name="DifficultyName" type="Label" parent="Top/V/Bottom"]
-margin_left = 71.0
+[node name="ChartInfo" type="Label" parent="Top/V/Bottom"]
+margin_left = 39.0
 margin_right = 1413.0
 margin_bottom = 49.0
 size_flags_horizontal = 3
@@ -107,8 +109,9 @@ theme_type_variation = "_Bottom"
 custom_styles/panel = SubResource( 3 )
 
 [node name="H" type="HBoxContainer" parent="Bottom"]
-margin_right = 1440.0
-margin_bottom = 100.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
 theme_type_variation = "SeparationP03"
 
 [node name="Back" type="Button" parent="Bottom/H"]
