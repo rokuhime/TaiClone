@@ -51,7 +51,7 @@ scroll_horizontal_enabled = false
 
 [node name="V" type="VBoxContainer" parent="H/Menu/Settings"]
 margin_right = 375.0
-margin_bottom = 1305.0
+margin_bottom = 1354.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="H/Menu/Settings/V"]
@@ -352,6 +352,14 @@ margin_bottom = 1305.0
 size_flags_horizontal = 4
 text = "Remove Skin"
 
+[node name="SongsFolder" type="Button" parent="H/Menu/Settings/V"]
+margin_left = 53.0
+margin_top = 1309.0
+margin_right = 322.0
+margin_bottom = 1354.0
+size_flags_horizontal = 4
+text = "Change Songs Folder"
+
 [node name="Preferences" type="ScrollContainer" parent="H/Menu"]
 visible = false
 margin_top = 515.0
@@ -427,3 +435,4 @@ text = "Preferences"
 [connection signal="button_up" from="H/Menu/Settings/V/GamePathButton" to="." method="game_path_button_pressed"]
 [connection signal="button_up" from="H/Menu/Settings/V/ChangeSkinButton" to="." method="skin_button_pressed"]
 [connection signal="button_up" from="H/Menu/Settings/V/RemoveSkinButton" to="." method="remove_skin"]
+[connection signal="button_up" from="H/Menu/Settings/V/SongsFolder" to="." method="change_songs_button_pressed"]

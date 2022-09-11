@@ -16,6 +16,9 @@ const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 const CONFIG_PATH := "config.ini"
 
 ## Comment
+const SONGS_FOLDER := "Songs"
+
+## Comment
 const STORAGE_PATH := "user://storage.ini"
 
 ## Comment
@@ -89,6 +92,9 @@ var charter: String
 
 ## Comment
 var difficulty_name: String
+
+## Comment
+var songs_folder: String
 
 ## Comment
 var title: String
@@ -179,7 +185,7 @@ func add_blackout(next_scene: PackedScene) -> void:
 
 ## Comment
 func add_scene(new_scene: Node, parent_node := "") -> void:
-	if has_node(new_scene.name) and new_scene.name != "Gameplay":
+	if has_node(new_scene.name) and new_scene.name != get_child(1).name:
 		new_scene.queue_free()
 
 	else:
@@ -285,6 +291,7 @@ func save_settings() -> void:
 	for i in range(AudioServer.bus_count):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
+	config_file.set_value("Debug", "SongsFolder", songs_folder)
 	if config_file.save(game_path.plus_file(CONFIG_PATH)):
 		push_warning("Attempted to save configuration file.")
 

@@ -96,6 +96,9 @@ func change_game_path(new_text: String, move_folder := true) -> void:
 		assert(not storage_file.open(Root.STORAGE_PATH, File.WRITE), "Unable to write storage.ini file.")
 		storage_file.store_string(new_text)
 		storage_file.close()
+		if root_viewport.songs_folder == root_viewport.game_path:
+			root_viewport.songs_folder = new_text
+
 		root_viewport.game_path = new_text
 
 	game_path_text.text = new_text
@@ -118,8 +121,20 @@ func change_res(index: int) -> void:
 
 
 ## Comment
+func change_songs_button_pressed() -> void:
+	_file_dialog(self, root_viewport.songs_folder, "change_songs_folder")
+
+
+## Comment
+func change_songs_folder(new_text: String) -> void:
+	root_viewport.songs_folder = new_text
+	_import_songs(new_text)
+	root_viewport.save_settings()
+
+
+## Comment
 func game_path_button_pressed() -> void:
-	_file_dialog(self, "change_game_path")
+	_file_dialog(self, root_viewport.game_path, "change_game_path")
 
 
 ## Called when [member hit_error_toggle] is toggled.
@@ -151,7 +166,7 @@ func scene_removed() -> void:
 
 ## Comment
 func skin_button_pressed() -> void:
-	_file_dialog(root_viewport, "change_skin")
+	_file_dialog(root_viewport, root_viewport.skin_path, "change_skin")
 
 
 ## Called when [member fullscreen_toggle] is toggled.
@@ -201,13 +216,13 @@ func _change_text(key: String, was_pressed := false) -> void:
 
 
 ## Comment
-func _file_dialog(signal_target: Node, method: String) -> void:
+func _file_dialog(signal_target: Node, open_dir: String, method: String) -> void:
 	## Comment
 	var file_dialog := FileDialog.new()
 
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.mode = FileDialog.MODE_OPEN_DIR
-	file_dialog.current_dir = root_viewport.game_path
+	file_dialog.current_dir = open_dir
 	file_dialog.show_hidden_files = true
 	file_dialog.window_title = ""
 	GlobalTools.send_signal(signal_target, "dir_selected", file_dialog, method)
@@ -215,6 +230,32 @@ func _file_dialog(signal_target: Node, method: String) -> void:
 	root_viewport.add_scene(file_dialog, "VolumeControl")
 	file_dialog.popup_centered_ratio(1)
 	file_dialog.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+
+
+## Comment
+func _import_songs(folder_path: String) -> void:
+	## Comment
+	var directory := Directory.new()
+
+	if directory.open(folder_path):
+		return
+
+	if directory.list_dir_begin(true):
+		directory.list_dir_end()
+		return
+
+	while true:
+		## Comment
+		var file_name := directory.get_next()
+
+		if directory.current_is_dir():
+			_import_songs(folder_path.plus_file(file_name))
+
+		elif file_name:
+			print(folder_path.plus_file(file_name))
+
+		else:
+			return
 
 
 ## Comment
