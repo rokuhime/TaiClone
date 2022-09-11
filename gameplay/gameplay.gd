@@ -77,7 +77,6 @@ onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var song_progress := $UI/SongProgress as ProgressBar
 #onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
 onready var debug_text := $Debug/DebugText as Label
-onready var line_edit := $Debug/TempLoadChart/LineEdit as LineEdit
 onready var play_button := $Debug/TempLoadChart/PlayButton as Button
 onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 
@@ -445,12 +444,6 @@ func change_indicator(timing: float) -> void:
 ## Comment
 func change_late_early() -> void:
 	timing_indicator.visible = root_viewport.late_early_simple_display > 0
-
-
-## Comment
-func load_func() -> void:
-	ChartLoader.load_chart(root_viewport.game_path, line_edit.text.replace("\\", "/"))
-	root_viewport.add_blackout(root_viewport.gameplay)
 
 
 ## Comment

@@ -76,11 +76,6 @@ func _init() -> void:
 	_root_viewport.add_scene(preload("res://song_select/song_select.tscn").instance())
 
 
-func _drop_files(files: PoolStringArray, _from_screen: int) -> void:
-	ChartLoader.load_chart(_root_viewport.game_path, files[0])
-	_root_viewport.add_blackout(_root_viewport.gameplay)
-
-
 func _input_event(event: InputEvent) -> void:
 	if event is InputEventKey:
 		## Comment

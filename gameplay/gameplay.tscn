@@ -186,40 +186,26 @@ margin_bottom = 125.0
 size_flags_vertical = 3
 theme_type_variation = "SeparationP08"
 
-[node name="LineEdit" type="LineEdit" parent="Debug/TempLoadChart"]
-margin_right = 370.0
-margin_bottom = 82.0
-rect_min_size = Vector2( 370, 0 )
-placeholder_text = "Chart Location"
-
-[node name="LoadButton" type="Button" parent="Debug/TempLoadChart"]
-margin_left = 378.0
-margin_right = 458.0
-margin_bottom = 82.0
-rect_min_size = Vector2( 80, 0 )
-text = "Load"
-
 [node name="PlayButton" type="Button" parent="Debug/TempLoadChart"]
-margin_left = 466.0
-margin_right = 538.0
+margin_right = 72.0
 margin_bottom = 82.0
 rect_min_size = Vector2( 72, 0 )
 text = "Play"
 
 [node name="AutoToggle" type="CheckBox" parent="Debug/TempLoadChart"]
-margin_left = 546.0
-margin_right = 632.0
+margin_left = 80.0
+margin_right = 166.0
 margin_bottom = 82.0
 text = "Auto"
 
 [node name="Text" type="VBoxContainer" parent="Debug/TempLoadChart"]
-margin_left = 640.0
+margin_left = 174.0
 margin_right = 1421.0
 margin_bottom = 82.0
 size_flags_horizontal = 3
 
 [node name="FPS" type="Label" parent="Debug/TempLoadChart/Text"]
-margin_right = 781.0
+margin_right = 1247.0
 margin_bottom = 39.0
 size_flags_vertical = 3
 align = 2
@@ -227,7 +213,7 @@ valign = 1
 
 [node name="Version" type="Label" parent="Debug/TempLoadChart/Text"]
 margin_top = 43.0
-margin_right = 781.0
+margin_right = 1247.0
 margin_bottom = 82.0
 size_flags_vertical = 3
 text = "v0.4 - new coat of paint"
@@ -239,6 +225,5 @@ valign = 1
 [connection signal="key_pressed" from="." to="BarRight/DrumVisual" method="keypress_animation"]
 [connection signal="marker_added" from="." to="HitError" method="new_marker"]
 [connection signal="indicator_changed" from="HitError" to="." method="change_indicator"]
-[connection signal="button_up" from="Debug/TempLoadChart/LoadButton" to="." method="load_func"]
 [connection signal="button_up" from="Debug/TempLoadChart/PlayButton" to="." method="play_button_pressed"]
 [connection signal="toggled" from="Debug/TempLoadChart/AutoToggle" to="." method="auto_toggled"]
