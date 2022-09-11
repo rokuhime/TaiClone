@@ -64,8 +64,15 @@ func _init() -> void:
 	for i in range(AudioServer.bus_count):
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
-	_root_viewport.add_scene(_root_viewport.main_menu.instance())
+	#_root_viewport.add_scene(_root_viewport.main_menu.instance())
 	_root_viewport.settings_save = true
+
+	# DEV ONLY
+	_root_viewport.artist = "Sanae-San"
+	_root_viewport.charter = "Genjuro"
+	_root_viewport.difficulty_name = "Hell Oni"
+	_root_viewport.title = "RD-Sounds feat. Meramipop"
+	_root_viewport.add_scene(preload("res://song_select/song_select.tscn").instance())
 
 
 func _drop_files(files: PoolStringArray, _from_screen: int) -> void:

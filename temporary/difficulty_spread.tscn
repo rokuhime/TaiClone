@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0, 0.162011, 0.318436, 0.497207, 0.675978, 0.843575, 1 )
+colors = PoolColorArray( 0.953125, 0.405823, 0.405823, 1, 0.914063, 0.625238, 0.31778, 1, 0.871094, 0.798334, 0.323257, 1, 0.38323, 0.871094, 0.367493, 1, 0.300156, 0.896455, 0.925781, 1, 0.487213, 0.258362, 0.972656, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[node name="DifficultySpread" type="TextureRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = SubResource( 2 )
+expand = true

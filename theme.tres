@@ -1,9 +1,9 @@
-[gd_resource type="Theme" load_steps=50 format=2]
+[gd_resource type="Theme" load_steps=53 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
 [ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
-[ext_resource path="res://skins/test_skin/sliderscorepoint.png" type="Texture" id=4]
+[ext_resource path="res://temporary/circle.png" type="Texture" id=4]
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -290,10 +290,15 @@ border_width_top = 5
 border_width_right = 3
 
 [sub_resource type="StyleBoxFlat" id=42]
-bg_color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
+bg_color = Color( 0.0980392, 0.0980392, 0.0980392, 0.921569 )
 
 [sub_resource type="StyleBoxFlat" id=43]
-bg_color = Color( 0, 0, 0, 0.490196 )
+bg_color = Color( 1, 1, 1, 0.196078 )
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=44]
+bg_color = Color( 0.392157, 0.392157, 0.392157, 0.784314 )
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
@@ -301,7 +306,16 @@ border_width_bottom = 5
 corner_radius_top_left = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=44]
+[sub_resource type="StyleBoxFlat" id=45]
+bg_color = Color( 0, 0, 0, 0.784314 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=46]
 content_margin_left = 3.0
 content_margin_right = 3.0
 content_margin_top = 4.0
@@ -311,13 +325,22 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="DynamicFont" id=45]
+[sub_resource type="StyleBoxFlat" id=47]
+bg_color = Color( 0.490196, 0.490196, 0.490196, 0.921569 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="DynamicFont" id=48]
 size = 26
 use_filter = true
 font_data = ExtResource( 3 )
 
 [resource]
-default_font = SubResource( 45 )
+default_font = SubResource( 48 )
 FontBlack20/fonts/font = SubResource( 1 )
 FontBlack28/fonts/font = SubResource( 2 )
 FontBold20/fonts/font = SubResource( 3 )
@@ -346,6 +369,7 @@ HSlider/styles/grabber_area_highlight = SubResource( 21 )
 HSlider/styles/slider = SubResource( 22 )
 ProgressBar/styles/bg = SubResource( 23 )
 ProgressBar/styles/fg = SubResource( 24 )
+SeparationN06/constants/separation = -6
 SeparationN08/constants/separation = -8
 SeparationP00/constants/separation = 0
 SeparationP01/constants/separation = 1
@@ -374,6 +398,9 @@ _Results/styles/bg = SubResource( 40 )
 _Results/styles/panel = SubResource( 40 )
 _Settings/styles/normal = SubResource( 41 )
 _Settings/styles/panel = SubResource( 42 )
-_Song/styles/normal = SubResource( 43 )
-_Song/styles/panel = SubResource( 44 )
+_Song/styles/focus = SubResource( 43 )
+_Song/styles/hover = SubResource( 44 )
+_Song/styles/normal = SubResource( 45 )
+_Song/styles/panel = SubResource( 46 )
+_Song/styles/pressed = SubResource( 47 )
 _Top/styles/panel = SubResource( 29 )

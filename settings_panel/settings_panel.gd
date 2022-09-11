@@ -16,17 +16,17 @@ var _active := false
 var _settings_save := false
 
 onready var root_viewport := $"/root" as Root
-onready var left_kat_butt := $V/Settings/V/Keybinds/LeftKat/Button as Button
-onready var left_don_butt := $V/Settings/V/Keybinds/LeftDon/Button as Button
-onready var right_don_butt := $V/Settings/V/Keybinds/RightDon/Button as Button
-onready var right_kat_butt := $V/Settings/V/Keybinds/RightKat/Button as Button
-onready var dropdown := $V/Settings/V/Resolution/Options as OptionButton
-onready var fullscreen_toggle := $V/Settings/V/Resolution/Fullscreen/Toggle as CheckBox
-onready var offset_text := $V/Settings/V/Offset/LineEdit as SpinBox
-onready var offset_slider := $V/Settings/V/HSlider as HSlider
-onready var late_early_drop := $V/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
-onready var hit_error_toggle := $V/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
-onready var game_path_text := $V/Settings/V/GamePathText as Label
+onready var left_kat_butt := $H/Menu/Settings/V/Keybinds/LeftKat/Button as Button
+onready var left_don_butt := $H/Menu/Settings/V/Keybinds/LeftDon/Button as Button
+onready var right_don_butt := $H/Menu/Settings/V/Keybinds/RightDon/Button as Button
+onready var right_kat_butt := $H/Menu/Settings/V/Keybinds/RightKat/Button as Button
+onready var dropdown := $H/Menu/Settings/V/Resolution/Options as OptionButton
+onready var fullscreen_toggle := $H/Menu/Settings/V/Resolution/Fullscreen/Toggle as CheckBox
+onready var offset_text := $H/Menu/Settings/V/Offset/LineEdit as SpinBox
+onready var offset_slider := $H/Menu/Settings/V/HSlider as HSlider
+onready var late_early_drop := $H/Menu/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
+onready var hit_error_toggle := $H/Menu/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
+onready var game_path_text := $H/Menu/Settings/V/GamePathText as Label
 
 
 func _ready() -> void:
@@ -62,6 +62,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		root_viewport.change_key(event, _currently_changing)
 		_change_text(_currently_changing)
 		_currently_changing = ""
+
+
+## Comment
+func back_button_pressed() -> void:
+	var _removed := root_viewport.remove_scene("SettingsPanel")
 
 
 ## Called when a key-bind button is pressed.
