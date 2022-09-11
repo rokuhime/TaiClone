@@ -51,7 +51,7 @@ scroll_horizontal_enabled = false
 
 [node name="V" type="VBoxContainer" parent="H/Menu/Settings"]
 margin_right = 375.0
-margin_bottom = 1208.0
+margin_bottom = 1305.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="H/Menu/Settings/V"]
@@ -240,21 +240,21 @@ align = 2
 [node name="HSlider" type="HSlider" parent="H/Menu/Settings/V"]
 margin_top = 702.0
 margin_right = 375.0
-margin_bottom = 715.0
+margin_bottom = 812.0
 min_value = -200.0
 max_value = 200.0
 
 [node name="Buffer4" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
 margin_left = 112.0
-margin_top = 719.0
+margin_top = 816.0
 margin_right = 262.0
-margin_bottom = 752.0
+margin_bottom = 849.0
 
 [node name="ExtraDisplays" type="VBoxContainer" parent="H/Menu/Settings/V"]
 margin_left = 79.0
-margin_top = 756.0
+margin_top = 853.0
 margin_right = 295.0
-margin_bottom = 895.0
+margin_bottom = 992.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="H/Menu/Settings/V/ExtraDisplays"]
@@ -300,55 +300,55 @@ margin_bottom = 47.0
 
 [node name="Buffer5" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
 margin_left = 112.0
-margin_top = 899.0
+margin_top = 996.0
 margin_right = 262.0
-margin_bottom = 932.0
+margin_bottom = 1029.0
 
 [node name="DebugLabel" type="Label" parent="H/Menu/Settings/V"]
-margin_top = 936.0
+margin_top = 1033.0
 margin_right = 375.0
-margin_bottom = 975.0
+margin_bottom = 1072.0
 theme_type_variation = "FontBold26"
 text = "Debug"
 align = 1
 
 [node name="GamePathLabel" type="Label" parent="H/Menu/Settings/V"]
-margin_top = 979.0
+margin_top = 1076.0
 margin_right = 375.0
-margin_bottom = 1018.0
+margin_bottom = 1115.0
 size_flags_horizontal = 3
 text = "Game Path"
 align = 1
 
 [node name="GamePathText" type="Label" parent="H/Menu/Settings/V"]
-margin_top = 1022.0
+margin_top = 1119.0
 margin_right = 375.0
-margin_bottom = 1061.0
+margin_bottom = 1158.0
 size_flags_horizontal = 3
 align = 1
 autowrap = true
 
 [node name="GamePathButton" type="Button" parent="H/Menu/Settings/V"]
 margin_left = 65.0
-margin_top = 1065.0
+margin_top = 1162.0
 margin_right = 310.0
-margin_bottom = 1110.0
+margin_bottom = 1207.0
 size_flags_horizontal = 4
 text = "Change Game Path"
 
 [node name="ChangeSkinButton" type="Button" parent="H/Menu/Settings/V"]
 margin_left = 105.0
-margin_top = 1114.0
+margin_top = 1211.0
 margin_right = 269.0
-margin_bottom = 1159.0
+margin_bottom = 1256.0
 size_flags_horizontal = 4
 text = "Change Skin"
 
 [node name="RemoveSkinButton" type="Button" parent="H/Menu/Settings/V"]
 margin_left = 102.0
-margin_top = 1163.0
+margin_top = 1260.0
 margin_right = 272.0
-margin_bottom = 1208.0
+margin_bottom = 1305.0
 size_flags_horizontal = 4
 text = "Remove Skin"
 

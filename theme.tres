@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=53 format=2]
+[gd_resource type="Theme" load_steps=52 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
@@ -188,8 +188,6 @@ bg_color = Color( 0.184314, 0.184314, 0.184314, 1 )
 bg_color = Color( 0, 0, 0, 1 )
 
 [sub_resource type="StyleBoxFlat" id=30]
-
-[sub_resource type="StyleBoxFlat" id=31]
 bg_color = Color( 1, 1, 1, 0 )
 border_width_left = 5
 border_width_top = 5
@@ -201,14 +199,14 @@ corner_radius_top_right = 7
 corner_radius_bottom_right = 7
 corner_radius_bottom_left = 7
 
-[sub_resource type="DynamicFont" id=32]
+[sub_resource type="DynamicFont" id=31]
 size = 50
 use_filter = true
 extra_spacing_top = -5
 extra_spacing_bottom = 5
 font_data = ExtResource( 3 )
 
-[sub_resource type="StyleBoxFlat" id=33]
+[sub_resource type="StyleBoxFlat" id=32]
 bg_color = Color( 0, 0, 0, 0.686275 )
 border_width_left = 5
 border_width_top = 5
@@ -220,7 +218,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=34]
+[sub_resource type="StyleBoxFlat" id=33]
 bg_color = Color( 0.176471, 0.176471, 0.176471, 1 )
 border_width_left = 5
 border_width_top = 5
@@ -231,7 +229,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=35]
+[sub_resource type="StyleBoxFlat" id=34]
 bg_color = Color( 0, 0, 0, 1 )
 border_width_left = 5
 border_width_top = 5
@@ -242,7 +240,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=36]
+[sub_resource type="StyleBoxFlat" id=35]
 bg_color = Color( 0.45098, 0.45098, 0.45098, 1 )
 border_width_left = 5
 border_width_top = 5
@@ -253,10 +251,10 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=37]
+[sub_resource type="StyleBoxFlat" id=36]
 bg_color = Color( 0.262745, 0.262745, 0.262745, 0.784314 )
 
-[sub_resource type="StyleBoxFlat" id=38]
+[sub_resource type="StyleBoxFlat" id=37]
 bg_color = Color( 0, 0, 0, 0.607843 )
 border_width_left = 2
 border_width_top = 2
@@ -264,14 +262,14 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.0980392, 0.0980392, 0.0980392, 1 )
 
-[sub_resource type="StyleBoxFlat" id=39]
+[sub_resource type="StyleBoxFlat" id=38]
 bg_color = Color( 0, 0, 0, 1 )
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
 
-[sub_resource type="StyleBoxFlat" id=40]
+[sub_resource type="StyleBoxFlat" id=39]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.843137 )
 border_width_left = 10
 border_width_top = 10
@@ -283,21 +281,21 @@ corner_radius_top_right = 7
 corner_radius_bottom_right = 7
 corner_radius_bottom_left = 7
 
-[sub_resource type="StyleBoxFlat" id=41]
+[sub_resource type="StyleBoxFlat" id=40]
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
 border_width_left = 3
 border_width_top = 5
 border_width_right = 3
 
-[sub_resource type="StyleBoxFlat" id=42]
+[sub_resource type="StyleBoxFlat" id=41]
 bg_color = Color( 0.0980392, 0.0980392, 0.0980392, 0.921569 )
 
-[sub_resource type="StyleBoxFlat" id=43]
+[sub_resource type="StyleBoxFlat" id=42]
 bg_color = Color( 1, 1, 1, 0.196078 )
 corner_radius_top_left = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=44]
+[sub_resource type="StyleBoxFlat" id=43]
 bg_color = Color( 0.392157, 0.392157, 0.392157, 0.784314 )
 border_width_left = 5
 border_width_top = 5
@@ -306,7 +304,7 @@ border_width_bottom = 5
 corner_radius_top_left = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=45]
+[sub_resource type="StyleBoxFlat" id=44]
 bg_color = Color( 0, 0, 0, 0.784314 )
 border_width_left = 5
 border_width_top = 5
@@ -315,7 +313,7 @@ border_width_bottom = 5
 corner_radius_top_left = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id=46]
+[sub_resource type="StyleBoxFlat" id=45]
 content_margin_left = 3.0
 content_margin_right = 3.0
 content_margin_top = 4.0
@@ -325,7 +323,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="StyleBoxFlat" id=47]
+[sub_resource type="StyleBoxFlat" id=46]
 bg_color = Color( 0.490196, 0.490196, 0.490196, 0.921569 )
 border_width_left = 5
 border_width_top = 5
@@ -334,13 +332,13 @@ border_width_bottom = 5
 corner_radius_top_left = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="DynamicFont" id=48]
+[sub_resource type="DynamicFont" id=47]
 size = 26
 use_filter = true
 font_data = ExtResource( 3 )
 
 [resource]
-default_font = SubResource( 48 )
+default_font = SubResource( 47 )
 FontBlack20/fonts/font = SubResource( 1 )
 FontBlack28/fonts/font = SubResource( 2 )
 FontBold20/fonts/font = SubResource( 3 )
@@ -384,23 +382,21 @@ _Bottom/fonts/font = SubResource( 26 )
 _Bottom/styles/disabled = SubResource( 27 )
 _Bottom/styles/hover = SubResource( 28 )
 _Bottom/styles/normal = SubResource( 29 )
-_Bottom/styles/panel = SubResource( 30 )
-_HitCount/styles/panel = SubResource( 31 )
-_MainMenu/fonts/font = SubResource( 32 )
-_MainMenu/styles/disabled = SubResource( 33 )
-_MainMenu/styles/hover = SubResource( 34 )
-_MainMenu/styles/normal = SubResource( 35 )
-_MainMenu/styles/pressed = SubResource( 36 )
-_PlayButton/styles/hover = SubResource( 37 )
-_PlayButton/styles/normal = SubResource( 38 )
-_Profile/styles/normal = SubResource( 39 )
-_Results/styles/bg = SubResource( 40 )
-_Results/styles/panel = SubResource( 40 )
-_Settings/styles/normal = SubResource( 41 )
-_Settings/styles/panel = SubResource( 42 )
-_Song/styles/focus = SubResource( 43 )
-_Song/styles/hover = SubResource( 44 )
-_Song/styles/normal = SubResource( 45 )
-_Song/styles/panel = SubResource( 46 )
-_Song/styles/pressed = SubResource( 47 )
-_Top/styles/panel = SubResource( 29 )
+_HitCount/styles/panel = SubResource( 30 )
+_MainMenu/fonts/font = SubResource( 31 )
+_MainMenu/styles/disabled = SubResource( 32 )
+_MainMenu/styles/hover = SubResource( 33 )
+_MainMenu/styles/normal = SubResource( 34 )
+_MainMenu/styles/pressed = SubResource( 35 )
+_PlayButton/styles/hover = SubResource( 36 )
+_PlayButton/styles/normal = SubResource( 37 )
+_Profile/styles/normal = SubResource( 38 )
+_Results/styles/bg = SubResource( 39 )
+_Results/styles/panel = SubResource( 39 )
+_Settings/styles/normal = SubResource( 40 )
+_Settings/styles/panel = SubResource( 41 )
+_Song/styles/focus = SubResource( 42 )
+_Song/styles/hover = SubResource( 43 )
+_Song/styles/normal = SubResource( 44 )
+_Song/styles/panel = SubResource( 45 )
+_Song/styles/pressed = SubResource( 46 )

@@ -10,7 +10,7 @@ colors = PoolColorArray( 1, 1, 1, 1 )
 [sub_resource type="GradientTexture" id=2]
 gradient = SubResource( 1 )
 
-[node name="VolumeControl" type="Panel"]
+[node name="VolumeControl" type="ColorRect"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -19,7 +19,7 @@ margin_left = -139.0
 margin_top = -461.0
 margin_right = 139.0
 margin_bottom = -79.0
-theme_type_variation = "_Settings"
+color = Color( 0.145098, 0.145098, 0.164706, 0.607843 )
 script = ExtResource( 1 )
 
 [node name="ChangeSound" type="AudioStreamPlayer" parent="."]

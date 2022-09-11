@@ -11,10 +11,10 @@ anchor_bottom = 1.0
 mouse_filter = 2
 script = ExtResource( 3 )
 
-[node name="Top" type="Panel" parent="."]
+[node name="Top" type="ColorRect" parent="."]
 anchor_right = 1.0
-margin_bottom = 100.0
-theme_type_variation = "_Top"
+margin_top = -100.0
+color = Color( 0, 0, 0, 1 )
 
 [node name="V" type="VBoxContainer" parent="Top"]
 anchor_right = 1.0
@@ -80,12 +80,12 @@ margin_right = 1420.0
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
 
-[node name="Bottom" type="Panel" parent="."]
+[node name="Bottom" type="ColorRect" parent="."]
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -100.0
-theme_type_variation = "_Bottom"
+margin_bottom = 100.0
+color = Color( 0.8, 0.8, 0.8, 1 )
 
 [node name="H" type="HBoxContainer" parent="Bottom"]
 anchor_right = 1.0
