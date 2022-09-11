@@ -4,7 +4,7 @@ class_name ChartLoader
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 
 ## Comment
-const FUS_VERSION := "v0.0.4"
+const FUS_VERSION := "v0.0.5"
 
 
 ## Comment
@@ -396,7 +396,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 	## Comment
 	var folder_path := file_path.get_base_dir()
 
-	f.store_string(_csv_line([FUS_VERSION, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist, charter, difficulty_name, title] + notes).join("\n"))
+	f.store_string(_csv_line([FUS_VERSION, title, difficulty_name, charter, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist] + notes).join("\n"))
 	f.close()
 
 	return

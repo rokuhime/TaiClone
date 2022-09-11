@@ -67,6 +67,9 @@ var roll_object: PackedScene
 var settings_panel: PackedScene
 
 ## Comment
+var song_button_object: PackedScene
+
+## Comment
 var spinner_object: PackedScene
 
 ## Comment
@@ -156,6 +159,7 @@ func _init() -> void:
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
 	settings_panel = load("res://settings_panel/settings_panel.tscn") as PackedScene
+	song_button_object = load("res://song_select/song.tscn") as PackedScene
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene

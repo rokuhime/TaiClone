@@ -4,7 +4,6 @@
 [ext_resource path="res://song_select/song.gd" type="Script" id=2]
 
 [node name="Song" type="Button"]
-self_modulate = Color( 0.501961, 0.752941, 1, 1 )
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
@@ -30,26 +29,24 @@ stretch_mode = 6
 
 [node name="Info" type="VBoxContainer" parent="Organizer"]
 margin_left = 104.0
-margin_right = 579.0
+margin_right = 136.0
 margin_bottom = 110.0
 theme_type_variation = "SeparationP00"
 
 [node name="SongInfo" type="Label" parent="Organizer/Info"]
-margin_right = 475.0
+margin_right = 32.0
 margin_bottom = 34.0
 theme_type_variation = "FontRegular025"
-text = "Sanae-San - RD-Sounds feat. Meramipop"
 
 [node name="ChartInfo" type="Label" parent="Organizer/Info"]
 margin_top = 34.0
-margin_right = 475.0
+margin_right = 32.0
 margin_bottom = 68.0
 theme_type_variation = "FontRegular025"
-text = "Hell Oni - Genjuro"
 
 [node name="Banners" type="HBoxContainer" parent="Organizer/Info"]
 margin_top = 68.0
-margin_right = 475.0
+margin_right = 32.0
 margin_bottom = 110.0
 size_flags_vertical = 3
 theme_type_variation = "SeparationP08"
@@ -75,17 +72,3 @@ margin_bottom = 42.0
 rect_min_size = Vector2( 0, 30 )
 mouse_filter = 2
 size_flags_vertical = 8
-
-[node name="Scroll" parent="Organizer/Info/Banners" instance=ExtResource( 1 )]
-self_modulate = Color( 0.886275, 0.552941, 0.898039, 1 )
-margin_left = 40.0
-margin_top = 12.0
-margin_right = 46.0
-margin_bottom = 42.0
-
-[node name="Manual" parent="Organizer/Info/Banners" instance=ExtResource( 1 )]
-self_modulate = Color( 0.603922, 0.552941, 0.898039, 1 )
-margin_left = 54.0
-margin_top = 12.0
-margin_right = 60.0
-margin_bottom = 42.0

@@ -82,10 +82,7 @@ func change_game_path(new_text: String, move_folder := true) -> void:
 		## Comment
 		var directory := Directory.new()
 
-		if directory.rename(root_viewport.game_path, new_text):
-			push_warning("Unable to move game directory.")
-			return
-
+		assert(not directory.rename(root_viewport.game_path, new_text), "Unable to move game directory.")
 		assert(not directory.make_dir_recursive(root_viewport.game_path), "Unable to recreate old game path directory.")
 		if directory.dir_exists(new_text.plus_file("logs")):
 			assert(not OS.move_to_trash(new_text.plus_file("logs")), "Unable to remove logs folder.")
@@ -244,13 +241,8 @@ func _import_songs(songs_folder: String, folder_path: String) -> void:
 	## Comment
 	var directory := Directory.new()
 
-	if directory.open(folder_path):
-		return
-
-	if directory.list_dir_begin(true):
-		directory.list_dir_end()
-		return
-
+	assert(not directory.open(folder_path), "Unable to open songs folder.")
+	assert(not directory.list_dir_begin(true), "Unable to read songs folder.")
 	while true:
 		## Comment
 		var file_name := directory.get_next()
@@ -259,7 +251,7 @@ func _import_songs(songs_folder: String, folder_path: String) -> void:
 			_import_songs(songs_folder, folder_path.plus_file(file_name))
 
 		elif file_name:
-			ChartLoader.load_chart(songs_folder.plus_file(file_name.get_basename() + ".fus"), folder_path.plus_file(file_name))
+			ChartLoader.load_chart(songs_folder.plus_file(folder_path.trim_prefix(root_viewport.songs_folder)).plus_file(file_name.get_basename() + ".fus"), folder_path.plus_file(file_name))
 
 		else:
 			return

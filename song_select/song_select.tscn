@@ -2,54 +2,17 @@
 
 [ext_resource path="res://bars/_bars.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scoreboard/scoreboard.tscn" type="PackedScene" id=2]
-[ext_resource path="res://song_select/song.tscn" type="PackedScene" id=3]
+[ext_resource path="res://song_select/song_select.gd" type="Script" id=3]
 
 [node name="SongSelect" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 3 )
 
 [node name="Scoreboard" parent="." instance=ExtResource( 2 )]
 
-[node name="Song1" parent="." instance=ExtResource( 3 )]
-margin_left = -582.0
-margin_top = -500.0
-margin_right = 138.0
-margin_bottom = -370.0
-
-[node name="Song2" parent="." instance=ExtResource( 3 )]
-margin_left = -582.0
-margin_top = -355.0
-margin_right = 138.0
-margin_bottom = -225.0
-
-[node name="Song3" parent="." instance=ExtResource( 3 )]
-margin_left = -582.0
-margin_top = -210.0
-margin_right = 138.0
-margin_bottom = -80.0
-
-[node name="Song4" parent="." instance=ExtResource( 3 )]
-self_modulate = Color( 1, 1, 1, 1 )
-margin_top = -65.0
-margin_bottom = 65.0
-
-[node name="Song5" parent="." instance=ExtResource( 3 )]
-self_modulate = Color( 1, 0.87451, 0.501961, 1 )
-margin_left = -664.0
-margin_top = 80.0
-margin_right = 56.0
-margin_bottom = 210.0
-
-[node name="Song6" parent="." instance=ExtResource( 3 )]
-margin_left = -582.0
-margin_top = 225.0
-margin_right = 138.0
-margin_bottom = 355.0
-
-[node name="Song7" parent="." instance=ExtResource( 3 )]
-margin_left = -582.0
-margin_top = 370.0
-margin_right = 138.0
-margin_bottom = 500.0
+[node name="Charts" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
 
 [node name="Bars" parent="." instance=ExtResource( 1 )]

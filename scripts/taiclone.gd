@@ -83,4 +83,3 @@ func _input_event(event: InputEvent) -> void:
 
 		if k_event.pressed and k_event.control and k_event.scancode == KEY_O:
 			_root_viewport.toggle_settings()
-			return
