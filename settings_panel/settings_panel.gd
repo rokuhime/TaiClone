@@ -128,7 +128,14 @@ func change_songs_button_pressed() -> void:
 ## Comment
 func change_songs_folder(new_text: String) -> void:
 	root_viewport.songs_folder = new_text
-	_import_songs(new_text)
+
+	## Comment
+	var songs_folder := root_viewport.game_path.plus_file(Root.SONGS_FOLDER)
+
+	if Directory.new().dir_exists(songs_folder):
+		assert(not OS.move_to_trash(songs_folder), "Unable to remove songs folder.")
+
+	_import_songs(songs_folder, new_text)
 	root_viewport.save_settings()
 
 
@@ -233,7 +240,7 @@ func _file_dialog(signal_target: Node, open_dir: String, method: String) -> void
 
 
 ## Comment
-func _import_songs(folder_path: String) -> void:
+func _import_songs(songs_folder: String, folder_path: String) -> void:
 	## Comment
 	var directory := Directory.new()
 
@@ -249,10 +256,10 @@ func _import_songs(folder_path: String) -> void:
 		var file_name := directory.get_next()
 
 		if directory.current_is_dir():
-			_import_songs(folder_path.plus_file(file_name))
+			_import_songs(songs_folder, folder_path.plus_file(file_name))
 
 		elif file_name:
-			print(folder_path.plus_file(file_name))
+			ChartLoader.load_chart(songs_folder.plus_file(file_name.get_basename() + ".fus"), folder_path.plus_file(file_name))
 
 		else:
 			return
