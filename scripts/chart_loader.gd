@@ -56,6 +56,8 @@ static func load_chart(save_path: String, file_path: String) -> void:
 	var total_cur_sv := 1.0
 
 	if file_path.ends_with(".osu"):
+		print("Now parsing: %s." % file_path)
+
 		## Comment
 		var current_timing_data := []
 
@@ -205,6 +207,8 @@ static func load_chart(save_path: String, file_path: String) -> void:
 						current_timing_data.append(line_data.join(","))
 
 	elif file_path.ends_with(".tja"):
+		print("Now parsing: %s." % file_path)
+
 		## Comment
 		var balloons_string := ""
 
