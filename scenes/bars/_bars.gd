@@ -1,4 +1,8 @@
+class_name Bars
 extends Scene
+
+## Comment
+var back_scene: PackedScene
 
 onready var root_viewport := $"/root" as Root
 onready var top := $Top as Control
@@ -44,7 +48,7 @@ func apply_skin() -> void:
 
 ## Comment
 func back_button_pressed() -> void:
-	root_viewport.add_blackout(root_viewport.main_menu)
+	root_viewport.add_blackout(back_scene)
 
 
 ## Comment

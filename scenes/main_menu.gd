@@ -27,4 +27,4 @@ func exit_button_pressed() -> void:
 
 ## Comment
 func play_button_pressed() -> void:
-	root_viewport.add_blackout(root_viewport.gameplay)
+	root_viewport.add_blackout(root_viewport.song_select)
