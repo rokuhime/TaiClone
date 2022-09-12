@@ -248,14 +248,14 @@ func _import_songs(songs_folder: String, folder_path: String) -> void:
 		## Comment
 		var file_name := directory.get_next()
 
+		if not file_name:
+			return
+
 		if directory.current_is_dir():
 			_import_songs(songs_folder, folder_path.plus_file(file_name))
 
-		elif file_name:
-			ChartLoader.load_chart(songs_folder.plus_file(folder_path.trim_prefix(root_viewport.songs_folder)).plus_file(file_name.get_basename() + ".fus"), folder_path.plus_file(file_name))
-
 		else:
-			return
+			ChartLoader.load_chart(songs_folder.plus_file(folder_path.trim_prefix(root_viewport.songs_folder)).plus_file(file_name.get_basename() + ".fus"), folder_path.plus_file(file_name))
 
 
 ## Comment
