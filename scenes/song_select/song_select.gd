@@ -10,6 +10,14 @@ func _ready() -> void:
 	if charts.get_child_count():
 		(charts.get_child(0) as Button)._pressed()
 
+	root_viewport.add_scene(root_viewport.bars.instance())
+
+	## Comment
+	var bars_object := root_viewport.get_node("Bars") as Bars
+
+	bars_object.back_scene = root_viewport.main_menu
+	bars_object.play_date.hide()
+
 
 ## Comment
 func load_metadata(folder_path: String) -> void:
@@ -47,6 +55,6 @@ func load_metadata(folder_path: String) -> void:
 		## Comment
 		var song_button := root_viewport.song_button_object.instance() as SongButton
 
-		song_button.change_properties(f.get_line(), f.get_line(), folder_path, f.get_line(), f.get_line(), f.get_line(), f.get_line())
+		song_button.change_properties(f.get_line(), f.get_line(), folder_path, file_name, f.get_line(), f.get_line(), f.get_line(), f.get_line())
 		f.close()
 		charts.add_child(song_button)

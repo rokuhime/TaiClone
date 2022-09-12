@@ -37,6 +37,9 @@ var artist := ""
 var charter := ""
 
 ## Comment
+var current_song_file := ""
+
+## Comment
 var current_song_folder := ""
 
 ## Comment
@@ -222,17 +225,20 @@ func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
 
 
 ## Comment
-func change_song_properties(new_title: String, new_name: String, new_folder: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
+func change_song_properties(new_title: String, new_name: String, new_folder: String, new_file: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
 	artist = new_artist
 	charter = new_charter
+	current_song_file = new_file
 	difficulty_name = new_name
 	title = new_title
 	emit_signal("song_properties_changed")
 	bg_changed(GlobalTools.texture_from_image(new_bg))
 	if new_folder != current_song_folder:
 		music.stream = AudioLoader.load_file(new_audio)
-		music.play()
 		current_song_folder = new_folder
+
+	if not music.playing:
+		music.play()
 
 
 ## Comment

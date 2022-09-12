@@ -20,6 +20,9 @@ var _charter := ""
 var _difficulty_name := ""
 
 ## Comment
+var _file_name := ""
+
+## Comment
 var _title := ""
 
 onready var root_viewport := $"/root" as Root
@@ -48,6 +51,7 @@ func _pressed() -> void:
 	var middle_index := int(child_count / 2.0)
 
 	if get_index() == middle_index:
+		root_viewport.add_blackout(root_viewport.gameplay)
 		return
 
 	for _i in range(abs(get_index() - middle_index)):
@@ -58,7 +62,7 @@ func _pressed() -> void:
 			get_parent().move_child(get_parent().get_child(child_count - 1), 0)
 
 	get_tree().call_group("Songs", "change_song", folder_path, middle_index)
-	root_viewport.change_song_properties(_title, _difficulty_name, folder_path, _charter, _bg_file_name, _audio_filename, _artist)
+	root_viewport.change_song_properties(_title, _difficulty_name, folder_path, _file_name, _charter, _bg_file_name, _audio_filename, _artist)
 
 
 ## Comment
@@ -67,13 +71,14 @@ func apply_skin() -> void:
 
 
 ## Comment
-func change_properties(new_title: String, new_name: String, new_folder: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
+func change_properties(new_title: String, new_name: String, new_folder: String, new_file: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
 	folder_path = new_folder
 	_artist = new_artist
 	_audio_filename = new_audio
 	_bg_file_name = new_bg
 	_charter = new_charter
 	_difficulty_name = new_name
+	_file_name = new_file
 	_title = new_title
 
 

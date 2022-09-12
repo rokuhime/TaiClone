@@ -54,6 +54,7 @@ func _ready() -> void:
 	var _right_tween := _animation_tween.tween_property(right_bar, "rect_position:x", 591.0, 1).from(87.0)
 
 	root_viewport.add_scene(root_viewport.bars.instance())
+	(root_viewport.get_node("Bars") as Bars).back_scene = root_viewport.song_select
 
 
 ## Comment

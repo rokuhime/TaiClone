@@ -71,13 +71,12 @@ stretch_mode = 6
 
 [node name="ChartInfo" type="Label" parent="Top/V/Bottom"]
 margin_left = 39.0
-margin_right = 1420.0
+margin_right = 1413.0
 margin_bottom = 49.0
 size_flags_horizontal = 3
 theme_type_variation = "FontRegular030"
 
 [node name="PlayDate" type="Label" parent="Top/V/Bottom"]
-visible = false
 margin_left = 1420.0
 margin_right = 1420.0
 margin_bottom = 49.0
