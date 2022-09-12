@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://gameplay/drum_visual.gd" type="Script" id=1]
+[ext_resource path="res://scenes/gameplay/drum_visual.gd" type="Script" id=1]
 
 [node name="DrumVisual" type="TextureRect"]
 anchor_bottom = 1.0

@@ -4,10 +4,10 @@ extends SceneTree
 ## Ran on startup, absolute root script of the project.
 
 ## Comment
-var _volume_control := preload("res://root/volume_control.tscn")
+var _volume_control := preload("res://scenes/root/volume_control.tscn")
 
 ## Comment
-var _root := preload("res://root/root.gd")
+var _root := preload("res://scenes/root/root.gd")
 
 ## The root viewport that's used when requiring [Root]-specific functions.
 var _root_viewport: Root
@@ -69,7 +69,7 @@ func _init() -> void:
 	_root_viewport.settings_save = true
 
 	# DEV ONLY
-	_root_viewport.add_scene(preload("res://song_select/song_select.tscn").instance())
+	_root_viewport.add_scene(_root_viewport.song_select.instance())
 
 
 func _input_event(event: InputEvent) -> void:

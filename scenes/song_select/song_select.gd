@@ -34,7 +34,7 @@ func load_metadata(folder_path: String) -> void:
 
 		if directory.current_is_dir():
 			load_metadata(folder_path.plus_file(file_name))
-			return
+			continue
 
 		if f.open(folder_path.plus_file(file_name), File.READ):
 			f.close()

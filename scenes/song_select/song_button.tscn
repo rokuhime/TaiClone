@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://song_select/banner.tscn" type="PackedScene" id=1]
-[ext_resource path="res://song_select/song_button.gd" type="Script" id=2]
+[ext_resource path="res://scenes/song_select/banner.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/song_select/song_button.gd" type="Script" id=2]
 
 [node name="SongButton" type="Button"]
 anchor_left = 1.0
