@@ -70,9 +70,9 @@ _global_script_classes=[ {
 "path": "res://scripts/skin_manager.gd"
 }, {
 "base": "Button",
-"class": "Song",
+"class": "SongButton",
 "language": "GDScript",
-"path": "res://song_select/song.gd"
+"path": "res://song_select/song_button.gd"
 }, {
 "base": "HitObject",
 "class": "Spinner",
@@ -117,7 +117,7 @@ _global_script_class_icons={
 "Root": "",
 "Scene": "",
 "SkinManager": "",
-"Song": "",
+"SongButton": "",
 "Spinner": "",
 "SpinnerWarn": "",
 "TaiClone": "",

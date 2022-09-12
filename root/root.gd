@@ -166,7 +166,7 @@ func _init() -> void:
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
-	song_button_object = load("res://song_select/song.tscn") as PackedScene
+	song_button_object = load("res://song_select/song_button.tscn") as PackedScene
 	song_select = load("res://song_select/song_select.tscn") as PackedScene
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene

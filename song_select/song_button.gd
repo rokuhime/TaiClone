@@ -1,4 +1,4 @@
-class_name Song
+class_name SongButton
 extends Button
 
 ## Comment

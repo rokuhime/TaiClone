@@ -42,7 +42,7 @@ func load_metadata(folder_path: String) -> void:
 				continue
 
 			## Comment
-			var song_button := root_viewport.song_button_object.instance() as Song
+			var song_button := root_viewport.song_button_object.instance() as SongButton
 
 			song_button.change_properties(f.get_line(), f.get_line(), folder_path, f.get_line(), f.get_line(), f.get_line(), f.get_line())
 			f.close()
