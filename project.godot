@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "BarLine",
 "language": "GDScript",
-"path": "res://hitobjects/bar_line.gd"
+"path": "res://scenes/hitobjects/bar_line.gd"
 }, {
 "base": "Reference",
 "class": "ChartLoader",
@@ -27,7 +27,7 @@ _global_script_classes=[ {
 "base": "Scene",
 "class": "Gameplay",
 "language": "GDScript",
-"path": "res://gameplay/gameplay.gd"
+"path": "res://scenes/gameplay/gameplay.gd"
 }, {
 "base": "Reference",
 "class": "GlobalTools",
@@ -37,27 +37,27 @@ _global_script_classes=[ {
 "base": "Control",
 "class": "HitError",
 "language": "GDScript",
-"path": "res://gameplay/hit_error.gd"
+"path": "res://scenes/gameplay/hit_error.gd"
 }, {
 "base": "TextureRect",
 "class": "HitObject",
 "language": "GDScript",
-"path": "res://hitobjects/_hit_object.gd"
+"path": "res://scenes/hitobjects/_hit_object.gd"
 }, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
-"path": "res://hitobjects/note.gd"
+"path": "res://scenes/hitobjects/note.gd"
 }, {
 "base": "HitObject",
 "class": "Roll",
 "language": "GDScript",
-"path": "res://hitobjects/roll.gd"
+"path": "res://scenes/hitobjects/roll.gd"
 }, {
 "base": "Viewport",
 "class": "Root",
 "language": "GDScript",
-"path": "res://root/root.gd"
+"path": "res://scenes/root/root.gd"
 }, {
 "base": "Control",
 "class": "Scene",
@@ -72,17 +72,17 @@ _global_script_classes=[ {
 "base": "Button",
 "class": "SongButton",
 "language": "GDScript",
-"path": "res://song_select/song_button.gd"
+"path": "res://scenes/song_select/song_button.gd"
 }, {
 "base": "HitObject",
 "class": "Spinner",
 "language": "GDScript",
-"path": "res://hitobjects/spinner.gd"
+"path": "res://scenes/hitobjects/spinner.gd"
 }, {
 "base": "HitObject",
 "class": "SpinnerWarn",
 "language": "GDScript",
-"path": "res://hitobjects/spinner_warn.gd"
+"path": "res://scenes/hitobjects/spinner_warn.gd"
 }, {
 "base": "SceneTree",
 "class": "TaiClone",
@@ -92,17 +92,17 @@ _global_script_classes=[ {
 "base": "HitObject",
 "class": "Tick",
 "language": "GDScript",
-"path": "res://hitobjects/tick.gd"
+"path": "res://scenes/hitobjects/tick.gd"
 }, {
 "base": "HitObject",
 "class": "TimingPoint",
 "language": "GDScript",
-"path": "res://hitobjects/timing_point.gd"
+"path": "res://scenes/hitobjects/timing_point.gd"
 }, {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
-"path": "res://root/volume_control.gd"
+"path": "res://scenes/root/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -129,7 +129,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://root/root.tscn"
+run/main_scene="res://scenes/root/root.tscn"
 boot_splash/image="res://temporary/sdsddsd.png"
 boot_splash/fullsize=false
 boot_splash/bg_color=Color( 1, 1, 1, 1 )

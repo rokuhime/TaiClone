@@ -28,7 +28,7 @@ const STORAGE_PATH := "user://storage.ini"
 var music := $Background/Music as AudioStreamPlayer
 
 ## Comment
-var settings_panel := load("res://settings_panel/settings_panel.tscn") as PackedScene
+var settings_panel := load("res://scenes/settings_panel/settings_panel.tscn") as PackedScene
 
 ## Comment
 var artist := ""
@@ -159,19 +159,19 @@ func _init() -> void:
 		game_path = storage_file.get_as_text()
 		storage_file.close()
 
-	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://bars/_bars.tscn") as PackedScene
-	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
+	bar_line_object = load("res://scenes/hitobjects/bar_line.tscn") as PackedScene
+	bars = load("res://scenes/bars/_bars.tscn") as PackedScene
+	gameplay = load("res://scenes/gameplay/gameplay.tscn") as PackedScene
 	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
-	note_object = load("res://hitobjects/note.tscn") as PackedScene
+	note_object = load("res://scenes/hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
-	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
-	song_button_object = load("res://song_select/song_button.tscn") as PackedScene
-	song_select = load("res://song_select/song_select.tscn") as PackedScene
-	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
-	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
-	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
-	timing_point_object = load("res://hitobjects/timing_point.tscn") as PackedScene
+	roll_object = load("res://scenes/hitobjects/roll.tscn") as PackedScene
+	song_button_object = load("res://scenes/song_select/song_button.tscn") as PackedScene
+	song_select = load("res://scenes/song_select/song_select.tscn") as PackedScene
+	spinner_object = load("res://scenes/hitobjects/spinner.tscn") as PackedScene
+	spinner_warn_object = load("res://scenes/hitobjects/spinner_warn.tscn") as PackedScene
+	tick_object = load("res://scenes/hitobjects/tick.tscn") as PackedScene
+	timing_point_object = load("res://scenes/hitobjects/timing_point.tscn") as PackedScene
 	accuracy = ""
 	accurate_count = 0
 	combo = 0
