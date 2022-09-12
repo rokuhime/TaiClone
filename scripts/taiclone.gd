@@ -69,10 +69,6 @@ func _init() -> void:
 	_root_viewport.settings_save = true
 
 	# DEV ONLY
-	_root_viewport.artist = "Sanae-San"
-	_root_viewport.charter = "Genjuro"
-	_root_viewport.difficulty_name = "Hell Oni"
-	_root_viewport.title = "RD-Sounds feat. Meramipop"
 	_root_viewport.add_scene(preload("res://song_select/song_select.tscn").instance())
 
 

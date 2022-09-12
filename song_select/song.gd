@@ -1,5 +1,5 @@
 class_name Song
-extends Control
+extends Button
 
 ## Comment
 var folder_path := ""
@@ -40,6 +40,27 @@ func _ready() -> void:
 	status_label.text = "LOCAL"
 
 
+func _pressed() -> void:
+	## Comment
+	var child_count := get_parent().get_child_count()
+
+	## Comment
+	var middle_index := int(child_count / 2.0)
+
+	if get_index() == middle_index:
+		return
+
+	for _i in range(abs(get_index() - middle_index)):
+		if get_index() > middle_index:
+			get_parent().move_child(get_parent().get_child(0), child_count - 1)
+
+		else:
+			get_parent().move_child(get_parent().get_child(child_count - 1), 0)
+
+	get_tree().call_group("Songs", "change_song", folder_path, middle_index)
+	root_viewport.change_song_properties(_title, _difficulty_name, folder_path, _charter, _bg_file_name, _audio_filename, _artist)
+
+
 ## Comment
 func apply_skin() -> void:
 	ranking.texture = root_viewport.skin.ranking_s_small
@@ -58,7 +79,11 @@ func change_properties(new_title: String, new_name: String, new_folder: String, 
 
 ## Comment
 func change_song(new_folder: String, middle_index: int) -> void:
-	rect_position.y = 475 + (get_index() - middle_index) * 145
+	## Comment
+	var size_y := rect_size.y
+
+	margin_bottom = size_y / 2 + (get_index() - middle_index) * 145
+	margin_top = margin_bottom - size_y
 	if get_index() == middle_index:
 		margin_left = -720
 		margin_right = 0

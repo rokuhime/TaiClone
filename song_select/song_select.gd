@@ -5,14 +5,10 @@ onready var charts := $Charts
 
 
 func _ready() -> void:
-	load_metadata(root_viewport.game_path.plus_file(root_viewport.SONGS_FOLDER))
 	Engine.target_fps = 120
-
-	## Comment
-	var middle_index := int(charts.get_child_count() / 2.0)
-
-	get_tree().call_group("Songs", "change_song", (charts.get_child(middle_index) as Song).folder_path, middle_index)
-	root_viewport.music.play()
+	load_metadata(root_viewport.game_path.plus_file(root_viewport.SONGS_FOLDER))
+	if charts.get_child_count():
+		(charts.get_child(0) as Button)._pressed()
 
 
 ## Comment
@@ -20,7 +16,10 @@ func load_metadata(folder_path: String) -> void:
 	## Comment
 	var directory := Directory.new()
 
-	assert(not directory.open(folder_path), "Unable to open songs folder.")
+	if directory.open(folder_path):
+		print_debug("Songs folder not found.")
+		return
+
 	assert(not directory.list_dir_begin(true), "Unable to read songs folder.")
 
 	## Comment

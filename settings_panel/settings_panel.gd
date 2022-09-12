@@ -134,6 +134,7 @@ func change_songs_folder(new_text: String) -> void:
 
 	_import_songs(songs_folder, new_text)
 	root_viewport.save_settings()
+	root_viewport.add_blackout(root_viewport.song_select)
 
 
 ## Comment
