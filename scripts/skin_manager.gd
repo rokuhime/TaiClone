@@ -211,7 +211,7 @@ var menu_bg: Texture
 #var mod_score: Texture
 
 ## Comment
-#var mod_sudden_death: Texture
+var mod_sudden_death: Texture
 
 ## Comment
 #var mod_free: Texture
@@ -340,7 +340,7 @@ var menu_bg: Texture
 #var ranking_s: Texture
 
 ## Comment
-#var ranking_s_small: Texture
+var ranking_s_small: Texture
 
 ## Comment
 #var ranking_a: Texture
@@ -682,8 +682,8 @@ func _init(skin_path: String) -> void:
 			#"ranking_S":
 			#	ranking_s = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
-			#"ranking_S_small":
-			#	ranking_s_small = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
+			"ranking_S_small":
+				ranking_s_small = _get_texture(skin_path, str(key), cur_files, ["@2x.png"]).get_frame_texture(0)
 
 			#"ranking_SH":
 			#	ranking_sh = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
@@ -831,8 +831,8 @@ func _init(skin_path: String) -> void:
 			#"selection_mod_scorev2":
 			#	mod_score = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
-			#"selection_mod_suddendeath":
-			#	mod_sudden_death = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
+			"selection_mod_suddendeath":
+				mod_sudden_death = _get_texture(skin_path, str(key), cur_files, ["@2x.png"]).get_frame_texture(0)
 
 			#"selection_mod_touchdevice":
 			#	mod_touch_device = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)

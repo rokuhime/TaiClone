@@ -18,6 +18,10 @@ theme_type_variation = "_Results"
 script = ExtResource( 1 )
 
 [node name="Scoreboard" parent="." instance=ExtResource( 2 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -704.0
+margin_right = -304.0
 
 [node name="Main" type="VBoxContainer" parent="."]
 anchor_right = 1.0

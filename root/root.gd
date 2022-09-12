@@ -10,19 +10,49 @@ signal hit_error_changed
 signal late_early_changed
 
 ## Comment
+signal song_properties_changed
+
+## Comment
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 ## Comment
 const CONFIG_PATH := "config.ini"
 
 ## Comment
+const SONGS_FOLDER := "Songs"
+
+## Comment
 const STORAGE_PATH := "user://storage.ini"
+
+## Comment
+var music := $Background/Music as AudioStreamPlayer
+
+## Comment
+var settings_panel := load("res://settings_panel/settings_panel.tscn") as PackedScene
+
+## Comment
+var artist := ""
+
+## Comment
+var charter := ""
+
+## Comment
+var current_song_folder := ""
+
+## Comment
+var difficulty_name := ""
+
+## Comment
+var game_path := OS.get_user_data_dir()
 
 ## Comment
 var skin_path := SkinManager.DEFAULT_SKIN_PATH
 
 ## Comment
-var game_path := OS.get_user_data_dir()
+var songs_folder := ""
+
+## Comment
+var title := ""
 
 ## Comment
 var global_offset := 0
@@ -35,9 +65,6 @@ var late_early_simple_display := 1
 
 ## Comment
 var settings_save := false
-
-## Comment
-var music: AudioStreamPlayer
 
 ## Comment
 var bar_line_object: PackedScene
@@ -61,7 +88,10 @@ var results: PackedScene
 var roll_object: PackedScene
 
 ## Comment
-var settings_panel: PackedScene
+var song_button_object: PackedScene
+
+## Comment
+var song_select: PackedScene
 
 ## Comment
 var spinner_object: PackedScene
@@ -80,18 +110,6 @@ var skin: SkinManager
 
 ## Comment
 var accuracy: String
-
-## Comment
-var artist: String
-
-## Comment
-var charter: String
-
-## Comment
-var difficulty_name: String
-
-## Comment
-var title: String
 
 ## Comment
 var accurate_count: int
@@ -127,7 +145,7 @@ var score: int
 var _background := $"Background" as TextureRect
 
 ## Comment
-var _blackout := load("res://root/blackout.tscn") as PackedScene
+var _blackout := load("res://scenes/blackout.tscn") as PackedScene
 
 ## Comment
 var _next_scene := PackedScene.new()
@@ -141,24 +159,20 @@ func _init() -> void:
 		game_path = storage_file.get_as_text()
 		storage_file.close()
 
-	music = $Background/Music as AudioStreamPlayer
 	bar_line_object = load("res://hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://root/bars.tscn") as PackedScene
+	bars = load("res://bars/_bars.tscn") as PackedScene
 	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
 	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
-	settings_panel = load("res://root/settings_panel.tscn") as PackedScene
+	song_button_object = load("res://song_select/song_button.tscn") as PackedScene
+	song_select = load("res://song_select/song_select.tscn") as PackedScene
 	spinner_object = load("res://hitobjects/spinner.tscn") as PackedScene
 	spinner_warn_object = load("res://hitobjects/spinner_warn.tscn") as PackedScene
 	tick_object = load("res://hitobjects/tick.tscn") as PackedScene
 	timing_point_object = load("res://hitobjects/timing_point.tscn") as PackedScene
 	accuracy = ""
-	artist = ""
-	charter = ""
-	difficulty_name = ""
-	title = ""
 	accurate_count = 0
 	combo = 0
 	early_count = 0
@@ -179,7 +193,7 @@ func add_blackout(next_scene: PackedScene) -> void:
 
 ## Comment
 func add_scene(new_scene: Node, parent_node := "") -> void:
-	if has_node(new_scene.name) and new_scene.name != "Gameplay":
+	if has_node(new_scene.name) and new_scene.name != get_child(1).name:
 		new_scene.queue_free()
 
 	else:
@@ -205,6 +219,20 @@ func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
 	skin_path = new_text
 	save_settings()
 	get_tree().call_group("Skinnables", "apply_skin")
+
+
+## Comment
+func change_song_properties(new_title: String, new_name: String, new_folder: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
+	artist = new_artist
+	charter = new_charter
+	difficulty_name = new_name
+	title = new_title
+	emit_signal("song_properties_changed")
+	bg_changed(GlobalTools.texture_from_image(new_bg))
+	if new_folder != current_song_folder:
+		music.stream = AudioLoader.load_file(new_audio)
+		music.play()
+		current_song_folder = new_folder
 
 
 ## Comment
@@ -285,6 +313,7 @@ func save_settings() -> void:
 	for i in range(AudioServer.bus_count):
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
+	config_file.set_value("Debug", "SongsFolder", songs_folder)
 	if config_file.save(game_path.plus_file(CONFIG_PATH)):
 		push_warning("Attempted to save configuration file.")
 

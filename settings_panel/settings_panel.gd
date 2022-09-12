@@ -64,6 +64,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		_currently_changing = ""
 
 
+## Comment
+func back_button_pressed() -> void:
+	var _removed := root_viewport.remove_scene("SettingsPanel")
+
+
 ## Called when a key-bind button is pressed.
 ## key ([String]): The key-bind that should be changed.
 func button_pressed(key: String) -> void:
@@ -77,10 +82,7 @@ func change_game_path(new_text: String, move_folder := true) -> void:
 		## Comment
 		var directory := Directory.new()
 
-		if directory.rename(root_viewport.game_path, new_text):
-			push_warning("Unable to move game directory.")
-			return
-
+		assert(not directory.rename(root_viewport.game_path, new_text), "Unable to move game directory.")
 		assert(not directory.make_dir_recursive(root_viewport.game_path), "Unable to recreate old game path directory.")
 		if directory.dir_exists(new_text.plus_file("logs")):
 			assert(not OS.move_to_trash(new_text.plus_file("logs")), "Unable to remove logs folder.")
@@ -91,6 +93,9 @@ func change_game_path(new_text: String, move_folder := true) -> void:
 		assert(not storage_file.open(Root.STORAGE_PATH, File.WRITE), "Unable to write storage.ini file.")
 		storage_file.store_string(new_text)
 		storage_file.close()
+		if root_viewport.songs_folder == root_viewport.game_path:
+			root_viewport.songs_folder = new_text
+
 		root_viewport.game_path = new_text
 
 	game_path_text.text = new_text
@@ -113,8 +118,28 @@ func change_res(index: int) -> void:
 
 
 ## Comment
+func change_songs_button_pressed() -> void:
+	_file_dialog(self, root_viewport.songs_folder, "change_songs_folder")
+
+
+## Comment
+func change_songs_folder(new_text: String) -> void:
+	root_viewport.songs_folder = new_text
+
+	## Comment
+	var songs_folder := root_viewport.game_path.plus_file(Root.SONGS_FOLDER)
+
+	if Directory.new().dir_exists(songs_folder):
+		assert(not OS.move_to_trash(songs_folder), "Unable to remove songs folder.")
+
+	_import_songs(songs_folder, new_text)
+	root_viewport.save_settings()
+	root_viewport.add_blackout(root_viewport.song_select)
+
+
+## Comment
 func game_path_button_pressed() -> void:
-	_file_dialog(self, "change_game_path")
+	_file_dialog(self, root_viewport.game_path, "change_game_path")
 
 
 ## Called when [member hit_error_toggle] is toggled.
@@ -146,7 +171,7 @@ func scene_removed() -> void:
 
 ## Comment
 func skin_button_pressed() -> void:
-	_file_dialog(root_viewport, "change_skin")
+	_file_dialog(root_viewport, root_viewport.skin_path, "change_skin")
 
 
 ## Called when [member fullscreen_toggle] is toggled.
@@ -196,13 +221,13 @@ func _change_text(key: String, was_pressed := false) -> void:
 
 
 ## Comment
-func _file_dialog(signal_target: Node, method: String) -> void:
+func _file_dialog(signal_target: Node, open_dir: String, method: String) -> void:
 	## Comment
 	var file_dialog := FileDialog.new()
 
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.mode = FileDialog.MODE_OPEN_DIR
-	file_dialog.current_dir = root_viewport.game_path
+	file_dialog.current_dir = open_dir
 	file_dialog.show_hidden_files = true
 	file_dialog.window_title = ""
 	GlobalTools.send_signal(signal_target, "dir_selected", file_dialog, method)
@@ -210,6 +235,27 @@ func _file_dialog(signal_target: Node, method: String) -> void:
 	root_viewport.add_scene(file_dialog, "VolumeControl")
 	file_dialog.popup_centered_ratio(1)
 	file_dialog.set_anchors_and_margins_preset(Control.PRESET_WIDE)
+
+
+## Comment
+func _import_songs(songs_folder: String, folder_path: String) -> void:
+	## Comment
+	var directory := Directory.new()
+
+	assert(not directory.open(folder_path), "Unable to open songs folder.")
+	assert(not directory.list_dir_begin(true), "Unable to read songs folder.")
+	while true:
+		## Comment
+		var file_name := directory.get_next()
+
+		if directory.current_is_dir():
+			_import_songs(songs_folder, folder_path.plus_file(file_name))
+
+		elif file_name:
+			ChartLoader.load_chart(songs_folder.plus_file(folder_path.trim_prefix(root_viewport.songs_folder)).plus_file(file_name.get_basename() + ".fus"), folder_path.plus_file(file_name))
+
+		else:
+			return
 
 
 ## Comment

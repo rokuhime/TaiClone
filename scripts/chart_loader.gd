@@ -4,14 +4,11 @@ class_name ChartLoader
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 
 ## Comment
-const FUS := "debug.fus"
-
-## Comment
-const FUS_VERSION := "v0.0.4"
+const FUS_VERSION := "v0.0.5"
 
 
 ## Comment
-static func load_chart(game_path: String, file_path: String) -> void:
+static func load_chart(save_path: String, file_path: String) -> void:
 	## Comment
 	var f := File.new()
 
@@ -176,10 +173,31 @@ static func load_chart(game_path: String, file_path: String) -> void:
 					title = _find_value(line, "Title:", title)
 
 				"TimingPoints":
+					if line_data.size() < 3:
+						line_data.append("4")
+
+					if line_data.size() < 4:
+						line_data.append("0")
+
+					if line_data.size() < 5:
+						line_data.append("0")
+
+					if line_data.size() < 6:
+						line_data.append("100")
+
+					if line_data.size() < 7:
+						line_data.append("1")
+
+					if line_data.size() < 8:
+						line_data.append("0")
+
 					## Comment
 					var uninherited := bool(int(line_data[6]))
 
-					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / float(line_data[1]), 1 << 0 & int(line_data[7]), 1 << 3 & int(line_data[7])])
+					## Comment
+					var slider_velocity := float(line_data[1])
+
+					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / slider_velocity if slider_velocity else INF, 1 << 0 & int(line_data[7]), 1 << 3 & int(line_data[7])])
 					if next_timing.empty():
 						next_timing = line_data
 
@@ -364,14 +382,21 @@ static func load_chart(game_path: String, file_path: String) -> void:
 		return
 
 	f.close()
-	if f.open(game_path.plus_file(FUS), File.WRITE):
+
+	## Comment
+	var directory := Directory.new()
+
+	if not directory.dir_exists(save_path.get_base_dir()) and directory.make_dir_recursive(save_path.get_base_dir()):
+		return
+
+	if f.open(save_path, File.WRITE):
 		f.close()
 		return
 
 	## Comment
 	var folder_path := file_path.get_base_dir()
 
-	f.store_string(_csv_line([FUS_VERSION, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist, charter, difficulty_name, title] + notes).join("\n"))
+	f.store_string(_csv_line([FUS_VERSION, title, difficulty_name, charter, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist] + notes).join("\n"))
 	f.close()
 
 	return
@@ -384,10 +409,8 @@ static func _append_note(notes: Array, line_data: Array) -> void:
 
 ## Comment
 static func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_meter: float, cur_bpm: float) -> float:
-	if total_cur_sv > 0:
-		_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
-
-	return next_barline + 60 * current_meter / cur_bpm
+	_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
+	return next_barline + max(0.001, 60 * current_meter / cur_bpm if cur_bpm else INF)
 
 
 ## Comment

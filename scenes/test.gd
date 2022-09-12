@@ -1,4 +1,4 @@
-extends Node
+extends Scene
 
 onready var audio_stream_player := $AudioStreamPlayer as AudioStreamPlayer
 

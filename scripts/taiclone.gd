@@ -55,6 +55,7 @@ func _init() -> void:
 	_root_viewport.toggle_fullscreen(bool(config_file.get_value("Display", "Fullscreen", 0)))
 	_root_viewport.change_skin(str(config_file.get_value("Display", "SkinPath", SkinManager.DEFAULT_SKIN_PATH)))
 	_root_viewport.global_offset = int(config_file.get_value("Audio", "GlobalOffset", 0))
+	_root_viewport.songs_folder = str(config_file.get_value("Debug", "SongsFolder", _root_viewport.game_path))
 
 	## The [VolumeControl] instance. It requires initialization before being added as a scene.
 	var volume_control := _volume_control.instance() as VolumeControl
@@ -65,16 +66,10 @@ func _init() -> void:
 		volume_control.set_volume(i, float(config_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
 	#_root_viewport.add_scene(_root_viewport.main_menu.instance())
-	_root_viewport.add_scene(preload("res://scenes/song_select.tscn").instance())
 	_root_viewport.settings_save = true
 
-	#dev
-	_root_viewport.bg_changed(_root_viewport.skin.menu_bg)
-
-
-func _drop_files(files: PoolStringArray, _from_screen: int) -> void:
-	ChartLoader.load_chart(_root_viewport.game_path, files[0])
-	_root_viewport.add_blackout(_root_viewport.gameplay)
+	# DEV ONLY
+	_root_viewport.add_scene(preload("res://song_select/song_select.tscn").instance())
 
 
 func _input_event(event: InputEvent) -> void:
@@ -84,4 +79,3 @@ func _input_event(event: InputEvent) -> void:
 
 		if k_event.pressed and k_event.control and k_event.scancode == KEY_O:
 			_root_viewport.toggle_settings()
-			return
