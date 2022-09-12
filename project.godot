@@ -62,7 +62,7 @@ _global_script_classes=[ {
 "base": "Viewport",
 "class": "Root",
 "language": "GDScript",
-"path": "res://scenes/root/root.gd"
+"path": "res://scenes/root.gd"
 }, {
 "base": "Control",
 "class": "Scene",
@@ -107,7 +107,7 @@ _global_script_classes=[ {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
-"path": "res://scenes/root/volume_control.gd"
+"path": "res://scenes/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -135,7 +135,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://scenes/root/root.tscn"
+run/main_scene="res://scenes/root.tscn"
 boot_splash/image="res://temporary/sdsddsd.png"
 boot_splash/fullsize=false
 boot_splash/bg_color=Color( 1, 1, 1, 1 )

@@ -127,7 +127,7 @@ func change_songs_folder(new_text: String) -> void:
 	root_viewport.songs_folder = new_text
 
 	## Comment
-	var songs_folder := root_viewport.game_path.plus_file(Root.SONGS_FOLDER)
+	var songs_folder := root_viewport.taiclone_songs_folder()
 
 	if Directory.new().dir_exists(songs_folder):
 		assert(not OS.move_to_trash(songs_folder), "Unable to remove songs folder.")

@@ -1,34 +1,26 @@
 class_name Root
 extends Viewport
 
-## The first and primary object of the project.
-
 ## Signals [HitError] when the value of [member hit_error] has changed.
 signal hit_error_changed
 
 ## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
 signal late_early_changed
 
-## Comment
+## Signals [Bars] when [method change_song_properties] is called.
 signal song_properties_changed
 
-## Comment
+## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
-## Comment
-const CONFIG_PATH := "config.ini"
+## The [PackedScene] used to instance [SettingsPanel].
+const SETTINGS_PANEL := preload("res://scenes/settings_panel/settings_panel.tscn")
 
-## Comment
-const SONGS_FOLDER := "Songs"
-
-## Comment
+## The path to the storage file that contains [member game_path].
 const STORAGE_PATH := "user://storage.ini"
 
-## Comment
+## The [AudioStreamPlayer] playing music.
 var music := $Background/Music as AudioStreamPlayer
-
-## Comment
-var settings_panel := load("res://scenes/settings_panel/settings_panel.tscn") as PackedScene
 
 ## Comment
 var artist := ""
@@ -217,6 +209,53 @@ func change_key(event: InputEvent, button: String) -> void:
 
 
 ## Comment
+func change_root_properties() -> void:
+	## The configuration file that's used to load settings.
+	var c_file := ConfigFile.new()
+
+	if c_file.load(_config_path()):
+		print_debug("Config file not found.")
+
+	for key in KEYS:
+		## [member key] as a [String].
+		var key_string := str(key)
+
+		## The key-bind for this [member key].
+		var keybind := str(c_file.get_value("Keybinds", key_string, ""))
+
+		## The key-bind value for this [member key].
+		var keybind_value := keybind.substr(1)
+
+		match keybind.left(1):
+			"J":
+				## The new [InputEventJoypadButton] to associate with this [member key].
+				var event := InputEventJoypadButton.new()
+
+				event.button_index = int(keybind_value)
+				change_key(event, key_string)
+
+			"K":
+				## The new [InputEventKey] to associate with this [member key].
+				var event := InputEventKey.new()
+
+				event.scancode = OS.find_scancode_from_string(keybind_value)
+				change_key(event, key_string)
+
+	late_early_simple_display = int(c_file.get_value("Display", "LateEarly", 1))
+	hit_error = bool(c_file.get_value("Display", "HitError", 1))
+	res_changed(Vector2(c_file.get_value("Display", "ResolutionX", 1920), c_file.get_value("Display", "ResolutionY", 1080)))
+	toggle_fullscreen(bool(c_file.get_value("Display", "Fullscreen", 0)))
+	change_skin(str(c_file.get_value("Display", "SkinPath", SkinManager.DEFAULT_SKIN_PATH)))
+	global_offset = int(c_file.get_value("Audio", "GlobalOffset", 0))
+	songs_folder = str(c_file.get_value("Debug", "SongsFolder", game_path))
+	for i in range(AudioServer.bus_count):
+		AudioServer.set_bus_volume_db(i, float(c_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
+
+	add_scene(main_menu.instance())
+	settings_save = true
+
+
+## Comment
 func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
 	skin = SkinManager.new(new_text)
 	skin_path = new_text
@@ -320,8 +359,13 @@ func save_settings() -> void:
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
 	config_file.set_value("Debug", "SongsFolder", songs_folder)
-	if config_file.save(game_path.plus_file(CONFIG_PATH)):
+	if config_file.save(_config_path()):
 		push_warning("Attempted to save configuration file.")
+
+
+## Comment
+func taiclone_songs_folder() -> String:
+	return game_path.plus_file("Songs")
 
 
 ## Comment
@@ -333,4 +377,9 @@ func toggle_fullscreen(new_visible: bool) -> void:
 ## Comment
 func toggle_settings() -> void:
 	if not remove_scene("SettingsPanel"):
-		add_scene(settings_panel.instance(), get_child(1).name)
+		add_scene(SETTINGS_PANEL.instance(), get_child(1).name)
+
+
+## Comment
+func _config_path() -> String:
+	return game_path.plus_file("config.ini")

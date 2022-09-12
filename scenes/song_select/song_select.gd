@@ -6,7 +6,7 @@ onready var charts := $Charts
 
 func _ready() -> void:
 	Engine.target_fps = 120
-	load_metadata(root_viewport.game_path.plus_file(root_viewport.SONGS_FOLDER))
+	load_metadata(root_viewport.taiclone_songs_folder())
 	if charts.get_child_count():
 		(charts.get_child(0) as Button)._pressed()
 
