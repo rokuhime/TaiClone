@@ -7,14 +7,8 @@ signal hit_error_changed
 ## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
 signal late_early_changed
 
-## Signals [Bars] when [method change_song_properties] is called.
-signal song_properties_changed
-
 ## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
-
-## The [PackedScene] used to instance [SettingsPanel].
-const SETTINGS_PANEL := preload("res://scenes/settings_panel/settings_panel.tscn")
 
 ## The path to the storage file that contains [member game_path].
 const STORAGE_PATH := "user://storage.ini"
@@ -23,19 +17,10 @@ const STORAGE_PATH := "user://storage.ini"
 var music := $Background/Music as AudioStreamPlayer
 
 ## Comment
-var artist := ""
+var chart := Chart.new()
 
-## Comment
-var charter := ""
-
-## Comment
-var current_song_file := ""
-
-## Comment
-var current_song_folder := ""
-
-## Comment
-var difficulty_name := ""
+## The [PackedScene] used to instance [SettingsPanel].
+var settings_panel := load("res://scenes/settings_panel/settings_panel.tscn") as PackedScene
 
 ## Comment
 var game_path := OS.get_user_data_dir()
@@ -45,9 +30,6 @@ var skin_path := SkinManager.DEFAULT_SKIN_PATH
 
 ## Comment
 var songs_folder := ""
-
-## Comment
-var title := ""
 
 ## Comment
 var global_offset := 0
@@ -264,23 +246,6 @@ func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
 
 
 ## Comment
-func change_song_properties(new_title: String, new_name: String, new_folder: String, new_file: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
-	artist = new_artist
-	charter = new_charter
-	current_song_file = new_file
-	difficulty_name = new_name
-	title = new_title
-	emit_signal("song_properties_changed")
-	bg_changed(GlobalTools.texture_from_image(new_bg))
-	if new_folder != current_song_folder:
-		music.stream = AudioLoader.load_file(new_audio)
-		current_song_folder = new_folder
-
-	if not music.playing:
-		music.play()
-
-
-## Comment
 func hit_error_toggled(new_visible: bool) -> void:
 	hit_error = new_visible
 	emit_signal("hit_error_changed")
@@ -377,7 +342,7 @@ func toggle_fullscreen(new_visible: bool) -> void:
 ## Comment
 func toggle_settings() -> void:
 	if not remove_scene("SettingsPanel"):
-		add_scene(SETTINGS_PANEL.instance(), get_child(1).name)
+		add_scene(settings_panel.instance(), get_child(1).name)
 
 
 ## Comment

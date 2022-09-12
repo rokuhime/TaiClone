@@ -20,16 +20,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 		return
 
 	## Comment
-	var artist := ""
-
-	## Comment
-	var audio_filename := ""
-
-	## Comment
-	var bg_file_name := ""
-
-	## Comment
-	var charter := ""
+	var chart := Chart.new()
 
 	## Comment
 	var cur_bpm := -1.0
@@ -41,16 +32,10 @@ static func load_chart(save_path: String, file_path: String) -> void:
 	var current_meter := 4.0
 
 	## Comment
-	var difficulty_name := ""
-
-	## Comment
 	var map_sv_multiplier := "1"
 
 	## Comment
 	var notes := []
-
-	## Comment
-	var title := ""
 
 	## Comment
 	var total_cur_sv := 1.0
@@ -94,13 +79,13 @@ static func load_chart(save_path: String, file_path: String) -> void:
 
 				"Events":
 					if subsection == "Background and Video events":
-						bg_file_name = line.get_slice(",", 2).replace("\"", "")
+						chart.bg_file_name = line.get_slice(",", 2).replace("\"", "")
 						subsection = ""
 
 					subsection = _find_value(line, "//", subsection)
 
 				"General":
-					audio_filename = _find_value(line, "AudioFilename:", audio_filename)
+					chart.audio_file_name = _find_value(line, "AudioFilename:", chart.audio_file_name)
 
 				"HitObjects":
 					## Comment
@@ -169,10 +154,10 @@ static func load_chart(save_path: String, file_path: String) -> void:
 						_append_note(notes, [time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher_int])
 
 				"Metadata":
-					artist = _find_value(line, "Artist:", artist)
-					charter = _find_value(line, "Creator:", charter)
-					difficulty_name = _find_value(line, "Version:", difficulty_name)
-					title = _find_value(line, "Title:", title)
+					chart.artist = _find_value(line, "Artist:", chart.artist)
+					chart.charter = _find_value(line, "Creator:", chart.charter)
+					chart.difficulty_name = _find_value(line, "Version:", chart.difficulty_name)
+					chart.title = _find_value(line, "Title:", chart.title)
 
 				"TimingPoints":
 					if line_data.size() < 3:
@@ -250,41 +235,41 @@ static func load_chart(save_path: String, file_path: String) -> void:
 					total_cur_sv = float(map_sv_multiplier)
 					_append_note(notes, [time, cur_bpm, NoteType.TIMING_POINT, 0])
 					metadata = false
-					match difficulty_name:
+					match chart.difficulty_name:
 						"0":
-							difficulty_name = "Easy"
+							chart.difficulty_name = "Easy"
 
 						"1":
-							difficulty_name = "Normal"
+							chart.difficulty_name = "Normal"
 
 						"2":
-							difficulty_name = "Hard"
+							chart.difficulty_name = "Hard"
 
 						"3":
-							difficulty_name = "Oni"
+							chart.difficulty_name = "Oni"
 
 						"4", "Edit":
-							difficulty_name = "Ura"
+							chart.difficulty_name = "Ura"
 
 						"5":
-							difficulty_name = "Tower"
+							chart.difficulty_name = "Tower"
 
 						"6":
-							difficulty_name = "Dan"
+							chart.difficulty_name = "Dan"
 
 				else:
-					artist = _find_value(line, "SUBTITLE:", artist).trim_prefix("++").trim_prefix("--")
-					artist = _find_value(line, "SUBTITLEEN:", artist, true)
-					audio_filename = _find_value(line, "WAVE:", audio_filename)
 					balloons_string = _find_value(line, "BALLOON:", balloons_string)
-					bg_file_name = _find_value(line, "BGIMAGE:", bg_file_name)
-					charter = _find_value(line, "MAKER:", charter)
-					difficulty_name = _find_value(line, "COURSE:", difficulty_name)
+					chart.artist = _find_value(line, "SUBTITLE:", chart.artist).trim_prefix("++").trim_prefix("--")
+					chart.artist = _find_value(line, "SUBTITLEEN:", chart.artist, true)
+					chart.audio_file_name = _find_value(line, "WAVE:", chart.audio_file_name)
+					chart.bg_file_name = _find_value(line, "BGIMAGE:", chart.bg_file_name)
+					chart.charter = _find_value(line, "MAKER:", chart.charter)
+					chart.difficulty_name = _find_value(line, "COURSE:", chart.difficulty_name)
+					chart.title = _find_value(line, "TITLE:", chart.title)
+					chart.title = _find_value(line, "TITLEEN:", chart.title, true)
 					map_sv_multiplier = _find_value(line, "HEADSCROLL:", map_sv_multiplier)
 					offset_string = _find_value(line, "OFFSET:", offset_string)
 					starting_bpm = _find_value(line, "BPM:", starting_bpm)
-					title = _find_value(line, "TITLE:", title)
-					title = _find_value(line, "TITLEEN:", title, true)
 
 				continue
 
@@ -398,9 +383,9 @@ static func load_chart(save_path: String, file_path: String) -> void:
 		return
 
 	## Comment
-	var folder_path := file_path.get_base_dir()
+	chart.folder_path = file_path.get_base_dir()
 
-	f.store_string(_csv_line([FUS_VERSION, title, difficulty_name, charter, folder_path.plus_file(bg_file_name), folder_path.plus_file(audio_filename), artist] + notes).join("\n"))
+	f.store_string(_csv_line([FUS_VERSION, chart.title, chart.difficulty_name, chart.charter, chart.folder_path.plus_file(chart.bg_file_name), chart.folder_path.plus_file(chart.audio_file_name), chart.artist] + notes).join("\n"))
 	f.close()
 
 	return
