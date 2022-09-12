@@ -256,6 +256,10 @@ VolumePrevious={
 
 pointing/emulate_touch_from_mouse=true
 
+[memory]
+
+limits/message_queue/max_size_kb=8192
+
 [rendering]
 
 quality/dynamic_fonts/use_oversampling=false

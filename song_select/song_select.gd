@@ -29,24 +29,24 @@ func load_metadata(folder_path: String) -> void:
 		## Comment
 		var file_name := directory.get_next()
 
+		if not file_name:
+			return
+
 		if directory.current_is_dir():
 			load_metadata(folder_path.plus_file(file_name))
-
-		elif file_name:
-			if f.open(folder_path.plus_file(file_name), File.READ):
-				f.close()
-				continue
-
-			if f.get_line() != ChartLoader.FUS_VERSION:
-				f.close()
-				continue
-
-			## Comment
-			var song_button := root_viewport.song_button_object.instance() as SongButton
-
-			song_button.change_properties(f.get_line(), f.get_line(), folder_path, f.get_line(), f.get_line(), f.get_line(), f.get_line())
-			f.close()
-			charts.add_child(song_button)
-
-		else:
 			return
+
+		if f.open(folder_path.plus_file(file_name), File.READ):
+			f.close()
+			continue
+
+		if f.get_line() != ChartLoader.FUS_VERSION:
+			f.close()
+			continue
+
+		## Comment
+		var song_button := root_viewport.song_button_object.instance() as SongButton
+
+		song_button.change_properties(f.get_line(), f.get_line(), folder_path, f.get_line(), f.get_line(), f.get_line(), f.get_line())
+		f.close()
+		charts.add_child(song_button)

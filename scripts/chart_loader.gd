@@ -163,7 +163,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 					var finisher_int := 1 << 2 & int(line_data[4])
 
 					if 1 << 1 & int(line_data[3]):
-						_append_note(notes, [time, total_cur_sv, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) * 0.6 / cur_bpm / total_cur_sv, finisher_int])
+						_append_note(notes, [time, total_cur_sv, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) * 0.6 / cur_bpm / total_cur_sv if cur_bpm else INF, finisher_int])
 
 					else:
 						_append_note(notes, [time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher_int])
