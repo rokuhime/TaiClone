@@ -8,7 +8,6 @@ const ROOT := preload("res://scenes/root.gd")
 func _init() -> void:
 	root.set_script(ROOT)
 	GlobalTools.send_signal(root, "screen_resized", self, "save_settings")
-	(root as Root).change_root_properties()
 
 
 func _input_event(event: InputEvent) -> void:

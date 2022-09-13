@@ -41,7 +41,7 @@ func _pressed() -> void:
 			get_parent().move_child(get_parent().get_child(child_count - 1), 0)
 
 	get_tree().call_group("Songs", "change_song", chart.folder_path, middle_index)
-	root_viewport.chart.change_chart(chart)
+	root_viewport.chart = chart
 
 
 ## Comment

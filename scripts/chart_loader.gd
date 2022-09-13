@@ -4,16 +4,13 @@ class_name ChartLoader
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 
 ## Comment
-const FUS_VERSION := "v0.0.5"
+const FUS_VERSION := "v0.0.6"
 
 
 ## Comment
 static func load_chart(save_path: String, file_path: String) -> void:
 	## Comment
 	var f := File.new()
-
-	if not f.file_exists(file_path):
-		return
 
 	if f.open(file_path, File.READ):
 		f.close()
@@ -26,9 +23,6 @@ static func load_chart(save_path: String, file_path: String) -> void:
 	var cur_bpm := -1.0
 
 	## Comment
-	var current_kiai := false
-
-	## Comment
 	var current_meter := 4.0
 
 	## Comment
@@ -38,10 +32,16 @@ static func load_chart(save_path: String, file_path: String) -> void:
 	var notes := []
 
 	## Comment
+	var preview_string := "0"
+
+	## Comment
 	var total_cur_sv := 1.0
 
 	if file_path.ends_with(".osu"):
 		print("Now parsing: %s." % file_path)
+
+		## Comment
+		var current_kiai := false
 
 		## Comment
 		var current_timing_data := []
@@ -78,14 +78,14 @@ static func load_chart(save_path: String, file_path: String) -> void:
 					total_cur_sv = float(map_sv_multiplier)
 
 				"Events":
-					if subsection == "Background and Video events":
+					subsection = _find_value(line, "//", subsection)
+					if subsection == "Background and Video events" and line != subsection:
 						chart.bg_file_name = line.get_slice(",", 2).replace("\"", "")
 						subsection = ""
 
-					subsection = _find_value(line, "//", subsection)
-
 				"General":
 					chart.audio_file_name = _find_value(line, "AudioFilename:", chart.audio_file_name)
+					preview_string = _find_value(line, "PreviewTime:", preview_string)
 
 				"HitObjects":
 					## Comment
@@ -125,7 +125,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 							total_cur_sv = timing * float(map_sv_multiplier)
 
 						if meter or bool(kiai) != current_kiai:
-							_append_note(notes, [next_barline, cur_bpm, NoteType.TIMING_POINT, kiai])
+							notes.append(",".join([next_barline, cur_bpm, NoteType.TIMING_POINT, kiai]))
 							current_kiai = bool(kiai)
 
 						if int(next_timing[4]):
@@ -141,23 +141,23 @@ static func load_chart(save_path: String, file_path: String) -> void:
 						next_barline = _barline(total_cur_sv, notes, next_barline, current_meter, cur_bpm)
 
 					if 1 << 3 & int(line_data[3]):
-						_append_note(notes, [time, total_cur_sv, NoteType.SPINNER, float(line_data[5]) / 1000 - time, -1])
+						notes.append(",".join([time, total_cur_sv, NoteType.SPINNER, float(line_data[5]) / 1000 - time]))
 						continue
 
 					## Comment
 					var finisher_int := 1 << 2 & int(line_data[4])
 
 					if 1 << 1 & int(line_data[3]):
-						_append_note(notes, [time, total_cur_sv, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) * 0.6 / cur_bpm / total_cur_sv if cur_bpm else INF, finisher_int])
+						notes.append(",".join([time, total_cur_sv, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) * 0.6 / cur_bpm / total_cur_sv if cur_bpm else INF, finisher_int]))
 
 					else:
-						_append_note(notes, [time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher_int])
+						notes.append(",".join([time, total_cur_sv, NoteType.KAT if bool(((1 << 1) + (1 << 3)) & int(line_data[4])) else NoteType.DON, finisher_int]))
 
 				"Metadata":
 					chart.artist = _find_value(line, "Artist:", chart.artist)
 					chart.charter = _find_value(line, "Creator:", chart.charter)
 					chart.difficulty_name = _find_value(line, "Version:", chart.difficulty_name)
-					chart.title = _find_value(line, "Title:", chart.title)
+					chart.song_title = _find_value(line, "Title:", chart.song_title)
 
 				"TimingPoints":
 					if line_data.size() < 3:
@@ -184,7 +184,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 					## Comment
 					var slider_velocity := float(line_data[1])
 
-					line_data = _csv_line([float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / slider_velocity if slider_velocity else INF, 1 << 0 & int(line_data[7]), 1 << 3 & int(line_data[7])])
+					line_data = [float(line_data[0]) / 1000, int(line_data[2]) if uninherited else 0, (60000 if uninherited else -100) / slider_velocity if slider_velocity else INF, 1 << 0 & int(line_data[7]), 1 << 3 & int(line_data[7])]
 					if next_timing.empty():
 						next_timing = line_data
 
@@ -233,7 +233,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 					cur_bpm = float(starting_bpm)
 					time = -float(offset_string)
 					total_cur_sv = float(map_sv_multiplier)
-					_append_note(notes, [time, cur_bpm, NoteType.TIMING_POINT, 0])
+					notes.append(",".join([time, cur_bpm, NoteType.TIMING_POINT, 0]))
 					metadata = false
 					match chart.difficulty_name:
 						"0":
@@ -265,8 +265,8 @@ static func load_chart(save_path: String, file_path: String) -> void:
 					chart.bg_file_name = _find_value(line, "BGIMAGE:", chart.bg_file_name)
 					chart.charter = _find_value(line, "MAKER:", chart.charter)
 					chart.difficulty_name = _find_value(line, "COURSE:", chart.difficulty_name)
-					chart.title = _find_value(line, "TITLE:", chart.title)
-					chart.title = _find_value(line, "TITLEEN:", chart.title, true)
+					chart.song_title = _find_value(line, "TITLE:", chart.song_title)
+					chart.song_title = _find_value(line, "TITLEEN:", chart.song_title, true)
 					map_sv_multiplier = _find_value(line, "HEADSCROLL:", map_sv_multiplier)
 					offset_string = _find_value(line, "OFFSET:", offset_string)
 					starting_bpm = _find_value(line, "BPM:", starting_bpm)
@@ -296,10 +296,10 @@ static func load_chart(save_path: String, file_path: String) -> void:
 						barlines = true
 
 					"#GOGOEND":
-						_append_note(notes, [time, cur_bpm, NoteType.TIMING_POINT, 0])
+						notes.append(",".join([time, cur_bpm, NoteType.TIMING_POINT, 0]))
 
 					"#GOGOSTART":
-						_append_note(notes, [time, cur_bpm, NoteType.TIMING_POINT, 1])
+						notes.append(",".join([time, cur_bpm, NoteType.TIMING_POINT, 1]))
 
 					_:
 						if line.begins_with("#"):
@@ -329,16 +329,16 @@ static func load_chart(save_path: String, file_path: String) -> void:
 						for idx in line.trim_suffix(","):
 							match int(idx):
 								1:
-									_append_note(notes, [time, total_cur_sv, NoteType.DON, 0])
+									notes.append(",".join([time, total_cur_sv, NoteType.DON, 0]))
 
 								2:
-									_append_note(notes, [time, total_cur_sv, NoteType.KAT, 0])
+									notes.append(",".join([time, total_cur_sv, NoteType.KAT, 0]))
 
 								3:
-									_append_note(notes, [time, total_cur_sv, NoteType.DON, 1])
+									notes.append(",".join([time, total_cur_sv, NoteType.DON, 1]))
 
 								4:
-									_append_note(notes, [time, total_cur_sv, NoteType.KAT, 1])
+									notes.append(",".join([time, total_cur_sv, NoteType.KAT, 1]))
 
 								5:
 									current_note = [time, total_cur_sv, NoteType.ROLL, 0]
@@ -352,7 +352,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 								8:
 									if not current_note.empty():
 										current_note.insert(3, time - float(current_note[0]))
-										_append_note(notes, current_note)
+										notes.append(",".join(current_note))
 										current_note.clear()
 
 							time += 60 * current_meter / cur_bpm / notes_in_measure
@@ -361,7 +361,7 @@ static func load_chart(save_path: String, file_path: String) -> void:
 				time += 60 * current_meter / cur_bpm
 
 			if barlines:
-				_append_note(notes, [time, total_cur_sv, NoteType.BARLINE])
+				notes.append(",".join([time, total_cur_sv, NoteType.BARLINE]))
 
 			measure.clear()
 			notes_in_measure = 0
@@ -385,32 +385,16 @@ static func load_chart(save_path: String, file_path: String) -> void:
 	## Comment
 	chart.folder_path = file_path.get_base_dir()
 
-	f.store_string(_csv_line([FUS_VERSION, chart.title, chart.difficulty_name, chart.charter, chart.folder_path.plus_file(chart.bg_file_name), chart.folder_path.plus_file(chart.audio_file_name), chart.artist] + notes).join("\n"))
+	f.store_string("\n".join([FUS_VERSION, chart.song_title, float(preview_string) / 1000, chart.folder_path, chart.difficulty_name, chart.charter, chart.bg_file_name, chart.audio_file_name, chart.artist] + notes))
 	f.close()
-
-	return
-
-
-## Comment
-static func _append_note(notes: Array, line_data: Array) -> void:
-	notes.append(_csv_line(line_data).join(","))
 
 
 ## Comment
 static func _barline(total_cur_sv: float, notes: Array, next_barline: float, current_meter: float, cur_bpm: float) -> float:
-	_append_note(notes, [next_barline, total_cur_sv, NoteType.BARLINE])
+	if total_cur_sv > 0:
+		notes.append(",".join([next_barline, total_cur_sv, NoteType.BARLINE]))
+
 	return next_barline + max(0.001, 60 * current_meter / cur_bpm if cur_bpm else INF)
-
-
-## Comment
-static func _csv_line(line_data: Array) -> PoolStringArray:
-	## Comment
-	var csv_line := []
-
-	for key in line_data:
-		csv_line.append(str(key))
-
-	return PoolStringArray(csv_line)
 
 
 ## Comment

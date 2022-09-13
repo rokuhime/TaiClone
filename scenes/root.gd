@@ -161,37 +161,6 @@ func _init() -> void:
 	miss_count = 0
 	score = 0
 
-
-## Comment
-func add_blackout(next_scene: PackedScene) -> void:
-	_next_scene = next_scene
-	add_scene(_blackout.instance(), "VolumeControl")
-
-
-## Comment
-func add_scene(new_scene: Node, parent_node := "") -> void:
-	if has_node(new_scene.name) and new_scene.name != get_child(1).name:
-		new_scene.queue_free()
-
-	else:
-		add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
-
-
-## Comment
-func bg_changed(new_texture: Texture, new_modulate := Color.white) -> void:
-	_background.modulate = new_modulate
-	_background.texture = new_texture
-
-
-## Comment
-func change_key(event: InputEvent, button: String) -> void:
-	InputMap.action_erase_events(str(button))
-	InputMap.action_add_event(str(button), event)
-	save_settings()
-
-
-## Comment
-func change_root_properties() -> void:
 	## The configuration file that's used to load settings.
 	var c_file := ConfigFile.new()
 
@@ -235,6 +204,34 @@ func change_root_properties() -> void:
 
 	add_scene(main_menu.instance())
 	settings_save = true
+
+
+## Comment
+func add_blackout(next_scene: PackedScene) -> void:
+	_next_scene = next_scene
+	add_scene(_blackout.instance(), "VolumeControl")
+
+
+## Comment
+func add_scene(new_scene: Node, parent_node := "") -> void:
+	if has_node(new_scene.name) and new_scene.name != get_child(1).name:
+		new_scene.queue_free()
+
+	else:
+		add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
+
+
+## Comment
+func bg_changed(new_texture: Texture, new_modulate := Color.white) -> void:
+	_background.modulate = new_modulate
+	_background.texture = new_texture
+
+
+## Comment
+func change_key(event: InputEvent, button: String) -> void:
+	InputMap.action_erase_events(str(button))
+	InputMap.action_add_event(str(button), event)
+	save_settings()
 
 
 ## Comment

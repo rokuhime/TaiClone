@@ -105,12 +105,12 @@ func _ready() -> void:
 	## Comment
 	var _bars_removed := root_viewport.remove_scene("Bars")
 
-	assert(not _f.open(root_viewport.chart.file_path(), File.READ), "Unable to read .fus file.")
+	assert(not _f.open(root_viewport.chart.full_file_path(), File.READ), "Unable to read .fus file.")
 	if _f.get_line() != ChartLoader.FUS_VERSION:
 		_load_finish("Outdated .fus file!")
 		return
 
-	root_viewport.chart.set_chart_properties(_f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line())
+	root_viewport.chart.change_chart_properties(_f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line())
 
 	## Comment
 	var cur_bpm := -1.0
