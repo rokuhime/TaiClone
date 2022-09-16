@@ -10,7 +10,7 @@ func _ready() -> void:
 	if charts.get_child_count():
 		(charts.get_child(0) as Button)._pressed()
 
-	root_viewport.add_scene(root_viewport.bars.instance())
+	root_viewport.add_scene(root_viewport.bars.instance(), ["SongSelect"])
 
 	## Comment
 	var bars_object := root_viewport.get_node("Bars") as Bars

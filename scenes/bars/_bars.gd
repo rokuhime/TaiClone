@@ -40,7 +40,7 @@ func _ready() -> void:
 	var _top_top_tween := position_tween.tween_property(top, "margin_top", 0.0, 1)
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	profile_picture.texture = root_viewport.skin.mod_sudden_death
 	texture_rect.texture = root_viewport.skin.tick_texture

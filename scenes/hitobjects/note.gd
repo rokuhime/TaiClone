@@ -24,7 +24,7 @@ func _ready() -> void:
 	left_margin = margin_left
 
 
-## See [HitObject].
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	self_modulate = root_viewport.skin.kat_color if _is_kat else root_viewport.skin.don_color
 	texture = root_viewport.skin.big_circle if finisher else root_viewport.skin.hit_circle

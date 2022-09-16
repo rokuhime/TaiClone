@@ -209,16 +209,18 @@ func _init() -> void:
 ## Comment
 func add_blackout(next_scene: PackedScene) -> void:
 	_next_scene = next_scene
-	add_scene(_blackout.instance(), "VolumeControl")
+	add_scene(_blackout.instance(), ["SettingsPanel", "Bars", get_child(1).name])
 
 
 ## Comment
-func add_scene(new_scene: Node, parent_node := "") -> void:
-	if has_node(new_scene.name) and new_scene.name != get_child(1).name:
-		new_scene.queue_free()
+func add_scene(new_scene: Node, nodes := ["Background"]) -> void:
+	if not has_node(new_scene.name) or new_scene.name == get_child(1).name:
+		for node_name in nodes:
+			if has_node(str(node_name)):
+				add_child_below_node(get_node(str(node_name)), new_scene)
+				return
 
-	else:
-		add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
+	new_scene.queue_free()
 
 
 ## Comment
@@ -266,22 +268,15 @@ func new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
 
 ## Comment
 func remove_blackout() -> void:
-	## Comment
-	var _old_scene := remove_scene(get_child(1).name)
-
+	remove_scene(get_child(1).name)
 	add_scene(_next_scene.instance())
-
-	## Comment
-	var _blackout_removed := remove_scene("Blackout")
+	remove_scene("Blackout")
 
 
 ## Comment
-func remove_scene(old_scene: String) -> bool:
+func remove_scene(old_scene: String) -> void:
 	if has_node(old_scene):
 		(get_node(old_scene) as Scene).scene_removed()
-		return true
-
-	return false
 
 
 ## Comment
@@ -338,8 +333,11 @@ func toggle_fullscreen(new_visible: bool) -> void:
 
 ## Comment
 func toggle_settings() -> void:
-	if not remove_scene("SettingsPanel"):
-		add_scene(settings_panel.instance(), get_child(1).name)
+	if has_node("SettingsPanel"):
+		remove_scene("SettingsPanel")
+
+	else:
+		add_scene(settings_panel.instance(), ["Bars", get_child(1).name])
 
 
 ## Comment

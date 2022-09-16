@@ -39,7 +39,7 @@ func _ready() -> void:
 	accurate.anchor_right = 0.5 + anchor
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	miss.color = root_viewport.skin.miss_color
 	inaccurate.color = root_viewport.skin.inaccurate_color

@@ -32,7 +32,7 @@ func _ready() -> void:
 		tick_container.move_child(new_tick, 0)
 
 
-## See [HitObject].
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	self_modulate = root_viewport.skin.roll_color
 	texture = root_viewport.skin.roll_middle

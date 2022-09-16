@@ -10,12 +10,10 @@ func _ready() -> void:
 	add_to_group("Skinnables")
 	apply_skin()
 	root_viewport.music.stop()
-
-	## Comment
-	var _bars_removed := root_viewport.remove_scene("Bars")
+	root_viewport.remove_scene("Bars")
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	root_viewport.bg_changed(root_viewport.skin.menu_bg)
 

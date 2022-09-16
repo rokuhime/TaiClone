@@ -44,7 +44,7 @@ func _pressed() -> void:
 	root_viewport.chart = chart
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	ranking.texture = root_viewport.skin.ranking_s_small
 

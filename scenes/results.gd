@@ -53,11 +53,11 @@ func _ready() -> void:
 	## Comment
 	var _right_tween := _animation_tween.tween_property(right_bar, "rect_position:x", 591.0, 1).from(87.0)
 
-	root_viewport.add_scene(root_viewport.bars.instance())
+	root_viewport.add_scene(root_viewport.bars.instance(), ["Results"])
 	(root_viewport.get_node("Bars") as Bars).back_scene = root_viewport.song_select
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	early_error_bar.modulate = root_viewport.skin.early_color
 	early_hit_count.modulate = root_viewport.skin.early_color

@@ -101,9 +101,7 @@ func _ready() -> void:
 	root_viewport.miss_count = 0
 	root_viewport.score = 0
 	add_score(-1)
-
-	## Comment
-	var _bars_removed := root_viewport.remove_scene("Bars")
+	root_viewport.remove_scene("Bars")
 
 	assert(not _f.open(root_viewport.chart.full_file_path(), File.READ), "Unable to read .fus file.")
 	if _f.get_line() != ChartLoader.FUS_VERSION:
@@ -394,7 +392,7 @@ func add_score(type: int, marker := true) -> void:
 	ui_accuracy.text = root_viewport.accuracy
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	bar_right.texture = root_viewport.skin.bar_right_glow if _in_kiai else root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
