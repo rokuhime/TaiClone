@@ -27,9 +27,12 @@ var preview_time := ""
 ## The title of this [Chart].
 var song_title := ""
 
+## The path to the folder containing the [member file_name] of this [Chart].
+var taiclone_folder := ""
+
 
 ## Changes the properties of this [Chart].
-func change_chart_properties(new_title: String, new_time: String, new_folder: String, new_difficulty: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String, new_file := "") -> void:
+func change_chart_properties(new_title: String, new_time: String, new_folder: String, new_difficulty: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String, new_file := "", new_taiclone := "") -> void:
 	artist = new_artist
 	audio_file_name = new_audio
 	bg_file_name = new_bg
@@ -39,6 +42,7 @@ func change_chart_properties(new_title: String, new_time: String, new_folder: St
 	folder_path = new_folder
 	preview_time = new_time
 	song_title = new_title
+	taiclone_folder = new_taiclone
 
 
 ## Returns the chart info used for display.
@@ -48,7 +52,7 @@ func chart_info() -> String:
 
 ## Returns the full file path of the .fus file of this [Chart].
 func full_file_path() -> String:
-	return folder_path.plus_file(file_name)
+	return taiclone_folder.plus_file(file_name)
 
 
 ## Returns the song info used for display.

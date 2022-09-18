@@ -55,6 +55,6 @@ func load_metadata(folder_path: String) -> void:
 		## Comment
 		var song_button := root_viewport.song_button_object.instance() as SongButton
 
-		song_button.chart.change_chart_properties(f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), file_name)
+		song_button.chart.change_chart_properties(f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), file_name, folder_path)
 		f.close()
 		charts.add_child(song_button)

@@ -434,7 +434,7 @@ func change_late_early() -> void:
 
 ## Comment
 func play_button_pressed() -> void:
-	if root_viewport.music.playing:
+	if _active:
 		_end_chart()
 
 	else:
