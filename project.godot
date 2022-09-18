@@ -143,6 +143,7 @@ run/main_loop_type="TaiClone"
 
 [debug]
 
+settings/gdscript/max_call_stack=8192
 gdscript/warnings/unused_class_variable=true
 gdscript/warnings/unsafe_property_access=true
 gdscript/warnings/unsafe_method_access=true

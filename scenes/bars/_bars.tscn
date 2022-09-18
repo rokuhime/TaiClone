@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/bars/bottom_button.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/bars/profile.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/bars/_bars.gd" type="Script" id=3]
 [ext_resource path="res://temporary/circle.png" type="Texture" id=4]
+[ext_resource path="res://temporary/sillycurve.png" type="Texture" id=5]
 
 [node name="Bars" type="Control"]
 anchor_right = 1.0
@@ -13,7 +14,7 @@ script = ExtResource( 3 )
 
 [node name="Top" type="ColorRect" parent="."]
 anchor_right = 1.0
-margin_top = -100.0
+margin_bottom = 100.0
 color = Color( 0, 0, 0, 1 )
 
 [node name="V" type="VBoxContainer" parent="Top"]
@@ -33,6 +34,7 @@ margin_right = 1420.0
 margin_bottom = 49.0
 size_flags_horizontal = 3
 theme_type_variation = "FontRegular030"
+text = " Sanae-San - RD-Sounds feat. Meramipop"
 
 [node name="PlayedByText" type="Label" parent="Top/V/Top"]
 visible = false
@@ -57,12 +59,14 @@ margin_bottom = 92.0
 theme_type_variation = "SeparationP07"
 
 [node name="DifficultyRating" type="Label" parent="Top/V/Bottom"]
+margin_right = 59.0
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
+text = "8.01"
 
 [node name="DifficultyIcon" type="TextureRect" parent="Top/V/Bottom"]
-margin_left = 7.0
-margin_right = 32.0
+margin_left = 66.0
+margin_right = 91.0
 margin_bottom = 49.0
 rect_min_size = Vector2( 25, 25 )
 texture = ExtResource( 4 )
@@ -70,11 +74,12 @@ expand = true
 stretch_mode = 6
 
 [node name="ChartInfo" type="Label" parent="Top/V/Bottom"]
-margin_left = 39.0
+margin_left = 98.0
 margin_right = 1413.0
 margin_bottom = 49.0
 size_flags_horizontal = 3
 theme_type_variation = "FontRegular030"
+text = "Hell Oni - Genjuro"
 
 [node name="PlayDate" type="Label" parent="Top/V/Bottom"]
 margin_left = 1420.0
@@ -82,11 +87,83 @@ margin_right = 1420.0
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
 
+[node name="LeftExtension" type="ColorRect" parent="Top"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_right = 464.0
+margin_bottom = 63.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="End" type="TextureRect" parent="Top/LeftExtension"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 464.0
+margin_right = 143.0
+texture = ExtResource( 5 )
+expand = true
+
+[node name="Bottom" type="HBoxContainer" parent="Top/LeftExtension"]
+margin_left = 10.0
+margin_right = 654.0
+margin_bottom = 92.0
+theme_type_variation = "SeparationP07"
+
+[node name="V" type="VBoxContainer" parent="Top/LeftExtension/Bottom"]
+modulate = Color( 0.619608, 0.619608, 0.619608, 1 )
+margin_right = 438.0
+margin_bottom = 92.0
+theme_type_variation = "SeparationN06"
+
+[node name="SongInfo" type="Label" parent="Top/LeftExtension/Bottom/V"]
+margin_right = 438.0
+margin_bottom = 34.0
+size_flags_horizontal = 3
+theme_type_variation = "FontRegular025"
+text = "Length: 5:47 BPM: 168 NPS: 10.56"
+
+[node name="SongInfo2" type="Label" parent="Top/LeftExtension/Bottom/V"]
+margin_top = 28.0
+margin_right = 438.0
+margin_bottom = 58.0
+size_flags_horizontal = 3
+theme_type_variation = "FontRegular020"
+text = "Objects: 3659 (Circles: 3658 Rolls: 0 Spinners: 1)"
+
+[node name="RightExtension" type="ColorRect" parent="Top"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -464.0
+margin_bottom = 63.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="End" type="TextureRect" parent="Top/RightExtension"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = -143.0
+margin_top = -31.5
+margin_bottom = 31.5
+texture = ExtResource( 5 )
+expand = true
+flip_h = true
+
+[node name="Bottom" type="HBoxContainer" parent="Top/RightExtension"]
+margin_left = 10.0
+margin_right = 654.0
+margin_bottom = 92.0
+theme_type_variation = "SeparationP07"
+
+[node name="V" type="VBoxContainer" parent="Top/RightExtension/Bottom"]
+modulate = Color( 0.619608, 0.619608, 0.619608, 1 )
+margin_bottom = 92.0
+theme_type_variation = "SeparationN06"
+
 [node name="Bottom" type="ColorRect" parent="."]
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_bottom = 100.0
+margin_top = -100.0
 color = Color( 0.8, 0.8, 0.8, 1 )
 
 [node name="H" type="HBoxContainer" parent="Bottom"]
