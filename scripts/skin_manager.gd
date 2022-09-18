@@ -157,7 +157,7 @@ var menu_bg: Texture
 #var button_right: Texture
 
 ## Comment
-#var cursor_texture: Texture
+var cursor_texture: Texture
 
 ## Comment
 #var cursor_middle: Texture
@@ -551,8 +551,8 @@ func _init(skin_path: String) -> void:
 			#"count3":
 			#	count_three = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
 
-			#"cursor":
-			#	cursor_texture = _get_texture(skin_path, str(key), cur_files).get_frame_texture(0)
+			"cursor":
+				cursor_texture = _get_texture(skin_path, str(key), cur_files, [".png"]).get_frame_texture(0)
 
 			# ZMTT TODO: Test
 			#"cursor_ripple":
@@ -1013,6 +1013,6 @@ func _get_texture(skin_path: String, key: String, cur_files: Array, default_file
 
 		if frame_idx <= max_frames:
 			new_texture.frames = int(max(1, frame_idx))
-			new_texture.set_frame_texture(new_texture.frames - 1, GlobalTools.texture_from_image(skin_path.plus_file((key + extension).replace("_", "-")), crop_transparent))
+			new_texture.set_frame_texture(new_texture.frames - 1, GlobalTools.get_image_texture(skin_path.plus_file((key + extension).replace("_", "-")), crop_transparent))
 
 	return new_texture

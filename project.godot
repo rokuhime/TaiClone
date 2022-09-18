@@ -34,6 +34,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/chart_loader.gd"
 }, {
+"base": "Hoverable",
+"class": "Clickable",
+"language": "GDScript",
+"path": "res://scenes/clickable.gd"
+}, {
 "base": "Scene",
 "class": "Gameplay",
 "language": "GDScript",
@@ -53,6 +58,11 @@ _global_script_classes=[ {
 "class": "HitObject",
 "language": "GDScript",
 "path": "res://scenes/hitobjects/_hit_object.gd"
+}, {
+"base": "NinePatchRect",
+"class": "Hoverable",
+"language": "GDScript",
+"path": "res://scripts/hoverable.gd"
 }, {
 "base": "HitObject",
 "class": "Note",
@@ -120,10 +130,12 @@ _global_script_class_icons={
 "Bars": "",
 "Chart": "",
 "ChartLoader": "",
+"Clickable": "",
 "Gameplay": "",
 "GlobalTools": "",
 "HitError": "",
 "HitObject": "",
+"Hoverable": "",
 "Note": "",
 "Roll": "",
 "Root": "",

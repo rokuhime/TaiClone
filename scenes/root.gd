@@ -32,6 +32,12 @@ var skin_path := SkinManager.DEFAULT_SKIN_PATH
 var songs_folder := ""
 
 ## Comment
+var button_black := GlobalTools.get_alpha_texture("res://textures/menu/button_neutral.png", Color.black)
+
+## Comment
+var button_white := GlobalTools.get_alpha_texture("res://textures/menu/button_neutral.png", Color.white)
+
+## Comment
 var global_offset := 0
 
 ## Comment
@@ -202,6 +208,7 @@ func _init() -> void:
 	for i in range(AudioServer.bus_count):
 		AudioServer.set_bus_volume_db(i, float(c_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
 
+	Input.set_custom_mouse_cursor(skin.cursor_texture, Input.CURSOR_BUSY, skin.cursor_texture.get_size() / 2)
 	add_scene(main_menu.instance())
 	settings_save = true
 
