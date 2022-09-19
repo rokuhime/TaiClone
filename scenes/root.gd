@@ -153,7 +153,7 @@ func _init() -> void:
 		storage_file.close()
 
 	bar_line_object = load("res://scenes/hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://scenes/bars/_bars.tscn") as PackedScene
+	bars = load("res://scenes/bars/bars.tscn") as PackedScene
 	gameplay = load("res://scenes/gameplay/gameplay.tscn") as PackedScene
 	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
 	note_object = load("res://scenes/hitobjects/note.tscn") as PackedScene

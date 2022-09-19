@@ -1,15 +1,15 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://scenes/bars/bars.gd" type="Script" id=2]
+[ext_resource path="res://scenes/bars/bars.gd" type="Script" id=1]
+[ext_resource path="res://scenes/bars/banner.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/clickable.tscn" type="PackedScene" id=3]
 [ext_resource path="res://temporary/circle.png" type="Texture" id=4]
-[ext_resource path="res://scenes/bars/banner.tscn" type="PackedScene" id=5]
 
 [node name="Bars" type="Control" groups=["Skinnables"]]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-script = ExtResource( 2 )
+script = ExtResource( 1 )
 
 [node name="Top" type="ColorRect" parent="."]
 anchor_right = 1.0
@@ -193,15 +193,15 @@ margin_right = 117.0
 margin_bottom = 30.0
 alignment = 2
 
-[node name="Banner1" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 5 )]
+[node name="Banner1" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 2 )]
 margin_left = 19.0
 margin_right = 49.0
 
-[node name="Banner2" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 5 )]
+[node name="Banner2" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 2 )]
 margin_left = 53.0
 margin_right = 83.0
 
-[node name="Banner3" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 5 )]
+[node name="Banner3" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 2 )]
 margin_left = 87.0
 margin_right = 117.0
 
