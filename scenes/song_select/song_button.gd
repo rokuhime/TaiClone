@@ -1,5 +1,5 @@
 class_name SongButton
-extends Button
+extends NinePatchRect
 
 ## Comment
 var folder_path := ""

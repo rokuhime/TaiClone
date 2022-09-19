@@ -6,7 +6,8 @@ onready var settings_button := $Options as Button
 
 func _ready() -> void:
 	Engine.target_fps = 120
-	GlobalTools.send_signal(root_viewport, "button_up", settings_button, "toggle_settings")
+	#temporary
+	#GlobalTools.send_signal(root_viewport, "button_up", settings_button, "toggle_settings")
 	add_to_group("Skinnables")
 	apply_skin()
 	root_viewport.music.stop()

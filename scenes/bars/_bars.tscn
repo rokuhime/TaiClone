@@ -38,8 +38,8 @@ text = " Sanae-San - RD-Sounds feat. Meramipop"
 
 [node name="PlayedByText" type="Label" parent="Top/V/Top"]
 visible = false
-margin_left = 1180.0
-margin_right = 1319.0
+margin_left = 1281.0
+margin_right = 1420.0
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
 text = "Played by"
@@ -87,14 +87,18 @@ margin_right = 1420.0
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
 
-[node name="LeftExtension" type="ColorRect" parent="Top"]
+[node name="Extensions" type="Control" parent="Top"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LeftExtension" type="ColorRect" parent="Top/Extensions"]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_right = 464.0
 margin_bottom = 63.0
 color = Color( 0, 0, 0, 1 )
 
-[node name="End" type="TextureRect" parent="Top/LeftExtension"]
+[node name="End" type="TextureRect" parent="Top/Extensions/LeftExtension"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 464.0
@@ -102,26 +106,26 @@ margin_right = 143.0
 texture = ExtResource( 5 )
 expand = true
 
-[node name="Bottom" type="HBoxContainer" parent="Top/LeftExtension"]
+[node name="Bottom" type="HBoxContainer" parent="Top/Extensions/LeftExtension"]
 margin_left = 10.0
 margin_right = 654.0
 margin_bottom = 92.0
 theme_type_variation = "SeparationP07"
 
-[node name="V" type="VBoxContainer" parent="Top/LeftExtension/Bottom"]
+[node name="V" type="VBoxContainer" parent="Top/Extensions/LeftExtension/Bottom"]
 modulate = Color( 0.619608, 0.619608, 0.619608, 1 )
 margin_right = 438.0
 margin_bottom = 92.0
 theme_type_variation = "SeparationN06"
 
-[node name="SongInfo" type="Label" parent="Top/LeftExtension/Bottom/V"]
+[node name="SongInfo" type="Label" parent="Top/Extensions/LeftExtension/Bottom/V"]
 margin_right = 438.0
 margin_bottom = 34.0
 size_flags_horizontal = 3
 theme_type_variation = "FontRegular025"
 text = "Length: 5:47 BPM: 168 NPS: 10.56"
 
-[node name="SongInfo2" type="Label" parent="Top/LeftExtension/Bottom/V"]
+[node name="SongInfo2" type="Label" parent="Top/Extensions/LeftExtension/Bottom/V"]
 margin_top = 28.0
 margin_right = 438.0
 margin_bottom = 58.0
@@ -129,7 +133,7 @@ size_flags_horizontal = 3
 theme_type_variation = "FontRegular020"
 text = "Objects: 3659 (Circles: 3658 Rolls: 0 Spinners: 1)"
 
-[node name="RightExtension" type="ColorRect" parent="Top"]
+[node name="RightExtension" type="ColorRect" parent="Top/Extensions"]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -138,7 +142,7 @@ margin_left = -464.0
 margin_bottom = 63.0
 color = Color( 0, 0, 0, 1 )
 
-[node name="End" type="TextureRect" parent="Top/RightExtension"]
+[node name="End" type="TextureRect" parent="Top/Extensions/RightExtension"]
 anchor_top = 0.5
 anchor_bottom = 0.5
 margin_left = -143.0
@@ -148,16 +152,193 @@ texture = ExtResource( 5 )
 expand = true
 flip_h = true
 
-[node name="Bottom" type="HBoxContainer" parent="Top/RightExtension"]
-margin_left = 10.0
-margin_right = 654.0
+[node name="Bottom" type="HBoxContainer" parent="Top/Extensions/RightExtension"]
+margin_left = -190.0
+margin_right = 454.0
 margin_bottom = 92.0
 theme_type_variation = "SeparationP07"
+alignment = 2
 
-[node name="V" type="VBoxContainer" parent="Top/RightExtension/Bottom"]
-modulate = Color( 0.619608, 0.619608, 0.619608, 1 )
+[node name="V" type="VBoxContainer" parent="Top/Extensions/RightExtension/Bottom"]
+margin_left = 132.0
+margin_right = 644.0
 margin_bottom = 92.0
 theme_type_variation = "SeparationN06"
+custom_constants/separation = 5
+
+[node name="_Categories" type="HBoxContainer" parent="Top/Extensions/RightExtension/Bottom/V"]
+margin_right = 512.0
+margin_bottom = 25.0
+
+[node name="ColorRect" type="ColorRect" parent="Top/Extensions/RightExtension/Bottom/V/_Categories"]
+margin_right = 125.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 125, 25 )
+color = Color( 0.298039, 0.298039, 0.298039, 1 )
+
+[node name="Label" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Categories/ColorRect"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 2.0
+margin_bottom = 3.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="ColorRect2" type="ColorRect" parent="Top/Extensions/RightExtension/Bottom/V/_Categories"]
+margin_left = 129.0
+margin_right = 254.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 125, 25 )
+color = Color( 0.298039, 0.298039, 0.298039, 1 )
+
+[node name="Label" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Categories/ColorRect2"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 2.0
+margin_bottom = 3.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="ColorRect3" type="ColorRect" parent="Top/Extensions/RightExtension/Bottom/V/_Categories"]
+margin_left = 258.0
+margin_right = 383.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 125, 25 )
+color = Color( 0.298039, 0.298039, 0.298039, 1 )
+
+[node name="Label" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Categories/ColorRect3"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 2.0
+margin_bottom = 3.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="ColorRect4" type="ColorRect" parent="Top/Extensions/RightExtension/Bottom/V/_Categories"]
+margin_left = 387.0
+margin_right = 512.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 125, 25 )
+color = Color( 0.298039, 0.298039, 0.298039, 1 )
+
+[node name="Label" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Categories/ColorRect4"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 2.0
+margin_bottom = 3.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="_Sort" type="HBoxContainer" parent="Top/Extensions/RightExtension/Bottom/V"]
+margin_top = 30.0
+margin_right = 512.0
+margin_bottom = 56.0
+alignment = 2
+
+[node name="Label" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Sort"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+margin_left = 154.0
+margin_right = 202.0
+margin_bottom = 26.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="ColorRect3" type="ColorRect" parent="Top/Extensions/RightExtension/Bottom/V/_Sort"]
+margin_left = 206.0
+margin_right = 331.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 125, 25 )
+color = Color( 0.298039, 0.298039, 0.298039, 1 )
+
+[node name="Label" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Sort/ColorRect3"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 2.0
+margin_bottom = 3.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="Label2" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Sort"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+margin_left = 335.0
+margin_right = 383.0
+margin_bottom = 26.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="ColorRect4" type="ColorRect" parent="Top/Extensions/RightExtension/Bottom/V/_Sort"]
+margin_left = 387.0
+margin_right = 512.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 125, 25 )
+color = Color( 0.298039, 0.298039, 0.298039, 1 )
+
+[node name="Label" type="Label" parent="Top/Extensions/RightExtension/Bottom/V/_Sort/ColorRect4"]
+self_modulate = Color( 0.666667, 0.666667, 0.666667, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 2.0
+margin_bottom = 3.0
+theme_type_variation = "FontRegular022"
+text = "balls"
+align = 1
+
+[node name="_QuickButtons" type="HBoxContainer" parent="Top/Extensions"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+alignment = 2
+
+[node name="VSeparator3" type="VSeparator" parent="Top/Extensions/_QuickButtons"]
+margin_left = 1148.0
+margin_right = 1152.0
+margin_bottom = 80.0
+
+[node name="msg" type="ColorRect" parent="Top/Extensions/_QuickButtons"]
+margin_left = 1156.0
+margin_right = 1236.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 80, 0 )
+color = Color( 0.235294, 0.235294, 0.235294, 1 )
+
+[node name="VSeparator2" type="VSeparator" parent="Top/Extensions/_QuickButtons"]
+margin_left = 1240.0
+margin_right = 1244.0
+margin_bottom = 80.0
+
+[node name="notif" type="ColorRect" parent="Top/Extensions/_QuickButtons"]
+margin_left = 1248.0
+margin_right = 1328.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 80, 0 )
+color = Color( 0.235294, 0.235294, 0.235294, 1 )
+
+[node name="VSeparator" type="VSeparator" parent="Top/Extensions/_QuickButtons"]
+margin_left = 1332.0
+margin_right = 1336.0
+margin_bottom = 80.0
+
+[node name="sett" type="ColorRect" parent="Top/Extensions/_QuickButtons"]
+margin_left = 1340.0
+margin_right = 1420.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 80, 0 )
+color = Color( 0.235294, 0.235294, 0.235294, 1 )
 
 [node name="Bottom" type="ColorRect" parent="."]
 anchor_top = 1.0
