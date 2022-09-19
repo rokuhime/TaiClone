@@ -20,14 +20,59 @@ var music := $Background/Music as AudioStreamPlayer
 ## Comment
 var chart := Chart.new()
 
+## Comment
+var bar_line_object := load("res://scenes/hitobjects/bar_line.tscn") as PackedScene
+
+## Comment
+var bars := load("res://scenes/bars/bars.tscn") as PackedScene
+
+## Comment
+var gameplay := load("res://scenes/gameplay/gameplay.tscn") as PackedScene
+
+## Comment
+var main_menu := load("res://scenes/main_menu.tscn") as PackedScene
+
+## Comment
+var note_object := load("res://scenes/hitobjects/note.tscn") as PackedScene
+
+## Comment
+var results := load("res://scenes/results.tscn") as PackedScene
+
+## Comment
+var roll_object := load("res://scenes/hitobjects/roll.tscn") as PackedScene
+
 ## The [PackedScene] used to instance [SettingsPanel].
 var settings_panel := load("res://scenes/settings_panel/settings_panel.tscn") as PackedScene
+
+## Comment
+var song_button_object := load("res://scenes/song_select/song_button.tscn") as PackedScene
+
+## Comment
+var song_select := load("res://scenes/song_select/song_select.tscn") as PackedScene
+
+## Comment
+var spinner_object := load("res://scenes/hitobjects/spinner.tscn") as PackedScene
+
+## Comment
+var spinner_warn_object := load("res://scenes/hitobjects/spinner_warn.tscn") as PackedScene
+
+## Comment
+var tick_object := load("res://scenes/hitobjects/tick.tscn") as PackedScene
+
+## Comment
+var timing_point_object := load("res://scenes/hitobjects/timing_point.tscn") as PackedScene
+
+## Comment
+var skin := SkinManager.new(SkinManager.DEFAULT_SKIN_PATH)
+
+## Comment
+var accuracy := ""
 
 ## Comment
 var game_path := OS.get_user_data_dir()
 
 ## Comment
-var skin_path := SkinManager.DEFAULT_SKIN_PATH
+var skin_path := ""
 
 ## Comment
 var songs_folder := ""
@@ -48,106 +93,61 @@ var button_black := GlobalTools.get_alpha_texture("res://textures/button_neutral
 var button_white := GlobalTools.get_alpha_texture("res://textures/button_neutral.png", Color.white)
 
 ## Comment
-var edge_black := box_black
+var edge_black := GlobalTools.get_edge_texture(button_black.get_data(), box_black.get_data())
 
 ## Comment
-var edge_white := box_white
-
-## Comment
-var global_offset := 0
+var edge_white := GlobalTools.get_edge_texture(button_white.get_data(), box_white.get_data())
 
 ## Comment
 var hit_error := true
 
 ## Comment
-var late_early_simple_display := 1
-
-## Comment
 var settings_save := false
 
 ## Comment
-var bar_line_object: PackedScene
+var accurate_count := 0
 
 ## Comment
-var bars: PackedScene
+var combo := 0
 
 ## Comment
-var gameplay: PackedScene
+var early_count := 0
 
 ## Comment
-var main_menu: PackedScene
+var f_accurate_count := 0
 
 ## Comment
-var note_object: PackedScene
+var f_inaccurate_count := 0
 
 ## Comment
-var results: PackedScene
+var global_offset := 0
 
 ## Comment
-var roll_object: PackedScene
+var inaccurate_count := 0
 
 ## Comment
-var song_button_object: PackedScene
+var late_count := 0
 
 ## Comment
-var song_select: PackedScene
+var late_early_simple_display := 1
 
 ## Comment
-var spinner_object: PackedScene
+var max_combo := 0
 
 ## Comment
-var spinner_warn_object: PackedScene
+var miss_count := 0
 
 ## Comment
-var tick_object: PackedScene
-
-## Comment
-var timing_point_object: PackedScene
-
-## Comment
-var skin: SkinManager
-
-## Comment
-var accuracy: String
-
-## Comment
-var accurate_count: int
-
-## Comment
-var combo: int
-
-## Comment
-var early_count: int
-
-## Comment
-var f_accurate_count: int
-
-## Comment
-var f_inaccurate_count: int
-
-## Comment
-var inaccurate_count: int
-
-## Comment
-var late_count: int
-
-## Comment
-var max_combo: int
-
-## Comment
-var miss_count: int
-
-## Comment
-var score: int
-
-## Comment
-var _background := $"Background" as TextureRect
+var score := 0
 
 ## Comment
 var _blackout := load("res://scenes/blackout.tscn") as PackedScene
 
 ## Comment
 var _next_scene := PackedScene.new()
+
+## Comment
+var _background := $"Background" as TextureRect
 
 
 func _init() -> void:
@@ -157,33 +157,6 @@ func _init() -> void:
 	if not storage_file.open(STORAGE_PATH, File.READ):
 		game_path = storage_file.get_as_text()
 		storage_file.close()
-
-	bar_line_object = load("res://scenes/hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://scenes/bars/bars.tscn") as PackedScene
-	gameplay = load("res://scenes/gameplay/gameplay.tscn") as PackedScene
-	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
-	note_object = load("res://scenes/hitobjects/note.tscn") as PackedScene
-	results = load("res://scenes/results.tscn") as PackedScene
-	roll_object = load("res://scenes/hitobjects/roll.tscn") as PackedScene
-	song_button_object = load("res://scenes/song_select/song_button.tscn") as PackedScene
-	song_select = load("res://scenes/song_select/song_select.tscn") as PackedScene
-	spinner_object = load("res://scenes/hitobjects/spinner.tscn") as PackedScene
-	spinner_warn_object = load("res://scenes/hitobjects/spinner_warn.tscn") as PackedScene
-	tick_object = load("res://scenes/hitobjects/tick.tscn") as PackedScene
-	timing_point_object = load("res://scenes/hitobjects/timing_point.tscn") as PackedScene
-	accuracy = ""
-	accurate_count = 0
-	combo = 0
-	early_count = 0
-	f_accurate_count = 0
-	f_inaccurate_count = 0
-	inaccurate_count = 0
-	late_count = 0
-	max_combo = 0
-	miss_count = 0
-	score = 0
-	edge_black = GlobalTools.get_edge_texture(button_black.get_data(), box_black.get_data())
-	edge_white = GlobalTools.get_edge_texture(button_white.get_data(), box_white.get_data())
 
 	## The configuration file that's used to load settings.
 	var c_file := ConfigFile.new()
@@ -224,28 +197,36 @@ func _init() -> void:
 	global_offset = int(c_file.get_value("Audio", "GlobalOffset", 0))
 	songs_folder = str(c_file.get_value("Debug", "SongsFolder", game_path))
 	for i in range(AudioServer.bus_count):
-		AudioServer.set_bus_volume_db(i, float(c_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
+		AudioServer.set_bus_volume_db(i, linear2db(float(c_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1))))
+
+	## Comment
+	var _scene := add_scene(main_menu.instance())
 
 	Input.set_custom_mouse_cursor(skin.cursor_texture, Input.CURSOR_BUSY, skin.cursor_texture.get_size() / 2)
-	add_scene(main_menu.instance())
 	settings_save = true
 
 
 ## Comment
 func add_blackout(next_scene: PackedScene) -> void:
 	_next_scene = next_scene
-	add_scene(_blackout.instance(), ["SettingsPanel", "Bars", get_child(1).name])
+
+	## Comment
+	var _scene := add_scene(_blackout.instance(), ["VolumeControl", "SettingsPanel", "Bars", get_child(1).name])
 
 
 ## Comment
-func add_scene(new_scene: Node, nodes := ["Background"]) -> void:
-	if not has_node(new_scene.name) or new_scene.name == get_child(1).name:
+func add_scene(new_scene: Node, nodes := ["Background"]) -> Node:
+	## Comment
+	var new_name := new_scene.name
+
+	if not has_node(new_name) or new_name == get_child(1).name:
 		for node_name in nodes:
 			if has_node(str(node_name)):
 				add_child_below_node(get_node(str(node_name)), new_scene)
-				return
+				return new_scene
 
 	new_scene.queue_free()
+	return get_node(new_name)
 
 
 ## Comment
@@ -294,7 +275,10 @@ func new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
 ## Comment
 func remove_blackout() -> void:
 	remove_scene(get_child(1).name)
-	add_scene(_next_scene.instance())
+
+	## Comment
+	var _scene := add_scene(_next_scene.instance())
+
 	remove_scene("Blackout")
 
 
@@ -362,7 +346,8 @@ func toggle_settings() -> void:
 		remove_scene("SettingsPanel")
 
 	else:
-		add_scene(settings_panel.instance(), ["Bars", get_child(1).name])
+		## Comment
+		var _scene := add_scene(settings_panel.instance(), ["Bars", get_child(1).name])
 
 
 ## Comment

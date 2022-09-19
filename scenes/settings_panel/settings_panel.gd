@@ -223,16 +223,15 @@ func _change_text(key: String, was_pressed := false) -> void:
 ## Comment
 func _file_dialog(signal_target: Node, open_dir: String, method: String) -> void:
 	## Comment
-	var file_dialog := FileDialog.new()
+	var file_dialog := root_viewport.add_scene(FileDialog.new(), ["SettingsPanel"]) as FileDialog
 
+	GlobalTools.send_signal(signal_target, "dir_selected", file_dialog, method)
+	GlobalTools.send_signal(file_dialog, "popup_hide", file_dialog, "queue_free")
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.mode = FileDialog.MODE_OPEN_DIR
 	file_dialog.current_dir = open_dir
 	file_dialog.show_hidden_files = true
 	file_dialog.window_title = ""
-	GlobalTools.send_signal(signal_target, "dir_selected", file_dialog, method)
-	GlobalTools.send_signal(file_dialog, "popup_hide", file_dialog, "queue_free")
-	root_viewport.add_scene(file_dialog, ["SettingsPanel"])
 	file_dialog.popup_centered_ratio(1)
 	file_dialog.set_anchors_and_margins_preset(Control.PRESET_WIDE)
 

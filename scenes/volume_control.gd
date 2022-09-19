@@ -1,5 +1,5 @@
 class_name VolumeControl
-extends CanvasItem
+extends Scene
 
 ## Comment
 signal volume_changed
@@ -25,9 +25,6 @@ var _sfx_modulate_tween := SceneTreeTween.new()
 ## Comment
 var _sfx_progress_tween := SceneTreeTween.new()
 
-## Comment
-var _cur_changing := 0
-
 onready var timer := get_tree().create_timer(0)
 onready var root_viewport := $"/root" as Root
 onready var change_sound := $ChangeSound as AudioStreamPlayer
@@ -38,40 +35,9 @@ onready var master_vol := $Bars/Master as CanvasItem
 
 func _ready() -> void:
 	GlobalTools.send_signal(root_viewport, "volume_changed", self, "save_settings")
-	hide()
-
-
-func _input(event: InputEvent) -> void:
-	if not (event is InputEventWithModifiers and event.is_pressed()):
-		return
-
-	## Comment
-	var m_event := event as InputEventWithModifiers
-
-	if not m_event.alt:
-		return
-
-	if not modulate.a:
-		_cur_changing = 0
-
-	## Comment
-	var vol_difference := 0.01 if m_event.control else 0.05
-
-	if event.is_action("VolumeUp"):
-		_change_volume(vol_difference)
-		get_tree().set_input_as_handled()
-
-	if event.is_action("VolumeDown"):
-		_change_volume(-vol_difference)
-		get_tree().set_input_as_handled()
-
-	if event.is_action("VolumeNext"):
-		change_channel(_cur_changing + 1, false)
-		get_tree().set_input_as_handled()
-
-	if event.is_action("VolumePrevious"):
-		change_channel(_cur_changing + 2, false)
-		get_tree().set_input_as_handled()
+	modulate.a = 0
+	for i in range(AudioServer.bus_count):
+		change_volume(i, 0, false)
 
 
 ## Comment
@@ -79,10 +45,9 @@ func change_channel(channel: int, needs_visible := true) -> void:
 	if needs_visible and not modulate.a:
 		return
 
-	_cur_changing = channel % AudioServer.bus_count
 	for i in range(AudioServer.bus_count):
 		## Comment
-		var new_color := 1.0 if i == _cur_changing else 0.5
+		var new_color := 1.0 if i == channel else 0.5
 
 		## Comment
 		var vol := _vol_view(i)
@@ -101,20 +66,14 @@ func change_channel(channel: int, needs_visible := true) -> void:
 			sfx_vol:
 				_sfx_modulate_tween = _modulate_vol_tween(vol, _sfx_modulate_tween, new_color)
 
-	if modulate.a < 1:
-		show()
-
-		## Comment
-		var _tween := _tween_self(1, 0.25)
-
-	timer = get_tree().create_timer(2)
-	GlobalTools.send_signal(self, "timeout", timer, "timeout")
-
 
 ## Comment
-func set_volume(channel: int, amount: float, needs_tween := false) -> void:
-	AudioServer.set_bus_volume_db(channel, linear2db(amount))
-	amount = round(amount * 100)
+func change_volume(channel: int, amount: float, needs_tween := true) -> void:
+	## Comment
+	var channel_volume := clamp(db2linear(AudioServer.get_bus_volume_db(channel)) + amount, 0, 1)
+
+	AudioServer.set_bus_volume_db(channel, linear2db(channel_volume))
+	amount = round(channel_volume * 100)
 
 	## Comment
 	var vol := _vol_view(channel)
@@ -128,6 +87,10 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 		progress.value = amount
 		return
 
+	change_channel(channel, false)
+	change_sound.pitch_scale = channel_volume / 2 + 1
+	change_sound.play()
+	emit_signal("volume_changed")
 	match vol:
 		master_vol:
 			_master_progress_tween = _progress_tween(_master_progress_tween, progress, amount)
@@ -139,23 +102,20 @@ func set_volume(channel: int, amount: float, needs_tween := false) -> void:
 			_sfx_progress_tween = _progress_tween(_sfx_progress_tween, progress, amount)
 
 
-## Comment
-func timeout() -> void:
+## See [Sceme].
+func scene_removed() -> void:
 	if timer.time_left <= 0:
-		GlobalTools.send_signal(self, "finished", _tween_self(0, 1), "hide")
+		GlobalTools.send_signal(self, "finished", tween_self(0, 1), "queue_free")
 
 
 ## Comment
-func _change_volume(amount: float) -> void:
-	change_channel(_cur_changing, false)
+func tween_self(final_val: float, duration: float) -> PropertyTweener:
+	if final_val:
+		timer = get_tree().create_timer(2)
+		GlobalTools.send_signal(self, "timeout", timer, "scene_removed")
 
-	## Comment
-	var channel_volume := clamp(db2linear(AudioServer.get_bus_volume_db(_cur_changing)) + amount, 0, 1)
-
-	set_volume(_cur_changing, channel_volume, true)
-	change_sound.pitch_scale = channel_volume / 2 + 1
-	change_sound.play()
-	emit_signal("volume_changed")
+	_self_tween = root_viewport.new_tween(_self_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	return _self_tween.tween_property(self, "modulate:a", final_val, duration)
 
 
 ## Comment
@@ -176,12 +136,6 @@ func _progress_tween(scene_tween: SceneTreeTween, progress: TextureProgress, amo
 	var _tween = scene_tween.tween_property(progress, "value", amount, 0.2)
 
 	return scene_tween
-
-
-## Comment
-func _tween_self(final_val: float, duration: float) -> PropertyTweener:
-	_self_tween = root_viewport.new_tween(_self_tween).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
-	return _self_tween.tween_property(self, "modulate:a", final_val, duration)
 
 
 ## Comment

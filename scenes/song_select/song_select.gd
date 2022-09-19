@@ -10,10 +10,8 @@ func _ready() -> void:
 	if charts.get_child_count():
 		(charts.get_child(0) as SongButton).clickable_clicked()
 
-	root_viewport.add_scene(root_viewport.bars.instance(), ["SongSelect"])
-
 	## Comment
-	var bars_object := root_viewport.get_node("Bars") as Bars
+	var bars_object := root_viewport.add_scene(root_viewport.bars.instance(), ["SongSelect"]) as Bars
 
 	bars_object.back_scene = root_viewport.main_menu
 	bars_object.play_date.hide()
