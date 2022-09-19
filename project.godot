@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Scene",
 "class": "Bars",
 "language": "GDScript",
-"path": "res://scenes/bars/_bars.gd"
+"path": "res://scenes/bars/bars.gd"
 }, {
 "base": "Reference",
 "class": "Chart",

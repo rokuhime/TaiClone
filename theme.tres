@@ -1,9 +1,9 @@
-[gd_resource type="Theme" load_steps=48 format=2]
+[gd_resource type="Theme" load_steps=43 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
 [ext_resource path="res://fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=3]
-[ext_resource path="res://textures/menu/button_flat.png" type="Texture" id=4]
+[ext_resource path="res://textures/button_flat.png" type="Texture" id=4]
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -180,20 +180,6 @@ grow_end = -4.0
 thickness = 2
 vertical = true
 
-[sub_resource type="DynamicFont" id=26]
-size = 50
-use_filter = true
-font_data = ExtResource( 3 )
-
-[sub_resource type="StyleBoxFlat" id=27]
-bg_color = Color( 0, 0, 0, 0.784314 )
-
-[sub_resource type="StyleBoxFlat" id=28]
-bg_color = Color( 0.184314, 0.184314, 0.184314, 1 )
-
-[sub_resource type="StyleBoxFlat" id=29]
-bg_color = Color( 0, 0, 0, 1 )
-
 [sub_resource type="StyleBoxFlat" id=30]
 bg_color = Color( 1, 1, 1, 0 )
 border_width_left = 5
@@ -216,13 +202,6 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.0980392, 0.0980392, 0.0980392, 1 )
-
-[sub_resource type="StyleBoxFlat" id=38]
-bg_color = Color( 0, 0, 0, 1 )
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
 
 [sub_resource type="StyleBoxFlat" id=39]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 0.843137 )
@@ -334,14 +313,9 @@ SeparationP08/constants/separation = 8
 SeparationP10/constants/separation = 10
 SeparationP15/constants/separation = 15
 VSeparator/styles/separator = SubResource( 25 )
-_Bottom/fonts/font = SubResource( 26 )
-_Bottom/styles/disabled = SubResource( 27 )
-_Bottom/styles/hover = SubResource( 28 )
-_Bottom/styles/normal = SubResource( 29 )
 _HitCount/styles/panel = SubResource( 30 )
 _PlayButton/styles/hover = SubResource( 36 )
 _PlayButton/styles/normal = SubResource( 37 )
-_Profile/styles/normal = SubResource( 38 )
 _Results/styles/bg = SubResource( 39 )
 _Results/styles/panel = SubResource( 39 )
 _Settings/styles/normal = SubResource( 40 )

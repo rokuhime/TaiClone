@@ -19,6 +19,12 @@ func _init() -> void:
 func _input_event(event: InputEvent) -> void:
 	set_input_as_handled()
 
+	if not is_instance_valid(cur_clickable):
+		cur_clickable = null
+
+	if not is_instance_valid(cur_hoverable):
+		cur_hoverable = null
+
 	## The [member ROOT] instance that's used when requiring [Root]-specific functions.
 	var root_viewport := root as Root
 

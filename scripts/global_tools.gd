@@ -11,6 +11,7 @@ static func get_alpha_texture(file_path: String, alpha_color: Color) -> Texture:
 	## Comment
 	var image := get_image_texture(file_path).get_data()
 
+	image.convert(Image.FORMAT_RGBA8)
 	image.lock()
 	for row in range(image.get_height()):
 		for column in range(image.get_width()):

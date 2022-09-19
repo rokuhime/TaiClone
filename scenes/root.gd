@@ -1,4 +1,5 @@
 class_name Root
+# warning-ignore-all:unused_class_variable
 extends Viewport
 
 ## Signals [HitError] when the value of [member hit_error] has changed.
@@ -32,10 +33,19 @@ var skin_path := SkinManager.DEFAULT_SKIN_PATH
 var songs_folder := ""
 
 ## Comment
-var button_black := GlobalTools.get_alpha_texture("res://textures/menu/button_neutral.png", Color.black)
+var box_black := GlobalTools.get_alpha_texture("res://textures/box_neutral.png", Color.black)
 
 ## Comment
-var button_white := GlobalTools.get_alpha_texture("res://textures/menu/button_neutral.png", Color.white)
+var box_flat := GlobalTools.get_image_texture("res://textures/box_flat.png")
+
+## Comment
+var box_white := GlobalTools.get_alpha_texture("res://textures/box_neutral.png", Color.white)
+
+## Comment
+var button_black := GlobalTools.get_alpha_texture("res://textures/button_neutral.png", Color.black)
+
+## Comment
+var button_white := GlobalTools.get_alpha_texture("res://textures/button_neutral.png", Color.white)
 
 ## Comment
 var global_offset := 0
