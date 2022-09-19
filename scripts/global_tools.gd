@@ -28,6 +28,17 @@ static func get_alpha_texture(file_path: String, alpha_color: Color) -> Texture:
 
 
 ## Comment
+static func get_edge_texture(image: Image, copy_image: Image) -> Texture:
+	image.blit_rect(copy_image, Rect2(16, 0, 16, 32), Vector2(16, 0))
+
+	## Comment
+	var new_texture := ImageTexture.new()
+
+	new_texture.create_from_image(image)
+	return new_texture
+
+
+## Comment
 static func get_image_texture(file_path: String, crop_transparent := true) -> Texture:
 	## Comment
 	var image := Image.new()

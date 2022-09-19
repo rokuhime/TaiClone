@@ -89,7 +89,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/skin_manager.gd"
 }, {
-"base": "Button",
+"base": "Node",
 "class": "SongButton",
 "language": "GDScript",
 "path": "res://scenes/song_select/song_button.gd"

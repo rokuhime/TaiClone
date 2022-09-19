@@ -48,6 +48,12 @@ var button_black := GlobalTools.get_alpha_texture("res://textures/button_neutral
 var button_white := GlobalTools.get_alpha_texture("res://textures/button_neutral.png", Color.white)
 
 ## Comment
+var edge_black := box_black
+
+## Comment
+var edge_white := box_white
+
+## Comment
 var global_offset := 0
 
 ## Comment
@@ -176,6 +182,8 @@ func _init() -> void:
 	max_combo = 0
 	miss_count = 0
 	score = 0
+	edge_black = GlobalTools.get_edge_texture(button_black.get_data(), box_black.get_data())
+	edge_white = GlobalTools.get_edge_texture(button_white.get_data(), box_white.get_data())
 
 	## The configuration file that's used to load settings.
 	var c_file := ConfigFile.new()

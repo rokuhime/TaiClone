@@ -20,7 +20,7 @@ func _init() -> void:
 
 
 func _input_event(event: InputEvent) -> void:
-	#set_input_as_handled()
+	set_input_as_handled()
 
 	if not is_instance_valid(cur_clickable):
 		cur_clickable = null
@@ -44,35 +44,7 @@ func _input_event(event: InputEvent) -> void:
 		if k_event.pressed and k_event.control and k_event.scancode == KEY_O:
 			root_viewport.toggle_settings()
 
-	if event is InputEventMouseButton:
-		## [member event] as an [InputEventMouseButton].
-		var mb_event := event as InputEventMouseButton
-
-		match mb_event.button_index:
-			BUTTON_LEFT:
-				if mb_event.pressed and cur_hoverable is Clickable:
-					cur_clickable = cur_hoverable as Clickable
-					cur_clickable.click_start()
-
-				else:
-					if cur_clickable != null:
-						cur_clickable.click_end()
-
-					cur_clickable = null
-
-			BUTTON_WHEEL_DOWN:
-				if mb_event.pressed:
-					print(cur_scrollable.rect_position.y)
-					cur_scrollable.rect_position.y = max(cur_scrollable.get_parent_control().rect_size.y - cur_scrollable.rect_size.y, cur_scrollable.rect_position.y - 135)
-					print(cur_scrollable.rect_position.y)
-
-			BUTTON_WHEEL_UP:
-				if mb_event.pressed:
-					print(cur_scrollable.rect_position.y)
-					cur_scrollable.rect_position.y = min(0, cur_scrollable.rect_position.y + 135)
-					print(cur_scrollable.rect_position.y)
-
-	if event is InputEventMouseMotion:
+	if event is InputEventMouse:
 		for node_object in get_nodes_in_group("Scrollables"):
 			## Comment
 			var scrollable_object: Control = node_object # UNSAFE
@@ -102,3 +74,27 @@ func _input_event(event: InputEvent) -> void:
 				cur_hoverable = null
 				if hoverable == cur_clickable:
 					cur_clickable = null
+
+		if event is InputEventMouseButton:
+			## [member event] as an [InputEventMouseButton].
+			var mb_event := event as InputEventMouseButton
+
+			match mb_event.button_index:
+				BUTTON_LEFT:
+					if mb_event.pressed and cur_hoverable is Clickable:
+						cur_clickable = cur_hoverable as Clickable
+						cur_clickable.click_start()
+
+					else:
+						if cur_clickable != null:
+							cur_clickable.click_end()
+
+						cur_clickable = null
+
+				BUTTON_WHEEL_DOWN:
+					if mb_event.pressed and cur_scrollable != null:
+						cur_scrollable.rect_position.y = max(cur_scrollable.get_parent_control().rect_size.y - cur_scrollable.rect_size.y, cur_scrollable.rect_position.y - 135)
+
+				BUTTON_WHEEL_UP:
+					if mb_event.pressed and cur_scrollable != null:
+						cur_scrollable.rect_position.y = min(0, cur_scrollable.rect_position.y + 135)
