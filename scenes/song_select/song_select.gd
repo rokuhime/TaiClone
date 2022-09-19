@@ -6,11 +6,11 @@ onready var charts := $Charts
 
 func _ready() -> void:
 	Engine.target_fps = 120
-	load_metadata(root_viewport.game_path.plus_file(root_viewport.SONGS_FOLDER))
+	load_metadata(root_viewport.taiclone_songs_folder())
 	if charts.get_child_count():
 		(charts.get_child(0) as Button)._pressed()
 
-	root_viewport.add_scene(root_viewport.bars.instance())
+	root_viewport.add_scene(root_viewport.bars.instance(), ["SongSelect"])
 
 	## Comment
 	var bars_object := root_viewport.get_node("Bars") as Bars
@@ -55,6 +55,6 @@ func load_metadata(folder_path: String) -> void:
 		## Comment
 		var song_button := root_viewport.song_button_object.instance() as SongButton
 
-		song_button.change_properties(f.get_line(), f.get_line(), folder_path, file_name, f.get_line(), f.get_line(), f.get_line(), f.get_line())
+		song_button.chart.change_chart_properties(f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), f.get_line(), file_name, folder_path)
 		f.close()
 		charts.add_child(song_button)

@@ -101,21 +101,14 @@ func _ready() -> void:
 	root_viewport.miss_count = 0
 	root_viewport.score = 0
 	add_score(-1)
+	root_viewport.remove_scene("Bars")
 
-	## Comment
-	var _bars_removed := root_viewport.remove_scene("Bars")
-
-	assert(not _f.open(root_viewport.current_song_folder.plus_file(root_viewport.current_song_file), File.READ), "Unable to read .fus file.")
+	assert(not _f.open(root_viewport.chart.full_file_path(), File.READ), "Unable to read .fus file.")
 	if _f.get_line() != ChartLoader.FUS_VERSION:
 		_load_finish("Outdated .fus file!")
 		return
 
-	root_viewport.title = _f.get_line()
-	root_viewport.difficulty_name = _f.get_line()
-	root_viewport.charter = _f.get_line()
-	root_viewport.bg_changed(GlobalTools.texture_from_image(_f.get_line()), Color("373737"))
-	root_viewport.music.stream = AudioLoader.load_file(_f.get_line())
-	root_viewport.artist = _f.get_line()
+	root_viewport.chart.change_chart_properties(_f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line())
 
 	## Comment
 	var cur_bpm := -1.0
@@ -399,7 +392,7 @@ func add_score(type: int, marker := true) -> void:
 	ui_accuracy.text = root_viewport.accuracy
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	bar_right.texture = root_viewport.skin.bar_right_glow if _in_kiai else root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
@@ -441,7 +434,7 @@ func change_late_early() -> void:
 
 ## Comment
 func play_button_pressed() -> void:
-	if root_viewport.music.playing:
+	if _active:
 		_end_chart()
 
 	else:

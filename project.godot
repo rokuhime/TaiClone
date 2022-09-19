@@ -22,12 +22,22 @@ _global_script_classes=[ {
 "base": "Scene",
 "class": "Bars",
 "language": "GDScript",
-"path": "res://scenes/bars/_bars.gd"
+"path": "res://scenes/bars/bars.gd"
+}, {
+"base": "Reference",
+"class": "Chart",
+"language": "GDScript",
+"path": "res://scripts/chart.gd"
 }, {
 "base": "Reference",
 "class": "ChartLoader",
 "language": "GDScript",
 "path": "res://scripts/chart_loader.gd"
+}, {
+"base": "Hoverable",
+"class": "Clickable",
+"language": "GDScript",
+"path": "res://scenes/clickable.gd"
 }, {
 "base": "Scene",
 "class": "Gameplay",
@@ -49,6 +59,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/hitobjects/_hit_object.gd"
 }, {
+"base": "NinePatchRect",
+"class": "Hoverable",
+"language": "GDScript",
+"path": "res://scripts/hoverable.gd"
+}, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
@@ -62,7 +77,7 @@ _global_script_classes=[ {
 "base": "Viewport",
 "class": "Root",
 "language": "GDScript",
-"path": "res://scenes/root/root.gd"
+"path": "res://scenes/root.gd"
 }, {
 "base": "Control",
 "class": "Scene",
@@ -107,17 +122,20 @@ _global_script_classes=[ {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
-"path": "res://scenes/root/volume_control.gd"
+"path": "res://scenes/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
 "BarLine": "",
 "Bars": "",
+"Chart": "",
 "ChartLoader": "",
+"Clickable": "",
 "Gameplay": "",
 "GlobalTools": "",
 "HitError": "",
 "HitObject": "",
+"Hoverable": "",
 "Note": "",
 "Roll": "",
 "Root": "",
@@ -135,7 +153,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone"
-run/main_scene="res://scenes/root/root.tscn"
+run/main_scene="res://scenes/root.tscn"
 boot_splash/image="res://temporary/sdsddsd.png"
 boot_splash/fullsize=false
 boot_splash/bg_color=Color( 1, 1, 1, 1 )

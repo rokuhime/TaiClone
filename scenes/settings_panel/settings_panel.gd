@@ -66,7 +66,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## Comment
 func back_button_pressed() -> void:
-	var _removed := root_viewport.remove_scene("SettingsPanel")
+	root_viewport.remove_scene("SettingsPanel")
 
 
 ## Called when a key-bind button is pressed.
@@ -127,7 +127,7 @@ func change_songs_folder(new_text: String) -> void:
 	root_viewport.songs_folder = new_text
 
 	## Comment
-	var songs_folder := root_viewport.game_path.plus_file(Root.SONGS_FOLDER)
+	var songs_folder := root_viewport.taiclone_songs_folder()
 
 	if Directory.new().dir_exists(songs_folder):
 		assert(not OS.move_to_trash(songs_folder), "Unable to remove songs folder.")
@@ -232,7 +232,7 @@ func _file_dialog(signal_target: Node, open_dir: String, method: String) -> void
 	file_dialog.window_title = ""
 	GlobalTools.send_signal(signal_target, "dir_selected", file_dialog, method)
 	GlobalTools.send_signal(file_dialog, "popup_hide", file_dialog, "queue_free")
-	root_viewport.add_scene(file_dialog, "VolumeControl")
+	root_viewport.add_scene(file_dialog, ["SettingsPanel"])
 	file_dialog.popup_centered_ratio(1)
 	file_dialog.set_anchors_and_margins_preset(Control.PRESET_WIDE)
 

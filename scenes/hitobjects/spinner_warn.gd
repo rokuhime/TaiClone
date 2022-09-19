@@ -8,7 +8,7 @@ signal object_added(hit_object, loaded)
 var _bpm := -1.0
 
 
-## See [HitObject].
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	texture = root_viewport.skin.spinner_warning
 

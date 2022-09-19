@@ -8,7 +8,7 @@ func activate() -> void:
 	rect_position.x = timing + margin_left
 
 
-## See [HitObject].
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	texture = root_viewport.skin.tick_texture
 

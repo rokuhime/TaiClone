@@ -1,7 +1,0 @@
-[gd_scene format=2]
-
-[node name="BottomButton" type="Button"]
-margin_right = 250.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 250, 0 )
-theme_type_variation = "_Bottom"

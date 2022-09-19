@@ -64,7 +64,7 @@ func activate() -> void:
 	state = int(State.ACTIVE)
 
 
-## Apply a skin to this [HitObject]. Intended to be implemented by child classes.
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	modulate = root_viewport.skin.barline_color
 

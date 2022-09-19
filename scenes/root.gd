@@ -1,7 +1,6 @@
 class_name Root
+# warning-ignore-all:unused_class_variable
 extends Viewport
-
-## The first and primary object of the project.
 
 ## Signals [HitError] when the value of [member hit_error] has changed.
 signal hit_error_changed
@@ -9,41 +8,20 @@ signal hit_error_changed
 ## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
 signal late_early_changed
 
-## Comment
-signal song_properties_changed
-
-## Comment
+## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
-## Comment
-const CONFIG_PATH := "config.ini"
-
-## Comment
-const SONGS_FOLDER := "Songs"
-
-## Comment
+## The path to the storage file that contains [member game_path].
 const STORAGE_PATH := "user://storage.ini"
 
-## Comment
+## The [AudioStreamPlayer] playing music.
 var music := $Background/Music as AudioStreamPlayer
 
 ## Comment
+var chart := Chart.new()
+
+## The [PackedScene] used to instance [SettingsPanel].
 var settings_panel := load("res://scenes/settings_panel/settings_panel.tscn") as PackedScene
-
-## Comment
-var artist := ""
-
-## Comment
-var charter := ""
-
-## Comment
-var current_song_file := ""
-
-## Comment
-var current_song_folder := ""
-
-## Comment
-var difficulty_name := ""
 
 ## Comment
 var game_path := OS.get_user_data_dir()
@@ -55,7 +33,19 @@ var skin_path := SkinManager.DEFAULT_SKIN_PATH
 var songs_folder := ""
 
 ## Comment
-var title := ""
+var box_black := GlobalTools.get_alpha_texture("res://textures/box_neutral.png", Color.black)
+
+## Comment
+var box_flat := GlobalTools.get_image_texture("res://textures/box_flat.png")
+
+## Comment
+var box_white := GlobalTools.get_alpha_texture("res://textures/box_neutral.png", Color.white)
+
+## Comment
+var button_black := GlobalTools.get_alpha_texture("res://textures/button_neutral.png", Color.black)
+
+## Comment
+var button_white := GlobalTools.get_alpha_texture("res://textures/button_neutral.png", Color.white)
 
 ## Comment
 var global_offset := 0
@@ -187,20 +177,67 @@ func _init() -> void:
 	miss_count = 0
 	score = 0
 
+	## The configuration file that's used to load settings.
+	var c_file := ConfigFile.new()
+
+	if c_file.load(_config_path()):
+		print_debug("Config file not found.")
+
+	for key in KEYS:
+		## [member key] as a [String].
+		var key_string := str(key)
+
+		## The key-bind for this [member key].
+		var keybind := str(c_file.get_value("Keybinds", key_string, ""))
+
+		## The key-bind value for this [member key].
+		var keybind_value := keybind.substr(1)
+
+		match keybind.left(1):
+			"J":
+				## The new [InputEventJoypadButton] to associate with this [member key].
+				var event := InputEventJoypadButton.new()
+
+				event.button_index = int(keybind_value)
+				change_key(event, key_string)
+
+			"K":
+				## The new [InputEventKey] to associate with this [member key].
+				var event := InputEventKey.new()
+
+				event.scancode = OS.find_scancode_from_string(keybind_value)
+				change_key(event, key_string)
+
+	late_early_simple_display = int(c_file.get_value("Display", "LateEarly", 1))
+	hit_error = bool(c_file.get_value("Display", "HitError", 1))
+	res_changed(Vector2(c_file.get_value("Display", "ResolutionX", 1920), c_file.get_value("Display", "ResolutionY", 1080)))
+	toggle_fullscreen(bool(c_file.get_value("Display", "Fullscreen", 0)))
+	change_skin(str(c_file.get_value("Display", "SkinPath", SkinManager.DEFAULT_SKIN_PATH)))
+	global_offset = int(c_file.get_value("Audio", "GlobalOffset", 0))
+	songs_folder = str(c_file.get_value("Debug", "SongsFolder", game_path))
+	for i in range(AudioServer.bus_count):
+		AudioServer.set_bus_volume_db(i, float(c_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
+
+	Input.set_custom_mouse_cursor(skin.cursor_texture, Input.CURSOR_BUSY, skin.cursor_texture.get_size() / 2)
+	add_scene(main_menu.instance())
+	settings_save = true
+
 
 ## Comment
 func add_blackout(next_scene: PackedScene) -> void:
 	_next_scene = next_scene
-	add_scene(_blackout.instance(), "VolumeControl")
+	add_scene(_blackout.instance(), ["SettingsPanel", "Bars", get_child(1).name])
 
 
 ## Comment
-func add_scene(new_scene: Node, parent_node := "") -> void:
-	if has_node(new_scene.name) and new_scene.name != get_child(1).name:
-		new_scene.queue_free()
+func add_scene(new_scene: Node, nodes := ["Background"]) -> void:
+	if not has_node(new_scene.name) or new_scene.name == get_child(1).name:
+		for node_name in nodes:
+			if has_node(str(node_name)):
+				add_child_below_node(get_node(str(node_name)), new_scene)
+				return
 
-	else:
-		add_child_below_node(get_node(parent_node) if has_node(parent_node) else _background, new_scene)
+	new_scene.queue_free()
 
 
 ## Comment
@@ -222,23 +259,6 @@ func change_skin(new_text := SkinManager.DEFAULT_SKIN_PATH) -> void:
 	skin_path = new_text
 	save_settings()
 	get_tree().call_group("Skinnables", "apply_skin")
-
-
-## Comment
-func change_song_properties(new_title: String, new_name: String, new_folder: String, new_file: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
-	artist = new_artist
-	charter = new_charter
-	current_song_file = new_file
-	difficulty_name = new_name
-	title = new_title
-	emit_signal("song_properties_changed")
-	bg_changed(GlobalTools.texture_from_image(new_bg))
-	if new_folder != current_song_folder:
-		music.stream = AudioLoader.load_file(new_audio)
-		current_song_folder = new_folder
-
-	if not music.playing:
-		music.play()
 
 
 ## Comment
@@ -265,22 +285,15 @@ func new_tween(old_tween: SceneTreeTween) -> SceneTreeTween:
 
 ## Comment
 func remove_blackout() -> void:
-	## Comment
-	var _old_scene := remove_scene(get_child(1).name)
-
+	remove_scene(get_child(1).name)
 	add_scene(_next_scene.instance())
-
-	## Comment
-	var _blackout_removed := remove_scene("Blackout")
+	remove_scene("Blackout")
 
 
 ## Comment
-func remove_scene(old_scene: String) -> bool:
+func remove_scene(old_scene: String) -> void:
 	if has_node(old_scene):
 		(get_node(old_scene) as Scene).scene_removed()
-		return true
-
-	return false
 
 
 ## Comment
@@ -320,8 +333,13 @@ func save_settings() -> void:
 		config_file.set_value("Audio", AudioServer.get_bus_name(i) + "Volume", db2linear(AudioServer.get_bus_volume_db(i)))
 
 	config_file.set_value("Debug", "SongsFolder", songs_folder)
-	if config_file.save(game_path.plus_file(CONFIG_PATH)):
+	if config_file.save(_config_path()):
 		push_warning("Attempted to save configuration file.")
+
+
+## Comment
+func taiclone_songs_folder() -> String:
+	return game_path.plus_file("Songs")
 
 
 ## Comment
@@ -332,5 +350,13 @@ func toggle_fullscreen(new_visible: bool) -> void:
 
 ## Comment
 func toggle_settings() -> void:
-	if not remove_scene("SettingsPanel"):
-		add_scene(settings_panel.instance(), get_child(1).name)
+	if has_node("SettingsPanel"):
+		remove_scene("SettingsPanel")
+
+	else:
+		add_scene(settings_panel.instance(), ["Bars", get_child(1).name])
+
+
+## Comment
+func _config_path() -> String:
+	return game_path.plus_file("config.ini")

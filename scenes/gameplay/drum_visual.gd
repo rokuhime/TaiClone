@@ -36,7 +36,7 @@ func _ready() -> void:
 	r_kat_obj.modulate.a = 0
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	combo_break_aud.stream = root_viewport.skin.combo_break
 	f_don_aud.stream = root_viewport.skin.hit_finish

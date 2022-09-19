@@ -2,28 +2,7 @@ class_name SongButton
 extends NinePatchRect
 
 ## Comment
-var folder_path := ""
-
-## Comment
-var _artist := ""
-
-## Comment
-var _audio_filename := ""
-
-## Comment
-var _bg_file_name := ""
-
-## Comment
-var _charter := ""
-
-## Comment
-var _difficulty_name := ""
-
-## Comment
-var _file_name := ""
-
-## Comment
-var _title := ""
+var chart := Chart.new()
 
 onready var root_viewport := $"/root" as Root
 onready var ranking := $Organizer/Rank as TextureRect
@@ -37,8 +16,8 @@ func _ready() -> void:
 	add_to_group("Skinnables")
 	add_to_group("Songs")
 	apply_skin()
-	chart_info.text = "%s - %s" % [_difficulty_name, _charter]
-	song_info.text = "%s - %s" % [_artist, _title]
+	chart_info.text = chart.chart_info()
+	song_info.text = chart.song_info()
 	rating_label.text = "?"
 	status_label.text = "LOCAL"
 
@@ -61,25 +40,13 @@ func _pressed() -> void:
 		else:
 			get_parent().move_child(get_parent().get_child(child_count - 1), 0)
 
-	get_tree().call_group("Songs", "change_song", folder_path, middle_index)
-	root_viewport.change_song_properties(_title, _difficulty_name, folder_path, _file_name, _charter, _bg_file_name, _audio_filename, _artist)
+	get_tree().call_group("Songs", "change_song", chart.folder_path, middle_index)
+	root_viewport.chart = chart
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	ranking.texture = root_viewport.skin.ranking_s_small
-
-
-## Comment
-func change_properties(new_title: String, new_name: String, new_folder: String, new_file: String, new_charter: String, new_bg: String, new_audio: String, new_artist: String) -> void:
-	folder_path = new_folder
-	_artist = new_artist
-	_audio_filename = new_audio
-	_bg_file_name = new_bg
-	_charter = new_charter
-	_difficulty_name = new_name
-	_file_name = new_file
-	_title = new_title
 
 
 ## Comment
@@ -94,7 +61,7 @@ func change_song(new_folder: String, middle_index: int) -> void:
 		margin_right = 0
 		self_modulate = Color.white
 
-	elif folder_path == new_folder:
+	elif chart.folder_path == new_folder:
 		margin_left = -664
 		margin_right = 56
 		self_modulate = Color("ffdf80")

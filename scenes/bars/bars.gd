@@ -12,15 +12,21 @@ onready var difficulty_icon := $Top/V/Bottom/DifficultyIcon as TextureRect
 onready var chart_info := $Top/V/Bottom/ChartInfo as Label
 onready var play_date := $Top/V/Bottom/PlayDate as Label
 onready var bottom := $Bottom as Control
+onready var back_button := $Bottom/H/Back as Clickable
+onready var back_label := $Bottom/H/Back/Label as Label
+onready var profile := $Bottom/Profile as Clickable
 onready var profile_picture := $Bottom/Profile/Organizer/ProfilePicture as TextureRect
 onready var texture_rect := $Bottom/Profile/Organizer/Info/Level/TextureRect as TextureRect
 
 
 func _ready() -> void:
-	GlobalTools.send_signal(self, "song_properties_changed", root_viewport, "change_text")
+	#GlobalTools.send_signal(self, "song_properties_changed", root_viewport, "change_text")
 	change_text()
-	add_to_group("Skinnables")
 	apply_skin()
+	back_button.background.texture = root_viewport.box_flat
+	back_label.text = "<<<"
+	profile.texture = root_viewport.box_white
+	profile.background.texture = root_viewport.box_black
 	difficulty_icon.modulate = Color("6f6cf4")
 	play_date.text = Time.get_datetime_string_from_system().replace("T", ", ")
 
@@ -40,7 +46,7 @@ func _ready() -> void:
 	var _top_top_tween := position_tween.tween_property(top, "margin_top", 0.0, 1)
 
 
-## Comment
+## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
 	profile_picture.texture = root_viewport.skin.mod_sudden_death
 	texture_rect.texture = root_viewport.skin.tick_texture
@@ -53,6 +59,6 @@ func back_button_pressed() -> void:
 
 ## Comment
 func change_text() -> void:
-	chart_info.text = "%s - %s" % [root_viewport.difficulty_name, root_viewport.charter]
+	chart_info.text = root_viewport.chart.chart_info()
 	difficulty_rating.text = "?"
-	song_info.text = "%s - %s" % [root_viewport.artist, root_viewport.title]
+	song_info.text = root_viewport.chart.song_info()

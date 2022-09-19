@@ -1,20 +1,20 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://scenes/bars/bottom_button.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scenes/bars/profile.tscn" type="PackedScene" id=2]
-[ext_resource path="res://scenes/bars/_bars.gd" type="Script" id=3]
+[ext_resource path="res://scenes/bars/bars.gd" type="Script" id=2]
+[ext_resource path="res://scenes/clickable.tscn" type="PackedScene" id=3]
 [ext_resource path="res://temporary/circle.png" type="Texture" id=4]
+[ext_resource path="res://scenes/bars/banner.tscn" type="PackedScene" id=5]
 [ext_resource path="res://temporary/sillycurve.png" type="Texture" id=5]
 
-[node name="Bars" type="Control"]
+[node name="Bars" type="Control" groups=["Skinnables"]]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-script = ExtResource( 3 )
+script = ExtResource( 2 )
 
 [node name="Top" type="ColorRect" parent="."]
 anchor_right = 1.0
-margin_bottom = 100.0
+margin_top = -100.0
 color = Color( 0, 0, 0, 1 )
 
 [node name="V" type="VBoxContainer" parent="Top"]
@@ -34,12 +34,11 @@ margin_right = 1420.0
 margin_bottom = 49.0
 size_flags_horizontal = 3
 theme_type_variation = "FontRegular030"
-text = " Sanae-San - RD-Sounds feat. Meramipop"
 
 [node name="PlayedByText" type="Label" parent="Top/V/Top"]
 visible = false
-margin_left = 1281.0
-margin_right = 1420.0
+margin_left = 1180.0
+margin_right = 1319.0
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
 text = "Played by"
@@ -59,14 +58,12 @@ margin_bottom = 92.0
 theme_type_variation = "SeparationP07"
 
 [node name="DifficultyRating" type="Label" parent="Top/V/Bottom"]
-margin_right = 59.0
 margin_bottom = 49.0
 theme_type_variation = "FontRegular030"
-text = "8.01"
 
 [node name="DifficultyIcon" type="TextureRect" parent="Top/V/Bottom"]
-margin_left = 66.0
-margin_right = 91.0
+margin_left = 7.0
+margin_right = 32.0
 margin_bottom = 49.0
 rect_min_size = Vector2( 25, 25 )
 texture = ExtResource( 4 )
@@ -74,12 +71,11 @@ expand = true
 stretch_mode = 6
 
 [node name="ChartInfo" type="Label" parent="Top/V/Bottom"]
-margin_left = 98.0
+margin_left = 39.0
 margin_right = 1413.0
 margin_bottom = 49.0
 size_flags_horizontal = 3
 theme_type_variation = "FontRegular030"
-text = "Hell Oni - Genjuro"
 
 [node name="PlayDate" type="Label" parent="Top/V/Bottom"]
 margin_left = 1420.0
@@ -344,7 +340,7 @@ color = Color( 0.235294, 0.235294, 0.235294, 1 )
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -100.0
+margin_bottom = 100.0
 color = Color( 0.8, 0.8, 0.8, 1 )
 
 [node name="H" type="HBoxContainer" parent="Bottom"]
@@ -352,8 +348,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 theme_type_variation = "SeparationP03"
 
-[node name="Back" parent="Bottom/H" instance=ExtResource( 1 )]
-text = "<<<"
+[node name="Back" parent="Bottom/H" groups=["Hoverables"] instance=ExtResource( 3 )]
+margin_right = 250.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 250, 0 )
 
 [node name="Buffer" type="ColorRect" parent="Bottom/H"]
 margin_left = 253.0
@@ -362,6 +360,111 @@ margin_bottom = 100.0
 size_flags_horizontal = 3
 color = Color( 0, 0, 0, 1 )
 
-[node name="Profile" parent="Bottom" instance=ExtResource( 2 )]
+[node name="Profile" parent="Bottom" groups=["Hoverables"] instance=ExtResource( 3 )]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -175.0
+margin_right = 175.0
+margin_bottom = 0.0
 
-[connection signal="button_up" from="Bottom/H/Back" to="." method="back_button_pressed"]
+[node name="Organizer" type="HBoxContainer" parent="Bottom/Profile"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 6.0
+margin_top = 6.0
+margin_right = -6.0
+margin_bottom = -6.0
+
+[node name="ProfilePicture" type="TextureRect" parent="Bottom/Profile/Organizer"]
+margin_right = 88.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 88, 0 )
+expand = true
+stretch_mode = 6
+
+[node name="Info" type="VBoxContainer" parent="Bottom/Profile/Organizer"]
+margin_left = 92.0
+margin_right = 217.0
+margin_bottom = 88.0
+theme_type_variation = "SeparationP02"
+
+[node name="Name" type="Label" parent="Bottom/Profile/Organizer/Info"]
+margin_right = 125.0
+margin_bottom = 26.0
+theme_type_variation = "FontBold20"
+text = "rokuhime"
+
+[node name="Subtitle" type="Label" parent="Bottom/Profile/Organizer/Info"]
+margin_top = 28.0
+margin_right = 125.0
+margin_bottom = 44.0
+theme_type_variation = "FontRegular015"
+text = "ようこぞ！"
+
+[node name="HSeparator" type="HSeparator" parent="Bottom/Profile/Organizer/Info"]
+margin_top = 46.0
+margin_right = 125.0
+margin_bottom = 52.0
+mouse_filter = 2
+size_flags_vertical = 3
+
+[node name="Level" type="HBoxContainer" parent="Bottom/Profile/Organizer/Info"]
+margin_top = 54.0
+margin_right = 125.0
+margin_bottom = 70.0
+
+[node name="Label" type="Label" parent="Bottom/Profile/Organizer/Info/Level"]
+margin_right = 63.0
+margin_bottom = 16.0
+theme_type_variation = "FontRegular015"
+text = "Level 435"
+
+[node name="TextureRect" type="TextureRect" parent="Bottom/Profile/Organizer/Info/Level"]
+margin_left = 67.0
+margin_right = 78.0
+margin_bottom = 11.0
+rect_min_size = Vector2( 11, 11 )
+size_flags_vertical = 0
+expand = true
+
+[node name="Accuracy" type="Label" parent="Bottom/Profile/Organizer/Info"]
+margin_top = 72.0
+margin_right = 125.0
+margin_bottom = 88.0
+theme_type_variation = "FontRegular015"
+text = "100.00% Accuracy"
+
+[node name="Right" type="VBoxContainer" parent="Bottom/Profile/Organizer"]
+margin_left = 221.0
+margin_right = 338.0
+margin_bottom = 88.0
+size_flags_horizontal = 3
+theme_type_variation = "SeparationN08"
+
+[node name="Banners" type="HBoxContainer" parent="Bottom/Profile/Organizer/Right"]
+margin_right = 117.0
+margin_bottom = 30.0
+alignment = 2
+
+[node name="Banner1" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 5 )]
+margin_left = 19.0
+margin_right = 49.0
+
+[node name="Banner2" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 5 )]
+margin_left = 53.0
+margin_right = 83.0
+
+[node name="Banner3" parent="Bottom/Profile/Organizer/Right/Banners" instance=ExtResource( 5 )]
+margin_left = 87.0
+margin_right = 117.0
+
+[node name="Rank" type="Label" parent="Bottom/Profile/Organizer/Right"]
+margin_top = 22.0
+margin_right = 117.0
+margin_bottom = 88.0
+theme_type_variation = "FontRegular045"
+text = "#1"
+align = 2
+
+[connection signal="clicked" from="Bottom/H/Back" to="." method="back_button_pressed"]
