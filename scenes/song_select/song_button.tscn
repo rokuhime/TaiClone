@@ -17,6 +17,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = 0.0
 margin_bottom = 0.0
+style = 2
 
 [node name="Organizer" type="HBoxContainer" parent="Clickable"]
 anchor_right = 1.0
@@ -34,48 +35,47 @@ stretch_mode = 6
 
 [node name="Info" type="VBoxContainer" parent="Clickable/Organizer"]
 margin_left = 104.0
-margin_right = 136.0
+margin_right = 152.0
 margin_bottom = 110.0
 theme_type_variation = "SeparationP00"
 
 [node name="SongInfo" type="Label" parent="Clickable/Organizer/Info"]
-margin_right = 32.0
+margin_right = 48.0
 margin_bottom = 34.0
 theme_type_variation = "FontRegular025"
 
 [node name="ChartInfo" type="Label" parent="Clickable/Organizer/Info"]
 margin_top = 34.0
-margin_right = 32.0
+margin_right = 48.0
 margin_bottom = 68.0
 theme_type_variation = "FontRegular025"
 
 [node name="Banners" type="HBoxContainer" parent="Clickable/Organizer/Info"]
 margin_top = 68.0
-margin_right = 32.0
+margin_right = 48.0
 margin_bottom = 110.0
 size_flags_vertical = 3
 theme_type_variation = "SeparationP08"
 
 [node name="Rating" parent="Clickable/Organizer/Info/Banners" instance=ExtResource( 2 )]
 self_modulate = Color( 0.435294, 0.423529, 0.956863, 1 )
-margin_top = 12.0
+margin_top = 2.0
+margin_right = 14.0
 margin_bottom = 42.0
 
 [node name="Status" parent="Clickable/Organizer/Info/Banners" instance=ExtResource( 2 )]
 self_modulate = Color( 0.368627, 0.631373, 0.858824, 1 )
-margin_left = 14.0
-margin_top = 12.0
-margin_right = 20.0
+margin_left = 22.0
+margin_top = 2.0
+margin_right = 36.0
 margin_bottom = 42.0
 
 [node name="VSeparator" type="VSeparator" parent="Clickable/Organizer/Info/Banners"]
-modulate = Color( 1, 1, 1, 0.490196 )
-margin_left = 28.0
+margin_left = 44.0
 margin_top = 12.0
-margin_right = 32.0
+margin_right = 48.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 0, 30 )
-mouse_filter = 2
 size_flags_vertical = 8
 
 [connection signal="clicked" from="Clickable" to="." method="clickable_clicked"]

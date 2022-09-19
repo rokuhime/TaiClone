@@ -98,6 +98,8 @@ theme_type_variation = "SeparationP03"
 margin_right = 250.0
 margin_bottom = 100.0
 rect_min_size = Vector2( 250, 0 )
+label_text = "<<<"
+style = 3
 
 [node name="Buffer" type="ColorRect" parent="Bottom/H"]
 margin_left = 253.0

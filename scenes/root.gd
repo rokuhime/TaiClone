@@ -15,7 +15,7 @@ const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 const STORAGE_PATH := "user://storage.ini"
 
 ## The [AudioStreamPlayer] playing music.
-var music := $Background/Music as AudioStreamPlayer
+var music := $Root/Music as AudioStreamPlayer
 
 ## Comment
 var chart := Chart.new()
@@ -150,7 +150,7 @@ var _blackout := load("res://scenes/blackout.tscn") as PackedScene
 var _next_scene := PackedScene.new()
 
 ## Comment
-var _background := $"Background" as TextureRect
+var _background := $"Root/Background" as TextureRect
 
 
 func _init() -> void:
@@ -218,7 +218,7 @@ func add_blackout(next_scene: PackedScene) -> void:
 
 
 ## Comment
-func add_scene(new_scene: Node, nodes := ["Background"]) -> Node:
+func add_scene(new_scene: Node, nodes := ["Root"]) -> Node:
 	## Comment
 	var new_name := new_scene.name
 

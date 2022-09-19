@@ -34,26 +34,38 @@ align = 1
 margin_top = 433.0
 margin_bottom = 516.0
 rect_min_size = Vector2( 0, 83 )
+label_text = "Play"
+style = 1
 
 [node name="Edit" parent="." instance=ExtResource( 1 )]
+modulate = Color( 0.631373, 0.631373, 0.631373, 1 )
 margin_top = 531.0
 margin_bottom = 614.0
 rect_min_size = Vector2( 0, 83 )
+label_text = "Edit"
+style = 1
 
 [node name="Training" parent="." instance=ExtResource( 1 )]
+modulate = Color( 0.631373, 0.631373, 0.631373, 1 )
 margin_top = 629.0
 margin_bottom = 712.0
 rect_min_size = Vector2( 0, 83 )
+label_text = "Training"
+style = 1
 
 [node name="Options" parent="." groups=["Hoverables"] instance=ExtResource( 1 )]
 margin_top = 727.0
 margin_bottom = 810.0
 rect_min_size = Vector2( 0, 83 )
+label_text = "Options"
+style = 1
 
 [node name="Exit" parent="." groups=["Hoverables"] instance=ExtResource( 1 )]
 margin_top = 825.0
 margin_bottom = 908.0
 rect_min_size = Vector2( 0, 83 )
+label_text = "Exit"
+style = 1
 
 [connection signal="clicked" from="Play" to="." method="play_button_pressed"]
 [connection signal="clicked" from="Exit" to="." method="exit_button_pressed"]
