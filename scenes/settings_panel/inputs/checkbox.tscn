@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/settings_panel/inputs/checkbox.gd" type="Script" id=1]
+
+[node name="Checkbox" type="NinePatchRect" groups=["Hoverables"]]
+margin_top = 43.0
+margin_right = 137.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 0, 45 )
+rect_pivot_offset = Vector2( -146, -66 )
+script = ExtResource( 1 )
+
+[node name="Background" type="NinePatchRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="H" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="H"]
+margin_top = 3.0
+margin_right = 113.0
+margin_bottom = 42.0
+size_flags_horizontal = 3
+text = "Title"
+
+[node name="Toggle" type="TextureRect" parent="H"]
+margin_left = 117.0
+margin_top = 12.0
+margin_right = 137.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 20, 20 )
+size_flags_vertical = 4
+expand = true
+
+[connection signal="clicked" from="." to="." method="click"]

@@ -1,10 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/bars/bars.gd" type="Script" id=2]
 [ext_resource path="res://scenes/clickable.tscn" type="PackedScene" id=3]
 [ext_resource path="res://temporary/circle.png" type="Texture" id=4]
 [ext_resource path="res://scenes/bars/banner.tscn" type="PackedScene" id=5]
-[ext_resource path="res://temporary/sillycurve.png" type="Texture" id=5]
+[ext_resource path="res://temporary/sillycurve.png" type="Texture" id=6]
 
 [node name="Bars" type="Control" groups=["Skinnables"]]
 anchor_right = 1.0
@@ -99,7 +99,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 464.0
 margin_right = 143.0
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 expand = true
 
 [node name="Bottom" type="HBoxContainer" parent="Top/Extensions/LeftExtension"]
@@ -144,7 +144,7 @@ anchor_bottom = 0.5
 margin_left = -143.0
 margin_top = -31.5
 margin_bottom = 31.5
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 expand = true
 flip_h = true
 

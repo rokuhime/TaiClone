@@ -15,9 +15,9 @@ alignment = 1
 script = ExtResource( 2 )
 
 [node name="Logo" type="TextureRect" parent="."]
-margin_top = 331.0
+margin_top = 198.0
 margin_right = 564.0
-margin_bottom = 524.0
+margin_bottom = 391.0
 rect_min_size = Vector2( 0, 193 )
 texture = ExtResource( 3 )
 expand = true

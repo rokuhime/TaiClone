@@ -1,11 +1,14 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scenes/settings_panel/buffer.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scenes/settings_panel/category.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/clickable.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/settings_panel/settings_panel.gd" type="Script" id=3]
 [ext_resource path="res://scenes/settings_panel/inputs/button_input.tscn" type="PackedScene" id=4]
 [ext_resource path="res://textures/menu/BoxInactive.png" type="Texture" id=5]
 [ext_resource path="res://textures/menu/BoxFocus.png" type="Texture" id=6]
+[ext_resource path="res://temporary/brehd.png" type="Texture" id=7]
+[ext_resource path="res://temporary/temp_back.png" type="Texture" id=8]
+[ext_resource path="res://scenes/settings_panel/inputs/checkbox.tscn" type="PackedScene" id=9]
 
 [node name="SettingsPanel" type="PanelContainer"]
 anchor_left = 1.0
@@ -25,7 +28,19 @@ margin_bottom = 1080.0
 rect_min_size = Vector2( 75, 0 )
 theme_type_variation = "SeparationP00"
 
-[node name="Category1" parent="H/Tabs" instance=ExtResource( 2 )]
+[node name="_lol" parent="H/Tabs" groups=["Hoverables"] instance=ExtResource( 2 )]
+margin_right = 75.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 0, 75 )
+sound = true
+
+[node name="TextureRect" type="TextureRect" parent="H/Tabs/_lol"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 7 )
+expand = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="H/Tabs/_lol"]
 
 [node name="Buffer" type="ColorRect" parent="H/Tabs"]
 margin_top = 75.0
@@ -34,9 +49,17 @@ margin_bottom = 1005.0
 size_flags_vertical = 3
 color = Color( 0, 0, 0, 0.392157 )
 
-[node name="Back" parent="H/Tabs" instance=ExtResource( 2 )]
+[node name="Back" parent="H/Tabs" groups=["Hoverables"] instance=ExtResource( 2 )]
 margin_top = 1005.0
+margin_right = 75.0
 margin_bottom = 1080.0
+rect_min_size = Vector2( 0, 75 )
+
+[node name="TextureRect2" type="TextureRect" parent="H/Tabs/Back"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 8 )
+expand = true
 
 [node name="Menu" type="VBoxContainer" parent="H"]
 margin_left = 79.0
@@ -52,7 +75,7 @@ scroll_horizontal_enabled = false
 
 [node name="V" type="VBoxContainer" parent="H/Menu/Settings"]
 margin_right = 375.0
-margin_bottom = 1330.0
+margin_bottom = 1248.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="H/Menu/Settings/V"]
@@ -92,21 +115,25 @@ align = 1
 [node name="LeftKat" parent="H/Menu/Settings/V/Keybinds" instance=ExtResource( 4 )]
 margin_right = 120.0
 margin_bottom = 82.0
+title = "Left Kat"
 
 [node name="LeftDon" parent="H/Menu/Settings/V/Keybinds" instance=ExtResource( 4 )]
 margin_top = 86.0
 margin_right = 120.0
 margin_bottom = 125.0
+title = "Left Don"
 
-[node name="RightDon2" parent="H/Menu/Settings/V/Keybinds" instance=ExtResource( 4 )]
+[node name="RightDon" parent="H/Menu/Settings/V/Keybinds" instance=ExtResource( 4 )]
 margin_top = 129.0
 margin_right = 120.0
 margin_bottom = 168.0
+title = "Right Don"
 
-[node name="RightKat2" parent="H/Menu/Settings/V/Keybinds" instance=ExtResource( 4 )]
+[node name="RightKat" parent="H/Menu/Settings/V/Keybinds" instance=ExtResource( 4 )]
 margin_top = 172.0
 margin_right = 120.0
 margin_bottom = 211.0
+title = "Right Kat"
 
 [node name="Buffer2" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
 margin_left = 112.0
@@ -118,7 +145,7 @@ margin_bottom = 398.0
 margin_left = 80.0
 margin_top = 402.0
 margin_right = 295.0
-margin_bottom = 541.0
+margin_bottom = 539.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="H/Menu/Settings/V/Resolution"]
@@ -135,42 +162,31 @@ margin_right = 122.0
 margin_bottom = 88.0
 size_flags_horizontal = 4
 
-[node name="Fullscreen" type="HBoxContainer" parent="H/Menu/Settings/V/Resolution"]
+[node name="Fullscreen" parent="H/Menu/Settings/V/Resolution" instance=ExtResource( 9 )]
 margin_top = 92.0
 margin_right = 215.0
-margin_bottom = 139.0
-
-[node name="Label" type="Label" parent="H/Menu/Settings/V/Resolution/Fullscreen"]
-margin_top = 4.0
-margin_right = 187.0
-margin_bottom = 43.0
-size_flags_horizontal = 3
-text = "Fullscreen"
-
-[node name="Toggle" type="CheckBox" parent="H/Menu/Settings/V/Resolution/Fullscreen"]
-margin_left = 191.0
-margin_right = 215.0
-margin_bottom = 47.0
+margin_bottom = 137.0
+title = "Fullscreen"
 
 [node name="Buffer3" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
 margin_left = 112.0
-margin_top = 545.0
+margin_top = 543.0
 margin_right = 262.0
-margin_bottom = 578.0
+margin_bottom = 576.0
 
 [node name="AudioLabel" type="Label" parent="H/Menu/Settings/V"]
-margin_top = 582.0
+margin_top = 580.0
 margin_right = 375.0
-margin_bottom = 621.0
+margin_bottom = 619.0
 theme_type_variation = "FontBold26"
 text = "Audio"
 align = 1
 
 [node name="Offset" type="HBoxContainer" parent="H/Menu/Settings/V"]
 margin_left = 101.0
-margin_top = 625.0
+margin_top = 623.0
 margin_right = 274.0
-margin_bottom = 674.0
+margin_bottom = 672.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="H/Menu/Settings/V/Offset"]
@@ -190,23 +206,23 @@ allow_lesser = true
 align = 2
 
 [node name="HSlider" type="HSlider" parent="H/Menu/Settings/V"]
-margin_top = 678.0
+margin_top = 676.0
 margin_right = 375.0
-margin_bottom = 788.0
+margin_bottom = 708.0
 min_value = -200.0
 max_value = 200.0
 
 [node name="Buffer4" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
 margin_left = 112.0
-margin_top = 792.0
+margin_top = 712.0
 margin_right = 262.0
-margin_bottom = 825.0
+margin_bottom = 745.0
 
 [node name="ExtraDisplays" type="VBoxContainer" parent="H/Menu/Settings/V"]
 margin_left = 79.0
-margin_top = 829.0
+margin_top = 749.0
 margin_right = 295.0
-margin_bottom = 968.0
+margin_bottom = 886.0
 size_flags_horizontal = 4
 
 [node name="Label" type="Label" parent="H/Menu/Settings/V/ExtraDisplays"]
@@ -233,82 +249,71 @@ margin_left = 187.0
 margin_right = 216.0
 margin_bottom = 45.0
 
-[node name="HitError" type="HBoxContainer" parent="H/Menu/Settings/V/ExtraDisplays"]
+[node name="HitError" parent="H/Menu/Settings/V/ExtraDisplays" instance=ExtResource( 9 )]
 margin_top = 92.0
 margin_right = 216.0
-margin_bottom = 139.0
-
-[node name="Label" type="Label" parent="H/Menu/Settings/V/ExtraDisplays/HitError"]
-margin_top = 4.0
-margin_right = 188.0
-margin_bottom = 43.0
-size_flags_horizontal = 3
-text = "Hit Error Bar"
-
-[node name="Toggle" type="CheckBox" parent="H/Menu/Settings/V/ExtraDisplays/HitError"]
-margin_left = 192.0
-margin_right = 216.0
-margin_bottom = 47.0
+margin_bottom = 137.0
+title = "Hit Error Bar"
 
 [node name="Buffer5" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
 margin_left = 112.0
-margin_top = 972.0
+margin_top = 890.0
 margin_right = 262.0
-margin_bottom = 1005.0
+margin_bottom = 923.0
 
 [node name="DebugLabel" type="Label" parent="H/Menu/Settings/V"]
-margin_top = 1009.0
+margin_top = 927.0
 margin_right = 375.0
-margin_bottom = 1048.0
+margin_bottom = 966.0
 theme_type_variation = "FontBold26"
 text = "Debug"
 align = 1
 
 [node name="GamePathLabel" type="Label" parent="H/Menu/Settings/V"]
-margin_top = 1052.0
+margin_top = 970.0
 margin_right = 375.0
-margin_bottom = 1091.0
+margin_bottom = 1009.0
 size_flags_horizontal = 3
 text = "Game Path"
 align = 1
 
 [node name="GamePathText" type="Label" parent="H/Menu/Settings/V"]
-margin_top = 1095.0
+margin_top = 1013.0
 margin_right = 375.0
-margin_bottom = 1134.0
+margin_bottom = 1052.0
 size_flags_horizontal = 3
 align = 1
 autowrap = true
 
 [node name="GamePathButton" type="Button" parent="H/Menu/Settings/V"]
 margin_left = 65.0
-margin_top = 1138.0
+margin_top = 1056.0
 margin_right = 310.0
-margin_bottom = 1183.0
+margin_bottom = 1101.0
 size_flags_horizontal = 4
 text = "Change Game Path"
 
 [node name="ChangeSkinButton" type="Button" parent="H/Menu/Settings/V"]
 margin_left = 105.0
-margin_top = 1187.0
+margin_top = 1105.0
 margin_right = 269.0
-margin_bottom = 1232.0
+margin_bottom = 1150.0
 size_flags_horizontal = 4
 text = "Change Skin"
 
 [node name="RemoveSkinButton" type="Button" parent="H/Menu/Settings/V"]
 margin_left = 102.0
-margin_top = 1236.0
+margin_top = 1154.0
 margin_right = 272.0
-margin_bottom = 1281.0
+margin_bottom = 1199.0
 size_flags_horizontal = 4
 text = "Remove Skin"
 
 [node name="SongsFolder" type="Button" parent="H/Menu/Settings/V"]
 margin_left = 53.0
-margin_top = 1285.0
+margin_top = 1203.0
 margin_right = 322.0
-margin_bottom = 1330.0
+margin_bottom = 1248.0
 size_flags_horizontal = 4
 text = "Change Songs Folder"
 
@@ -396,12 +401,16 @@ text = "Preferences"
 align = 1
 valign = 1
 
+[connection signal="clicked" from="H/Tabs/Back" to="." method="back_button_pressed"]
+[connection signal="clicked" from="H/Menu/Settings/V/Keybinds/LeftKat" to="." method="_change_text" binds= [ "LeftKat", true ]]
+[connection signal="clicked" from="H/Menu/Settings/V/Keybinds/LeftDon" to="." method="_change_text" binds= [ "LeftDon", true ]]
+[connection signal="clicked" from="H/Menu/Settings/V/Keybinds/RightDon" to="." method="_change_text" binds= [ "RightDon", true ]]
+[connection signal="clicked" from="H/Menu/Settings/V/Keybinds/RightKat" to="." method="_change_text" binds= [ "RightKat", true ]]
 [connection signal="item_selected" from="H/Menu/Settings/V/Resolution/Options" to="." method="change_res"]
-[connection signal="toggled" from="H/Menu/Settings/V/Resolution/Fullscreen/Toggle" to="." method="toggle_fullscreen"]
+[connection signal="toggled" from="H/Menu/Settings/V/Resolution/Fullscreen" to="." method="toggle_fullscreen"]
 [connection signal="value_changed" from="H/Menu/Settings/V/Offset/LineEdit" to="." method="change_offset"]
 [connection signal="value_changed" from="H/Menu/Settings/V/HSlider" to="." method="change_offset"]
 [connection signal="item_selected" from="H/Menu/Settings/V/ExtraDisplays/LateEarly/Options" to="." method="late_early"]
-[connection signal="toggled" from="H/Menu/Settings/V/ExtraDisplays/HitError/Toggle" to="." method="hit_error_func"]
 [connection signal="button_up" from="H/Menu/Settings/V/GamePathButton" to="." method="game_path_button_pressed"]
 [connection signal="button_up" from="H/Menu/Settings/V/ChangeSkinButton" to="." method="skin_button_pressed"]
 [connection signal="button_up" from="H/Menu/Settings/V/RemoveSkinButton" to="." method="remove_skin"]

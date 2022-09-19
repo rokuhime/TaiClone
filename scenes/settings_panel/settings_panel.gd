@@ -16,20 +16,24 @@ var _active := false
 var _settings_save := false
 
 onready var root_viewport := $"/root" as Root
-onready var left_kat_butt := $H/Menu/Settings/V/Keybinds/LeftKat/Button as Button
-onready var left_don_butt := $H/Menu/Settings/V/Keybinds/LeftDon/Button as Button
-onready var right_don_butt := $H/Menu/Settings/V/Keybinds/RightDon/Button as Button
-onready var right_kat_butt := $H/Menu/Settings/V/Keybinds/RightKat/Button as Button
+onready var left_kat_butt := $H/Menu/Settings/V/Keybinds/LeftKat as ButtonInput
+onready var left_don_butt := $H/Menu/Settings/V/Keybinds/LeftDon as ButtonInput
+onready var right_don_butt := $H/Menu/Settings/V/Keybinds/RightDon as ButtonInput
+onready var right_kat_butt := $H/Menu/Settings/V/Keybinds/RightKat as ButtonInput
 onready var dropdown := $H/Menu/Settings/V/Resolution/Options as OptionButton
-onready var fullscreen_toggle := $H/Menu/Settings/V/Resolution/Fullscreen/Toggle as CheckBox
+onready var fullscreen_toggle := $H/Menu/Settings/V/Resolution/Fullscreen as Checkbox
 onready var offset_text := $H/Menu/Settings/V/Offset/LineEdit as SpinBox
 onready var offset_slider := $H/Menu/Settings/V/HSlider as HSlider
 onready var late_early_drop := $H/Menu/Settings/V/ExtraDisplays/LateEarly/Options as OptionButton
-onready var hit_error_toggle := $H/Menu/Settings/V/ExtraDisplays/HitError/Toggle as CheckBox
+onready var hit_error_toggle := $H/Menu/Settings/V/ExtraDisplays/HitError as Checkbox
 onready var game_path_text := $H/Menu/Settings/V/GamePathText as Label
 
+onready var back_button := $H/Tabs/Back as Clickable
 
 func _ready() -> void:
+	#back_button.texture = root_viewport.button_white
+	back_button.background.texture = root_viewport.box_flat
+	
 	for key in Root.KEYS:
 		_change_text(str(key))
 
@@ -145,10 +149,9 @@ func game_path_button_pressed() -> void:
 ## Called when [member hit_error_toggle] is toggled.
 ## new_visible ([bool]): Whether or not the hit error bar should be visible.
 func hit_error_func(new_visible: bool) -> void:
-	hit_error_toggle.pressed = new_visible
+	hit_error_toggle.change_toggle(new_visible)
 	if _settings_save:
 		root_viewport.hit_error_toggled(new_visible)
-
 
 ## Called when a new timing indicator format is selected,
 ## new_value ([int]): The index of [member late_early_drop] chosen.
@@ -177,7 +180,7 @@ func skin_button_pressed() -> void:
 ## Called when [member fullscreen_toggle] is toggled.
 ## new_visible ([bool]): Whether or not the window should be fullscreen.
 func toggle_fullscreen(new_visible: bool) -> void:
-	fullscreen_toggle.pressed = new_visible
+	#fullscreen_toggle.change_toggle(new_visible)
 	for i in range(dropdown.get_item_count()):
 		dropdown.set_item_disabled(i, new_visible)
 
@@ -195,7 +198,7 @@ static func _item_resolution(item: Array) -> Vector2:
 ## was_pressed ([bool]): Whether or not the button was pressed.
 func _change_text(key: String, was_pressed := false) -> void:
 	## Comment
-	var button_obj: Button
+	var button_obj: ButtonInput
 
 	match key:
 		"LeftDon":
@@ -217,7 +220,8 @@ func _change_text(key: String, was_pressed := false) -> void:
 	## The action associated with this key-bind.
 	var event := GlobalTools.get_event(key)
 
-	button_obj.text = "..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else ""
+	# change button input's text
+	button_obj.change_input("..." if was_pressed else "Joystick Button %s" % (event as InputEventJoypadButton).button_index if event is InputEventJoypadButton else OS.get_scancode_string((event as InputEventKey).scancode) if event is InputEventKey else "")
 
 
 ## Comment

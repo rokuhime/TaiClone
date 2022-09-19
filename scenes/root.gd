@@ -39,6 +39,9 @@ var box_black := GlobalTools.get_alpha_texture("res://textures/box_neutral.png",
 var box_flat := GlobalTools.get_image_texture("res://textures/box_flat.png")
 
 ## Comment
+var box_neutral := GlobalTools.get_image_texture("res://textures/box_neutral.png")
+
+## Comment
 var box_white := GlobalTools.get_alpha_texture("res://textures/box_neutral.png", Color.white)
 
 ## Comment
@@ -153,7 +156,7 @@ func _init() -> void:
 		storage_file.close()
 
 	bar_line_object = load("res://scenes/hitobjects/bar_line.tscn") as PackedScene
-	bars = load("res://scenes/bars/_bars.tscn") as PackedScene
+	bars = load("res://scenes/bars/bars.tscn") as PackedScene
 	gameplay = load("res://scenes/gameplay/gameplay.tscn") as PackedScene
 	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
 	note_object = load("res://scenes/hitobjects/note.tscn") as PackedScene
@@ -217,8 +220,13 @@ func _init() -> void:
 	songs_folder = str(c_file.get_value("Debug", "SongsFolder", game_path))
 	for i in range(AudioServer.bus_count):
 		AudioServer.set_bus_volume_db(i, float(c_file.get_value("Audio", AudioServer.get_bus_name(i) + "Volume", 1)))
-
+	
+	# linux cursor
 	Input.set_custom_mouse_cursor(skin.cursor_texture, Input.CURSOR_BUSY, skin.cursor_texture.get_size() / 2)
+
+	# windows cursor
+	#Input.set_custom_mouse_cursor(skin.cursor_texture, Input.CURSOR_ARROW, skin.cursor_texture.get_size() / 2)
+
 	add_scene(main_menu.instance())
 	settings_save = true
 
