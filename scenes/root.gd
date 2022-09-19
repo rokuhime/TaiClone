@@ -2,7 +2,7 @@ class_name Root
 # warning-ignore-all:unused_class_variable
 extends Viewport
 
-## Signals [HitError] when the value of [member hit_error] has changed.
+## Signals HitError when the value of [member hit_error] has changed.
 signal hit_error_changed
 
 ## Signals [Gameplay] when the value of [member late_early_simple_display] has changed.
@@ -28,6 +28,9 @@ var bars := load("res://scenes/bars/bars.tscn") as PackedScene
 
 ## Comment
 var gameplay := load("res://scenes/gameplay/gameplay.tscn") as PackedScene
+
+## Comment
+var hit_marker := load("res://scenes/gameplay/hit_marker.tscn") as PackedScene
 
 ## Comment
 var main_menu := load("res://scenes/main_menu.tscn") as PackedScene
@@ -223,6 +226,7 @@ func add_scene(new_scene: Node, nodes := ["Background"]) -> Node:
 		for node_name in nodes:
 			if has_node(str(node_name)):
 				add_child_below_node(get_node(str(node_name)), new_scene)
+				get_tree().call_group("Skinnables", "apply_skin")
 				return new_scene
 
 	new_scene.queue_free()

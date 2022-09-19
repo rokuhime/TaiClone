@@ -49,10 +49,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/global_tools.gd"
 }, {
-"base": "Control",
-"class": "HitError",
+"base": "ColorRect",
+"class": "HitMarker",
 "language": "GDScript",
-"path": "res://scenes/gameplay/hit_error.gd"
+"path": "res://scenes/gameplay/hit_marker.gd"
 }, {
 "base": "TextureRect",
 "class": "HitObject",
@@ -133,7 +133,7 @@ _global_script_class_icons={
 "Clickable": "",
 "Gameplay": "",
 "GlobalTools": "",
-"HitError": "",
+"HitMarker": "",
 "HitObject": "",
 "Hoverable": "",
 "Note": "",

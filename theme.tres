@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=43 format=2]
+[gd_resource type="Theme" load_steps=39 format=2]
 
 [ext_resource path="res://fonts/noto_sans_jp-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=2]
@@ -224,29 +224,6 @@ border_width_right = 3
 [sub_resource type="StyleBoxFlat" id=41]
 bg_color = Color( 0.0980392, 0.0980392, 0.0980392, 0.921569 )
 
-[sub_resource type="StyleBoxFlat" id=42]
-bg_color = Color( 1, 1, 1, 0.196078 )
-corner_radius_top_left = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id=43]
-bg_color = Color( 0.392157, 0.392157, 0.392157, 0.784314 )
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-corner_radius_top_left = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id=44]
-bg_color = Color( 0, 0, 0, 0.784314 )
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-corner_radius_top_left = 10
-corner_radius_bottom_left = 10
-
 [sub_resource type="StyleBoxFlat" id=45]
 content_margin_left = 3.0
 content_margin_right = 3.0
@@ -256,15 +233,6 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id=46]
-bg_color = Color( 0.490196, 0.490196, 0.490196, 0.921569 )
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-corner_radius_top_left = 10
-corner_radius_bottom_left = 10
 
 [sub_resource type="DynamicFont" id=47]
 size = 26
@@ -320,8 +288,4 @@ _Results/styles/bg = SubResource( 39 )
 _Results/styles/panel = SubResource( 39 )
 _Settings/styles/normal = SubResource( 40 )
 _Settings/styles/panel = SubResource( 41 )
-_Song/styles/focus = SubResource( 42 )
-_Song/styles/hover = SubResource( 43 )
-_Song/styles/normal = SubResource( 44 )
 _Song/styles/panel = SubResource( 45 )
-_Song/styles/pressed = SubResource( 46 )

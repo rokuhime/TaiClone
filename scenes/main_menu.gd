@@ -16,7 +16,6 @@ onready var exit_label := $Exit/Label as Label
 func _ready() -> void:
 	Engine.target_fps = 120
 	GlobalTools.send_signal(root_viewport, "clicked", options_button, "toggle_settings")
-	apply_skin()
 	play_button.texture = root_viewport.button_white
 	play_button.background.texture = root_viewport.button_black
 	play_label.text = "Play"

@@ -1,15 +1,6 @@
 class_name Gameplay
 extends Scene
 
-## Signals DrumVisual when a sound should be played.
-signal audio_played(key)
-
-## Comment
-signal combo_changed(combo)
-
-## Comment
-signal key_pressed(key)
-
 ## Comment
 signal marker_added(type, timing, indicate)
 
@@ -21,6 +12,18 @@ var _judgement_tween := SceneTreeTween.new()
 
 ## Comment
 var _kiai_tween := SceneTreeTween.new()
+
+## Comment
+var _l_don_tween := SceneTreeTween.new()
+
+## Comment
+var _l_kat_tween := SceneTreeTween.new()
+
+## Comment
+var _r_don_tween := SceneTreeTween.new()
+
+## Comment
+var _r_kat_tween := SceneTreeTween.new()
 
 ## Comment
 var _score_indicator_tween := SceneTreeTween.new()
@@ -62,14 +65,26 @@ var _time_begin := 0.0
 var _current_combo := 0
 
 onready var root_viewport := $"/root" as Root
+onready var combo_break_aud := $ComboBreakAudio as AudioStreamPlayer
+onready var f_don_aud := $FinisherDonAudio as AudioStreamPlayer
+onready var f_kat_aud := $FinisherKatAudio as AudioStreamPlayer
+onready var l_don_aud := $LeftDonAudio as AudioStreamPlayer
+onready var l_kat_aud := $LeftKatAudio as AudioStreamPlayer
+onready var r_don_aud := $RightDonAudio as AudioStreamPlayer
+onready var r_kat_aud := $RightKatAudio as AudioStreamPlayer
 onready var bar_right := $BarRight as TextureRect
-onready var hit_point := $BarRight/HitPointOffset/HitPoint as TextureRect
-onready var hit_point_rim := $BarRight/HitPointOffset/HitPoint/Rim as TextureRect
-onready var kiai_glow := $BarRight/HitPointOffset/KiaiGlow as TextureRect
-onready var judgement := $BarRight/HitPointOffset/Judgement as TextureRect
-onready var obj_container := $BarRight/HitPointOffset/ObjectContainer as Control
-onready var timing_indicator := $BarRight/HitPointOffset/TimingIndicator as Label
-onready var drum_visual := $BarRight/DrumVisual
+onready var hit_point := $BarRight/HitPoint as TextureRect
+onready var hit_point_rim := $BarRight/HitPoint/Rim as TextureRect
+onready var kiai_glow := $BarRight/HitPoint/KiaiGlow as TextureRect
+onready var judgement := $BarRight/HitPoint/Judgement as TextureRect
+onready var obj_container := $BarRight/HitPoint/ObjectContainer as Control
+onready var timing_indicator := $BarRight/HitPoint/TimingIndicator as Label
+onready var drum_visual := $BarRight/DrumVisual as TextureRect
+onready var l_don_obj := $BarRight/DrumVisual/LeftDon as TextureRect
+onready var l_kat_obj := $BarRight/DrumVisual/LeftKat as TextureRect
+onready var r_don_obj := $BarRight/DrumVisual/RightDon as TextureRect
+onready var r_kat_obj := $BarRight/DrumVisual/RightKat as TextureRect
+onready var combo_label := $BarRight/DrumVisual/Combo as Label
 onready var pippidon := $Pippidon as TextureRect
 onready var ui_score := $UI/Score as Label
 onready var last_hit_score := $UI/LastHitScore as Label
@@ -82,9 +97,11 @@ func _ready() -> void:
 	Engine.target_fps = 0
 	GlobalTools.send_signal(self, "late_early_changed", root_viewport, "change_late_early")
 	change_late_early()
-	add_to_group("Skinnables")
-	apply_skin()
 	kiai_glow.modulate.a = 0
+	l_don_obj.modulate.a = 0
+	l_kat_obj.modulate.a = 0
+	r_don_obj.modulate.a = 0
+	r_kat_obj.modulate.a = 0
 	last_hit_score.modulate.a = 0
 	root_viewport.music.stop()
 	root_viewport.accurate_count = 0
@@ -168,7 +185,7 @@ func _ready() -> void:
 				add_object(hit_object)
 
 	get_tree().call_group("HitObjects", "apply_skin")
-	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
+	get_tree().call_group("HitObjects", "connect", "audio_played", self, "play_audio")
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
 	if _first_note_time < 1:
@@ -205,7 +222,7 @@ func _process(_delta: float) -> void:
 
 		hit_object.move(bar_right.rect_size.x, _cur_time)
 		if check_misses:
-			check_auto = hit_object.miss_check(_cur_time - (HitError.INACC_TIMING if hit_object is Note else 0.0))
+			check_auto = hit_object.miss_check(_cur_time - (HitMarker.INACC_TIMING if hit_object is Note else 0.0))
 			check_misses = not check_auto
 			if check_misses and hit_object is TimingPoint:
 				## Comment
@@ -255,10 +272,10 @@ func _process(_delta: float) -> void:
 
 ## Comment
 func add_marker(timing: float, previous_timing: float) -> void:
-	timing -= HitError.INACC_TIMING
+	timing -= HitMarker.INACC_TIMING
 
 	## Comment
-	var type := int(HitObject.Score.ACCURATE if abs(timing) < HitError.ACC_TIMING else HitObject.Score.INACCURATE if abs(timing) < HitError.INACC_TIMING else HitObject.Score.MISS)
+	var type := int(HitObject.Score.ACCURATE if abs(timing) < HitMarker.ACC_TIMING else HitObject.Score.INACCURATE if abs(timing) < HitMarker.INACC_TIMING else HitObject.Score.MISS)
 
 	if previous_timing < 0:
 		emit_signal("marker_added", type, timing, true)
@@ -266,11 +283,11 @@ func add_marker(timing: float, previous_timing: float) -> void:
 		return
 
 	emit_signal("marker_added", type, timing, false)
-	previous_timing -= HitError.INACC_TIMING
-	if abs(previous_timing) < HitError.ACC_TIMING:
+	previous_timing -= HitMarker.INACC_TIMING
+	if abs(previous_timing) < HitMarker.ACC_TIMING:
 		root_viewport.f_accurate_count += 1
 
-	elif abs(previous_timing) < HitError.INACC_TIMING:
+	elif abs(previous_timing) < HitMarker.INACC_TIMING:
 		root_viewport.f_inaccurate_count += 1
 
 
@@ -286,7 +303,7 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 		return
 
 	hit_object.apply_skin()
-	GlobalTools.send_signal(drum_visual, "audio_played", hit_object, "play_audio")
+	GlobalTools.send_signal(self, "audio_played", hit_object, "play_audio")
 	GlobalTools.send_signal(self, "score_added", hit_object, "add_score")
 
 
@@ -320,7 +337,7 @@ func add_score(type: int, marker := true) -> void:
 
 		HitObject.Score.MISS:
 			if _current_combo >= 25:
-				emit_signal("audio_played", "ComboBreak")
+				play_audio("ComboBreak")
 			root_viewport.miss_count += 1
 			root_viewport.max_combo += 1
 			_current_combo = 0
@@ -329,7 +346,7 @@ func add_score(type: int, marker := true) -> void:
 			judgement.texture = root_viewport.skin.miss_judgement
 			play_tween = false
 			if marker:
-				emit_signal("marker_added", type, HitError.INACC_TIMING, true)
+				emit_signal("marker_added", type, HitMarker.INACC_TIMING, true)
 
 		HitObject.Score.FINISHER:
 			play_tween = false
@@ -359,7 +376,7 @@ func add_score(type: int, marker := true) -> void:
 	## Comment
 	var hit_count := root_viewport.accurate_count + root_viewport.inaccurate_count / 2.0
 
-	emit_signal("combo_changed", _current_combo)
+	combo_label.text = str(_current_combo)
 	ui_score.text = "%010d" % root_viewport.score
 	root_viewport.accuracy = "%2.2f" % (hit_count * 100 / (root_viewport.accurate_count + root_viewport.inaccurate_count + root_viewport.miss_count) if hit_count else 0.0)
 	ui_accuracy.text = root_viewport.accuracy
@@ -367,10 +384,22 @@ func add_score(type: int, marker := true) -> void:
 
 ## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.
 func apply_skin() -> void:
+	combo_break_aud.stream = root_viewport.skin.combo_break
+	f_don_aud.stream = root_viewport.skin.hit_finish
+	f_kat_aud.stream = root_viewport.skin.hit_whistle
+	l_don_aud.stream = root_viewport.skin.hit_normal
+	l_kat_aud.stream = root_viewport.skin.hit_clap
+	r_don_aud.stream = root_viewport.skin.hit_normal
+	r_kat_aud.stream = root_viewport.skin.hit_clap
 	bar_right.texture = root_viewport.skin.bar_right_glow if _in_kiai else root_viewport.skin.bar_right_texture
 	hit_point.texture = root_viewport.skin.big_circle
 	hit_point_rim.texture = root_viewport.skin.approach_circle
 	kiai_glow.texture = root_viewport.skin.kiai_glow_texture
+	drum_visual.texture = root_viewport.skin.bar_left_texture
+	l_don_obj.texture = root_viewport.skin.don_texture
+	l_kat_obj.texture = root_viewport.skin.kat_texture
+	r_don_obj.texture = root_viewport.skin.don_texture
+	r_kat_obj.texture = root_viewport.skin.kat_texture
 	pippidon.texture = root_viewport.skin.pippidon_kiai if _in_kiai else root_viewport.skin.pippidon_idle
 
 
@@ -424,7 +453,18 @@ func handle_input(event: InputEvent) -> void:
 	for key in Root.KEYS:
 		if event.is_action_pressed(str(key), false, true):
 			inputs.append(str(key))
-			emit_signal("key_pressed", str(key))
+			match key:
+				"LeftDon":
+					_l_don_tween = _keypress_animation(_l_don_tween, l_don_obj)
+
+				"LeftKat":
+					_l_kat_tween = _keypress_animation(_l_kat_tween, l_kat_obj)
+
+				"RightDon":
+					_r_don_tween = _keypress_animation(_r_don_tween, r_don_obj)
+
+				"RightKat":
+					_r_kat_tween = _keypress_animation(_r_kat_tween, r_kat_obj)
 
 	if GlobalTools.inputs_empty(inputs):
 		return
@@ -434,12 +474,37 @@ func handle_input(event: InputEvent) -> void:
 		## Comment
 		var hit_object := obj_container.get_child(i) as HitObject
 
-		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or GlobalTools.inputs_empty(inputs):
+		if hit_object.hit(inputs, _cur_time + (HitMarker.INACC_TIMING if hit_object is Note else 0.0)) or GlobalTools.inputs_empty(inputs):
 			break
 
 	inputs.remove(0)
 	for key in inputs:
-		emit_signal("audio_played", str(key))
+		play_audio(str(key))
+
+
+## Comment
+func play_audio(key: String) -> void:
+	match key:
+		"ComboBreak":
+			combo_break_aud.play()
+
+		"FinisherDon":
+			f_don_aud.play()
+
+		"FinisherKat":
+			f_kat_aud.play()
+
+		"LeftDon":
+			l_don_aud.play()
+
+		"LeftKat":
+			l_kat_aud.play()
+
+		"RightDon":
+			r_don_aud.play()
+
+		"RightKat":
+			r_kat_aud.play()
 
 
 ## Comment
@@ -454,3 +519,13 @@ func _hit_notify_animation() -> void:
 
 	## Comment
 	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
+
+
+## Comment
+func _keypress_animation(scene_tween: SceneTreeTween, drum_obj: Node) -> SceneTreeTween:
+	scene_tween = root_viewport.new_tween(scene_tween).set_ease(Tween.EASE_OUT)
+
+	## Comment
+	var _tween := scene_tween.tween_property(drum_obj, "modulate:a", 0.0, 0.2).from(1.0)
+
+	return scene_tween

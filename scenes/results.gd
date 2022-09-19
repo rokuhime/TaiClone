@@ -31,7 +31,6 @@ onready var early_error_bar := $RightBar/ErrorBar/Early as CanvasItem
 func _ready() -> void:
 	Engine.target_fps = 120
 	add_to_group("Skinnables")
-	apply_skin()
 	accuracy_label.text = root_viewport.accuracy + "%"
 	accurate_amount.text = str(root_viewport.accurate_count - root_viewport.f_accurate_count)
 	combo_label.text = str(root_viewport.combo)

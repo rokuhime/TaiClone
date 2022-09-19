@@ -22,7 +22,6 @@ onready var texture_rect := $Bottom/Profile/Organizer/Info/Level/TextureRect as 
 func _ready() -> void:
 	#GlobalTools.send_signal(self, "song_properties_changed", root_viewport, "change_text")
 	change_text()
-	apply_skin()
 	back_button.background.texture = root_viewport.box_flat
 	back_label.text = "<<<"
 	profile.texture = root_viewport.box_white
