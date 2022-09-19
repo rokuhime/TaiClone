@@ -76,9 +76,6 @@ onready var last_hit_score := $UI/LastHitScore as Label
 onready var ui_accuracy := $UI/Accuracy/Label as Label
 onready var song_progress := $UI/SongProgress as ProgressBar
 #onready var break_progress := $UI/SongProgress/BreakProgress as TextureProgress
-onready var debug_text := $Debug/DebugText as Label
-onready var play_button := $Debug/TempLoadChart/PlayButton as Button
-onready var fpstext := $Debug/TempLoadChart/Text/FPS as Label
 
 
 func _ready() -> void:
@@ -105,7 +102,7 @@ func _ready() -> void:
 
 	assert(not _f.open(root_viewport.chart.full_file_path(), File.READ), "Unable to read .fus file.")
 	if _f.get_line() != ChartLoader.FUS_VERSION:
-		_load_finish("Outdated .fus file!")
+		_f.close()
 		return
 
 	root_viewport.chart.change_chart_properties(_f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line(), _f.get_line())
@@ -173,11 +170,20 @@ func _ready() -> void:
 	get_tree().call_group("HitObjects", "apply_skin")
 	get_tree().call_group("HitObjects", "connect", "audio_played", drum_visual, "play_audio", [], SceneTree.GROUP_CALL_REALTIME)
 	get_tree().call_group("HitObjects", "connect", "score_added", self, "add_score")
-	_load_finish("Done!")
+	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	if _first_note_time < 1:
+		_time_begin += 1 - _first_note_time
+		GlobalTools.send_signal(root_viewport.music, "timeout", get_tree().create_timer(1 - _first_note_time), "play")
+
+	else:
+		root_viewport.music.play()
+
+	_active = true
+	get_tree().call_group("HitObjects", "activate")
+	_f.close()
 
 
 func _process(_delta: float) -> void:
-	fpstext.text = "FPS: %s" % Engine.get_frames_per_second()
 	if not _active:
 		return
 
@@ -245,39 +251,6 @@ func _process(_delta: float) -> void:
 
 		pippidon_texture.current_frame = (pippidon_texture.current_frame + 1) % pippidon_texture.frames
 		_cur_animation_time += _cur_spb
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if _active and event is InputEventKey:
-		## Comment
-		var k_event := event as InputEventKey
-
-		if k_event.pressed and k_event.scancode == KEY_SPACE and _cur_time < _first_note_time - 1:
-			root_viewport.music.seek(_first_note_time - 1)
-			_time_begin -= _first_note_time - 1 - _cur_time
-
-	## Comment
-	var inputs := [2]
-
-	for key in Root.KEYS:
-		if event.is_action_pressed(str(key)):
-			inputs.append(str(key))
-			emit_signal("key_pressed", str(key))
-
-	if GlobalTools.inputs_empty(inputs):
-		return
-
-	# ZMTT TODO: Fix kiai
-	for i in range(obj_container.get_child_count() - 1, -1, -1):
-		## Comment
-		var hit_object := obj_container.get_child(i) as HitObject
-
-		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or GlobalTools.inputs_empty(inputs):
-			break
-
-	inputs.remove(0)
-	for key in inputs:
-		emit_signal("audio_played", str(key))
 
 
 ## Comment
@@ -402,11 +375,6 @@ func apply_skin() -> void:
 
 
 ## Comment
-func auto_toggled(new_auto: bool) -> void:
-	_auto = new_auto
-
-
-## Comment
 func change_indicator(timing: float) -> void:
 	if timing > 0:
 		timing_indicator.modulate = root_viewport.skin.late_color
@@ -432,23 +400,46 @@ func change_late_early() -> void:
 	timing_indicator.visible = root_viewport.late_early_simple_display > 0
 
 
-## Comment
-func play_button_pressed() -> void:
-	if _active:
-		_end_chart()
+func handle_input(event: InputEvent) -> void:
+	if _active and event is InputEventKey:
+		## Comment
+		var k_event := event as InputEventKey
 
-	else:
-		play_button.text = "Stop"
-		_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-		if _first_note_time < 1:
-			_time_begin += 1 - _first_note_time
-			GlobalTools.send_signal(root_viewport.music, "timeout", get_tree().create_timer(1 - _first_note_time), "play")
+		if k_event.pressed:
+			match k_event.scancode:
+				KEY_SPACE:
+					if _cur_time < _first_note_time - 1:
+						root_viewport.music.seek(_first_note_time - 1)
+						_time_begin -= _first_note_time - 1 - _cur_time
 
-		else:
-			root_viewport.music.play()
+				KEY_QUOTELEFT:
+					_auto = not _auto
 
-		_active = true
-		get_tree().call_group("HitObjects", "activate")
+				KEY_ESCAPE:
+					_end_chart()
+
+	## Comment
+	var inputs := [2]
+
+	for key in Root.KEYS:
+		if event.is_action_pressed(str(key), false, true):
+			inputs.append(str(key))
+			emit_signal("key_pressed", str(key))
+
+	if GlobalTools.inputs_empty(inputs):
+		return
+
+	# ZMTT TODO: Fix kiai
+	for i in range(obj_container.get_child_count() - 1, -1, -1):
+		## Comment
+		var hit_object := obj_container.get_child(i) as HitObject
+
+		if hit_object.hit(inputs, _cur_time + (HitError.INACC_TIMING if hit_object is Note else 0.0)) or GlobalTools.inputs_empty(inputs):
+			break
+
+	inputs.remove(0)
+	for key in inputs:
+		emit_signal("audio_played", str(key))
 
 
 ## Comment
@@ -463,9 +454,3 @@ func _hit_notify_animation() -> void:
 
 	## Comment
 	var _tween := _judgement_tween.tween_property(judgement, "modulate:a", 0.0, 0.4).from(1.0)
-
-
-## Comment
-func _load_finish(new_text: String) -> void:
-	_f.close()
-	debug_text.text = new_text

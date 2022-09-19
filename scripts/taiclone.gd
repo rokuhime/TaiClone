@@ -31,10 +31,10 @@ func _input_event(event: InputEvent) -> void:
 	## The [member ROOT] instance that's used when requiring [Root]-specific functions.
 	var root_viewport := root as Root
 
-	if event is InputEventJoypadButton:
-		pass
-
 	if not event is InputEventWithModifiers:
+		if root_viewport.has_node("Gameplay"):
+			(root_viewport.get_node("Gameplay") as Gameplay).handle_input(event)
+
 		return
 
 	## [member event] as an [InputEventWithModifiers].
@@ -48,28 +48,39 @@ func _input_event(event: InputEvent) -> void:
 		var k_event := event as InputEventKey
 
 		if k_event.pressed:
+			## Comment
+			var other_input := true
+
 			match k_event.scancode:
 				KEY_O:
 					if w_event.control:
 						root_viewport.toggle_settings()
+						other_input = false
 
 				KEY_LEFT:
 					if w_event.alt:
 						volume_changing = (volume_changing + 2) % AudioServer.bus_count
 						_volume_control(root_viewport).change_channel(volume_changing, false)
+						other_input = false
 
 				KEY_UP:
 					if w_event.alt:
 						_volume_control(root_viewport).change_volume(volume_changing, vol_difference)
+						other_input = false
 
 				KEY_RIGHT:
 					if w_event.alt:
 						volume_changing = (volume_changing + 1) % AudioServer.bus_count
 						_volume_control(root_viewport).change_channel(volume_changing, false)
+						other_input = false
 
 				KEY_DOWN:
 					if w_event.alt:
 						_volume_control(root_viewport).change_volume(volume_changing, -vol_difference)
+						other_input = false
+
+			if other_input and root_viewport.has_node("Gameplay"):
+				(root_viewport.get_node("Gameplay") as Gameplay).handle_input(event)
 
 	if not event is InputEventMouse:
 		return

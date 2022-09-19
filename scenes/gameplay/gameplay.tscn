@@ -164,66 +164,8 @@ nine_patch_stretch = true
 
 [node name="HitError" parent="." instance=ExtResource( 3 )]
 
-[node name="Debug" type="VBoxContainer" parent="."]
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 10.0
-margin_top = -100.0
-margin_right = -9.0
-margin_bottom = -10.0
-grow_vertical = 0
-
-[node name="DebugText" type="Label" parent="Debug"]
-margin_right = 1421.0
-margin_bottom = 39.0
-text = "Welcome to TaiClone!"
-
-[node name="TempLoadChart" type="HBoxContainer" parent="Debug"]
-margin_top = 43.0
-margin_right = 1421.0
-margin_bottom = 125.0
-size_flags_vertical = 3
-theme_type_variation = "SeparationP08"
-
-[node name="PlayButton" type="Button" parent="Debug/TempLoadChart"]
-margin_right = 72.0
-margin_bottom = 82.0
-rect_min_size = Vector2( 72, 0 )
-text = "Play"
-
-[node name="AutoToggle" type="CheckBox" parent="Debug/TempLoadChart"]
-margin_left = 80.0
-margin_right = 166.0
-margin_bottom = 82.0
-text = "Auto"
-
-[node name="Text" type="VBoxContainer" parent="Debug/TempLoadChart"]
-margin_left = 174.0
-margin_right = 1421.0
-margin_bottom = 82.0
-size_flags_horizontal = 3
-
-[node name="FPS" type="Label" parent="Debug/TempLoadChart/Text"]
-margin_right = 1247.0
-margin_bottom = 39.0
-size_flags_vertical = 3
-align = 2
-valign = 1
-
-[node name="Version" type="Label" parent="Debug/TempLoadChart/Text"]
-margin_top = 43.0
-margin_right = 1247.0
-margin_bottom = 82.0
-size_flags_vertical = 3
-text = "v0.4 - new coat of paint"
-align = 2
-valign = 1
-
 [connection signal="audio_played" from="." to="BarRight/DrumVisual" method="play_audio"]
 [connection signal="combo_changed" from="." to="BarRight/DrumVisual" method="change_combo"]
 [connection signal="key_pressed" from="." to="BarRight/DrumVisual" method="keypress_animation"]
 [connection signal="marker_added" from="." to="HitError" method="new_marker"]
 [connection signal="indicator_changed" from="HitError" to="." method="change_indicator"]
-[connection signal="button_up" from="Debug/TempLoadChart/PlayButton" to="." method="play_button_pressed"]
-[connection signal="toggled" from="Debug/TempLoadChart/AutoToggle" to="." method="auto_toggled"]
