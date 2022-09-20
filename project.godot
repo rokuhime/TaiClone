@@ -19,7 +19,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/hitobjects/bar_line.gd"
 }, {
-"base": "Reference",
+"base": "Scene",
 "class": "Bars",
 "language": "GDScript",
 "path": "res://scenes/bars/bars.gd"
@@ -58,11 +58,6 @@ _global_script_classes=[ {
 "class": "GlobalTools",
 "language": "GDScript",
 "path": "res://scripts/global_tools.gd"
-}, {
-"base": "ColorRect",
-"class": "HitMarker",
-"language": "GDScript",
-"path": "res://scenes/gameplay/hit_marker.gd"
 }, {
 "base": "ColorRect",
 "class": "HitMarker",

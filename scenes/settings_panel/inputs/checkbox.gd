@@ -3,7 +3,6 @@ extends Clickable
 
 signal toggled(tgl)
 
-onready var root_viewport := $"/root" as Root
 onready var titleObj := $H/Title as Label
 onready var toggleObj := $H/Toggle as TextureRect
 

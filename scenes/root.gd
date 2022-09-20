@@ -87,6 +87,9 @@ var box_black := GlobalTools.get_alpha_texture("res://textures/box_neutral.png",
 var box_flat := GlobalTools.get_image_texture("res://textures/box_flat.png")
 
 ## Comment
+var box_neutral := GlobalTools.get_image_texture("res://textures/box_neutral.png")
+
+## Comment
 var box_white := GlobalTools.get_alpha_texture("res://textures/box_neutral.png", Color.white)
 
 ## Comment

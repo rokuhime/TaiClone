@@ -32,6 +32,7 @@ theme_type_variation = "SeparationP00"
 margin_right = 75.0
 margin_bottom = 75.0
 rect_min_size = Vector2( 0, 75 )
+style = 3
 sound = true
 
 [node name="TextureRect" type="TextureRect" parent="H/Tabs/_lol"]
@@ -54,6 +55,7 @@ margin_top = 1005.0
 margin_right = 75.0
 margin_bottom = 1080.0
 rect_min_size = Vector2( 0, 75 )
+style = 3
 
 [node name="TextureRect2" type="TextureRect" parent="H/Tabs/Back"]
 anchor_right = 1.0
@@ -79,7 +81,7 @@ margin_bottom = 1248.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="H/Menu/Settings/V"]
-margin_right = 387.0
+margin_right = 375.0
 margin_bottom = 66.0
 theme_type_variation = "FontRegular045"
 text = "Settings"
@@ -87,15 +89,15 @@ align = 1
 
 [node name="Description" type="Label" parent="H/Menu/Settings/V"]
 margin_top = 70.0
-margin_right = 387.0
+margin_right = 375.0
 margin_bottom = 109.0
 text = "Change how the game runs."
 align = 1
 
 [node name="Buffer1" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
-margin_left = 118.0
+margin_left = 112.0
 margin_top = 113.0
-margin_right = 268.0
+margin_right = 262.0
 margin_bottom = 146.0
 
 [node name="Keybinds" type="VBoxContainer" parent="H/Menu/Settings/V"]

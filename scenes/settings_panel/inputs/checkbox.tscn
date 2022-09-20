@@ -9,6 +9,7 @@ margin_bottom = 88.0
 rect_min_size = Vector2( 0, 45 )
 rect_pivot_offset = Vector2( -146, -66 )
 script = ExtResource( 1 )
+style = 3
 
 [node name="Background" type="NinePatchRect" parent="."]
 anchor_right = 1.0
@@ -37,5 +38,9 @@ margin_bottom = 32.0
 rect_min_size = Vector2( 20, 20 )
 size_flags_vertical = 4
 expand = true
+
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 39.0
 
 [connection signal="clicked" from="." to="." method="click"]
