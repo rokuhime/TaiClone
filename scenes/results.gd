@@ -31,7 +31,6 @@ onready var early_error_bar := $RightBar/ErrorBar/Early as CanvasItem
 func _ready() -> void:
 	Engine.target_fps = 120
 	add_to_group("Skinnables")
-	apply_skin()
 	accuracy_label.text = root_viewport.accuracy + "%"
 	accurate_amount.text = str(root_viewport.accurate_count - root_viewport.f_accurate_count)
 	combo_label.text = str(root_viewport.combo)
@@ -53,8 +52,7 @@ func _ready() -> void:
 	## Comment
 	var _right_tween := _animation_tween.tween_property(right_bar, "rect_position:x", 591.0, 1).from(87.0)
 
-	root_viewport.add_scene(root_viewport.bars.instance(), ["Results"])
-	(root_viewport.get_node("Bars") as Bars).back_scene = root_viewport.song_select
+	(root_viewport.add_scene(root_viewport.bars.instance(), ["Results"]) as Bars).back_scene = root_viewport.song_select
 
 
 ## Applies the [member root_viewport]'s [SkinManager] to this [Node]. This method is seen in all [Node]s in the "Skinnables" group.

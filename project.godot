@@ -59,10 +59,15 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/global_tools.gd"
 }, {
-"base": "Control",
-"class": "HitError",
+"base": "ColorRect",
+"class": "HitMarker",
 "language": "GDScript",
-"path": "res://scenes/gameplay/hit_error.gd"
+"path": "res://scenes/gameplay/hit_marker.gd"
+}, {
+"base": "ColorRect",
+"class": "HitMarker",
+"language": "GDScript",
+"path": "res://scenes/gameplay/hit_marker.gd"
 }, {
 "base": "TextureRect",
 "class": "HitObject",
@@ -99,7 +104,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/skin_manager.gd"
 }, {
-"base": "NinePatchRect",
+"base": "Node",
 "class": "SongButton",
 "language": "GDScript",
 "path": "res://scenes/song_select/song_button.gd"
@@ -129,7 +134,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/hitobjects/timing_point.gd"
 }, {
-"base": "Reference",
+"base": "Scene",
 "class": "VolumeControl",
 "language": "GDScript",
 "path": "res://scenes/volume_control.gd"
@@ -145,7 +150,7 @@ _global_script_class_icons={
 "Clickable": "",
 "Gameplay": "",
 "GlobalTools": "",
-"HitError": "",
+"HitMarker": "",
 "HitObject": "",
 "Hoverable": "",
 "Note": "",

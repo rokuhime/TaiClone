@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scenes/gameplay/hit_error.gd" type="Script" id=1]
+[ext_resource path="res://scenes/gameplay/hit_marker.tscn" type="PackedScene" id=2]
 
-[node name="HitError" type="ColorRect"]
+[node name="HitError" type="ColorRect" groups=["Skinnables"]]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -18,26 +19,22 @@ anchor_top = 0.325
 anchor_right = 1.0
 anchor_bottom = 0.675
 
-[node name="HitPoints" type="Control" parent="."]
+[node name="Inaccurate" type="ColorRect" parent="Miss"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 2.0
 margin_right = -2.0
 
-[node name="Inaccurate" type="ColorRect" parent="HitPoints"]
-anchor_top = 0.325
+[node name="Accurate" type="ColorRect" parent="Miss/Inaccurate"]
+anchor_bottom = 1.0
+
+[node name="HitPoints" type="Control" parent="."]
 anchor_right = 1.0
-anchor_bottom = 0.675
-
-[node name="Accurate" type="ColorRect" parent="HitPoints/Inaccurate"]
 anchor_bottom = 1.0
+margin_left = 1.0
+margin_right = -1.0
 
-[node name="MiddleMarker" type="ColorRect" parent="."]
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -1.0
-margin_right = 1.0
+[node name="MiddleMarker" parent="." instance=ExtResource( 2 )]
 
 [node name="AverageHit" type="ColorRect" parent="."]
 anchor_left = 0.5

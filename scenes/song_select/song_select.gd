@@ -8,12 +8,10 @@ func _ready() -> void:
 	Engine.target_fps = 120
 	load_metadata(root_viewport.taiclone_songs_folder())
 	if charts.get_child_count():
-		(charts.get_child(0) as Button)._pressed()
-
-	root_viewport.add_scene(root_viewport.bars.instance(), ["SongSelect"])
+		(charts.get_child(0) as SongButton).clickable_clicked()
 
 	## Comment
-	var bars_object := root_viewport.get_node("Bars") as Bars
+	var bars_object := root_viewport.add_scene(root_viewport.bars.instance(), ["SongSelect"]) as Bars
 
 	bars_object.back_scene = root_viewport.main_menu
 	bars_object.play_date.hide()

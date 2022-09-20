@@ -3,13 +3,11 @@
 [node name="Banner" type="PanelContainer"]
 margin_right = 6.0
 margin_bottom = 30.0
-mouse_filter = 2
 size_flags_vertical = 8
-theme_type_variation = "_Song"
 
 [node name="Label" type="Label" parent="."]
-margin_left = 3.0
-margin_top = 4.0
-margin_right = 3.0
-margin_bottom = 30.0
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 7.0
+margin_bottom = 33.0
 theme_type_variation = "FontRegular022"

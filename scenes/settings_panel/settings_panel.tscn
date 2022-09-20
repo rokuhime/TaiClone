@@ -10,7 +10,7 @@
 [ext_resource path="res://temporary/temp_back.png" type="Texture" id=8]
 [ext_resource path="res://scenes/settings_panel/inputs/checkbox.tscn" type="PackedScene" id=9]
 
-[node name="SettingsPanel" type="PanelContainer"]
+[node name="SettingsPanel" type="Panel"]
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -67,11 +67,11 @@ margin_right = 466.0
 margin_bottom = 1080.0
 size_flags_horizontal = 3
 
-[node name="Settings" type="ScrollContainer" parent="H/Menu"]
+[node name="Settings" type="Control" parent="H/Menu"]
 margin_right = 387.0
 margin_bottom = 1080.0
+rect_clip_content = true
 size_flags_vertical = 3
-scroll_horizontal_enabled = false
 
 [node name="V" type="VBoxContainer" parent="H/Menu/Settings"]
 margin_right = 375.0
@@ -79,7 +79,7 @@ margin_bottom = 1248.0
 size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="H/Menu/Settings/V"]
-margin_right = 375.0
+margin_right = 387.0
 margin_bottom = 66.0
 theme_type_variation = "FontRegular045"
 text = "Settings"
@@ -87,15 +87,15 @@ align = 1
 
 [node name="Description" type="Label" parent="H/Menu/Settings/V"]
 margin_top = 70.0
-margin_right = 375.0
+margin_right = 387.0
 margin_bottom = 109.0
 text = "Change how the game runs."
 align = 1
 
 [node name="Buffer1" parent="H/Menu/Settings/V" instance=ExtResource( 1 )]
-margin_left = 112.0
+margin_left = 118.0
 margin_top = 113.0
-margin_right = 262.0
+margin_right = 268.0
 margin_bottom = 146.0
 
 [node name="Keybinds" type="VBoxContainer" parent="H/Menu/Settings/V"]
