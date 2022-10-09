@@ -52,6 +52,9 @@ var gameplay: PackedScene
 var main_menu: PackedScene
 
 ## Comment
+var editor: PackedScene
+
+## Comment
 var note_object: PackedScene
 
 ## Comment
@@ -146,6 +149,7 @@ func _init() -> void:
 	bars = load("res://root/bars.tscn") as PackedScene
 	gameplay = load("res://gameplay/gameplay.tscn") as PackedScene
 	main_menu = load("res://scenes/main_menu.tscn") as PackedScene
+	editor = load("res://editor/editor.tscn") as PackedScene
 	note_object = load("res://hitobjects/note.tscn") as PackedScene
 	results = load("res://scenes/results.tscn") as PackedScene
 	roll_object = load("res://hitobjects/roll.tscn") as PackedScene
