@@ -1,4 +1,6 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://temporary/comma.mp3" type="AudioStream" id=1]
 
 [node name="Background" type="TextureRect"]
 anchor_right = 1.0
@@ -6,4 +8,5 @@ anchor_bottom = 1.0
 stretch_mode = 7
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 1 )
 bus = "Music"
