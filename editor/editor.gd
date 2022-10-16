@@ -10,6 +10,13 @@ onready var obj_container := $Main/Display/HitPoint/ObjectContainer
 onready var hit_point := $Main/Display/HitPoint as Control
 onready var bar_right := $Main/Display as Control
 
+onready var select_shader : ShaderMaterial
+
+var holding_ctrl := false
+var holding_shift := false
+
+var currently_selected = []
+
 var currentTool := 0
 var currentFinisher := false
 var cur_time := 0.0
@@ -22,8 +29,11 @@ var exTimelineFlip := false
 const DEFAULT_VELOCITY := 1750.0
 var current_velocity := 1.0
 
+func _init() -> void:
+	select_shader = load("res://editor/select_matt.tres") as ShaderMaterial
+
 func _ready() -> void:
-	#$"LoadFile".loadChart("C:/Users/Fus/AppData/Roaming/Godot/app_userdata/TaiClone/Songs/1383022 Toze - Incendiary/Toze - Incendiary (9_9) [Burning].fus")
+	$"LoadFile".loadChart("C:/Users/Fus/AppData/Roaming/Godot/app_userdata/TaiClone/Songs/1383022 Toze - Incendiary/Toze - Incendiary (9_9) [Burning].fus")
 	print('a')
 
 func _process(_delta: float) -> void:
@@ -110,11 +120,44 @@ func _unhandled_input(event: InputEvent) -> void:
 			
 		# change type: kat
 		if k_event.pressed and k_event.scancode == KEY_W or k_event.scancode == KEY_R:
-			print("changeToKat")
+			if currently_selected.size() != 0:
+				var changingto := true
+
+				# check if first note selected is/isnt kat
+				if currently_selected[0].is_in_group("Note"):
+					var first_select_obj := currently_selected[0] as Note
+					changingto = !first_select_obj._is_kat
+
+				for selection in currently_selected:
+					if selection.is_in_group("Note"):
+						selection.change_display(changingto, selection.finisher)
+			
 		# change tool: finisher
 		if k_event.pressed and k_event.scancode == KEY_E:
-			print("changeToFinisher")
+			if currently_selected.size() != 0:
+				var changingto := true
 
+				# check if first note selected is/isnt kat
+				if currently_selected[0].is_in_group("Note"):
+					var first_select_obj := currently_selected[0] as Note
+					print("changing to from true to ", !first_select_obj.finisher)
+					changingto = !first_select_obj.finisher
+
+				for selection in currently_selected:
+					if selection.is_in_group("Note"):
+						selection.change_display(selection._is_kat, changingto)
+
+		# ctrl toggle
+		if k_event.pressed and k_event.scancode == KEY_CONTROL:
+			holding_ctrl = true
+		if not k_event.pressed and k_event.scancode == KEY_CONTROL:
+			holding_ctrl = false
+		# shift toggle
+		if k_event.pressed and k_event.scancode == KEY_SHIFT:
+			holding_shift = true
+		if not k_event.pressed and k_event.scancode == KEY_SHIFT:
+			holding_shift = false
+		
 
 func topOptionSelected(id, type):
 	match type:
@@ -137,8 +180,7 @@ func change_editor_speed(factor: float) -> void:
 
 		hit_object.speed = DEFAULT_VELOCITY * current_velocity
 		hit_object.move(bar_right.rect_size.x, cur_time)
-
-		
+	
 func change_playfield_view(is_constant: bool) -> void:
 	using_constant_sv = is_constant
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
@@ -163,3 +205,58 @@ func change_playfield_view(is_constant: bool) -> void:
 		hit_point.anchor_right = 0
 		hit_point.margin_left = 300
 	hit_point.margin_right = hit_point.margin_left + width
+
+func moused_over_object(event: InputEvent, obj: TextureRect) ->  void:
+	## deals with selecting objects
+
+	# make sure its a mouse input
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			var m_event := event as InputEventMouseButton
+			var group = obj.get_groups()[0]
+			#make sure its one of the valid groups and apply accordingly
+			match group:
+				"Note":
+					obj.material = select_shader
+					pass
+				"Roll":
+					obj.material = select_shader
+					pass
+				"SpinnerWarn":
+					obj.material = select_shader
+					pass
+				_:
+					return
+
+			# if theres anything in the actual array, and if you aren't trying to select multiple...
+			if currently_selected.size() != 0 and !holding_ctrl:
+				print("removing selections, ", currently_selected.size())
+				# go through each selection in the array and remove the material + the array entry
+				while currently_selected.size() != 0:
+					currently_selected[0].material = null
+					currently_selected.pop_front()
+					currently_selected.sort()
+			
+			# add the new selection to array
+			currently_selected.append(obj)
+
+func change_object(initial_obj: Node, change: Array) -> void:
+	var group = initial_obj.get_groups()[0]
+	var obj
+	#make sure its one of the valid groups and reassign it accordingly
+	match group:
+		"Note":
+			obj = initial_obj as Note
+			if change[0] == "kat":
+				obj.change_display(change[1], obj.finisher)
+			if change[0] == "finisher":
+				obj.change_display(obj._is_kat, change[1])
+			pass
+		"Roll":
+			obj = initial_obj as Roll
+			pass
+		"SpinnerWarn":
+			obj = initial_obj as SpinnerWarn
+			pass
+		_:
+			return

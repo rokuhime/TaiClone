@@ -2,7 +2,7 @@
 
 [ext_resource path="res://hitobjects/roll.gd" type="Script" id=1]
 
-[node name="Roll" type="TextureRect"]
+[node name="Roll" type="TextureRect" groups=["Roll"]]
 margin_top = -64.0
 margin_right = 128.0
 margin_bottom = 64.0

@@ -23,6 +23,25 @@ func _ready() -> void:
 
 	left_margin = margin_left
 
+func change_display(new_kat: bool, new_finisher: bool) -> void:
+	# FIX ME HOOKHAT
+	# finishers currently don't position correctly until played
+	
+	# finisher
+	if new_finisher != finisher:
+		if new_finisher:
+			print("its a finisher")
+			rect_position *= FINISHER_SCALE
+			rect_size *= FINISHER_SCALE
+		else:
+			print("not a finisher")
+			rect_position /= FINISHER_SCALE
+			rect_size /= FINISHER_SCALE
+	finisher = new_finisher
+
+	# kat
+	_is_kat = new_kat
+	self_modulate = root_viewport.skin.kat_color if _is_kat else root_viewport.skin.don_color
 
 ## See [HitObject].
 func apply_skin() -> void:

@@ -2,6 +2,7 @@ extends Node
 
 onready var obj_container := $"../Main/Display/HitPoint/ObjectContainer"
 onready var root_viewport := $"/root" as Root
+onready var editor := $"../"
 var _f := File.new()
 
 ## the time for the first note in the chart
@@ -106,6 +107,7 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 	for i in range(obj_container.get_child_count()):
 		if hit_object.end_time > (obj_container.get_child(i) as HitObject).end_time:
 			obj_container.move_child(hit_object, i)
+			hit_object.connect("gui_input", editor, "moused_over_object", [hit_object])
 			break
 
 	if loaded:
