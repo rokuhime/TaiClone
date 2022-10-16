@@ -12,13 +12,24 @@ onready var bar_right := $Main/Display as Control
 
 onready var select_shader : ShaderMaterial
 
+onready var tglkat_tex : Texture
+onready var tgldon_tex : Texture
+onready var tglfin_on_tex : Texture
+onready var tglfin_off_tex : Texture
+
+onready var tglkat_but := $Tools/GridContainer/ToggleKat as Button
+onready var tglfin_but := $Tools/GridContainer/ToggleFinisher as Button
+
+onready var tools := $Tools as WindowDialog
+
 var holding_ctrl := false
 var holding_shift := false
+var current_finisher := false
+var current_kat := false
 
 var currently_selected = []
 
 var currentTool := 0
-var currentFinisher := false
 var cur_time := 0.0
 
 var using_constant_sv := true
@@ -31,6 +42,10 @@ var current_velocity := 1.0
 
 func _init() -> void:
 	select_shader = load("res://editor/select_matt.tres") as ShaderMaterial
+	tglkat_tex = load("res://temporary/editor/togglekat.png")
+	tgldon_tex = load("res://temporary/editor/toggledon.png")
+	tglfin_on_tex = load("res://temporary/editor/togglefinisher_on.png")
+	tglfin_off_tex = load("res://temporary/editor/togglefinisher_off.png")
 
 func _ready() -> void:
 	$"LoadFile".loadChart("C:/Users/Fus/AppData/Roaming/Godot/app_userdata/TaiClone/Songs/1383022 Toze - Incendiary/Toze - Incendiary (9_9) [Burning].fus")
@@ -66,7 +81,22 @@ func timelineDrag(_dummy, isDragging) -> void:
 	interactingWithTimeline = isDragging
 
 func changeTool(newTool) -> void:
-	currentTool = newTool;
+	if newTool >= 0:
+		currentTool = newTool;
+	else:
+		match newTool:
+			-1:
+				current_kat = !current_kat
+				if current_kat:
+					tglkat_but.icon = tglkat_tex 
+				else:
+					tglkat_but.icon = tgldon_tex 
+			-2:
+				current_finisher = !current_finisher
+				if current_finisher:
+					tglfin_but.icon = tglfin_on_tex 
+				else:
+					tglfin_but.icon = tglfin_off_tex
 
 func changeExTimelineFlip() -> void:
 	exTimelineFlip = not exTimelineFlip
@@ -80,11 +110,6 @@ func changeCurrentTime() -> void:
 	else:
 		cur_time = root_viewport.music.stream.get_length() * timeline.value / 100.0
 		root_viewport.music.seek(cur_time)
-
-func toggleMenu(menu) -> void:
-	match menu:
-		"a": 
-			print("a")
 
 func playPause() -> void:
 	if root_viewport.music.playing:
@@ -120,6 +145,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			
 		# change type: kat
 		if k_event.pressed and k_event.scancode == KEY_W or k_event.scancode == KEY_R:
+			# if editing objects...
 			if currently_selected.size() != 0:
 				var changingto := true
 
@@ -131,6 +157,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				for selection in currently_selected:
 					if selection.is_in_group("Note"):
 						selection.change_display(changingto, selection.finisher)
+			else:
+				changeTool(-1)
+
 			
 		# change tool: finisher
 		if k_event.pressed and k_event.scancode == KEY_E:
@@ -146,6 +175,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				for selection in currently_selected:
 					if selection.is_in_group("Note"):
 						selection.change_display(selection._is_kat, changingto)
+			else:
+				changeTool(-1)
 
 		# ctrl toggle
 		if k_event.pressed and k_event.scancode == KEY_CONTROL:
@@ -165,6 +196,10 @@ func topOptionSelected(id, type):
 			match id:
 				0:
 					$FileDialog.visible = true
+		"view":
+			match id:
+				0:
+					tools.visible = true
 	pass # Replace with function body.
 
 func change_editor_speed(factor: float) -> void:
@@ -227,17 +262,29 @@ func moused_over_object(event: InputEvent, obj: TextureRect) ->  void:
 					pass
 				_:
 					return
+			
+			# incase toggling a selected note while multiple selected, just toggle that
+			if currently_selected.has(obj) and holding_ctrl:
+				obj.material = null
+				currently_selected.erase(obj)
+				currently_selected.sort()
+				return
 
 			# if theres anything in the actual array, and if you aren't trying to select multiple...
 			if currently_selected.size() != 0 and !holding_ctrl:
-				print("removing selections, ", currently_selected.size())
 				# go through each selection in the array and remove the material + the array entry
+				print("removing selections, ", currently_selected.size())
 				while currently_selected.size() != 0:
 					currently_selected[0].material = null
 					currently_selected.pop_front()
 					currently_selected.sort()
 			
+			# FIX ME HOOKHAT
+			# currently gives up if already removed above, annoying to work around cuz while
+			# if its "for idx of currently_selected" it just doesnt do them all (thanks godot!)
+				
 			# add the new selection to array
+			print("adding ", obj)
 			currently_selected.append(obj)
 
 func change_object(initial_obj: Node, change: Array) -> void:
@@ -256,7 +303,9 @@ func change_object(initial_obj: Node, change: Array) -> void:
 			obj = initial_obj as Roll
 			pass
 		"SpinnerWarn":
-			obj = initial_obj as SpinnerWarn
 			pass
 		_:
 			return
+
+func change_speed(new_speed: float) -> void:
+	root_viewport.music.pitch_scale = new_speed

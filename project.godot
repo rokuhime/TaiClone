@@ -122,7 +122,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="TaiClone"
+config/name="TaiClone Editor"
 run/main_scene="res://root/root.tscn"
 boot_splash/image="res://temporary/sdsddsd.png"
 boot_splash/fullsize=false
