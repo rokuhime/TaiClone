@@ -41,6 +41,9 @@ var length := 0.0
 ## The slider velocity of this [HitObject]. Applies to all [HitObject]s.
 var speed := 0.0
 
+## The slider velocity of this [HitObject]. Applies to all [HitObject]s.
+var actual_speed := 0.0
+
 ## The hit time of this [HitObject]. Applies to all [HitObject]s.
 var timing := 0.0
 
@@ -141,6 +144,7 @@ func ini(new_timing: float, new_speed: float, new_length: float, new_finisher :=
 	finisher = new_finisher
 	length = new_length
 	speed = new_speed
+	actual_speed = new_speed
 	timing = new_timing
 	end_time = timing + length
 

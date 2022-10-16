@@ -1,6 +1,6 @@
 extends Node
 
-onready var obj_container := $Main/Play/ObjectContainer as Node
+onready var obj_container := $"../Main/Display/HitPoint/ObjectContainer"
 onready var root_viewport := $"/root" as Root
 var _f := File.new()
 
@@ -10,9 +10,7 @@ var _first_note_time := -1.0
 ## the time for the last note in the chart
 var _last_note_time := -1.0
 
-## Comment
-var _time_begin := 0.0
-
+const DEFAULT_VELOCITY := 1750.0
 
 func loadChart(filePath) -> void:
 	if not _f.file_exists(filePath):
@@ -22,20 +20,20 @@ func loadChart(filePath) -> void:
 
 	if _f.open(filePath, File.READ):
 		print("Unable to read temporary .fus file!")
-		_f.close()
 		return
 
 	if _f.get_line() != ChartLoader.FUS_VERSION:
 		print("Outdated .fus file!")
-		_f.close()
 		return
-
-	root_viewport.bg_changed(GlobalTools.texture_from_image(_f.get_line()), Color("373737"))
-	root_viewport.music.stream = AudioLoader.load_file(_f.get_line())
-	root_viewport.artist = _f.get_line()
-	root_viewport.charter = _f.get_line()
-	root_viewport.difficulty_name = _f.get_line()
+	
 	root_viewport.title = _f.get_line()
+	var _preview_time = _f.get_line()
+	var file_path = _f.get_line()
+	root_viewport.difficulty_name = _f.get_line()
+	root_viewport.charter = _f.get_line()
+	root_viewport.bg_changed(GlobalTools.texture_from_image(file_path.plus_file(_f.get_line())), Color("373737"))
+	root_viewport.music.stream = AudioLoader.load_file(file_path.plus_file((_f.get_line())))
+	root_viewport.artist = _f.get_line()
 
 	## Comment
 	var cur_bpm := -1.0
@@ -71,6 +69,7 @@ func loadChart(filePath) -> void:
 
 				hit_object.change_properties(timing, total_cur_sv, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
 				add_object(hit_object)
+
 				GlobalTools.send_signal(self, "new_marker_added", hit_object, "add_marker")
 
 			ChartLoader.NoteType.ROLL:
@@ -99,6 +98,8 @@ func loadChart(filePath) -> void:
 
 	get_tree().call_group("HitObjects", "apply_skin")
 	print("Done!")
+	_f.close()
+	return
 
 func add_object(hit_object: HitObject, loaded := true) -> void:
 	obj_container.add_child(hit_object)

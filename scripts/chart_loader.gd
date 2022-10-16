@@ -7,7 +7,7 @@ enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 const FUS := "debug.fus"
 
 ## Comment
-const FUS_VERSION := "v0.0.4"
+const FUS_VERSION := "v0.0.6"
 
 
 ## Comment

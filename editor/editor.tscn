@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
@@ -10,7 +10,6 @@
 [ext_resource path="res://temporary/roll.png" type="Texture" id=8]
 [ext_resource path="res://temporary/note.png" type="Texture" id=9]
 [ext_resource path="res://editor/editor.gd" type="Script" id=10]
-[ext_resource path="res://temporary/waveformsample.png" type="Texture" id=11]
 [ext_resource path="res://editor/tab_manager.gd" type="Script" id=12]
 [ext_resource path="res://editor/load_file.gd" type="Script" id=13]
 
@@ -39,6 +38,10 @@ region_rect = Rect2( 0, 0, 250, 250 )
 [node name="Editor" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = 3.0
+margin_top = -13.0
+margin_right = 3.0
+margin_bottom = -13.0
 rect_pivot_offset = Vector2( -572, -55 )
 theme = ExtResource( 4 )
 script = ExtResource( 10 )
@@ -51,23 +54,13 @@ margin_top = -155.5
 margin_bottom = 155.5
 custom_constants/separation = 0
 
-[node name="Play" type="Panel" parent="Main"]
+[node name="Display" type="Panel" parent="Main"]
 margin_right = 1440.0
 margin_bottom = 250.0
 rect_min_size = Vector2( 0, 250 )
 custom_styles/panel = SubResource( 1 )
 
-[node name="Waveform" type="TextureRect" parent="Main/Play"]
-visible = false
-self_modulate = Color( 0.517647, 1, 0.419608, 0.494118 )
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 6.0
-margin_bottom = -5.0
-texture = ExtResource( 11 )
-expand = true
-
-[node name="HitPoint" type="TextureRect" parent="Main/Play"]
+[node name="HitPoint" type="TextureRect" parent="Main/Display"]
 self_modulate = Color( 0.415686, 0.415686, 0.415686, 1 )
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -78,7 +71,7 @@ margin_bottom = 61.0
 texture = ExtResource( 2 )
 expand = true
 
-[node name="Rim" type="TextureRect" parent="Main/Play/HitPoint"]
+[node name="Rim" type="TextureRect" parent="Main/Display/HitPoint"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -16.0
@@ -88,14 +81,51 @@ margin_bottom = 16.0
 texture = ExtResource( 1 )
 expand = true
 
-[node name="ObjectContainer" type="Control" parent="Main/Play"]
+[node name="ObjectContainer" type="Control" parent="Main/Display/HitPoint"]
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = 361.0
-margin_right = 361.0
+
+[node name="Chapters" type="HBoxContainer" parent="Main/Display"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -720.0
+margin_top = -45.0
+margin_right = 720.0
+alignment = 1
+
+[node name="Add" type="Button" parent="Main/Display/Chapters"]
+margin_left = 614.0
+margin_right = 664.0
+margin_bottom = 45.0
+rect_min_size = Vector2( 50, 0 )
+text = "+"
+
+[node name="Play" type="Button" parent="Main/Display/Chapters"]
+margin_left = 668.0
+margin_right = 718.0
+margin_bottom = 45.0
+rect_min_size = Vector2( 50, 0 )
+text = "0"
+
+[node name="Remove" type="Button" parent="Main/Display/Chapters"]
+margin_left = 722.0
+margin_right = 772.0
+margin_bottom = 45.0
+rect_min_size = Vector2( 50, 0 )
+text = "-"
+
+[node name="Swap" type="Button" parent="Main/Display/Chapters"]
+margin_left = 776.0
+margin_right = 826.0
+margin_bottom = 45.0
+rect_min_size = Vector2( 50, 0 )
+toggle_mode = true
+icon = ExtResource( 5 )
+expand_icon = true
 
 [node name="Density" type="Panel" parent="Main"]
-visible = false
 margin_top = 250.0
 margin_right = 1440.0
 margin_bottom = 311.0
@@ -516,6 +546,23 @@ items = [ "Github", null, 0, false, false, 0, 0, null, "", false, "TaiClone Edit
 [node name="LoadFile" type="Node" parent="."]
 script = ExtResource( 13 )
 
+[node name="FileDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -633.5
+margin_top = -422.0
+margin_right = 633.5
+margin_bottom = 422.0
+window_title = "Open a File"
+mode = 0
+access = 2
+
+[connection signal="pressed" from="Main/Display/Chapters/Add" to="." method="change_editor_speed" binds= [ 0.1 ]]
+[connection signal="pressed" from="Main/Display/Chapters/Play" to="." method="change_editor_speed" binds= [ 0.0 ]]
+[connection signal="pressed" from="Main/Display/Chapters/Remove" to="." method="change_editor_speed" binds= [ -0.1 ]]
+[connection signal="toggled" from="Main/Display/Chapters/Swap" to="." method="change_playfield_view"]
 [connection signal="drag_ended" from="Timeline/Container/Timeline" to="." method="timelineDrag" binds= [ false ]]
 [connection signal="drag_started" from="Timeline/Container/Timeline" to="." method="timelineDrag" binds= [ false, true ]]
 [connection signal="pressed" from="Timeline/Container/Controls/Play" to="." method="playPause"]
@@ -528,7 +575,9 @@ script = ExtResource( 13 )
 [connection signal="pressed" from="Tools/GridContainer/Roll" to="." method="changeTool" binds= [ 2 ]]
 [connection signal="pressed" from="Tools/GridContainer/Spin" to="." method="changeTool" binds= [ 3 ]]
 [connection signal="pressed" from="Top/HBoxContainer/File" to="Top" method="openMenu" binds= [ "file" ]]
+[connection signal="id_pressed" from="Top/HBoxContainer/File/PopupMenu" to="." method="topOptionSelected" binds= [ "file" ]]
 [connection signal="pressed" from="Top/HBoxContainer/Edit" to="Top" method="openMenu" binds= [ "edit" ]]
 [connection signal="pressed" from="Top/HBoxContainer/View" to="Top" method="openMenu" binds= [ "view" ]]
 [connection signal="pressed" from="Top/HBoxContainer/Help" to="Top" method="openMenu" binds= [ "help" ]]
 [connection signal="id_pressed" from="Top/HBoxContainer/Help/PopupMenu" to="Top" method="openGithub"]
+[connection signal="file_selected" from="FileDialog" to="LoadFile" method="loadChart"]
