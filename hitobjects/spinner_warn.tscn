@@ -2,7 +2,7 @@
 
 [ext_resource path="res://hitobjects/spinner_warn.gd" type="Script" id=1]
 
-[node name="SpinnerWarn" type="TextureRect" groups=["SpinnerWarn"]]
+[node name="SpinnerWarn" type="TextureRect" groups=["HitObject", "SpinnerWarn"]]
 margin_left = -96.0
 margin_top = -96.0
 margin_right = 480.0

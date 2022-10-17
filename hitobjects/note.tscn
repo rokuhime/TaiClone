@@ -2,7 +2,7 @@
 
 [ext_resource path="res://hitobjects/note.gd" type="Script" id=1]
 
-[node name="Note" type="TextureRect" groups=["Note"]]
+[node name="Note" type="TextureRect" groups=["HitObject", "Note"]]
 margin_left = -64.0
 margin_top = -64.0
 margin_right = 64.0

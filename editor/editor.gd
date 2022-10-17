@@ -22,6 +22,8 @@ onready var tglfin_but := $Tools/GridContainer/ToggleFinisher as Button
 
 onready var tools := $Tools as WindowDialog
 
+onready var save_file := $SaveFile
+
 var holding_ctrl := false
 var holding_shift := false
 var current_finisher := false
@@ -196,6 +198,8 @@ func topOptionSelected(id, type):
 			match id:
 				0:
 					$FileDialog.visible = true
+				2:
+					save_file.save_map()
 		"view":
 			match id:
 				0:
@@ -247,44 +251,18 @@ func moused_over_object(event: InputEvent, obj: TextureRect) ->  void:
 	# make sure its a mouse input
 	if event is InputEventMouseButton:
 		if event.is_pressed():
-			var m_event := event as InputEventMouseButton
-			var group = obj.get_groups()[0]
-			#make sure its one of the valid groups and apply accordingly
-			match group:
-				"Note":
-					obj.material = select_shader
-					pass
-				"Roll":
-					obj.material = select_shader
-					pass
-				"SpinnerWarn":
-					obj.material = select_shader
-					pass
-				_:
+			if not holding_ctrl:
+				var was_selected: bool = currently_selected.has(obj) and currently_selected.size() == 1
+				while currently_selected.size() != 0:
+					remove_object(currently_selected[0])
+				if was_selected:
 					return
-			
-			# incase toggling a selected note while multiple selected, just toggle that
-			if currently_selected.has(obj) and holding_ctrl:
-				obj.material = null
-				currently_selected.erase(obj)
-				currently_selected.sort()
+
+			elif currently_selected.has(obj):
+				remove_object(obj)
 				return
 
-			# if theres anything in the actual array, and if you aren't trying to select multiple...
-			if currently_selected.size() != 0 and !holding_ctrl:
-				# go through each selection in the array and remove the material + the array entry
-				print("removing selections, ", currently_selected.size())
-				while currently_selected.size() != 0:
-					currently_selected[0].material = null
-					currently_selected.pop_front()
-					currently_selected.sort()
-			
-			# FIX ME HOOKHAT
-			# currently gives up if already removed above, annoying to work around cuz while
-			# if its "for idx of currently_selected" it just doesnt do them all (thanks godot!)
-				
-			# add the new selection to array
-			print("adding ", obj)
+			obj.material = select_shader
 			currently_selected.append(obj)
 
 func change_object(initial_obj: Node, change: Array) -> void:
@@ -309,3 +287,7 @@ func change_object(initial_obj: Node, change: Array) -> void:
 
 func change_speed(new_speed: float) -> void:
 	root_viewport.music.pitch_scale = new_speed
+
+func remove_object(obj: Control) -> void:
+	obj.material = null
+	currently_selected.erase(obj)
