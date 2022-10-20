@@ -50,7 +50,7 @@ func _init() -> void:
 	tglfin_off_tex = load("res://temporary/editor/togglefinisher_off.png")
 
 func _ready() -> void:
-	$"LoadFile".loadChart("C:/Users/Fus/AppData/Roaming/Godot/app_userdata/TaiClone/Songs/1383022 Toze - Incendiary/Toze - Incendiary (9_9) [Burning].fus")
+	$"LoadFile".loadChart("E:/Games/osu!/Songs/1408669 Ta9-5 (Feat Looci) - Positive/Ta9-5 (Feat. Looci) - Positive (TaiCloneConverter) [o(GTS edit)].fus")
 	print('a')
 
 func _process(_delta: float) -> void:

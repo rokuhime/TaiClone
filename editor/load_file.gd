@@ -14,6 +14,10 @@ var _last_note_time := -1.0
 const DEFAULT_VELOCITY := 1750.0
 
 func loadChart(filePath) -> void:
+	#delete current chart
+	for obj in obj_container.get_children():
+		obj.queue_free()
+
 	if not _f.file_exists(filePath):
 		print("Invalid file!")
 		_f.close()
@@ -41,13 +45,14 @@ func loadChart(filePath) -> void:
 
 	## Comment
 	var cur_bpm := -1.0
+	var cur_bpm_timing := -1.0
 
 	while _f.get_position() < _f.get_len():
 		## Comment
 		var line_data := _f.get_csv_line()
 
 		## Comment
-		var timing := float(line_data[0])
+		var timing := cur_bpm_timing + float(line_data[0]) * 60 / cur_bpm if cur_bpm else 0.0
 
 		## Comment
 		var total_cur_sv := float(line_data[1]) * cur_bpm * 5.7
@@ -93,11 +98,12 @@ func loadChart(filePath) -> void:
 
 			ChartLoader.NoteType.TIMING_POINT:
 				cur_bpm = float(line_data[1])
+				cur_bpm_timing = float(line_data[0]) / 1000
 
 				## Comment
 				var hit_object := root_viewport.timing_point_object.instance() as TimingPoint
 
-				hit_object.change_properties(timing, int(line_data[3]), cur_bpm)
+				hit_object.change_properties(cur_bpm_timing, int(line_data[3]), cur_bpm)
 				add_object(hit_object)
 
 	get_tree().call_group("HitObjects", "apply_skin")
