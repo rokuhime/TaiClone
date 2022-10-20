@@ -158,5 +158,8 @@ func miss_check(_hit_time: float) -> bool:
 
 ## Comment
 func move(visible_x: float, cur_time: float) -> void:
-	rect_position.x = speed * (timing - cur_time) + left_margin
+	if finisher:
+		rect_position.x = speed * (timing - cur_time) + left_margin - 38.4
+	else:
+		rect_position.x = speed * (timing - cur_time) + left_margin
 	visible = -visible_x < rect_position.x + rect_size.x and rect_position.x < visible_x

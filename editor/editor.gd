@@ -177,6 +177,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				for selection in currently_selected:
 					if selection.is_in_group("Note"):
 						selection.change_display(selection._is_kat, changingto)
+						selection.move(bar_right.rect_size.x, cur_time)
 			else:
 				changeTool(-1)
 
@@ -249,7 +250,7 @@ func moused_over_object(event: InputEvent, obj: TextureRect) ->  void:
 	## deals with selecting objects
 
 	# make sure its a mouse input
-	if event is InputEventMouseButton:
+	if event is InputEventMouseButton and currentTool == 0:
 		if event.is_pressed():
 			if not holding_ctrl:
 				var was_selected: bool = currently_selected.has(obj) and currently_selected.size() == 1
