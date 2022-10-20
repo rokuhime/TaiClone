@@ -96,6 +96,13 @@ var difficulty_name: String
 ## Comment
 var title: String
 
+#ababababababa
+var od := ""
+var preview := ""
+var folder_path := ""
+var bg_file_name := ""
+var audio_file_name := ""
+
 ## Comment
 var accurate_count: int
 

@@ -28,12 +28,15 @@ func loadChart(filePath) -> void:
 		return
 	
 	root_viewport.title = _f.get_line()
-	var _preview_time = _f.get_line()
-	var file_path = _f.get_line()
+	root_viewport.preview = _f.get_line()
+	root_viewport.od = _f.get_line()
+	root_viewport.folder_path = _f.get_line()
 	root_viewport.difficulty_name = _f.get_line()
 	root_viewport.charter = _f.get_line()
-	root_viewport.bg_changed(GlobalTools.texture_from_image(file_path.plus_file(_f.get_line())), Color("373737"))
-	root_viewport.music.stream = AudioLoader.load_file(file_path.plus_file((_f.get_line())))
+	root_viewport.bg_file_name = _f.get_line()
+	root_viewport.bg_changed(GlobalTools.texture_from_image(root_viewport.folder_path.plus_file(root_viewport.bg_file_name)), Color("373737"))
+	root_viewport.audio_file_name = _f.get_line()
+	root_viewport.music.stream = AudioLoader.load_file(root_viewport.folder_path.plus_file((root_viewport.audio_file_name)))
 	root_viewport.artist = _f.get_line()
 
 	## Comment

@@ -2,7 +2,7 @@
 
 [ext_resource path="res://hitobjects/bar_line.gd" type="Script" id=1]
 
-[node name="BarLine" type="TextureRect"]
+[node name="BarLine" type="TextureRect" groups=["Barline", "HitObject"]]
 margin_left = -1.0
 margin_top = -139.0
 margin_right = 1.0

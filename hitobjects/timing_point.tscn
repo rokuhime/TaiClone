@@ -2,5 +2,5 @@
 
 [ext_resource path="res://hitobjects/timing_point.gd" type="Script" id=1]
 
-[node name="TimingPoint" type="TextureRect"]
+[node name="TimingPoint" type="TextureRect" groups=["HitObject", "TimingPoint"]]
 script = ExtResource( 1 )
