@@ -1,6 +1,7 @@
 extends Control
 
 onready var root_viewport := $"/root" as Root
+onready var load_file = $LoadFile as LoadFile
 onready var exTimeline := $Timeline/Ex as Node
 onready var timeline := $Timeline/Container/Timeline as Slider
 onready var timestamp := $Timeline/Container/Timestamp as Label
@@ -42,6 +43,8 @@ var using_constant_sv := true
 var interactingWithTimeline := false
 var exTimelineFlip := false
 
+
+
 const DEFAULT_VELOCITY := 1750.0
 var current_velocity := 1.0
 
@@ -53,7 +56,7 @@ func _init() -> void:
 	tglfin_off_tex = load("res://temporary/editor/togglefinisher_off.png")
 
 func _ready() -> void:
-	$"LoadFile".loadChart("E:/Games/osu!/Songs/1383022 Toze - Incendiary/Toze - Incendiary (TaiCloneConverter) [Burning].fus")
+	load_file.loadChart("E:/Games/osu!/Songs/1383022 Toze - Incendiary/Toze - Incendiary (TaiCloneConverter) [Burning].fus")
 	print('a')
 
 func _process(_delta: float) -> void:
@@ -86,13 +89,22 @@ func _process(_delta: float) -> void:
 
 	var mouse_pos := get_viewport().get_mouse_position().x
 	var raw_pos := mouse_pos - hit_point.rect_position.x
+	# the timing of the new theoretical note
 	var new_timing := cur_time + (raw_pos / current_velocity / DEFAULT_VELOCITY)
-	var cur_bpm = get_current_bpm(new_timing)
+	if current_snapping != 0:
+		# the current bpm data (0 = bpm, 1 = time the bpm starts at)
+		var cur_bpm = get_current_bpm(new_timing)
 
-	var snapped_beat = round((new_timing - cur_bpm[1]) * cur_bpm[0] * current_snapping / 60) / current_snapping
+		# the measure the note would be on
+		var snapped_beat: float = round((new_timing - cur_bpm[1]) * cur_bpm[0] * current_snapping / 60) / current_snapping
+		# the actual timing of the snapped note
+		var snapped_timing = snapped_beat * 60 / cur_bpm[0] if cur_bpm[0] else 0.0
 
-	var snapped_timing = snapped_beat * 60 / cur_bpm[0] if cur_bpm[0] else 0.0
-	placer_obj.rect_position.x = (snapped_timing - cur_time + cur_bpm[1]) * DEFAULT_VELOCITY * current_velocity
+		# move the display to show where the new theoretical note would be
+		placer_obj.rect_position.x = (snapped_timing - cur_time + cur_bpm[1]) * DEFAULT_VELOCITY * current_velocity
+	else:
+		# move the display to show where the new theoretical note would be
+		placer_obj.rect_position.x = raw_pos - (hit_point.rect_size.x / 2)
 
 func timelineDrag(_dummy, isDragging) -> void:
 	if isDragging == false:
@@ -215,13 +227,25 @@ func _unhandled_input(event: InputEvent) -> void:
 			holding_shift = false
 
 func _input(event) -> void:
-	if event is InputEventMouseButton:
-		var m_event := event as InputEventMouseButton
-		if (m_event.button_index == 4 or m_event.button_index == 5) and holding_ctrl:
-			if m_event.button_index == 4 and current_snapping < 16:
-				current_snapping += 1
-			elif current_snapping > 1:
-				current_snapping -= 1
+	if event is InputEventMouseButton and currentTool != 0:
+		print("ababa")
+		if event.pressed and event.button_index == 1:
+			print("obobo")
+			var mouse_pos := get_viewport().get_mouse_position().x
+			var raw_pos := mouse_pos - hit_point.rect_position.x
+			# the timing of the new theoretical note
+			var new_timing := cur_time + (raw_pos / current_velocity / DEFAULT_VELOCITY)
+
+			var hit_object := root_viewport.note_object.instance() as Note
+			hit_object.change_properties(new_timing, 1, current_kat, current_finisher)
+			load_file.add_object(hit_object)
+
+	
+	if event.is_action_pressed("SnappingUp") and holding_ctrl or event.is_action_pressed("SnappingDown") and holding_ctrl:
+		if event.is_action_pressed("SnappingUp"):
+			current_snapping += 1
+		elif event.is_action_pressed("SnappingDown"):
+			current_snapping -= 1
 
 func topOptionSelected(id, type):
 	match type:

@@ -1,3 +1,4 @@
+class_name LoadFile
 extends Node
 
 onready var obj_container := $"../Main/Display/HitPoint/ObjectContainer"
