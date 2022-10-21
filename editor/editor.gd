@@ -9,6 +9,7 @@ onready var debugText := $Debug as Label
 onready var obj_container := $Main/Display/HitPoint/ObjectContainer
 onready var hit_point := $Main/Display/HitPoint as Control
 onready var bar_right := $Main/Display as Control
+onready var placer_obj := $Main/Display/HitPoint/Placer as Placer
 
 onready var select_shader : ShaderMaterial
 
@@ -31,6 +32,8 @@ var current_kat := false
 
 var currently_selected = []
 
+var current_snapping := 4
+
 var currentTool := 0
 var cur_time := 0.0
 
@@ -50,13 +53,17 @@ func _init() -> void:
 	tglfin_off_tex = load("res://temporary/editor/togglefinisher_off.png")
 
 func _ready() -> void:
-	$"LoadFile".loadChart("E:/Games/osu!/Songs/1408669 Ta9-5 (Feat Looci) - Positive/Ta9-5 (Feat. Looci) - Positive (TaiCloneConverter) [o(GTS edit)].fus")
+	$"LoadFile".loadChart("E:/Games/osu!/Songs/1383022 Toze - Incendiary/Toze - Incendiary (TaiCloneConverter) [Burning].fus")
 	print('a')
 
 func _process(_delta: float) -> void:
 	var prev_time := cur_time
 	
-	debugText.text = "currentTool: " + String(currentTool) + "\n" + "FPS: %s" % Engine.get_frames_per_second()
+	debugText.text = "currentTool: " + String(currentTool)
+	debugText.text += "\n" + "FPS: %s" % Engine.get_frames_per_second()
+	debugText.text += "\n" + "current_snapping: %s" % current_snapping
+	if currently_selected.size() != 0:
+		debugText.text += "\ncurrent note time: " + String(currently_selected[0].timing) + ", " + String(currently_selected[0].rect_position.x)
 	
 	if not interactingWithTimeline:
 		if root_viewport.music.stream.get_length():
@@ -77,6 +84,16 @@ func _process(_delta: float) -> void:
 
 			hit_object.move(bar_right.rect_size.x, cur_time)
 
+	var mouse_pos := get_viewport().get_mouse_position().x
+	var raw_pos := mouse_pos - hit_point.rect_position.x
+	var new_timing := cur_time + (raw_pos / current_velocity / DEFAULT_VELOCITY)
+	var cur_bpm = get_current_bpm(new_timing)
+
+	var snapped_beat = round((new_timing - cur_bpm[1]) * cur_bpm[0] * current_snapping / 60) / current_snapping
+
+	var snapped_timing = snapped_beat * 60 / cur_bpm[0] if cur_bpm[0] else 0.0
+	placer_obj.rect_position.x = (snapped_timing - cur_time + cur_bpm[1]) * DEFAULT_VELOCITY * current_velocity
+
 func timelineDrag(_dummy, isDragging) -> void:
 	if isDragging == false:
 		changeCurrentTime()
@@ -84,6 +101,10 @@ func timelineDrag(_dummy, isDragging) -> void:
 
 func changeTool(newTool) -> void:
 	if newTool >= 0:
+		if newTool != 0:
+			placer_obj.self_modulate.a = 0.5
+		else:
+			placer_obj.self_modulate.a = 0
 		currentTool = newTool;
 	else:
 		match newTool:
@@ -99,6 +120,7 @@ func changeTool(newTool) -> void:
 					tglfin_but.icon = tglfin_on_tex 
 				else:
 					tglfin_but.icon = tglfin_off_tex
+		placer_obj.change_display(current_kat, current_finisher)
 
 func changeExTimelineFlip() -> void:
 	exTimelineFlip = not exTimelineFlip
@@ -179,7 +201,7 @@ func _unhandled_input(event: InputEvent) -> void:
 						selection.change_display(selection._is_kat, changingto)
 						selection.move(bar_right.rect_size.x, cur_time)
 			else:
-				changeTool(-1)
+				changeTool(-2)
 
 		# ctrl toggle
 		if k_event.pressed and k_event.scancode == KEY_CONTROL:
@@ -191,7 +213,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			holding_shift = true
 		if not k_event.pressed and k_event.scancode == KEY_SHIFT:
 			holding_shift = false
-		
+
+func _input(event) -> void:
+	if event is InputEventMouseButton:
+		var m_event := event as InputEventMouseButton
+		if (m_event.button_index == 4 or m_event.button_index == 5) and holding_ctrl:
+			if m_event.button_index == 4 and current_snapping < 16:
+				current_snapping += 1
+			elif current_snapping > 1:
+				current_snapping -= 1
 
 func topOptionSelected(id, type):
 	match type:
@@ -292,3 +322,16 @@ func change_speed(new_speed: float) -> void:
 func remove_object(obj: Control) -> void:
 	obj.material = null
 	currently_selected.erase(obj)
+
+func get_current_bpm(time: float) -> Array:
+	var cur_bpm := -1.0
+	var cur_bpm_timing := -1.0
+	for i in range(obj_container.get_child_count() - 1, -1, -1):
+		var hit_obj := obj_container.get_child(i) as HitObject
+		if hit_obj.is_in_group("TimingPoint"):
+			if hit_obj.timing <= time or cur_bpm == -1.0:
+				cur_bpm = hit_obj.bpm
+				cur_bpm_timing = hit_obj.timing
+			else:
+				break
+	return [cur_bpm, cur_bpm_timing]
