@@ -36,7 +36,9 @@ var currently_selected = []
 var current_snapping := 4
 
 var currentTool := 0
-var cur_time := 0.0
+var current_os_time := 0.0
+var current_music_time := 0.0
+var current_music_speed := 1.0
 
 var using_constant_sv := true
 
@@ -60,7 +62,11 @@ func _ready() -> void:
 	print('a')
 
 func _process(_delta: float) -> void:
-	var prev_time := cur_time
+	var elapsed_os_time = 0.0
+	if root_viewport.music.playing:
+		elapsed_os_time = (OS.get_ticks_msec() * 0.001) - current_os_time
+	current_os_time = OS.get_ticks_msec() * 0.001
+	var previous_music_time = current_music_time
 	
 	debugText.text = "currentTool: " + String(currentTool)
 	debugText.text += "\n" + "FPS: %s" % Engine.get_frames_per_second()
@@ -73,38 +79,44 @@ func _process(_delta: float) -> void:
 			timeline.value = root_viewport.music.get_playback_position() * 100.0 / root_viewport.music.stream.get_length()
 		
 		#timestamp schenanigans
-		var time = root_viewport.music.get_playback_position()
-		var mils = fmod(time,1)*1000
-		var secs = fmod(time,60)
-		var mins = fmod(time, 60*60) / 60
+		current_music_time += elapsed_os_time * current_music_speed
+		var mils = fmod(current_music_time,1)*1000
+		var secs = fmod(current_music_time,60)
+		var mins = fmod(current_music_time, 60*60) / 60
 		timestamp.text = "%02d:%02d:%03d" % [mins,secs,mils]
-		cur_time = time
 	
-	if prev_time != cur_time:
-		for i in range(obj_container.get_child_count() - 1, -1, -1):
-			## Comment
-			var hit_object := obj_container.get_child(i) as HitObject
-
-			hit_object.move(bar_right.rect_size.x, cur_time)
+	if current_music_time != previous_music_time:
+		updateNotes()
 
 	var mouse_pos := get_viewport().get_mouse_position().x
-	var raw_pos := mouse_pos - hit_point.rect_position.x
-	# the timing of the new theoretical note
-	var new_timing := cur_time + (raw_pos / current_velocity / DEFAULT_VELOCITY)
-	if current_snapping != 0:
-		# the current bpm data (0 = bpm, 1 = time the bpm starts at)
-		var cur_bpm = get_current_bpm(new_timing)
-
-		# the measure the note would be on
-		var snapped_beat: float = round((new_timing - cur_bpm[1]) * cur_bpm[0] * current_snapping / 60) / current_snapping
-		# the actual timing of the snapped note
-		var snapped_timing = snapped_beat * 60 / cur_bpm[0] if cur_bpm[0] else 0.0
-
-		# move the display to show where the new theoretical note would be
-		placer_obj.rect_position.x = (snapped_timing - cur_time + cur_bpm[1]) * DEFAULT_VELOCITY * current_velocity
+	var raw_pos := mouse_pos - hit_point.rect_position.x - (hit_point.rect_size.x / 2)
+	
+	var new_timing := 0.0
+	if using_constant_sv:
+		new_timing = current_music_time + (raw_pos / current_velocity / DEFAULT_VELOCITY)
 	else:
-		# move the display to show where the new theoretical note would be
-		placer_obj.rect_position.x = raw_pos - (hit_point.rect_size.x / 2)
+		var tracking_speed := 0.0
+		for i in range(obj_container.get_child_count() - 1, -1, -1):
+			var hit_object := obj_container.get_child(i) as HitObject
+			if hit_object.rect_position.x > raw_pos:
+				break
+			tracking_speed = hit_object.speed
+		new_timing = current_music_time + (raw_pos / tracking_speed)
+	
+	var timing_info = get_timing_info(new_timing)
+	var current_bpm = timing_info[0]
+	var current_timing_point = timing_info[1]
+	var current_speed = timing_info[2]
+
+	var snapped_beat = round((new_timing - current_timing_point) * current_bpm * current_snapping / 60) / current_snapping
+
+	var snapped_timing = snapped_beat * 60 / current_bpm if current_bpm else 0.0
+	var placer_position := 0
+	if using_constant_sv:
+		placer_position = (snapped_timing - current_music_time + current_timing_point) * DEFAULT_VELOCITY * current_velocity - 1
+	else:
+		placer_position = (snapped_timing - current_music_time + current_timing_point) * current_speed - 1
+	placer_obj.rect_position.x = placer_position
 
 func timelineDrag(_dummy, isDragging) -> void:
 	if isDragging == false:
@@ -144,19 +156,26 @@ func changeCurrentTime() -> void:
 	if timeline.value == 100.0:
 		root_viewport.music.stop()
 	else:
-		cur_time = root_viewport.music.stream.get_length() * timeline.value / 100.0
-		root_viewport.music.seek(cur_time)
+		current_music_time = root_viewport.music.stream.get_length() * timeline.value / 100.0
+		root_viewport.music.seek(current_music_time)
+	updateNotes()
+
+func updateNotes(velocity: float = -1.0) -> void:
+	for i in range(obj_container.get_child_count() - 1, -1, -1):
+		var hit_object := obj_container.get_child(i) as HitObject
+		if velocity >= 0:
+			hit_object.speed = DEFAULT_VELOCITY * velocity
+		hit_object.move(bar_right.rect_size.x, current_music_time)
 
 func playPause() -> void:
 	if root_viewport.music.playing:
 		root_viewport.music.stop()
-		cur_time = root_viewport.music.get_playback_position()
 		return
-	root_viewport.music.play(cur_time)
+	root_viewport.music.play(current_music_time)
 
 func stopMusic() -> void:
 	root_viewport.music.stop()
-	cur_time = 0.0
+	current_music_time = 0.0
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
@@ -211,7 +230,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				for selection in currently_selected:
 					if selection.is_in_group("Note"):
 						selection.change_display(selection._is_kat, changingto)
-						selection.move(bar_right.rect_size.x, cur_time)
+						selection.move(bar_right.rect_size.x, current_music_time)
 			else:
 				changeTool(-2)
 
@@ -268,12 +287,7 @@ func change_editor_speed(factor: float) -> void:
 		current_velocity = 1
 	else:
 		current_velocity += factor
-	
-	for i in range(obj_container.get_child_count() - 1, -1, -1):
-		var hit_object := obj_container.get_child(i) as HitObject
-
-		hit_object.speed = DEFAULT_VELOCITY * current_velocity
-		hit_object.move(bar_right.rect_size.x, cur_time)
+	updateNotes(current_velocity)
 	
 func change_playfield_view(is_constant: bool) -> void:
 	using_constant_sv = is_constant
@@ -287,7 +301,7 @@ func change_playfield_view(is_constant: bool) -> void:
 		else:
 			hit_object.speed = hit_object.actual_speed
 
-		hit_object.move(bar_right.rect_size.x, cur_time)
+		hit_object.move(bar_right.rect_size.x, current_music_time)
 	
 	var width := hit_point.rect_size.x
 	if is_constant:
@@ -342,20 +356,23 @@ func change_object(initial_obj: Node, change: Array) -> void:
 
 func change_speed(new_speed: float) -> void:
 	root_viewport.music.pitch_scale = new_speed
+	current_music_speed = new_speed
 
 func remove_object(obj: Control) -> void:
 	obj.material = null
 	currently_selected.erase(obj)
 
-func get_current_bpm(time: float) -> Array:
+func get_timing_info(time: float) -> Array:
 	var cur_bpm := -1.0
 	var cur_bpm_timing := -1.0
+	var cur_speed := -1.0
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
 		var hit_obj := obj_container.get_child(i) as HitObject
-		if hit_obj.is_in_group("TimingPoint"):
-			if hit_obj.timing <= time or cur_bpm == -1.0:
+		if hit_obj.timing <= time or cur_bpm == -1.0:
+			cur_speed = hit_obj.speed
+			if hit_obj.is_in_group("TimingPoint"):
 				cur_bpm = hit_obj.bpm
 				cur_bpm_timing = hit_obj.timing
-			else:
-				break
-	return [cur_bpm, cur_bpm_timing]
+		else:
+			break
+	return [cur_bpm, cur_bpm_timing, cur_speed]
