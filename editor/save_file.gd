@@ -1,3 +1,4 @@
+class_name SaveFile
 extends Node
 
 onready var obj_container := $"../Main/Display/HitPoint/ObjectContainer"

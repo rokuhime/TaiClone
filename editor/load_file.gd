@@ -117,7 +117,7 @@ func add_object(hit_object: HitObject, loaded := true) -> void:
 	for i in range(obj_container.get_child_count()):
 		if hit_object.end_time > (obj_container.get_child(i) as HitObject).end_time:
 			obj_container.move_child(hit_object, i)
-			hit_object.connect("gui_input", editor, "moused_over_object", [hit_object])
+			var _error = hit_object.connect("gui_input", editor, "moused_over_object", [hit_object])
 			break
 
 	if loaded:

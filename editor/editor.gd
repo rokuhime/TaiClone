@@ -24,7 +24,7 @@ onready var tglfin_but := $Tools/GridContainer/ToggleFinisher as Button
 
 onready var tools := $Tools as WindowDialog
 
-onready var save_file := $SaveFile
+onready var save_file := $SaveFile as SaveFile
 
 var holding_ctrl := false
 var holding_shift := false
@@ -149,8 +149,8 @@ func changeTool(newTool) -> void:
 func changeExtimelineFlip() -> void:
 	ex_timeline_flip = not ex_timeline_flip
 	
-	ex_timeline.get_child(int(ex_timeline_flip)).visible = true
-	ex_timeline.get_child(int(!ex_timeline_flip)).visible = false
+	(ex_timeline.get_child(int(ex_timeline_flip))as CanvasItem).visible = true
+	(ex_timeline.get_child(int(!ex_timeline_flip))as CanvasItem).visible = false
 
 func changeCurrentTime() -> void:
 	if timeline.value == 100.0:
@@ -208,7 +208,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 				# check if first note selected is/isnt kat
 				if currently_selected[0].is_in_group("Note"):
-					var first_select_obj := currently_selected[0] as Note
+					var first_select_obj: Note = currently_selected[0]
 					changingto = !first_select_obj._is_kat
 
 				for selection in currently_selected:
@@ -225,7 +225,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 				# check if first note selected is/isnt kat
 				if currently_selected[0].is_in_group("Note"):
-					var first_select_obj := currently_selected[0] as Note
+					var first_select_obj: Note = currently_selected[0]
 					print("changing to from true to ", !first_select_obj.finisher)
 					changingto = !first_select_obj.finisher
 
@@ -272,7 +272,7 @@ func topOptionSelected(id, type):
 		"file":
 			match id:
 				0:
-					$FileDialog.visible = true
+					($FileDialog as CanvasItem).visible = true
 				2:
 					save_file.save_map()
 		"view":
@@ -368,7 +368,7 @@ func get_timing_info(time: float) -> Array:
 	var cur_bpm_timing := -1.0
 	var cur_speed := -1.0
 	for i in range(obj_container.get_child_count() - 1, -1, -1):
-		var hit_obj := obj_container.get_child(i) as HitObject
+		var hit_obj: HitObject = obj_container.get_child(i)
 		if hit_obj.timing <= time or cur_bpm == -1.0:
 			cur_speed = hit_obj.speed
 			if hit_obj.is_in_group("TimingPoint"):
