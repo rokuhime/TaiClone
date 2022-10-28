@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://skins/test_skin/approachcircle.png" type="Texture" id=1]
 [ext_resource path="res://skins/test_skin/taikobigcircle.png" type="Texture" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://editor/save_file.gd" type="Script" id=15]
 [ext_resource path="res://editor/select_matt.tres" type="Material" id=16]
 [ext_resource path="res://editor/placer.gd" type="Script" id=17]
+[ext_resource path="res://editor/metadata.gd" type="Script" id=18]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.129412, 0.129412, 0.129412, 1 )
@@ -140,6 +141,7 @@ icon = ExtResource( 5 )
 expand_icon = true
 
 [node name="Density" type="Panel" parent="Main"]
+visible = false
 margin_top = 250.0
 margin_right = 1440.0
 margin_bottom = 311.0
@@ -437,6 +439,9 @@ margin_top = 165.0
 margin_right = 343.0
 margin_bottom = 369.0
 window_title = "Tools"
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="GridContainer" type="GridContainer" parent="Tools"]
 anchor_right = 1.0
@@ -498,6 +503,218 @@ size_flags_vertical = 3
 icon = ExtResource( 11 )
 expand_icon = true
 
+[node name="Metadata" type="WindowDialog" parent="."]
+visible = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 274.0
+margin_top = -443.0
+margin_right = 600.0
+margin_bottom = -172.0
+window_title = "Metadata"
+script = ExtResource( 18 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Metadata"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Metadata/ScrollContainer"]
+margin_right = 326.0
+margin_bottom = 261.0
+size_flags_horizontal = 3
+
+[node name="Title" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+margin_right = 326.0
+margin_bottom = 49.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/Title"]
+margin_top = 5.0
+margin_right = 54.0
+margin_bottom = 44.0
+text = "Title"
+
+[node name="Buffer" type="Control" parent="Metadata/ScrollContainer/VBoxContainer/Title"]
+margin_left = 58.0
+margin_right = 147.0
+margin_bottom = 49.0
+size_flags_horizontal = 3
+
+[node name="LineEdit" type="LineEdit" parent="Metadata/ScrollContainer/VBoxContainer/Title"]
+margin_left = 151.0
+margin_right = 326.0
+margin_bottom = 49.0
+rect_min_size = Vector2( 175, 0 )
+size_flags_horizontal = 3
+
+[node name="Artist" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+margin_top = 53.0
+margin_right = 326.0
+margin_bottom = 102.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/Artist"]
+margin_top = 5.0
+margin_right = 65.0
+margin_bottom = 44.0
+text = "Artist"
+
+[node name="Buffer" type="Control" parent="Metadata/ScrollContainer/VBoxContainer/Artist"]
+margin_left = 69.0
+margin_right = 147.0
+margin_bottom = 49.0
+size_flags_horizontal = 3
+
+[node name="LineEdit" type="LineEdit" parent="Metadata/ScrollContainer/VBoxContainer/Artist"]
+margin_left = 151.0
+margin_right = 326.0
+margin_bottom = 49.0
+rect_min_size = Vector2( 175, 0 )
+size_flags_horizontal = 3
+
+[node name="Difficulty" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+margin_top = 106.0
+margin_right = 326.0
+margin_bottom = 155.0
+rect_pivot_offset = Vector2( -429, 0 )
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/Difficulty"]
+margin_top = 5.0
+margin_right = 108.0
+margin_bottom = 44.0
+text = "Difficulty"
+
+[node name="Buffer" type="Control" parent="Metadata/ScrollContainer/VBoxContainer/Difficulty"]
+margin_left = 112.0
+margin_right = 147.0
+margin_bottom = 49.0
+size_flags_horizontal = 3
+
+[node name="LineEdit" type="LineEdit" parent="Metadata/ScrollContainer/VBoxContainer/Difficulty"]
+margin_left = 151.0
+margin_right = 326.0
+margin_bottom = 49.0
+rect_min_size = Vector2( 175, 0 )
+size_flags_horizontal = 3
+
+[node name="Charter" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+margin_top = 159.0
+margin_right = 326.0
+margin_bottom = 208.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/Charter"]
+margin_top = 5.0
+margin_right = 92.0
+margin_bottom = 44.0
+text = "Charter"
+
+[node name="Buffer" type="Control" parent="Metadata/ScrollContainer/VBoxContainer/Charter"]
+margin_left = 96.0
+margin_right = 147.0
+margin_bottom = 49.0
+size_flags_horizontal = 3
+
+[node name="LineEdit" type="LineEdit" parent="Metadata/ScrollContainer/VBoxContainer/Charter"]
+margin_left = 151.0
+margin_right = 326.0
+margin_bottom = 49.0
+rect_min_size = Vector2( 175, 0 )
+size_flags_horizontal = 3
+
+[node name="OD" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+margin_top = 212.0
+margin_right = 326.0
+margin_bottom = 261.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/OD"]
+margin_top = 5.0
+margin_right = 37.0
+margin_bottom = 44.0
+text = "OD"
+
+[node name="Buffer" type="Control" parent="Metadata/ScrollContainer/VBoxContainer/OD"]
+margin_left = 41.0
+margin_right = 224.0
+margin_bottom = 49.0
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="Metadata/ScrollContainer/VBoxContainer/OD"]
+margin_left = 228.0
+margin_right = 326.0
+margin_bottom = 49.0
+max_value = 10.0
+
+[node name="Preview" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 225.0
+margin_right = 314.0
+margin_bottom = 264.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/Preview"]
+margin_right = 96.0
+margin_bottom = 39.0
+text = "Preview"
+
+[node name="TextEdit" type="TextEdit" parent="Metadata/ScrollContainer/VBoxContainer/Preview"]
+margin_left = 100.0
+margin_right = 314.0
+margin_bottom = 39.0
+size_flags_horizontal = 3
+
+[node name="FolderPath" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 215.0
+margin_right = 314.0
+margin_bottom = 254.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/FolderPath"]
+margin_right = 140.0
+margin_bottom = 39.0
+text = "Folder Path"
+
+[node name="TextEdit" type="TextEdit" parent="Metadata/ScrollContainer/VBoxContainer/FolderPath"]
+margin_left = 144.0
+margin_right = 314.0
+margin_bottom = 39.0
+size_flags_horizontal = 3
+
+[node name="BGFileName" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 215.0
+margin_right = 314.0
+margin_bottom = 254.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/BGFileName"]
+margin_right = 35.0
+margin_bottom = 39.0
+text = "BG"
+
+[node name="TextEdit" type="TextEdit" parent="Metadata/ScrollContainer/VBoxContainer/BGFileName"]
+margin_left = 39.0
+margin_right = 314.0
+margin_bottom = 39.0
+size_flags_horizontal = 3
+
+[node name="AudioFileName" type="HBoxContainer" parent="Metadata/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 215.0
+margin_right = 314.0
+margin_bottom = 254.0
+
+[node name="Label" type="Label" parent="Metadata/ScrollContainer/VBoxContainer/AudioFileName"]
+margin_right = 71.0
+margin_bottom = 39.0
+text = "Audio"
+
+[node name="TextEdit" type="TextEdit" parent="Metadata/ScrollContainer/VBoxContainer/AudioFileName"]
+margin_left = 75.0
+margin_right = 314.0
+margin_bottom = 39.0
+size_flags_horizontal = 3
+
 [node name="Timing" type="WindowDialog" parent="."]
 margin_left = 447.0
 margin_top = 101.0
@@ -534,7 +751,7 @@ margin_left = -3.0
 margin_top = 52.0
 margin_right = 234.0
 margin_bottom = 545.0
-items = [ "Open", null, 0, false, false, 0, 0, null, "", false, "Change Difficulty", null, 0, false, false, 1, 0, null, "", false, "Save", null, 0, false, false, 2, 0, null, "", false, "", null, 0, false, true, 3, 0, null, "", true, "Revert to Saved", null, 0, false, false, 4, 0, null, "", false, "Import", null, 0, false, false, 5, 0, null, "", false, "Export", null, 0, false, false, 6, 0, null, "", false, "", null, 0, false, true, 7, 0, null, "", true, "Open Song Folder", null, 0, false, false, 8, 0, null, "", false, "Open .fus File", null, 0, false, false, 9, 0, null, "", false, "", null, 0, false, true, 10, 0, null, "", true, "Exit", null, 0, false, false, 11, 0, null, "", false ]
+items = [ "New", null, 0, false, false, 0, 0, null, "", false, "Load", null, 0, false, false, 1, 0, null, "", false, "Save", null, 0, false, false, 2, 0, null, "", false, "", null, 0, false, true, 3, 0, null, "", true, "Revert to Saved", null, 0, false, false, 4, 0, null, "", false, "Import", null, 0, false, false, 5, 0, null, "", false, "Export", null, 0, false, false, 6, 0, null, "", false, "", null, 0, false, true, 7, 0, null, "", true, "Open Song Folder", null, 0, false, false, 8, 0, null, "", false, "Open .fus File", null, 0, false, false, 9, 0, null, "", false, "", null, 0, false, true, 10, 0, null, "", true, "Exit", null, 0, false, false, 11, 0, null, "", false ]
 
 [node name="Edit" type="Button" parent="Top/HBoxContainer"]
 margin_left = 58.0
@@ -560,7 +777,7 @@ margin_left = -3.0
 margin_top = 52.0
 margin_right = 104.0
 margin_bottom = 115.0
-items = [ "Tools", null, 1, false, false, 0, 0, null, "", false, "Timing", null, 1, false, false, 1, 0, null, "", false, "", null, 0, false, true, 2, 0, null, "", true, "Waveform", null, 1, false, false, 3, 0, null, "", false, "Density Graph", null, 1, false, false, 4, 0, null, "", false ]
+items = [ "Tools", null, 1, false, false, 0, 0, null, "", false, "Timing", null, 1, false, false, 1, 0, null, "", false, "Metadata", null, 1, false, false, 2, 0, null, "", false, "", null, 0, false, true, 3, 0, null, "", true, "Waveform", null, 1, false, false, 4, 0, null, "", false, "Density Graph", null, 1, false, false, 5, 0, null, "", false ]
 
 [node name="Help" type="Button" parent="Top/HBoxContainer"]
 margin_left = 195.0
@@ -615,6 +832,11 @@ access = 2
 [connection signal="pressed" from="Tools/GridContainer/Roll" to="." method="changeTool" binds= [ 2 ]]
 [connection signal="pressed" from="Tools/GridContainer/Spin" to="." method="changeTool" binds= [ 3 ]]
 [connection signal="pressed" from="Tools/GridContainer/ToggleFinisher" to="." method="changeTool" binds= [ -2 ]]
+[connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Title/LineEdit" to="." method="edit_metadata" binds= [ "title" ]]
+[connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Artist/LineEdit" to="." method="edit_metadata" binds= [ "title" ]]
+[connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Difficulty/LineEdit" to="." method="edit_metadata" binds= [ "difficulty" ]]
+[connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Charter/LineEdit" to="." method="edit_metadata" binds= [ "charter" ]]
+[connection signal="value_changed" from="Metadata/ScrollContainer/VBoxContainer/OD/SpinBox" to="Metadata" method="edit_metadata" binds= [ "od" ]]
 [connection signal="pressed" from="Top/HBoxContainer/File" to="Top" method="openMenu" binds= [ "file" ]]
 [connection signal="id_pressed" from="Top/HBoxContainer/File/PopupMenu" to="." method="topOptionSelected" binds= [ "file" ]]
 [connection signal="pressed" from="Top/HBoxContainer/Edit" to="Top" method="openMenu" binds= [ "edit" ]]
@@ -622,4 +844,4 @@ access = 2
 [connection signal="id_pressed" from="Top/HBoxContainer/View/PopupMenu" to="." method="topOptionSelected" binds= [ "view" ]]
 [connection signal="pressed" from="Top/HBoxContainer/Help" to="Top" method="openMenu" binds= [ "help" ]]
 [connection signal="id_pressed" from="Top/HBoxContainer/Help/PopupMenu" to="Top" method="openGithub"]
-[connection signal="file_selected" from="FileDialog" to="LoadFile" method="loadChart"]
+[connection signal="file_selected" from="FileDialog" to="." method="file_dialog_used"]

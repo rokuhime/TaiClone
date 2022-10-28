@@ -6,6 +6,7 @@ onready var ex_timeline := $Timeline/Ex as Node
 onready var timeline := $Timeline/Container/Timeline as Slider
 onready var timestamp := $Timeline/Container/Timestamp as Label
 onready var debugText := $Debug as Label
+onready var metadata := $Metadata as Metadata
 
 onready var obj_container := $Main/Display/HitPoint/ObjectContainer
 onready var hit_point := $Main/Display/HitPoint as Control
@@ -25,6 +26,7 @@ onready var tglfin_but := $Tools/GridContainer/ToggleFinisher as Button
 onready var tools := $Tools as WindowDialog
 
 onready var save_file := $SaveFile as SaveFile
+onready var file_dialog := $FileDialog as FileDialog
 
 var holding_ctrl := false
 var holding_shift := false
@@ -39,6 +41,8 @@ var currentTool := 0
 var cur_time := 0.0
 var cur_music_speed := 1.0
 var start_time := 0.0
+
+var last_fd_id := -1
 
 var using_constant_sv := true
 
@@ -218,7 +222,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				changeTool(-1)
 
 			
-		# change tool: finisher
+		# change type: finisher
 		if k_event.pressed and k_event.scancode == KEY_E:
 			if currently_selected.size() != 0:
 				var changingto := true
@@ -236,6 +240,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			else:
 				changeTool(-2)
 
+		# delete notes
+		if k_event.pressed and k_event.scancode == KEY_DELETE:
+			if currently_selected.size() != 0:
+				while currently_selected.size() > 0:
+					for obj in currently_selected:
+						#has to be separate bc of godot sillyness
+						currently_selected.erase(obj)
+						obj.queue_free()
+
 		# ctrl toggle
 		if k_event.pressed and k_event.scancode == KEY_CONTROL:
 			holding_ctrl = true
@@ -252,11 +265,22 @@ func _input(event) -> void:
 		if event.pressed and event.button_index == 1:
 			var mouse_pos := get_viewport().get_mouse_position().x
 			var raw_pos := mouse_pos - hit_point.rect_position.x
+
 			# the timing of the new theoretical note
 			var new_timing := cur_time + (raw_pos / current_velocity / DEFAULT_VELOCITY)
 
+			var timing_info = get_timing_info(new_timing)
+			var snapped_timing := 0.0
+			if current_snapping > 0:
+				var snapped_beat = round((new_timing - timing_info[1]) * timing_info[0] * current_snapping / 60) / current_snapping
+				
+				snapped_timing = snapped_beat * 60 / timing_info[0] if timing_info[0] else 0.0
+			else:
+				snapped_timing = new_timing
+
+			# spawn note
 			var hit_object := root_viewport.note_object.instance() as Note
-			hit_object.change_properties(new_timing, DEFAULT_VELOCITY, current_kat, current_finisher)
+			hit_object.change_properties(snapped_timing, DEFAULT_VELOCITY, current_kat, current_finisher)
 			load_file.add_object(hit_object, false)
 			hit_object.move(bar_right.rect_size.x, cur_time)
 
@@ -272,14 +296,21 @@ func topOptionSelected(id, type):
 		"file":
 			match id:
 				0:
-					($FileDialog as CanvasItem).visible = true
-				2:
+					file_dialog.mode = file_dialog.MODE_SAVE_FILE
+					file_dialog.popup()
+				1:
+					file_dialog.mode = file_dialog.MODE_OPEN_FILE
+					file_dialog.popup()
+				3:
 					save_file.save_map()
 		"view":
 			match id:
 				0:
 					tools.visible = true
-	pass # Replace with function body.
+				2:
+					metadata.visible = true
+	
+	last_fd_id = id	
 
 func change_editor_speed(factor: float) -> void:
 	if not using_constant_sv:
@@ -317,10 +348,12 @@ func change_playfield_view(is_constant: bool) -> void:
 
 func moused_over_object(event: InputEvent, obj: TextureRect) ->  void:
 	## deals with selecting objects
-
+	
 	# make sure its a mouse input
 	if event is InputEventMouseButton and currentTool == 0:
 		if event.is_pressed():
+			print("MOUSE ", obj.name, " ", event)
+			
 			if not holding_ctrl:
 				var was_selected: bool = currently_selected.has(obj) and currently_selected.size() == 1
 				while currently_selected.size() != 0:
@@ -377,3 +410,14 @@ func get_timing_info(time: float) -> Array:
 		else:
 			break
 	return [cur_bpm, cur_bpm_timing, cur_speed]
+
+func file_dialog_used(file_path):
+	match last_fd_id:
+		0: # new file
+			return
+		1: # load file
+			load_file.loadChart(file_path)
+
+
+func edit_metadata(new_text, extra_arg_0):
+	pass # Replace with function body.

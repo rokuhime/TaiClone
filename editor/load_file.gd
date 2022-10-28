@@ -3,6 +3,7 @@ extends Node
 
 onready var obj_container := $"../Main/Display/HitPoint/ObjectContainer"
 onready var root_viewport := $"/root" as Root
+onready var metadata := $"../Metadata" as Metadata
 onready var editor := $"../"
 var _f := File.new()
 
@@ -43,6 +44,8 @@ func loadChart(filePath) -> void:
 	root_viewport.audio_file_name = _f.get_line()
 	root_viewport.music.stream = AudioLoader.load_file(root_viewport.folder_path.plus_file((root_viewport.audio_file_name)))
 	root_viewport.artist = _f.get_line()
+	
+	metadata.reload()
 
 	## Comment
 	var cur_bpm := -1.0

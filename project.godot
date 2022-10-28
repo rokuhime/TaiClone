@@ -49,6 +49,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://editor/load_file.gd"
 }, {
+"base": "Node",
+"class": "Metadata",
+"language": "GDScript",
+"path": "res://editor/metadata.gd"
+}, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
@@ -123,6 +128,7 @@ _global_script_class_icons={
 "HitError": "",
 "HitObject": "",
 "LoadFile": "",
+"Metadata": "",
 "Note": "",
 "Placer": "",
 "Roll": "",
