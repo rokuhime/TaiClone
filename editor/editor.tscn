@@ -833,7 +833,7 @@ access = 2
 [connection signal="pressed" from="Tools/GridContainer/Spin" to="." method="changeTool" binds= [ 3 ]]
 [connection signal="pressed" from="Tools/GridContainer/ToggleFinisher" to="." method="changeTool" binds= [ -2 ]]
 [connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Title/LineEdit" to="." method="edit_metadata" binds= [ "title" ]]
-[connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Artist/LineEdit" to="." method="edit_metadata" binds= [ "title" ]]
+[connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Artist/LineEdit" to="." method="edit_metadata" binds= [ "artist" ]]
 [connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Difficulty/LineEdit" to="." method="edit_metadata" binds= [ "difficulty" ]]
 [connection signal="text_entered" from="Metadata/ScrollContainer/VBoxContainer/Charter/LineEdit" to="." method="edit_metadata" binds= [ "charter" ]]
 [connection signal="value_changed" from="Metadata/ScrollContainer/VBoxContainer/OD/SpinBox" to="Metadata" method="edit_metadata" binds= [ "od" ]]

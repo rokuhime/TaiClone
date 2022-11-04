@@ -22,6 +22,7 @@ func map_to_array() -> PoolStringArray:
 
 	#dummy, basically would include all the metadata shit
 	map.append(ChartLoader.FUS_VERSION)
+	print(root_viewport.title)
 	map.append(root_viewport.title)
 	map.append(root_viewport.preview)
 	map.append(root_viewport.od)

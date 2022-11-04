@@ -292,6 +292,7 @@ func _input(event) -> void:
 			current_snapping -= 1
 
 func topOptionSelected(id, type):
+	print(id, type)
 	match type:
 		"file":
 			match id:
@@ -301,7 +302,7 @@ func topOptionSelected(id, type):
 				1:
 					file_dialog.mode = file_dialog.MODE_OPEN_FILE
 					file_dialog.popup()
-				3:
+				2:
 					save_file.save_map()
 		"view":
 			match id:
@@ -418,6 +419,15 @@ func file_dialog_used(file_path):
 		1: # load file
 			load_file.loadChart(file_path)
 
-
-func edit_metadata(new_text, extra_arg_0):
-	pass # Replace with function body.
+func edit_metadata(new_value, type: String):
+	match type:
+		"title":
+			root_viewport.title = new_value
+		"artist":
+			root_viewport.artist = new_value
+		"difficulty":
+			root_viewport.difficulty_name = new_value
+		"charter":
+			root_viewport.charter = new_value
+		"od":
+			root_viewport.od = new_value
