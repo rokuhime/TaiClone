@@ -12,92 +12,97 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "AudioLoader",
 "language": "GDScript",
-"path": "res://scripts/gd_script_audio_import.gd"
+"path": "res://scripts/GDScriptAudioImport.gd"
 }, {
 "base": "HitObject",
 "class": "BarLine",
 "language": "GDScript",
-"path": "res://hitobjects/bar_line.gd"
+"path": "res://scenes/playfield/hitobjects/barline.gd"
 }, {
 "base": "Reference",
 "class": "ChartLoader",
 "language": "GDScript",
-"path": "res://scripts/chart_loader.gd"
+"path": "res://old/scripts/chart_loader.gd"
 }, {
 "base": "Scene",
 "class": "Gameplay",
 "language": "GDScript",
-"path": "res://gameplay/gameplay.gd"
+"path": "res://old/gameplay/gameplay.gd"
 }, {
 "base": "Reference",
 "class": "GlobalTools",
 "language": "GDScript",
-"path": "res://scripts/global_tools.gd"
+"path": "res://old/scripts/global_tools.gd"
 }, {
 "base": "Control",
 "class": "HitError",
 "language": "GDScript",
-"path": "res://gameplay/hit_error.gd"
+"path": "res://old/gameplay/hit_error.gd"
 }, {
 "base": "TextureRect",
 "class": "HitObject",
 "language": "GDScript",
-"path": "res://hitobjects/_hit_object.gd"
+"path": "res://scenes/playfield/hitobjects/hitobject.gd"
+}, {
+"base": "Node",
+"class": "HitObjectScenes",
+"language": "GDScript",
+"path": "res://scenes/playfield/hitobjectscenes.gd"
 }, {
 "base": "HitObject",
 "class": "Note",
 "language": "GDScript",
-"path": "res://hitobjects/note.gd"
+"path": "res://scenes/playfield/hitobjects/note.gd"
 }, {
-"base": "HitObject",
+"base": "Reference",
 "class": "Roll",
 "language": "GDScript",
-"path": "res://hitobjects/roll.gd"
+"path": "res://scenes/playfield/hitobjects/roll.gd"
 }, {
 "base": "Viewport",
 "class": "Root",
 "language": "GDScript",
-"path": "res://root/root.gd"
+"path": "res://old/root/root.gd"
 }, {
 "base": "Control",
 "class": "Scene",
 "language": "GDScript",
-"path": "res://scripts/scene.gd"
+"path": "res://old/scripts/scene.gd"
 }, {
 "base": "Reference",
 "class": "SkinManager",
 "language": "GDScript",
-"path": "res://scripts/skin_manager.gd"
+"path": "res://old/scripts/skin_manager.gd"
 }, {
-"base": "HitObject",
+"base": "Reference",
 "class": "Spinner",
 "language": "GDScript",
-"path": "res://hitobjects/spinner.gd"
+"path": "res://scenes/playfield/hitobjects/spinner.gd"
 }, {
-"base": "HitObject",
+"base": "Reference",
 "class": "SpinnerWarn",
 "language": "GDScript",
-"path": "res://hitobjects/spinner_warn.gd"
+"path": "res://scenes/playfield/hitobjects/spinner_warn.gd"
 }, {
 "base": "SceneTree",
 "class": "TaiClone",
 "language": "GDScript",
-"path": "res://scripts/taiclone.gd"
+"path": "res://old/scripts/taiclone.gd"
 }, {
-"base": "HitObject",
+"base": "Reference",
 "class": "Tick",
 "language": "GDScript",
-"path": "res://hitobjects/tick.gd"
+"path": "res://scenes/playfield/hitobjects/tick.gd"
 }, {
-"base": "HitObject",
+"base": "Reference",
 "class": "TimingPoint",
 "language": "GDScript",
-"path": "res://hitobjects/timing_point.gd"
+"path": "res://scenes/playfield/hitobjects/timing_point.gd"
 }, {
 "base": "CanvasItem",
 "class": "VolumeControl",
 "language": "GDScript",
-"path": "res://root/volume_control.gd"
+"path": "res://old/root/volume_control.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -107,6 +112,7 @@ _global_script_class_icons={
 "GlobalTools": "",
 "HitError": "",
 "HitObject": "",
+"HitObjectScenes": "",
 "Note": "",
 "Roll": "",
 "Root": "",
@@ -122,134 +128,48 @@ _global_script_class_icons={
 
 [application]
 
-config/name="TaiClone"
-run/main_scene="res://root/root.tscn"
-boot_splash/image="res://temporary/sdsddsd.png"
-boot_splash/fullsize=false
-boot_splash/bg_color=Color( 1, 1, 1, 1 )
-run/main_loop_type="TaiClone"
-
-[debug]
-
-gdscript/warnings/unused_class_variable=true
-gdscript/warnings/unsafe_property_access=true
-gdscript/warnings/unsafe_method_access=true
-gdscript/warnings/unsafe_cast=true
-gdscript/warnings/unsafe_call_argument=true
+config/name="TaiClone Take 2"
+run/main_scene="res://scenes/gameplay/gameplay.tscn"
+config/icon="res://icon.png"
 
 [display]
 
 window/size/width=1440
 window/size/height=1080
-window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
 
 [gui]
 
-theme/custom="res://theme.tres"
+common/drop_mouse_on_gui_input_disabled=true
 
 [input]
 
-ui_accept={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_select={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_cancel={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_focus_next={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_focus_prev={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_left={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_right={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_up={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_down={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_page_up={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_page_down={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_home={
-"deadzone": 0.5,
-"events": [  ]
-}
-ui_end={
-"deadzone": 0.5,
-"events": [  ]
-}
 LeftDon={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":88,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":46,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 RightDon={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":67,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":39,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 LeftKat={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":90,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 RightKat={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":86,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
- ]
-}
-VolumeUp={
-"deadzone": 0.5,
-"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":4,"pressed":false,"doubleclick":false,"script":null)
-, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777232,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
- ]
-}
-VolumeDown={
-"deadzone": 0.5,
-"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":5,"pressed":false,"doubleclick":false,"script":null)
-, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777234,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
- ]
-}
-VolumeNext={
-"deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777233,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
- ]
-}
-VolumePrevious={
-"deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777231,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":88,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 
-[input_devices]
+[physics]
 
-pointing/emulate_touch_from_mouse=true
+common/enable_pause_aware_picking=true
 
 [rendering]
 
-quality/dynamic_fonts/use_oversampling=false
+environment/default_environment="res://default_env.tres"

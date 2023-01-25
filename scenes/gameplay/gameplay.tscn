@@ -1,0 +1,135 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://scenes/playfield/track.tscn" type="PackedScene" id=1]
+[ext_resource path="res://old/temporary/osu_rwxudnxmu5.png" type="Texture" id=2]
+[ext_resource path="res://scenes/playfield/input_indicator.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/ingame.tres" type="Theme" id=4]
+[ext_resource path="res://resources/fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=5]
+[ext_resource path="res://resources/dev_art/load.png" type="Texture" id=6]
+[ext_resource path="res://resources/dev_art/play.png" type="Texture" id=7]
+[ext_resource path="res://resources/dev_art/settings.png" type="Texture" id=8]
+[ext_resource path="res://scenes/gameplay/myfatfuckingnutts.gd" type="Script" id=9]
+
+[sub_resource type="DynamicFont" id=1]
+size = 26
+use_filter = true
+font_data = ExtResource( 5 )
+
+[node name="Gameplay" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Reference" type="TextureRect" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.317647 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 2 )
+
+[node name="Track" parent="." instance=ExtResource( 1 )]
+
+[node name="InputIndicator" parent="Track" instance=ExtResource( 3 )]
+
+[node name="UI" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Score" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -80.0
+margin_bottom = 14.0
+grow_horizontal = 0
+theme = ExtResource( 4 )
+text = "0000000000"
+align = 2
+valign = 2
+
+[node name="Accuracy" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -360.0
+margin_top = 68.0
+margin_bottom = 162.0
+grow_horizontal = 0
+theme = ExtResource( 4 )
+text = "100.00%"
+align = 2
+valign = 2
+
+[node name="Debug" type="VBoxContainer" parent="UI"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -288.0
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="Console" type="Label" parent="UI/Debug"]
+margin_top = 163.0
+margin_right = 1440.0
+margin_bottom = 202.0
+custom_fonts/font = SubResource( 1 )
+text = "MY BUALS"
+
+[node name="Container" type="HBoxContainer" parent="UI/Debug"]
+margin_top = 206.0
+margin_right = 1440.0
+margin_bottom = 288.0
+
+[node name="ChartLocation" type="LineEdit" parent="UI/Debug/Container"]
+margin_right = 500.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 500, 0 )
+custom_fonts/font = SubResource( 1 )
+text = "aaaa"
+placeholder_text = "Chart Location"
+
+[node name="Load" type="Button" parent="UI/Debug/Container"]
+margin_left = 504.0
+margin_right = 586.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 82, 0 )
+icon = ExtResource( 6 )
+expand_icon = true
+script = ExtResource( 9 )
+
+[node name="Play" type="Button" parent="UI/Debug/Container"]
+margin_left = 590.0
+margin_right = 672.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 82, 0 )
+icon = ExtResource( 7 )
+expand_icon = true
+
+[node name="RightText" type="VBoxContainer" parent="UI/Debug/Container"]
+margin_left = 676.0
+margin_right = 1354.0
+margin_bottom = 82.0
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="FPS" type="Label" parent="UI/Debug/Container/RightText"]
+margin_right = 678.0
+margin_bottom = 39.0
+custom_fonts/font = SubResource( 1 )
+text = "FPS: XXX"
+align = 2
+
+[node name="Version" type="Label" parent="UI/Debug/Container/RightText"]
+margin_top = 43.0
+margin_right = 678.0
+margin_bottom = 82.0
+custom_fonts/font = SubResource( 1 )
+text = "v0.1.1 - here we go again"
+align = 2
+
+[node name="Settings" type="Button" parent="UI/Debug/Container"]
+margin_left = 1358.0
+margin_right = 1440.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 82, 0 )
+icon = ExtResource( 8 )
+expand_icon = true
+
+[connection signal="pressed" from="UI/Debug/Container/Load" to="UI/Debug/Container/Load" method="dothething"]

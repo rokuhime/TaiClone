@@ -1,0 +1,13 @@
+[gd_resource type="Theme" load_steps=3 format=2]
+
+[ext_resource path="res://resources/fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=1]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+outline_size = 2
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 1 )
+
+[resource]
+Label/fonts/font = SubResource( 1 )

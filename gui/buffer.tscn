@@ -1,5 +1,0 @@
-[gd_scene format=2]
-
-[node name="Buffer" type="HSeparator"]
-rect_min_size = Vector2( 150, 33 )
-size_flags_horizontal = 4
