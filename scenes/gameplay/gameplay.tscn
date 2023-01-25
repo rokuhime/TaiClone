@@ -8,7 +8,7 @@
 [ext_resource path="res://resources/dev_art/load.png" type="Texture" id=6]
 [ext_resource path="res://resources/dev_art/play.png" type="Texture" id=7]
 [ext_resource path="res://resources/dev_art/settings.png" type="Texture" id=8]
-[ext_resource path="res://scenes/gameplay/myfatfuckingnutts.gd" type="Script" id=9]
+[ext_resource path="res://scenes/gameplay/temporarybuttonlol.gd" type="Script" id=9]
 
 [sub_resource type="DynamicFont" id=1]
 size = 26
