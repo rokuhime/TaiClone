@@ -54,7 +54,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/playfield/hitobjects/note.gd"
 }, {
-"base": "Reference",
+"base": "HitObject",
 "class": "Roll",
 "language": "GDScript",
 "path": "res://scenes/playfield/hitobjects/roll.gd"
@@ -74,12 +74,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://old/scripts/skin_manager.gd"
 }, {
-"base": "Reference",
+"base": "HitObject",
 "class": "Spinner",
 "language": "GDScript",
 "path": "res://scenes/playfield/hitobjects/spinner.gd"
 }, {
-"base": "Reference",
+"base": "HitObject",
 "class": "SpinnerWarn",
 "language": "GDScript",
 "path": "res://scenes/playfield/hitobjects/spinner_warn.gd"
@@ -89,12 +89,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://old/scripts/taiclone.gd"
 }, {
-"base": "Reference",
+"base": "HitObject",
 "class": "Tick",
 "language": "GDScript",
 "path": "res://scenes/playfield/hitobjects/tick.gd"
 }, {
-"base": "Reference",
+"base": "HitObject",
 "class": "TimingPoint",
 "language": "GDScript",
 "path": "res://scenes/playfield/hitobjects/timing_point.gd"
@@ -129,7 +129,7 @@ _global_script_class_icons={
 [application]
 
 config/name="TaiClone Take 2"
-run/main_scene="res://scenes/gameplay/gameplay.tscn"
+run/main_scene="res://scenes/donch-demo/main.tscn"
 config/icon="res://icon.png"
 
 [display]

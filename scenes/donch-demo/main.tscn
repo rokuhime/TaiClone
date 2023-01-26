@@ -1,0 +1,336 @@
+[gd_scene load_steps=34 format=2]
+
+[ext_resource path="res://resources/ingame.tres" type="Theme" id=1]
+[ext_resource path="res://resources/dev_art/donch/donch-1.png" type="Texture" id=2]
+[ext_resource path="res://resources/dev_art/donch/donch-0.png" type="Texture" id=3]
+[ext_resource path="res://resources/dev_art/donch/donch-3.png" type="Texture" id=4]
+[ext_resource path="res://resources/dev_art/donch/donch-2.png" type="Texture" id=5]
+[ext_resource path="res://scenes/donch-demo/donch.gd" type="Script" id=6]
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 3 )
+region = Rect2( 42, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 3 )
+region = Rect2( 63, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 3 )
+region = Rect2( 84, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 3 )
+region = Rect2( 105, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 3 )
+region = Rect2( 21, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 20, 16 )
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ SubResource( 3 ), SubResource( 4 ) ],
+"loop": true,
+"name": "idle",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 5 ), SubResource( 6 ) ],
+"loop": true,
+"name": "kiai",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 7 ), SubResource( 8 ) ],
+"loop": true,
+"name": "miss",
+"speed": 1.0
+} ]
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 2 )
+region = Rect2( 42, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 2 )
+region = Rect2( 63, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 2 )
+region = Rect2( 84, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 2 )
+region = Rect2( 105, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 2 )
+region = Rect2( 21, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 20, 16 )
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ SubResource( 9 ), SubResource( 10 ) ],
+"loop": true,
+"name": "idle",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 11 ), SubResource( 12 ) ],
+"loop": true,
+"name": "kiai",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 13 ), SubResource( 14 ) ],
+"loop": true,
+"name": "miss",
+"speed": 1.0
+} ]
+
+[sub_resource type="AtlasTexture" id=15]
+atlas = ExtResource( 5 )
+region = Rect2( 42, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=16]
+atlas = ExtResource( 5 )
+region = Rect2( 63, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=17]
+atlas = ExtResource( 5 )
+region = Rect2( 84, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=18]
+atlas = ExtResource( 5 )
+region = Rect2( 105, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=19]
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 20, 16 )
+
+[sub_resource type="SpriteFrames" id=20]
+animations = [ {
+"frames": [ SubResource( 15 ), SubResource( 16 ) ],
+"loop": true,
+"name": "idle",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 17 ), SubResource( 18 ) ],
+"loop": true,
+"name": "kiai",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 19 ) ],
+"loop": true,
+"name": "miss",
+"speed": 1.0
+} ]
+
+[sub_resource type="AtlasTexture" id=21]
+atlas = ExtResource( 4 )
+region = Rect2( 42, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=22]
+atlas = ExtResource( 4 )
+region = Rect2( 63, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=23]
+atlas = ExtResource( 4 )
+region = Rect2( 84, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=24]
+atlas = ExtResource( 4 )
+region = Rect2( 105, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=25]
+atlas = ExtResource( 4 )
+region = Rect2( 21, 0, 20, 16 )
+
+[sub_resource type="AtlasTexture" id=26]
+atlas = ExtResource( 4 )
+region = Rect2( 0, 0, 20, 16 )
+
+[sub_resource type="SpriteFrames" id=27]
+animations = [ {
+"frames": [ SubResource( 21 ), SubResource( 22 ) ],
+"loop": true,
+"name": "idle",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 23 ), SubResource( 24 ) ],
+"loop": true,
+"name": "kiai",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 25 ), SubResource( 26 ) ],
+"loop": true,
+"name": "miss",
+"speed": 1.0
+} ]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 6 )
+
+[node name="colors" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -180.0
+margin_bottom = 4.0
+
+[node name="outline" type="VBoxContainer" parent="colors"]
+margin_right = 357.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="colors/outline"]
+margin_right = 357.0
+margin_bottom = 94.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource( 1 )
+text = "outline"
+align = 1
+valign = 1
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="colors/outline"]
+margin_top = 98.0
+margin_right = 357.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="color1" type="VBoxContainer" parent="colors"]
+margin_left = 361.0
+margin_right = 718.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="colors/color1"]
+margin_right = 357.0
+margin_bottom = 94.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource( 1 )
+text = "rim"
+align = 1
+valign = 1
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="colors/color1"]
+margin_top = 98.0
+margin_right = 357.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.976471, 0.94902, 0.886275, 1 )
+
+[node name="color2" type="VBoxContainer" parent="colors"]
+margin_left = 722.0
+margin_right = 1079.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="colors/color2"]
+margin_right = 357.0
+margin_bottom = 94.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource( 1 )
+text = "face"
+align = 1
+valign = 1
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="colors/color2"]
+margin_top = 98.0
+margin_right = 357.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.972549, 0.290196, 0.156863, 1 )
+
+[node name="color3" type="VBoxContainer" parent="colors"]
+margin_left = 1083.0
+margin_right = 1440.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="colors/color3"]
+margin_right = 357.0
+margin_bottom = 94.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource( 1 )
+text = "side"
+align = 1
+valign = 1
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="colors/color3"]
+margin_top = 98.0
+margin_right = 357.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.403922, 0.752941, 0.752941, 1 )
+
+[node name="donch" type="AnimatedSprite" parent="."]
+self_modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 731.75, 405 )
+scale = Vector2( 25, 25 )
+frames = SubResource( 1 )
+animation = "idle"
+frame = 1
+playing = true
+
+[node name="rim" type="AnimatedSprite" parent="donch"]
+self_modulate = Color( 0.976471, 0.94902, 0.886275, 1 )
+frames = SubResource( 2 )
+animation = "idle"
+frame = 1
+playing = true
+
+[node name="face" type="AnimatedSprite" parent="donch"]
+self_modulate = Color( 0.972549, 0.290196, 0.156863, 1 )
+frames = SubResource( 20 )
+animation = "idle"
+frame = 1
+playing = true
+
+[node name="side" type="AnimatedSprite" parent="donch"]
+self_modulate = Color( 0.403922, 0.752941, 0.752941, 1 )
+frames = SubResource( 27 )
+animation = "idle"
+frame = 1
+playing = true
+
+[node name="BPM" type="SpinBox" parent="."]
+margin_left = 1179.0
+margin_top = 402.0
+margin_right = 1437.0
+margin_bottom = 504.0
+max_value = 750.0
+allow_greater = true
+align = 1
+
+[node name="State" type="SpinBox" parent="."]
+margin_left = 1167.0
+margin_top = 570.0
+margin_right = 1425.0
+margin_bottom = 672.0
+max_value = 2.0
+align = 1
+
+[connection signal="color_changed" from="colors/outline/ColorPickerButton" to="." method="changeColor" binds= [ 0 ]]
+[connection signal="color_changed" from="colors/color1/ColorPickerButton" to="." method="changeColor" binds= [ 1 ]]
+[connection signal="color_changed" from="colors/color2/ColorPickerButton" to="." method="changeColor" binds= [ 2 ]]
+[connection signal="color_changed" from="colors/color3/ColorPickerButton" to="." method="changeColor" binds= [ 3 ]]
+[connection signal="value_changed" from="BPM" to="." method="changeSpeedFromBPM"]
+[connection signal="value_changed" from="State" to="." method="changeState"]

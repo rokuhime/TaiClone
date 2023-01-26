@@ -3,13 +3,16 @@ extends Node
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 
 onready var hitObjectScenes := HitObjectScenes.new()
+var spinner_warn_object := preload("res://scenes/playfield/hitobjects/spinner_warn.tscn") as PackedScene
 
 const FUS_VERSION := "v0.0.10"
 const FUS := "user://debug.fus"
 
+var firstNoteTime := -1.0
+var lastNoteTime := -1.0
+
 func load_chart(_game_path: String, file_path: String) -> void:
 	file_path = file_path.replace("\\", "/")
-	print(file_path)
 	var file := File.new()
 
 	# fail safes
@@ -21,6 +24,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 		file.close()
 		return
 	
+	print("passed fail safes")
 	# actual loading 
 
 	var hitObjects := []
@@ -34,10 +38,19 @@ func load_chart(_game_path: String, file_path: String) -> void:
 	var chartRating := ""
 	var folderPath = file_path.get_base_dir()
 
+	print("finding file path, ", file_path)
+
 	if file_path.ends_with(".fus"):
+		print("fuwus")
+		return
+
+		var bpmCurrent := -1.0
 		var lineIndex := 0
+
 		while file.get_position() < file.get_len():
 			var line := file.get_line().strip_edges()
+
+			# go through metadata
 			lineIndex += 1
 			match lineIndex:
 				1:
@@ -69,11 +82,41 @@ func load_chart(_game_path: String, file_path: String) -> void:
 				continue
 
 			var objectTime := float(line_data[0])
-			var svCurrent := float(line_data[1])
+			var svCurrent := float(line_data[1]) * bpmCurrent
+
+			if int(line_data[2]) > NoteType.BARLINE:
+				firstNoteTime = min(firstNoteTime if firstNoteTime + 1 else objectTime, objectTime)
+				lastNoteTime = max(lastNoteTime if lastNoteTime + 1 else objectTime, objectTime)
 
 			match int(line_data[2]):
 				NoteType.BARLINE:
-					add_object(hitObjectScenes.bar_line_object)
+					var hit_object := hitObjectScenes.barline_object.instance() as BarLine
+					hit_object.change_properties(objectTime, svCurrent)
+					add_object(hit_object)
+
+				NoteType.DON, NoteType.KAT:
+					var hit_object := hitObjectScenes.note_object.instance() as Note
+					hit_object.change_properties(objectTime, svCurrent, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
+					add_object(hit_object)
+
+				NoteType.ROLL:
+					var hit_object := hitObjectScenes.roll_object.instance() as Roll
+					hit_object.change_properties(objectTime, svCurrent, float(line_data[3]), bool(int(line_data[4])), bpmCurrent)
+					add_object(hit_object)
+
+				NoteType.SPINNER:
+					var hit_object := spinner_warn_object.instance() as SpinnerWarn
+					print("spinner: ", hit_object)
+					hit_object.change_properties(objectTime, svCurrent, float(line_data[3]), bpmCurrent)
+					add_object(hit_object)
+
+				NoteType.TIMING_POINT:
+					bpmCurrent = float(line_data[1])
+
+					#var hit_object := hitObjectScenes.timing_point_object as TimingPoint
+					#hit_object.change_properties(objectTime, int(line_data[3]), bpmCurrent)
+					#add_object(hit_object)
+		print("Done!")
 		return
 
 	elif file_path.ends_with(".osu"):
@@ -93,7 +136,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 
 		while file.get_position() < file.get_len():
 			var line := file.get_line().strip_edges()
-			
+			print(line)
 			if line.empty():
 				continue
 
@@ -206,7 +249,6 @@ func load_chart(_game_path: String, file_path: String) -> void:
 		file.close()
 		return
 	file.close()
-	print("AWA")
 
 	if file.open(FUS, File.WRITE): 
 		file.close()
