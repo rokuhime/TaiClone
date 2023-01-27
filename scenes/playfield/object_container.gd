@@ -224,7 +224,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 					else:
 						var finisher := int(line_data[4])
 						if 2 & objectType:
-							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) / svCurrent / 100 if bpmCurrent * svCurrent != 0 and line_data.size() > 7 else float(2^1024 - 1)]).join(","))
+							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) / svCurrent / 100 if bpmCurrent * svCurrent != 0 and line_data.size() > 7 else float(2^1024 - 1), 1 if 4 & finisher else 0]).join(","))
 						else:
 							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.KAT if 10 & finisher else NoteType.DON, 1 if 4 & finisher else 0]).join(","))
 

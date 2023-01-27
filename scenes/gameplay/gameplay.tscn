@@ -136,3 +136,4 @@ expand_icon = true
 [node name="Song" type="AudioStreamPlayer" parent="."]
 
 [connection signal="pressed" from="UI/Debug/Container/Load" to="UI/Debug/Container/Load" method="dothething"]
+[connection signal="pressed" from="UI/Debug/Container/Play" to="Track" method="changeChartPlayback"]

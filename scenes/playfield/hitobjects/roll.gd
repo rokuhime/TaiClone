@@ -25,11 +25,12 @@ func _ready() -> void:
 
 	for tick_idx in range(_total_ticks):
 		## The [Tick] object to spawn.
-		var new_tick := root_viewport.tick_object.instance() as Tick
+		pass
+		# var new_tick := root_viewport.tick_object.instance() as Tick
 
-		new_tick.change_properties(tick_idx * _tick_distance * speed)
-		tick_container.add_child(new_tick)
-		tick_container.move_child(new_tick, 0)
+		# new_tick.change_properties(tick_idx * _tick_distance * speed)
+		# tick_container.add_child(new_tick)
+		# tick_container.move_child(new_tick, 0)
 
 
 ## See [HitObject].

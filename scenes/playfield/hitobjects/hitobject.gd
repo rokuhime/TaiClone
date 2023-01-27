@@ -52,8 +52,8 @@ onready var root_viewport := $"/root" as Root
 
 func _ready() -> void:
 	hide()
-	# add_to_group("HitObjects")
-	# add_to_group("Skinnables")
+	add_to_group("HitObjects")
+	add_to_group("Skinnables")
 	move(1, timing)
 	state = int(State.READY)
 

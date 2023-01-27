@@ -130,7 +130,8 @@ _global_script_class_icons={
 
 config/name="TaiClone Take 2"
 run/main_scene="res://scenes/gameplay/gameplay.tscn"
-boot_splash/image="res://resources/dev_art/logo-long.png"
+boot_splash/image="res://resources/dev_art/logo.png"
+boot_splash/fullsize=false
 config/icon="res://resources/dev_art/logo.png"
 
 [display]
