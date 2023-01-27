@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://scenes/playfield/track.tscn" type="PackedScene" id=1]
-[ext_resource path="res://old/temporary/osu_rwxudnxmu5.png" type="Texture" id=2]
+[ext_resource path="res://resources/dev_art/background.png" type="Texture" id=2]
 [ext_resource path="res://scenes/playfield/input_indicator.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/ingame.tres" type="Theme" id=4]
 [ext_resource path="res://resources/fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=5]
@@ -19,12 +19,13 @@ font_data = ExtResource( 5 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Reference" type="TextureRect" parent="."]
-visible = false
-modulate = Color( 1, 1, 1, 0.317647 )
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 texture = ExtResource( 2 )
+expand = true
+stretch_mode = 7
 
 [node name="Track" parent="." instance=ExtResource( 1 )]
 
@@ -70,7 +71,7 @@ margin_top = 163.0
 margin_right = 1440.0
 margin_bottom = 202.0
 custom_fonts/font = SubResource( 1 )
-text = "MY BUALS"
+text = "Welcome to TaiClone!"
 
 [node name="Container" type="HBoxContainer" parent="UI/Debug"]
 margin_top = 206.0
@@ -131,5 +132,7 @@ margin_bottom = 82.0
 rect_min_size = Vector2( 82, 0 )
 icon = ExtResource( 8 )
 expand_icon = true
+
+[node name="Song" type="AudioStreamPlayer" parent="."]
 
 [connection signal="pressed" from="UI/Debug/Container/Load" to="UI/Debug/Container/Load" method="dothething"]
