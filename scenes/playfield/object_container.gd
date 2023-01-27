@@ -23,8 +23,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 	if file.open(file_path, File.READ):
 		file.close()
 		return
-	
-	print("passed fail safes")
+
 	# actual loading 
 
 	var hitObjects := []
@@ -38,11 +37,9 @@ func load_chart(_game_path: String, file_path: String) -> void:
 	var chartRating := ""
 	var folderPath = file_path.get_base_dir()
 
-	print("finding file path, ", file_path)
+	print_debug("Finding file path: ", file_path)
 
 	if file_path.ends_with(".fus"):
-		print("fuwus")
-		return
 
 		var bpmCurrent := -1.0
 		var lineIndex := 0
@@ -77,6 +74,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 
 			if line.empty() or lineIndex < 11:
 				continue
+
 			var line_data := line.split(",")
 			if line_data.size() < 3:
 				continue
@@ -105,8 +103,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 					add_object(hit_object)
 
 				NoteType.SPINNER:
-					var hit_object := spinner_warn_object.instance() as SpinnerWarn
-					print("spinner: ", hit_object)
+					var hit_object := hitObjectScenes.spinner_warn_object.instance() as SpinnerWarn
 					hit_object.change_properties(objectTime, svCurrent, float(line_data[3]), bpmCurrent)
 					add_object(hit_object)
 
@@ -116,7 +113,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 					#var hit_object := hitObjectScenes.timing_point_object as TimingPoint
 					#hit_object.change_properties(objectTime, int(line_data[3]), bpmCurrent)
 					#add_object(hit_object)
-		print("Done!")
+		print_debug("Done loading file!")
 		return
 
 	elif file_path.ends_with(".osu"):
@@ -136,7 +133,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 
 		while file.get_position() < file.get_len():
 			var line := file.get_line().strip_edges()
-			print(line)
+			
 			if line.empty():
 				continue
 
@@ -179,41 +176,48 @@ func load_chart(_game_path: String, file_path: String) -> void:
 							while timingPointTime > objectTimeInMilliseconds:
 								timingPointTime -= timingPointMeter * timingPointValue
 								barlineNext += timingPointMeter
+							meterCurrent = timingPointMeter
 							timingPreviousTime = timingPointTime
 						if timingPointTime > objectTimeInMilliseconds:
 							break
 
 						var barlines := (timingPointTime - timingPreviousTime) / beatLength if beatLength != 0 else float(2^1024 - 1)
+
 						while barlineNext < barlines:
 							if svCurrent > 0:
 								hitObjects.append(PoolStringArray([barlineNext, svCurrent, NoteType.BARLINE]).join(","))
-							barlineNext += timingPointMeter
+							barlineNext += meterCurrent
+
 						if not timingPointInherited or timingPointKiai != kiaiCurrent:
 							barlineNext -= barlines
 							if not timingPointInherited:
 								if bpmCurrent >= 0:
 									barlineNext = 0
+
 								beatLength = timingPointValue
 								bpmCurrent = 60000 / beatLength if beatLength != 0 else float(2^1024 - 1)
 								meterCurrent = timingPointMeter
 								svCurrent = float(svMap)
+
 								if timingPointFirstBarLine:
-									barlineNext += timingPointMeter
+									barlineNext += meterCurrent
+
 							hitObjects.append(PoolStringArray([timingPointTime, bpmCurrent, NoteType.TIMING_POINT, 1 if timingPointKiai else 0]).join(","))
 							kiaiCurrent = timingPointKiai
 							timingPreviousTime = timingPointTime
+
 						if timingPointInherited:
 							svCurrent = -100 * float(svMap) / timingPointValue if timingPointValue != 0 else float(2^1024 - 1)
 						timingPoints.remove(0)
-				#########################################
-				
+					#########################################
+
 					var objectTimeInBeats = (objectTimeInMilliseconds - timingPreviousTime) / beatLength if beatLength != 0 else float(2^1024 - 1)
 					while barlineNext <= objectTimeInBeats:
 						if svCurrent > 0:
 							hitObjects.append(PoolStringArray([barlineNext, svCurrent, NoteType.BARLINE]).join(","))
 						barlineNext += meterCurrent
 					var objectType = int(line_data[3])
-					
+
 					if 8 & objectType:
 						if line_data.size() > 5:
 							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.SPINNER, (float(line_data[5]) - objectTimeInMilliseconds) / beatLength if beatLength != 0 else float(2^1024 - 1)]).join(","))

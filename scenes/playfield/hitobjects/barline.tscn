@@ -1,10 +1,17 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
 
-[node name="Control" type="TextureRect"]
+[ext_resource path="res://scenes/playfield/hitobjects/barline.gd" type="Script" id=1]
+
+[node name="Barline" type="TextureRect"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 margin_left = -1.0
 margin_top = -139.0
 margin_right = 1.0
 margin_bottom = 139.0
+script = ExtResource( 1 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchor_right = 1.0
