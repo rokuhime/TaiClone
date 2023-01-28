@@ -1,25 +1,14 @@
 extends TextureRect
 
 var playing := false
+
 onready var objectContainer := $HitTarget/ObjectContainer as Node
-var timeCurrent := 0.0
-var timeBegin := 0.0
+ 
+func activateObjects() -> void:
+	for hitObject in objectContainer.get_children():
+		hitObject.activate()
+		#hitObject.apply_skin()
 
-func changeChartPlayback():
-	if not playing:
-		timeBegin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-
-		for hitObject in objectContainer.get_children():
-			hitObject.activate()
-			
-	playing = not playing
-
-
-func _process(_delta):
-	if not playing:
-		return
-	
-	timeCurrent = (Time.get_ticks_usec() / 1000.0) / 1000 - timeBegin
-	print(timeCurrent)
+func moveObjects(timeCurrent) -> void:
 	for hitObject in objectContainer.get_children():
 		hitObject.move(rect_size.x, timeCurrent)

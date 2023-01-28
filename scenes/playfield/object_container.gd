@@ -1,6 +1,7 @@
 extends Node
 
 enum NoteType {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
+const MAX_VALUE := float(2^1024 - 1)
 
 onready var hitObjectScenes := HitObjectScenes.new()
 var spinner_warn_object := preload("res://scenes/playfield/hitobjects/spinner_warn.tscn") as PackedScene
@@ -42,6 +43,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 	if file_path.ends_with(".fus"):
 
 		var bpmCurrent := -1.0
+		var timingPreviousTime := 0.0
 		var lineIndex := 0
 
 		while file.get_position() < file.get_len():
@@ -79,40 +81,45 @@ func load_chart(_game_path: String, file_path: String) -> void:
 			if line_data.size() < 3:
 				continue
 
-			var objectTime := float(line_data[0])
-			var svCurrent := float(line_data[1]) * bpmCurrent
+			var objectTimeInBeats := float(line_data[0])
+			var objectTimeInSeconds := (objectTimeInBeats * 60.0 / bpmCurrent) + timingPreviousTime if bpmCurrent != 0.0 else MAX_VALUE
+			var svCurrent := float(line_data[1]) * bpmCurrent * 5.7
 
 			if int(line_data[2]) > NoteType.BARLINE:
-				firstNoteTime = min(firstNoteTime if firstNoteTime + 1 else objectTime, objectTime)
-				lastNoteTime = max(lastNoteTime if lastNoteTime + 1 else objectTime, objectTime)
-
+				firstNoteTime = min(firstNoteTime if firstNoteTime + 1 else objectTimeInBeats, objectTimeInBeats)
+				lastNoteTime = max(lastNoteTime if lastNoteTime + 1 else objectTimeInBeats, objectTimeInBeats)
+			
 			match int(line_data[2]):
 				NoteType.BARLINE:
 					var hit_object := hitObjectScenes.barline_object.instance() as BarLine
-					hit_object.change_properties(objectTime, svCurrent)
+					hit_object.change_properties(objectTimeInSeconds, svCurrent)
 					add_object(hit_object)
 
 				NoteType.DON, NoteType.KAT:
 					var hit_object := hitObjectScenes.note_object.instance() as Note
-					hit_object.change_properties(objectTime, svCurrent, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
+					hit_object.change_properties(objectTimeInSeconds, svCurrent, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
 					add_object(hit_object)
 
 				NoteType.ROLL:
 					var hit_object := hitObjectScenes.roll_object.instance() as Roll
-					hit_object.change_properties(objectTime, svCurrent, float(line_data[3]), bool(int(line_data[4])), bpmCurrent)
+					hit_object.change_properties(objectTimeInSeconds, svCurrent, float(line_data[3]), bool(int(line_data[4])), bpmCurrent)
 					add_object(hit_object)
 
 				NoteType.SPINNER:
 					var hit_object := hitObjectScenes.spinner_warn_object.instance() as SpinnerWarn
-					hit_object.change_properties(objectTime, svCurrent, float(line_data[3]), bpmCurrent)
+					hit_object.change_properties(objectTimeInSeconds, svCurrent, float(line_data[3]), bpmCurrent)
 					add_object(hit_object)
 
 				NoteType.TIMING_POINT:
 					bpmCurrent = float(line_data[1])
+					timingPreviousTime = float(line_data[0]) / 1000.0
 
-					#var hit_object := hitObjectScenes.timing_point_object as TimingPoint
-					#hit_object.change_properties(objectTime, int(line_data[3]), bpmCurrent)
-					#add_object(hit_object)
+					# var hit_object := hitObjectScenes.timing_point_object as TimingPoint
+					# hit_object.change_properties(objectTimeInSeconds, int(line_data[3]), bpmCurrent)
+					# add_object(hit_object)
+		
+		var audioloader := AudioLoader.new()
+		$"../../../Song".stream = audioloader.loadfile(folderPath.plus_file(audioFileName))
 		print_debug("Done loading file!")
 		return
 
@@ -181,7 +188,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 						if timingPointTime > objectTimeInMilliseconds:
 							break
 
-						var barlines := (timingPointTime - timingPreviousTime) / beatLength if beatLength != 0 else float(2^1024 - 1)
+						var barlines := (timingPointTime - timingPreviousTime) / beatLength if beatLength != 0 else MAX_VALUE
 
 						while barlineNext < barlines:
 							if svCurrent > 0:
@@ -195,7 +202,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 									barlineNext = 0
 
 								beatLength = timingPointValue
-								bpmCurrent = 60000 / beatLength if beatLength != 0 else float(2^1024 - 1)
+								bpmCurrent = 60000 / beatLength if beatLength != 0 else MAX_VALUE
 								meterCurrent = timingPointMeter
 								svCurrent = float(svMap)
 
@@ -207,11 +214,11 @@ func load_chart(_game_path: String, file_path: String) -> void:
 							timingPreviousTime = timingPointTime
 
 						if timingPointInherited:
-							svCurrent = -100 * float(svMap) / timingPointValue if timingPointValue != 0 else float(2^1024 - 1)
+							svCurrent = -100 * float(svMap) / timingPointValue if timingPointValue != 0 else MAX_VALUE
 						timingPoints.remove(0)
 					#########################################
 
-					var objectTimeInBeats = (objectTimeInMilliseconds - timingPreviousTime) / beatLength if beatLength != 0 else float(2^1024 - 1)
+					var objectTimeInBeats = (objectTimeInMilliseconds - timingPreviousTime) / beatLength if beatLength != 0 else MAX_VALUE
 					while barlineNext <= objectTimeInBeats:
 						if svCurrent > 0:
 							hitObjects.append(PoolStringArray([barlineNext, svCurrent, NoteType.BARLINE]).join(","))
@@ -220,11 +227,11 @@ func load_chart(_game_path: String, file_path: String) -> void:
 
 					if 8 & objectType:
 						if line_data.size() > 5:
-							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.SPINNER, (float(line_data[5]) - objectTimeInMilliseconds) / beatLength if beatLength != 0 else float(2^1024 - 1)]).join(","))
+							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.SPINNER, (float(line_data[5]) - objectTimeInMilliseconds) / beatLength if beatLength != 0 else MAX_VALUE]).join(","))
 					else:
 						var finisher := int(line_data[4])
 						if 2 & objectType:
-							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) / svCurrent / 100 if bpmCurrent * svCurrent != 0 and line_data.size() > 7 else float(2^1024 - 1), 1 if 4 & finisher else 0]).join(","))
+							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.ROLL, float(line_data[7]) * int(line_data[6]) / svCurrent / 100 if bpmCurrent * svCurrent != 0 and line_data.size() > 7 else MAX_VALUE, 1 if 4 & finisher else 0]).join(","))
 						else:
 							hitObjects.append(PoolStringArray([objectTimeInBeats, svCurrent, NoteType.KAT if 10 & finisher else NoteType.DON, 1 if 4 & finisher else 0]).join(","))
 

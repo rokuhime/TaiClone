@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scenes/playfield/track.tscn" type="PackedScene" id=1]
 [ext_resource path="res://resources/dev_art/background.png" type="Texture" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://resources/dev_art/play.png" type="Texture" id=7]
 [ext_resource path="res://resources/dev_art/settings.png" type="Texture" id=8]
 [ext_resource path="res://scenes/gameplay/temporarybuttonlol.gd" type="Script" id=9]
+[ext_resource path="res://scenes/gameplay/gameplay.gd" type="Script" id=10]
 
 [sub_resource type="DynamicFont" id=1]
 size = 26
@@ -18,6 +19,7 @@ font_data = ExtResource( 5 )
 [node name="Gameplay" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 10 )
 
 [node name="Background" type="TextureRect" parent="."]
 modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
@@ -136,4 +138,4 @@ expand_icon = true
 [node name="Song" type="AudioStreamPlayer" parent="."]
 
 [connection signal="pressed" from="UI/Debug/Container/Load" to="UI/Debug/Container/Load" method="dothething"]
-[connection signal="pressed" from="UI/Debug/Container/Play" to="Track" method="changeChartPlayback"]
+[connection signal="pressed" from="UI/Debug/Container/Play" to="." method="changeChartPlayback"]
