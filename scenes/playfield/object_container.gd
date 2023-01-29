@@ -89,34 +89,32 @@ func load_chart(_game_path: String, file_path: String) -> void:
 				firstNoteTime = min(firstNoteTime if firstNoteTime + 1 else objectTimeInBeats, objectTimeInBeats)
 				lastNoteTime = max(lastNoteTime if lastNoteTime + 1 else objectTimeInBeats, objectTimeInBeats)
 			
+			var hit_object
 			match int(line_data[2]):
 				NoteType.BARLINE:
-					var hit_object := hitObjectScenes.barline_object.instance() as BarLine
+					hit_object = hitObjectScenes.barline_object.instance() as BarLine
 					hit_object.change_properties(objectTimeInSeconds, svCurrent)
-					add_object(hit_object)
 
 				NoteType.DON, NoteType.KAT:
-					var hit_object := hitObjectScenes.note_object.instance() as Note
+					hit_object = hitObjectScenes.note_object.instance() as Note
 					hit_object.change_properties(objectTimeInSeconds, svCurrent, int(line_data[2]) == int(ChartLoader.NoteType.KAT), bool(int(line_data[3])))
-					add_object(hit_object)
 
 				NoteType.ROLL:
-					var hit_object := hitObjectScenes.roll_object.instance() as Roll
+					hit_object = hitObjectScenes.roll_object.instance() as Roll
 					hit_object.change_properties(objectTimeInSeconds, svCurrent, float(line_data[3]), bool(int(line_data[4])), bpmCurrent)
-					add_object(hit_object)
 
 				NoteType.SPINNER:
-					var hit_object := hitObjectScenes.spinner_warn_object.instance() as SpinnerWarn
+					hit_object = hitObjectScenes.spinner_warn_object.instance() as SpinnerWarn
 					hit_object.change_properties(objectTimeInSeconds, svCurrent, float(line_data[3]), bpmCurrent)
-					add_object(hit_object)
 
 				NoteType.TIMING_POINT:
 					bpmCurrent = float(line_data[1])
 					timingPreviousTime = float(line_data[0]) / 1000.0
 
-					# var hit_object := hitObjectScenes.timing_point_object as TimingPoint
+					# hit_object = hitObjectScenes.timing_point_object as TimingPoint
 					# hit_object.change_properties(objectTimeInSeconds, int(line_data[3]), bpmCurrent)
-					# add_object(hit_object)
+			
+			add_object(hit_object)
 		
 		var audioloader := AudioLoader.new()
 		$"../../../Song".stream = audioloader.loadfile(folderPath.plus_file(audioFileName))
@@ -170,6 +168,7 @@ func load_chart(_game_path: String, file_path: String) -> void:
 						continue
 					var objectTimeInMilliseconds = float(line_data[2])
 					while timingPoints.size() > 0:
+						# todo: refactor to dictionary
 						var timingPointCurrent := str(timingPoints[0]).split(",")
 
 						var timingPointTime := float(timingPointCurrent[0])

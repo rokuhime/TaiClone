@@ -1,0 +1,1283 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://resources/dev_art/brehd.png" type="Texture" id=1]
+[ext_resource path="res://scenes/menus/mod.tres" type="Theme" id=2]
+[ext_resource path="res://resources/fonts/noto_sans_jp-bold.otf" type="DynamicFontData" id=3]
+[ext_resource path="res://resources/fonts/noto_sans_jp-regular.otf" type="DynamicFontData" id=4]
+[ext_resource path="res://scenes/menus/results/resultspanels.tres" type="Theme" id=5]
+[ext_resource path="res://resources/test_skin/taiko-hit100.png" type="Texture" id=6]
+[ext_resource path="res://resources/test_skin/taiko-hit0.png" type="Texture" id=7]
+[ext_resource path="res://resources/test_skin/taiko-hit300.png" type="Texture" id=8]
+[ext_resource path="res://resources/dev_art/logo.png" type="Texture" id=9]
+
+[sub_resource type="DynamicFont" id=1]
+size = 35
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 30
+extra_spacing_bottom = -12
+font_data = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.137255, 0.137255, 0.137255, 0.784314 )
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+
+[sub_resource type="DynamicFont" id=4]
+font_data = ExtResource( 4 )
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Middle" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -200.0
+margin_top = -325.0
+margin_right = 200.0
+margin_bottom = 325.0
+theme = ExtResource( 5 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Middle"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+
+[node name="Rank" type="TextureRect" parent="Middle/VBoxContainer"]
+margin_right = 380.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 0, 300 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Mods" type="HBoxContainer" parent="Middle/VBoxContainer"]
+margin_top = 304.0
+margin_right = 380.0
+margin_bottom = 344.0
+rect_min_size = Vector2( 0, 40 )
+custom_constants/separation = 5
+alignment = 1
+
+[node name="Mod1" type="PanelContainer" parent="Middle/VBoxContainer/Mods"]
+self_modulate = Color( 0.862745, 0.25098, 0.25098, 1 )
+margin_left = 101.0
+margin_right = 165.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 50, 0 )
+theme = ExtResource( 2 )
+
+[node name="Icon" type="TextureRect" parent="Middle/VBoxContainer/Mods/Mod1"]
+margin_right = 64.0
+margin_bottom = 40.0
+
+[node name="Text" type="Label" parent="Middle/VBoxContainer/Mods/Mod1"]
+margin_top = 1.0
+margin_right = 64.0
+margin_bottom = 38.0
+theme = ExtResource( 2 )
+text = " x1.2 "
+align = 1
+valign = 1
+
+[node name="Mod2" type="PanelContainer" parent="Middle/VBoxContainer/Mods"]
+self_modulate = Color( 0.862745, 0.737255, 0.25098, 1 )
+margin_left = 170.0
+margin_right = 210.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 40, 0 )
+theme = ExtResource( 2 )
+
+[node name="Icon" type="TextureRect" parent="Middle/VBoxContainer/Mods/Mod2"]
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 1 )
+expand = true
+
+[node name="Text" type="Label" parent="Middle/VBoxContainer/Mods/Mod2"]
+margin_top = 1.0
+margin_right = 40.0
+margin_bottom = 38.0
+theme = ExtResource( 2 )
+align = 1
+valign = 1
+
+[node name="Mod3" type="PanelContainer" parent="Middle/VBoxContainer/Mods"]
+self_modulate = Color( 0.584314, 0.25098, 0.862745, 1 )
+margin_left = 215.0
+margin_right = 279.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 50, 0 )
+theme = ExtResource( 2 )
+
+[node name="Icon" type="TextureRect" parent="Middle/VBoxContainer/Mods/Mod3"]
+margin_right = 64.0
+margin_bottom = 40.0
+
+[node name="Text" type="Label" parent="Middle/VBoxContainer/Mods/Mod3"]
+margin_top = 1.0
+margin_right = 64.0
+margin_bottom = 38.0
+theme = ExtResource( 2 )
+text = " x0.5 "
+align = 1
+valign = 1
+
+[node name="Score" type="RichTextLabel" parent="Middle/VBoxContainer"]
+margin_top = 348.0
+margin_right = 380.0
+margin_bottom = 439.0
+size_flags_vertical = 3
+custom_fonts/bold_font = SubResource( 1 )
+custom_fonts/normal_font = SubResource( 2 )
+bbcode_enabled = true
+bbcode_text = "[center]Score
+[b]1,000,000[/b][/center]"
+text = "Score
+1,000,000"
+scroll_active = false
+
+[node name="AccCombo" type="HBoxContainer" parent="Middle/VBoxContainer"]
+margin_top = 443.0
+margin_right = 380.0
+margin_bottom = 534.0
+size_flags_vertical = 3
+
+[node name="Accuracy" type="RichTextLabel" parent="Middle/VBoxContainer/AccCombo"]
+margin_right = 188.0
+margin_bottom = 91.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/bold_font = SubResource( 1 )
+custom_fonts/normal_font = SubResource( 2 )
+bbcode_enabled = true
+bbcode_text = "[center]Accuracy
+[b]100.00%[/b][/center]"
+text = "Accuracy
+100.00%"
+scroll_active = false
+
+[node name="Combo" type="RichTextLabel" parent="Middle/VBoxContainer/AccCombo"]
+margin_left = 192.0
+margin_right = 380.0
+margin_bottom = 91.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/bold_font = SubResource( 1 )
+custom_fonts/normal_font = SubResource( 2 )
+bbcode_enabled = true
+bbcode_text = "[center]Combo
+[b]1024[/b][color=grey]/1024[/color][/center]"
+text = "Combo
+1024/1024"
+scroll_active = false
+
+[node name="Performance" type="RichTextLabel" parent="Middle/VBoxContainer"]
+margin_top = 538.0
+margin_right = 380.0
+margin_bottom = 630.0
+size_flags_vertical = 3
+custom_fonts/bold_font = SubResource( 1 )
+custom_fonts/normal_font = SubResource( 2 )
+bbcode_enabled = true
+bbcode_text = "[center]Performance
+[b]350[/b][color=grey]/350[/color][/center]"
+text = "Performance
+350/350"
+scroll_active = false
+
+[node name="Information" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 230.0
+margin_top = -275.0
+margin_right = 630.0
+margin_bottom = 275.0
+custom_constants/separation = 20
+
+[node name="AccuracyGraph" type="Panel" parent="Information"]
+margin_right = 400.0
+margin_bottom = 331.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 5 )
+
+[node name="GridContainer" type="GridContainer" parent="Information/AccuracyGraph"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 20.0
+margin_top = 20.0
+margin_right = -20.0
+margin_bottom = -20.0
+columns = 2
+
+[node name="Accurate" type="HBoxContainer" parent="Information/AccuracyGraph/GridContainer"]
+margin_right = 178.0
+margin_bottom = 95.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="Information/AccuracyGraph/GridContainer/Accurate"]
+margin_right = 87.0
+margin_bottom = 95.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+expand = true
+stretch_mode = 6
+
+[node name="Label" type="Label" parent="Information/AccuracyGraph/GridContainer/Accurate"]
+margin_left = 91.0
+margin_top = 31.0
+margin_right = 178.0
+margin_bottom = 63.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "2000"
+align = 1
+valign = 1
+
+[node name="FAccurate" type="HBoxContainer" parent="Information/AccuracyGraph/GridContainer"]
+margin_left = 182.0
+margin_right = 360.0
+margin_bottom = 95.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="Information/AccuracyGraph/GridContainer/FAccurate"]
+margin_right = 87.0
+margin_bottom = 95.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+expand = true
+stretch_mode = 6
+
+[node name="Label" type="Label" parent="Information/AccuracyGraph/GridContainer/FAccurate"]
+margin_left = 91.0
+margin_top = 31.0
+margin_right = 178.0
+margin_bottom = 63.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "2000"
+align = 1
+valign = 1
+
+[node name="Inaccurate" type="HBoxContainer" parent="Information/AccuracyGraph/GridContainer"]
+margin_top = 99.0
+margin_right = 178.0
+margin_bottom = 193.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="Information/AccuracyGraph/GridContainer/Inaccurate"]
+margin_right = 87.0
+margin_bottom = 94.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Label" type="Label" parent="Information/AccuracyGraph/GridContainer/Inaccurate"]
+margin_left = 91.0
+margin_top = 31.0
+margin_right = 178.0
+margin_bottom = 63.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "2000"
+align = 1
+valign = 1
+
+[node name="FInaccurate" type="HBoxContainer" parent="Information/AccuracyGraph/GridContainer"]
+margin_left = 182.0
+margin_top = 99.0
+margin_right = 360.0
+margin_bottom = 193.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="Information/AccuracyGraph/GridContainer/FInaccurate"]
+margin_right = 87.0
+margin_bottom = 94.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Label" type="Label" parent="Information/AccuracyGraph/GridContainer/FInaccurate"]
+margin_left = 91.0
+margin_top = 31.0
+margin_right = 178.0
+margin_bottom = 63.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "2000"
+align = 1
+valign = 1
+
+[node name="Miss" type="HBoxContainer" parent="Information/AccuracyGraph/GridContainer"]
+margin_top = 197.0
+margin_right = 178.0
+margin_bottom = 291.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="Information/AccuracyGraph/GridContainer/Miss"]
+margin_right = 87.0
+margin_bottom = 94.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 6
+
+[node name="Label" type="Label" parent="Information/AccuracyGraph/GridContainer/Miss"]
+margin_left = 91.0
+margin_top = 31.0
+margin_right = 178.0
+margin_bottom = 63.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "2000"
+align = 1
+valign = 1
+
+[node name="HBoxContainer" type="VBoxContainer" parent="Information/AccuracyGraph/GridContainer"]
+margin_left = 182.0
+margin_top = 197.0
+margin_right = 360.0
+margin_bottom = 291.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="Information/AccuracyGraph/GridContainer/HBoxContainer"]
+self_modulate = Color( 1, 0.352941, 0.352941, 1 )
+margin_top = 3.0
+margin_right = 178.0
+margin_bottom = 45.0
+
+[node name="Label" type="Label" parent="Information/AccuracyGraph/GridContainer/HBoxContainer/PanelContainer"]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 168.0
+margin_bottom = 37.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "2000"
+align = 1
+valign = 1
+
+[node name="PanelContainer2" type="PanelContainer" parent="Information/AccuracyGraph/GridContainer/HBoxContainer"]
+self_modulate = Color( 0.352941, 0.352941, 1, 1 )
+margin_top = 49.0
+margin_right = 178.0
+margin_bottom = 91.0
+
+[node name="Label" type="Label" parent="Information/AccuracyGraph/GridContainer/HBoxContainer/PanelContainer2"]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 168.0
+margin_bottom = 37.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "2000"
+align = 1
+valign = 1
+
+[node name="Judgements" type="Panel" parent="Information"]
+margin_top = 351.0
+margin_right = 400.0
+margin_bottom = 550.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+theme = ExtResource( 5 )
+
+[node name="Middle" type="ColorRect" parent="Information/Judgements"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = 9.0
+margin_top = -1.0
+margin_right = -9.0
+margin_bottom = 1.0
+color = Color( 0.8, 0.8, 0.8, 1 )
+
+[node name="Label" type="Label" parent="Information/Judgements"]
+modulate = Color( 1, 0.352941, 0.352941, 0.607843 )
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -67.0
+margin_top = 11.0
+margin_right = -10.0
+margin_bottom = 43.0
+theme = ExtResource( 5 )
+text = "Late "
+align = 2
+
+[node name="Label2" type="Label" parent="Information/Judgements"]
+modulate = Color( 0.352941, 0.352941, 1, 0.607843 )
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -76.0
+margin_top = -44.0
+margin_right = -10.0
+margin_bottom = -12.0
+theme = ExtResource( 5 )
+text = "Early "
+align = 2
+valign = 2
+
+[node name="Leaderboards" type="Control" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -630.0
+margin_top = -275.0
+margin_right = -230.0
+margin_bottom = 275.0
+theme = ExtResource( 5 )
+
+[node name="Tabs" type="Panel" parent="Leaderboards"]
+anchor_right = 1.0
+margin_left = 20.0
+margin_right = -20.0
+margin_bottom = 50.0
+custom_styles/panel = SubResource( 3 )
+
+[node name="Organizer" type="HBoxContainer" parent="Leaderboards/Tabs"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+
+[node name="Local" type="Button" parent="Leaderboards/Tabs/Organizer"]
+margin_right = 82.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+text = "Local"
+
+[node name="Global" type="Button" parent="Leaderboards/Tabs/Organizer"]
+margin_left = 86.0
+margin_right = 168.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+text = "Global"
+
+[node name="Friends" type="Button" parent="Leaderboards/Tabs/Organizer"]
+margin_left = 172.0
+margin_right = 254.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+text = "Friends"
+
+[node name="Country" type="Button" parent="Leaderboards/Tabs/Organizer"]
+margin_left = 258.0
+margin_right = 340.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+text = "Country"
+
+[node name="Leaderboard" type="Panel" parent="Leaderboards"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 50.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Leaderboards/Leaderboard"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer"]
+margin_right = 368.0
+margin_bottom = 707.0
+size_flags_horizontal = 3
+
+[node name="Score" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_right = 368.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score2" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 79.0
+margin_right = 368.0
+margin_bottom = 154.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score2/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score3" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 158.0
+margin_right = 368.0
+margin_bottom = 233.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score3/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score4" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 237.0
+margin_right = 368.0
+margin_bottom = 312.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score4/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score5" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 316.0
+margin_right = 368.0
+margin_bottom = 391.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score5/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score6" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 395.0
+margin_right = 368.0
+margin_bottom = 470.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score6/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score7" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 474.0
+margin_right = 368.0
+margin_bottom = 549.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score7/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score8" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 553.0
+margin_right = 368.0
+margin_bottom = 628.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score8/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="Score9" type="ColorRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer"]
+margin_top = 632.0
+margin_right = 368.0
+margin_bottom = 707.0
+rect_min_size = Vector2( 0, 75 )
+color = Color( 0.0392157, 0.0392157, 0.0392157, 0.882353 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+margin_bottom = -3.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PFP" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer"]
+margin_right = 75.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+
+[node name="Text" type="VBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer"]
+margin_left = 79.0
+margin_right = 289.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+
+[node name="Username" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer/Text"]
+margin_right = 210.0
+margin_bottom = 32.0
+text = "rokuhime"
+valign = 2
+
+[node name="Scores" type="HBoxContainer" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer/Text"]
+margin_top = 36.0
+margin_right = 210.0
+margin_bottom = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer/Text/Scores"]
+margin_top = 4.0
+margin_right = 67.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "1,000,000"
+valign = 1
+clip_text = true
+
+[node name="Accuracy" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer/Text/Scores"]
+margin_left = 71.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "100.00%"
+valign = 1
+
+[node name="Combo" type="Label" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer/Text/Scores"]
+margin_left = 142.0
+margin_top = 4.0
+margin_right = 210.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 4 )
+text = "x1024"
+valign = 1
+
+[node name="Rank" type="TextureRect" parent="Leaderboards/Leaderboard/ScrollContainer/VBoxContainer/Score9/HBoxContainer"]
+margin_left = 293.0
+margin_right = 368.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 75, 0 )
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="TopBar" type="ColorRect" parent="."]
+anchor_right = 1.0
+margin_bottom = 100.0
+color = Color( 0, 0, 0, 0.784314 )
+
+[node name="BottomBar" type="ColorRect" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -100.0
+color = Color( 0, 0, 0, 0.784314 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BottomBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Back" type="Button" parent="BottomBar/HBoxContainer"]
+margin_right = 300.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 300, 0 )
+size_flags_vertical = 3
+text = "Back"
+
+[node name="Control" type="Control" parent="BottomBar/HBoxContainer"]
+margin_left = 304.0
+margin_right = 1136.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+
+[node name="Retry" type="Button" parent="BottomBar/HBoxContainer"]
+margin_left = 1140.0
+margin_right = 1440.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 300, 0 )
+size_flags_vertical = 3
+text = "Retry"

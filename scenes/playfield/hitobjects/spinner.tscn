@@ -2,7 +2,7 @@
 
 [ext_resource path="res://resources/test_skin/spinner-circle.png" type="Texture" id=1]
 [ext_resource path="res://resources/test_skin/spinner-approachcircle.png" type="Texture" id=2]
-[ext_resource path="res://resources/ingame.tres" type="Theme" id=3]
+[ext_resource path="res://scenes/playfield/ingame.tres" type="Theme" id=3]
 [ext_resource path="res://scenes/playfield/hitobjects/spinner.gd" type="Script" id=4]
 
 [node name="Spinner" type="TextureRect"]

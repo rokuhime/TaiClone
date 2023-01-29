@@ -6,6 +6,9 @@
 [node name="temproot" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+rect_scale = Vector2( 0.998693, 1.00839 )
 script = ExtResource( 2 )
 
 [node name="Gameplay" parent="." instance=ExtResource( 1 )]
+margin_right = 2.0
+margin_bottom = -9.0

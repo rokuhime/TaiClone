@@ -1,6 +1,6 @@
 [gd_scene load_steps=34 format=2]
 
-[ext_resource path="res://resources/ingame.tres" type="Theme" id=1]
+[ext_resource path="res://scenes/playfield/ingame.tres" type="Theme" id=1]
 [ext_resource path="res://resources/dev_art/donch/donch-1.png" type="Texture" id=2]
 [ext_resource path="res://resources/dev_art/donch/donch-0.png" type="Texture" id=3]
 [ext_resource path="res://resources/dev_art/donch/donch-3.png" type="Texture" id=4]
