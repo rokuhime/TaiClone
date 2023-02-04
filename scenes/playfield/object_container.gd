@@ -111,6 +111,9 @@ func load_chart(_game_path: String, file_path: String) -> void:
 					bpmCurrent = float(line_data[1])
 					timingPreviousTime = float(line_data[0]) / 1000.0
 
+					# object doesnt actually exist, so
+					continue
+
 					# hit_object = hitObjectScenes.timing_point_object as TimingPoint
 					# hit_object.change_properties(objectTimeInSeconds, int(line_data[3]), bpmCurrent)
 			
@@ -281,11 +284,15 @@ func load_chart(_game_path: String, file_path: String) -> void:
 	file.close()
 	load_chart("", FUS)
 
-func add_object(hit_object: HitObject, loaded := true) -> void:
-	add_child(hit_object)
+func add_object(hitObject: HitObject, loaded := true) -> void:
+	if not hitObject:
+		return
+
+	add_child(hitObject)
+
 	for i in range(get_child_count()):
-		if hit_object.end_time > (get_child(i) as HitObject).end_time:
-			move_child(hit_object, i)
+		if hitObject.end_time > (get_child(i) as HitObject).end_time:
+			move_child(hitObject, i)
 			break
 
 	if loaded:
