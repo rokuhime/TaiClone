@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://scenes/playfield/track.tscn" type="PackedScene" id=1]
 [ext_resource path="res://resources/dev_art/background.png" type="Texture" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://resources/dev_art/settings.png" type="Texture" id=8]
 [ext_resource path="res://scenes/gameplay/temporarybuttonlol.gd" type="Script" id=9]
 [ext_resource path="res://scenes/gameplay/gameplay.gd" type="Script" id=10]
+[ext_resource path="res://scenes/gameplay/debugui.gd" type="Script" id=11]
 
 [sub_resource type="DynamicFont" id=1]
 size = 26
@@ -67,6 +68,7 @@ anchor_bottom = 1.0
 margin_top = -288.0
 size_flags_horizontal = 3
 alignment = 2
+script = ExtResource( 11 )
 
 [node name="Console" type="Label" parent="UI/Debug"]
 margin_top = 163.0

@@ -1,3 +1,4 @@
+class_name Track
 extends TextureRect
 
 var playing := false
@@ -11,4 +12,6 @@ func activateObjects() -> void:
 
 func moveObjects(timeCurrent) -> void:
 	for hitObject in objectContainer.get_children():
+		# uses the tracks horizontal size as first variable, so it adapts being visible to that
+		# saves frames
 		hitObject.move(rect_size.x, timeCurrent)
