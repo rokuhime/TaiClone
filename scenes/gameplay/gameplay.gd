@@ -89,4 +89,3 @@ func play_keypress_tween(input : String) -> void:
 	keypress_tweens[input] = create_tween()
 	target.self_modulate = Color.WHITE
 	keypress_tweens[input].tween_property(target, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
-	

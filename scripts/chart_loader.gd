@@ -53,6 +53,7 @@ static func convert_chart(file_path: String):
 			
 			match section:
 				"General":
+					chart_info["Audio_Path"] = file.get_path()
 					continue
 				"Metadata":
 					continue
@@ -175,6 +176,7 @@ static func convert_chart(file_path: String):
 					
 					hit_objects.append(hit_object)
 					continue
+
 				_:
 					continue
 	
@@ -189,6 +191,9 @@ static func convert_chart(file_path: String):
 	# save newly made taiclone file
 	var new_file = FileAccess.open("user://temp.tc", FileAccess.WRITE)
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
+
+	for ci in chart_info:
+		new_file.store_line(str(ci) + ": " + chart_info[ci])
 
 	new_file.store_line("\nTiming Points")
 	for tp in timing_points:
