@@ -90,6 +90,10 @@ static func convert_chart(file_path: String):
 						continue
 
 					"Events":
+						if line.begins_with("//"):
+							continue
+						if line_data[2].begins_with('"'):
+							chart_info["Background"] = line_data[2].trim_prefix('"').trim_suffix('"')
 						continue
 
 					"TimingPoints":
@@ -236,7 +240,7 @@ static func convert_chart(file_path: String):
 	# chart info section
 	for ci in chart_info:
 		new_file.store_line(str(ci) + ": " + chart_info[ci])
-
+	
 	# timing section
 	new_file.store_line("\n[Timing Points]")
 	for tp in timing_points:
