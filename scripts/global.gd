@@ -19,9 +19,19 @@ func format_time(time) -> String:
 	var str := "%02d:%02d.%02d" % [min, sec, mil]
 	return str
 
-# this should probably use an await??
 func load_file(directory):
 	var file = FileAccess.open("user://save_game.dat", FileAccess.READ)
 	var content = file.get_as_text()
 	file.close() # i aint makin any memory leaks you got me MESSED UP
 	return content
+
+func load_image(file_path: String, crop_transparent := true) -> Texture:
+	var image = Image.load_from_file(file_path)
+	
+	# crops image to first visible pixels on every side, helps minimize small note skins
+	if crop_transparent and not image.is_invisible():
+		image = image.get_region(image.get_used_rect())
+		
+	var texture = ImageTexture.create_from_image(image)
+	
+	return texture

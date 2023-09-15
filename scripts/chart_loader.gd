@@ -234,8 +234,7 @@ static func convert_chart(file_path: String):
 	# top info
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
 	if origin != null:
-		new_file.store_line("Origin: " + origin)
-		new_file.store_line(file_path.get_base_dir() + "\n")
+		new_file.store_line("Origin: " + file_path + "\n")
 	
 	# chart info section
 	for ci in chart_info:
@@ -259,3 +258,55 @@ static func convert_chart(file_path: String):
 	
 	print("ChartLoader: done converting chart!")
 	return new_path
+
+static func load_chart(file_path: String):
+	var file := FileAccess.open(file_path, FileAccess.READ)
+	var line := ""
+	var section := ""
+	
+	var audio
+	var background
+	
+	while file.get_position() < file.get_length():
+		line = file.get_line().strip_edges()
+		
+		if line.is_empty():
+			continue
+		
+		# change current section
+		if line.begins_with("[") and line.ends_with("]"):
+			section = line.substr(1, line.length() - 2)
+			continue
+		
+		# split line into array by commas
+		var line_data := line.split(",")
+		var data_name := ""
+		var data_value := ""
+		
+		match section:
+			"Timing Points":
+				continue
+
+			"Hit Objects":
+				continue
+
+			_: # chart info
+				data_name = line.substr(0, line.find(':'))
+				data_value = line.substr(line.find(':') + 1, line.length()).strip_edges()
+				
+				match data_name:
+					"Origin":
+						file_path = data_value
+
+					"Audio_Path":
+						# FIX ME HOOK HAT
+						# i really dont like the fact were instancing it here, ugly and wastes memory. cant be outside of this because static
+						# find a way to make AudioLoader static, convert_to_16bit was getting in the way
+						var audio_loader = AudioLoader.new()
+						audio = audio_loader.load_file(file_path.get_base_dir() + "/" + data_value)
+
+					"Background":
+						background = load(file_path.get_base_dir() + "/" + data_value)
+				
+				continue
+	return background

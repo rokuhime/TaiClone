@@ -47,12 +47,8 @@ func report_errors(err, filepath):
 	else:
 		print("Unknown error with file ", filepath, " error code: ", err)
 
-func loadfile(filepath):
+func load_file(filepath):
 	var file = FileAccess.open(filepath, FileAccess.READ)
-	if file != OK:
-		report_errors(file, filepath)
-		file.close()
-		return AudioStreamWAV.new()
 
 	var bytes = file.get_buffer(file.get_length())
 	# if File is wav

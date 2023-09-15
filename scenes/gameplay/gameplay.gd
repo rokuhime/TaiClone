@@ -4,6 +4,7 @@ extends Control
 @onready var audio_container := $Audio
 @onready var drum_indicator := $Lane/DrumIndicator
 @onready var music := $Music
+@onready var background := $Background
 
 ## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
@@ -16,7 +17,13 @@ var _time_begin := 0.0
 var cur_object := 0
 
 func _ready() -> void:
-	ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/N_dog - Dusk in overnight (6_6) [Eclipse].osu", true)
+	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/N_dog - Dusk in overnight (6_6) [Eclipse].osu", false)
+	if typeof(chart_path) == TYPE_INT:
+		# error, shoot a notif to let the user know what happened
+		pass
+	
+	var a = ChartLoader.load_chart(chart_path)
+	background.texture = Global.load_image("/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/image.jpg")
 	
 	# set time when song starts, using AudioServer to help with latency
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
@@ -89,3 +96,6 @@ func play_keypress_tween(input : String) -> void:
 	keypress_tweens[input] = create_tween()
 	target.self_modulate = Color.WHITE
 	keypress_tweens[input].tween_property(target, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
+
+func load_chart(file_path) -> void:
+	pass

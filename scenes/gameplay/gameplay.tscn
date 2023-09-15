@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dc3sc6e2gotjc"]
+[gd_scene load_steps=6 format=3 uid="uid://dc3sc6e2gotjc"]
 
 [ext_resource type="Texture2D" uid="uid://juyo6h056khs" path="res://assets/default_skin/taikohitcircle.png" id="1_0hcx1"]
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_6riuo"]
 [ext_resource type="PackedScene" uid="uid://mr8o47qkqrdt" path="res://scenes/gameplay/hitobject/note.tscn" id="3_7avpq"]
 [ext_resource type="AudioStream" uid="uid://3tx48jwrc0fk" path="res://assets/stella/audio.mp3" id="4_xlq6k"]
+[ext_resource type="Texture2D" uid="uid://kog7coscf8qa" path="res://assets/dev_art/background.png" id="5_epojv"]
 
 [node name="Gameplay" type="Control"]
 layout_mode = 3
@@ -14,6 +15,18 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6riuo")
 metadata/_edit_lock_ = true
+
+[node name="Background" type="TextureRect" parent="."]
+self_modulate = Color(0.54902, 0.54902, 0.54902, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_epojv")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Lane" type="ColorRect" parent="."]
 layout_mode = 1
