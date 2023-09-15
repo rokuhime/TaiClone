@@ -36,6 +36,11 @@ static func convert_chart(file_path: String):
 	if file_path.ends_with(".osu"):
 		print("ChartLoader: parsing file as osu...")
 		
+		# variables that can be assigned while going through sections
+		# avoids pointless vars that could break stuff
+		var valid_variables := ["AudioFilename", "PreviewTime", "Title", "Artist", "Creator", "Version"]
+		var translated_variables := ["Audio_Path", "Preview_Point", "Song_Title", "Song_Artist", "Chart_Title", "Chart_Artist"]
+		
 		while file.get_position() < file.get_length():
 			line = file.get_line().strip_edges()
 			
@@ -45,22 +50,29 @@ static func convert_chart(file_path: String):
 			# change current section
 			if line.begins_with("[") and line.ends_with("]"):
 				section = line.substr(1, line.length() - 2)
-				print("ChartLoader: changed section to ", section)
 				continue
 			
 			# split line into array by commas
 			var line_data := line.split(",")
+			var data_name := ""
+			var data_value := ""
 			
 			match section:
-				"General":
-					chart_info["Audio_Path"] = file.get_path()
+				"General", "Metadata", "Difficulty":
+					data_name = line.substr(0, line.find(':'))
+					
+					if valid_variables.has(data_name):
+						data_value = line.substr(line.find(':') + 1, line.length())
+						chart_info[ translated_variables[valid_variables.find(data_name)] ] = data_value
+					
+					elif data_name == "SliderMultiplier":
+						slider_multiplier = float(data_value) * 100
+					
 					continue
-				"Metadata":
-					continue
-				"Difficulty":
-					continue
+
 				"Events":
 					continue
+
 				"TimingPoints":
 					# ensure all required data is in line_data (compatibility)
 					if line_data.size() < 3:
