@@ -16,7 +16,7 @@ var _time_begin := 0.0
 var cur_object := 0
 
 func _ready() -> void:
-	ChartLoader.get_chart_path()
+	ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/N_dog - Dusk in overnight (6_6) [Eclipse].osu", true)
 	
 	# set time when song starts, using AudioServer to help with latency
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()

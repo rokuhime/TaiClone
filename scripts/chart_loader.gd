@@ -11,9 +11,9 @@ enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 const TC_VERSION := "v0.0.1"
 
 ## sees if chart needs to be converted, and then gives the .tc file path
-static func get_chart_path(file_path: String = "/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/N_dog - Dusk in overnight (6_6) [Eclipse].osu"):
+static func get_chart_path(file_path: String, force_convert := false):
 	if not file_path.ends_with(".tc"):
-		if FileAccess.file_exists("user://ConvertedSongs/" + file_path.get_file() + ".tc"):
+		if FileAccess.file_exists("user://ConvertedSongs/" + file_path.get_file() + ".tc") and not force_convert:
 			
 			# chart isnt .tc, and is converted
 			print("ChartLoader: converted file found!")
