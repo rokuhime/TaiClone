@@ -1,15 +1,17 @@
+## dummy class to hold a chart's data
 class_name Chart
 
 var audio
-var preview_point
-var song_title
-var song_artist
-var chart_title
-var chart_artist
 var background
+
+var chart_info := {}
 
 var timing_points := []
 var hit_objects := []
 
-func _init(aud, prev_point, s_title, s_artist, c_title, c_artist, bg) -> void:
-	
+func _init(aud, bg, c_info, t_points, h_obj) -> void:
+	audio = aud
+	background = bg
+	chart_info = c_info
+	timing_points = t_points
+	hit_objects = h_obj

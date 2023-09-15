@@ -57,7 +57,7 @@ static func convert_chart(file_path: String):
 			
 			# variables that can be assigned while going through sections
 			# avoids pointless vars that could break stuff
-			var valid_variables := ["AudioFilename", "PreviewTime", "Title", "Artist", "Creator", "Version"]
+			var valid_variables := ["AudioFilename", "PreviewTime", "Title", "Artist", "Version", "Creator"]
 			var translated_variables := ["Audio_Path", "Preview_Point", "Song_Title", "Song_Artist", "Chart_Title", "Chart_Artist"]
 			
 			while file.get_position() < file.get_length():
@@ -259,6 +259,7 @@ static func convert_chart(file_path: String):
 	print("ChartLoader: done converting chart!")
 	return new_path
 
+## loads .tc files and spits out Chart variable
 static func load_chart(file_path: String):
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	var line := ""
@@ -267,10 +268,15 @@ static func load_chart(file_path: String):
 	var audio
 	var background
 	
+	var chart_info := {}
+	
+	var timing_points := []
+	var hit_objects := []
+	
 	while file.get_position() < file.get_length():
 		line = file.get_line().strip_edges()
 		
-		if line.is_empty():
+		if line.is_empty() or line.begins_with("TaiClone Chart"):
 			continue
 		
 		# change current section
@@ -307,6 +313,10 @@ static func load_chart(file_path: String):
 
 					"Background":
 						background = load(file_path.get_base_dir() + "/" + data_value)
-				
+					
+					_:
+						chart_info[data_name] = data_value
 				continue
-	return background
+	
+	print("ChartLoader: chart loaded successfully!")
+	return Chart.new(audio, background, chart_info, timing_points, hit_objects)
