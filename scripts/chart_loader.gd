@@ -1,5 +1,7 @@
 class_name ChartLoader
 
+# TODO: Audio_Path and Preview_Point include extra spaces at the start?
+
 # stupid notes to roku
 # sv types could be named "default", "slide", "scale"
 # respectively taiko, mania, piu
@@ -20,6 +22,7 @@ static func convert_chart(file_path: String):
 	#open and load
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	var line := ""
+	var origin
 	
 	var section := ""
 	var chart_info := {}
@@ -32,9 +35,9 @@ static func convert_chart(file_path: String):
 	
 	var slider_multiplier := 100
 	
-	
 	if file_path.ends_with(".osu"):
 		print("ChartLoader: parsing file as osu...")
+		origin = "osu"
 		
 		# variables that can be assigned while going through sections
 		# avoids pointless vars that could break stuff
@@ -198,12 +201,15 @@ static func convert_chart(file_path: String):
 		print("ChartLoader: invalid file type!")
 		return -2
 	
-	file.close()
 	
 	# save newly made taiclone file
 	var new_file = FileAccess.open("user://temp.tc", FileAccess.WRITE)
+	
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
-
+	if origin != null:
+		new_file.store_line("Origin: " + origin)
+		new_file.store_line(file_path.get_base_dir() + "\n")
+	
 	for ci in chart_info:
 		new_file.store_line(str(ci) + ": " + chart_info[ci])
 
@@ -214,10 +220,8 @@ static func convert_chart(file_path: String):
 	new_file.store_line("\nHit Objects")
 	for ho in hit_objects:
 		new_file.store_line(str(ho))
-
+	
 	new_file.close()
+	file.close()
+	
 	print("ChartLoader: done!")
-
-static func _find_value(line: String, key: String, value := "", overwrite := false) -> String:
-	return line.trim_prefix(key).strip_edges() if line.begins_with(key) and not (overwrite and value) else value
-
