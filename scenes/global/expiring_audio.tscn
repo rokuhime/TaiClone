@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ov1gcsgrkem7"]
+
+[ext_resource type="Script" path="res://scenes/global/expiring_audio.gd" id="1_02qd7"]
+
+[node name="ExpiringAudio" type="AudioStreamPlayer2D"]
+script = ExtResource("1_02qd7")
+
+[connection signal="finished" from="." to="." method="finish"]
