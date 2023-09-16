@@ -288,10 +288,36 @@ static func load_chart(file_path: String):
 		
 		match section:
 			"Timing Points":
+				var obj_arr := []
+				
+				# set basic variables 
+				obj_arr.push_back(float(line_data[0])) # timing
+				obj_arr.push_back(line_data[1] == "true") # bpm change (this is silly and will be fixed!)
+				obj_arr.push_back(float(line_data[2])) # bpm value
+				obj_arr.push_back(int(line_data[3])) # time signature (assumes 4/x)
+				
+				timing_points.push_back(obj_arr)
 				continue
 
 			"Hit Objects":
+				var obj_arr := []
 				
+				# set basic variables 
+				obj_arr.push_back(float(line_data[0])) # timing
+				obj_arr.push_back(float(line_data[1])) # velocity
+				obj_arr.push_back(int(line_data[2])) # type
+				obj_arr.push_back(line_data[3] == "true") # finisher (lol)
+				
+				var ex_vars := {}
+				
+				if line_data.size() > 4: # if ex vars exist...
+					for ex in line_data.slice(4, line_data.size()):
+						data_name = ex.substr(0, ex.find(':')).strip_edges()
+						data_value = ex.substr(ex.find(':') + 1, ex.length()).strip_edges()
+						ex_vars[data_name] = data_value
+				
+				obj_arr.push_back(ex_vars)
+				hit_objects.push_back(obj_arr)
 				continue
 
 			_: # chart info

@@ -104,13 +104,8 @@ func load_chart(chart: Chart) -> void:
 	background.texture = chart.background
 	
 	# treating everything as a note for now
-	for h_obj in chart.hit_objects:
-		var note = note.instantiate()
-		if h_obj.get("is_kat"):
-			print("waow")
-		if not h_obj.get("is_kat"):
-			print("fake and a fraud")
-			
+	#for h_obj in chart.hit_objects:
+		#var note = note.instantiate()
 		#note.change_properties(h_obj.timing, h_obj.speed, is_kat)
 		#obj_container.add_child(note)
 		
