@@ -229,7 +229,6 @@ static func convert_chart(file_path: String):
 			print("ChartLoader: invalid file type!")
 			return -3
 	
-	
 	# save newly made taiclone file
 	if not DirAccess.dir_exists_absolute("user://ConvertedSongs"):
 		DirAccess.make_dir_absolute("user://ConvertedSongs")
@@ -244,37 +243,9 @@ static func convert_chart(file_path: String):
 	for ci in chart_info:
 		new_file.store_line(str(ci) + ": " + chart_info[ci])
 	
-	# timing section
-	new_file.store_line("\n[Timing Points]")
-	for tp in timing_points:
-		var intended_line := ""
-		
-		for tim_var in tp:
-			if typeof(tim_var) == TYPE_DICTIONARY:
-				for ex_var in tim_var:
-					intended_line += str(ex_var, ": ", tim_var[ex_var], ", ")
-				continue
-			
-			intended_line += str(tim_var, ", ")
-		
-		intended_line = intended_line.substr(0, intended_line.length() - 2)
-		new_file.store_line(intended_line)
-
-	# hit object section
-	new_file.store_line("\n[Hit Objects]")
-	for ho in hit_objects:
-		var intended_line := ""
-		
-		for hobj_var in ho:
-			if typeof(hobj_var) == TYPE_DICTIONARY:
-				for ex_var in hobj_var:
-					intended_line += str(ex_var, ": ", hobj_var[ex_var], ", ")
-				continue
-			
-			intended_line += str(hobj_var, ", ")
-		
-		intended_line = intended_line.substr(0, intended_line.length() - 2)
-		new_file.store_line(intended_line)
+	# store timing points, then hit objects
+	new_file.store_line(get_object_string(false, timing_points))
+	new_file.store_line(get_object_string(true, hit_objects))
 	
 	# save path and close 
 	var new_path = new_file.get_path()
@@ -347,3 +318,28 @@ static func load_chart(file_path: String):
 	
 	print("ChartLoader: chart loaded successfully!")
 	return Chart.new(audio, background, chart_info, timing_points, hit_objects)
+
+## formats objects into a string
+static func get_object_string(is_hobj: bool, data: Array):
+	var intended_str := ""
+	
+	if is_hobj:
+		intended_str += "\n[Hit Objects]\n"
+	else:
+		intended_str += "\n[Timing Points]\n"
+	
+	for obj in data:
+		var line := ""
+		
+		for value in obj:
+			if typeof(value) == TYPE_DICTIONARY:
+				for ex_value in value:
+					line += str(ex_value, ": ", value[ex_value], ", ")
+				continue
+			
+			line += str(value, ", ")
+		
+		# trim off ending comma, and add line
+		intended_str += line.substr(0, line.length() - 2) + "\n"
+	
+	return intended_str
