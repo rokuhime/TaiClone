@@ -6,7 +6,7 @@ extends Control
 @onready var music := $Music
 @onready var background := $Background
 
-var note := load("res://scenes/gameplay/hitobject/note.tscn") as PackedScene
+var note_scene = load("res://scenes/gameplay/hitobject/note.tscn")
 
 ## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
@@ -104,9 +104,9 @@ func load_chart(chart: Chart) -> void:
 	background.texture = chart.background
 	
 	# treating everything as a note for now
-	#for h_obj in chart.hit_objects:
-		#var note = note.instantiate()
-		#note.change_properties(h_obj.timing, h_obj.speed, is_kat)
-		#obj_container.add_child(note)
+	for h_obj in chart.hit_objects:
+		var note = note_scene.instantiate()
+		note.change_properties(h_obj[0], h_obj[1], h_obj[2])
+		obj_container.add_child(note)
 		
 	pass
