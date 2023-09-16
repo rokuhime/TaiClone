@@ -1,9 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://dc3sc6e2gotjc"]
+[gd_scene load_steps=4 format=3 uid="uid://dc3sc6e2gotjc"]
 
 [ext_resource type="Texture2D" uid="uid://juyo6h056khs" path="res://assets/default_skin/taikohitcircle.png" id="1_0hcx1"]
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_6riuo"]
-[ext_resource type="PackedScene" uid="uid://mr8o47qkqrdt" path="res://scenes/gameplay/hitobject/note.tscn" id="3_7avpq"]
-[ext_resource type="AudioStream" uid="uid://3tx48jwrc0fk" path="res://assets/stella/audio.mp3" id="4_xlq6k"]
 [ext_resource type="Texture2D" uid="uid://kog7coscf8qa" path="res://assets/dev_art/background.png" id="5_epojv"]
 
 [node name="Gameplay" type="Control"]
@@ -105,43 +103,6 @@ anchor_top = 0.5
 anchor_bottom = 0.5
 grow_vertical = 2
 
-[node name="Note" parent="Lane/ObjectContainers/TaikoSV" instance=ExtResource("3_7avpq")]
-z_index = 1
-layout_mode = 0
-anchors_preset = 0
-anchor_top = 0.0
-anchor_bottom = 0.0
-offset_top = 0.0
-offset_bottom = 64.0
-grow_vertical = 1
-timing = 2
-speed = 500.0
-
-[node name="Note2" parent="Lane/ObjectContainers/TaikoSV" instance=ExtResource("3_7avpq")]
-z_index = 1
-layout_mode = 0
-anchors_preset = 0
-anchor_top = 0.0
-anchor_bottom = 0.0
-offset_top = 0.0
-offset_bottom = 64.0
-grow_vertical = 1
-timing = 3
-speed = 500.0
-is_kat = true
-
-[node name="Note3" parent="Lane/ObjectContainers/TaikoSV" instance=ExtResource("3_7avpq")]
-z_index = 1
-layout_mode = 0
-anchors_preset = 0
-anchor_top = 0.0
-anchor_bottom = 0.0
-offset_top = 0.0
-offset_bottom = 64.0
-grow_vertical = 1
-timing = 4
-speed = 500.0
-
 [node name="Target" type="TextureRect" parent="Lane/ObjectContainers"]
 self_modulate = Color(1, 1, 1, 0.313726)
 layout_mode = 1
@@ -157,5 +118,3 @@ metadata/_edit_lock_ = true
 [node name="Audio" type="Node" parent="."]
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("4_xlq6k")
-autoplay = true

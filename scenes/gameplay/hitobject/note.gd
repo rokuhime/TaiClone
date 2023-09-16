@@ -7,15 +7,12 @@ extends TextureRect
 @export var is_kat := false
 var state := 1
 
-func _ready():
+func change_properties(new_timing : int, new_speed : float, new_kat : bool, new_finisher := false) -> void:
+	timing = new_timing
+	speed = new_speed
+	is_kat = new_kat
+	finisher = new_finisher
 	self_modulate = SkinManager.colour_kat if is_kat else SkinManager.colour_don
-
-#func _init(new_timing : int, new_speed : float, new_kat : bool, new_finisher := false) -> void:
-#	timing = new_timing
-#	speed = new_speed
-#	is_kat = new_kat
-#	finisher = new_finisher
-#	self_modulate = SkinManager.colour_kat if is_kat else SkinManager.colour_don
 
 func move(cur_time : float) -> void:
 	position.x = speed * (timing - cur_time)

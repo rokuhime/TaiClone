@@ -1,6 +1,8 @@
 class_name ChartLoader
 
 # TODO: Audio_Path and Preview_Point include extra spaces at the start?
+# TODO: dont include inherited points, unless kiai (inherit the last bpm)
+# TODO: its not writing the velocity :((((((((((((((((((((((((((((((((((((((
 
 # stupid notes to roku
 # sv types could be named "default", "slide", "scale"
@@ -148,6 +150,7 @@ static func convert_chart(file_path: String):
 						
 						# already parsed it, may aswell use it
 						timing_points.append(timing_point)
+						
 						continue
 
 					"HitObjects":
@@ -248,7 +251,18 @@ static func convert_chart(file_path: String):
 	# hit object section
 	new_file.store_line("\n[Hit Objects]")
 	for ho in hit_objects:
-		new_file.store_line(str(ho))
+		var intended_line := ""
+		
+		for hobj_var in ho:
+			if typeof(hobj_var) == TYPE_DICTIONARY:
+				for ex_var in hobj_var:
+					intended_line += str(ex_var, ": ", hobj_var[ex_var], ", ")
+				continue
+			
+			intended_line += str(hobj_var, ", ")
+		
+		intended_line = intended_line.substr(0, intended_line.length() - 2)
+		new_file.store_line(intended_line)
 	
 	# save path and close 
 	var new_path = new_file.get_path()
@@ -260,7 +274,7 @@ static func convert_chart(file_path: String):
 	return new_path
 
 ## loads .tc files and spits out Chart variable
-static func load_chart(file_path: String):
+static func load_chart(file_path: String):	
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	var line := ""
 	var section := ""
@@ -294,6 +308,7 @@ static func load_chart(file_path: String):
 				continue
 
 			"Hit Objects":
+				
 				continue
 
 			_: # chart info
@@ -312,7 +327,7 @@ static func load_chart(file_path: String):
 						audio = audio_loader.load_file(file_path.get_base_dir() + "/" + data_value)
 
 					"Background":
-						background = load(file_path.get_base_dir() + "/" + data_value)
+						background = Global.load_image(file_path.get_base_dir() + "/" + data_value)
 					
 					_:
 						chart_info[data_name] = data_value

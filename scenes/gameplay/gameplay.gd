@@ -6,6 +6,8 @@ extends Control
 @onready var music := $Music
 @onready var background := $Background
 
+var note := load("res://scenes/gameplay/hitobject/note.tscn") as PackedScene
+
 ## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
@@ -17,12 +19,15 @@ var _time_begin := 0.0
 var cur_object := 0
 
 func _ready() -> void:
-	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/N_dog - Dusk in overnight (6_6) [Eclipse].osu", false)
+	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/N_dog - Dusk in overnight (6_6) [Eclipse].osu", true)
 	if typeof(chart_path) == TYPE_INT:
 		# error, shoot a notif to let the user know what happened
 		pass
 	
-	var chart = ChartLoader.load_chart(chart_path)
+	# TODO: rename ChartLoader.load_chart or something, this is stupid
+	var a = ChartLoader.load_chart(chart_path)
+	print(a.background)
+	load_chart(a)
 	
 	# set time when song starts, using AudioServer to help with latency
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
@@ -96,5 +101,20 @@ func play_keypress_tween(input : String) -> void:
 	target.self_modulate = Color.WHITE
 	keypress_tweens[input].tween_property(target, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
 
-func load_chart(file_path) -> void:
+func load_chart(chart: Chart) -> void:
+	music.stream = chart.audio
+	background.texture = chart.background
+	
+	# treating everything as a note for now
+	print(chart.hit_objects)
+	for h_obj in chart.hit_objects:
+		var note = note.instantiate()
+		if h_obj.get("is_kat"):
+			print("waow")
+		if not h_obj.get("is_kat"):
+			print("fake and a fraud")
+			
+		#note.change_properties(h_obj.timing, h_obj.speed, is_kat)
+		#obj_container.add_child(note)
+		
 	pass
