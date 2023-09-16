@@ -25,9 +25,7 @@ func _ready() -> void:
 		pass
 	
 	# TODO: rename ChartLoader.load_chart or something, this is stupid
-	var a = ChartLoader.load_chart(chart_path)
-	print(a.background)
-	load_chart(a)
+	load_chart(ChartLoader.load_chart(chart_path))
 	
 	# set time when song starts, using AudioServer to help with latency
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
@@ -106,7 +104,6 @@ func load_chart(chart: Chart) -> void:
 	background.texture = chart.background
 	
 	# treating everything as a note for now
-	print(chart.hit_objects)
 	for h_obj in chart.hit_objects:
 		var note = note.instantiate()
 		if h_obj.get("is_kat"):

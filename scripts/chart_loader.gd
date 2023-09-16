@@ -3,6 +3,7 @@ class_name ChartLoader
 # TODO: Audio_Path and Preview_Point include extra spaces at the start?
 # TODO: dont include inherited points, unless kiai (inherit the last bpm)
 # TODO: its not writing the velocity :((((((((((((((((((((((((((((((((((((((
+# TODO: length is also grossly incorrect
 
 # stupid notes to roku
 # sv types could be named "default", "slide", "scale"
@@ -246,7 +247,18 @@ static func convert_chart(file_path: String):
 	# timing section
 	new_file.store_line("\n[Timing Points]")
 	for tp in timing_points:
-		new_file.store_line(str(tp))
+		var intended_line := ""
+		
+		for tim_var in tp:
+			if typeof(tim_var) == TYPE_DICTIONARY:
+				for ex_var in tim_var:
+					intended_line += str(ex_var, ": ", tim_var[ex_var], ", ")
+				continue
+			
+			intended_line += str(tim_var, ", ")
+		
+		intended_line = intended_line.substr(0, intended_line.length() - 2)
+		new_file.store_line(intended_line)
 
 	# hit object section
 	new_file.store_line("\n[Hit Objects]")
