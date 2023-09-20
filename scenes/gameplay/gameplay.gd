@@ -48,7 +48,6 @@ func _unhandled_input(event) -> void:
 		if obj_container.get_child_count() > cur_object:
 			# set variable as intended hit object
 			var hit_object := obj_container.get_child(cur_object) #as HitObject
-			print(hit_object.timing, " - ", hit_object.speed)
 			# let hit object do hit check
 			if hit_object.hit(inputs, _cur_time):
 				# set cur_object to next hit object
@@ -104,7 +103,7 @@ func play_keypress_tween(input : String) -> void:
 	keypress_tweens[input].tween_property(target, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
 
 func load_chart(chart: Chart) -> void:
-	music.stream = chart.audio
+	music.stream = chart.audio 
 	background.texture = chart.background
 	
 	# treating everything as a note for now

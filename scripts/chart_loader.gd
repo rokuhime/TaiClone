@@ -176,7 +176,6 @@ static func convert_chart(file_path: String):
 									
 									else: # if sv change...
 										current_timing["Velocity"] = timing[2]
-										#print(current_timing["Velocity"], " = ", timing[2], " * ", slider_multiplier , " * ", current_timing["BPM"])
 							
 							else:
 								next_timing_time = null
