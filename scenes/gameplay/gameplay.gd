@@ -29,6 +29,7 @@ func _ready() -> void:
 	
 	# set time when song starts, using AudioServer to help with latency
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	music.play()
 
 func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.is_pressed():

@@ -88,6 +88,7 @@ static func convert_chart(file_path: String):
 							chart_info[ translated_variables[valid_variables.find(data_name)] ] = data_value
 						
 						elif data_name == "SliderMultiplier":
+							data_value = line.substr(line.find(':') + 1, line.length())
 							slider_multiplier = float(data_value) * 100
 						
 						continue
@@ -169,6 +170,7 @@ static func convert_chart(file_path: String):
 									if timing[1]: # if bpm change...
 										current_timing["BPM"] = timing[2]
 										current_timing["Velocity"] = timing[2] * slider_multiplier
+										#print(slider_multiplier)
 									
 									else: # if sv change...
 										current_timing["Velocity"] = timing[2]
