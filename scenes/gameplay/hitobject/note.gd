@@ -1,13 +1,13 @@
 extends TextureRect
 
-@export var timing := 0
+@export var timing := 0.0
 @export var speed := 0.0
 @export var finisher := false
 
 @export var is_kat := false
 var state := 1
 
-func change_properties(new_timing : int, new_speed : float, new_kat : bool, new_finisher := false) -> void:
+func change_properties(new_timing : float, new_speed : float, new_kat : bool, new_finisher := false) -> void:
 	timing = new_timing
 	speed = new_speed
 	is_kat = new_kat

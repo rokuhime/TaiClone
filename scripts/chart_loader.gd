@@ -51,7 +51,7 @@ static func convert_chart(file_path: String):
 	
 	var hit_objects := []
 	
-	var slider_multiplier := 100
+	var slider_multiplier := 1.4
 	
 	match file_path.get_extension():
 		"osu":
@@ -89,7 +89,7 @@ static func convert_chart(file_path: String):
 						
 						elif data_name == "SliderMultiplier":
 							data_value = line.substr(line.find(':') + 1, line.length())
-							slider_multiplier = float(data_value) * 100
+							slider_multiplier = float(data_value)
 						
 						continue
 
@@ -97,7 +97,10 @@ static func convert_chart(file_path: String):
 						if line.begins_with("//"):
 							continue
 						if line_data[2].begins_with('"'):
-							chart_info["Background"] = line_data[2].trim_prefix('"').trim_suffix('"')
+							var bg_filepath = line_data[2].trim_prefix('"').trim_suffix('"')
+							if bg_filepath.ends_with(".png") or bg_filepath.ends_with(".jpg"):
+								chart_info["Background"] = line_data[2].trim_prefix('"').trim_suffix('"')
+								
 						continue
 
 					"TimingPoints":
@@ -123,7 +126,7 @@ static func convert_chart(file_path: String):
 						
 						# parse bpm changes/sv, based on uninherited
 						var beat_length := float(line_data[1])
-						var timing_value := snappedf(((60000 if uninherited else slider_multiplier * -1) / beat_length if beat_length else INF), 0.001)
+						var timing_value := snappedf(((60000 if uninherited else slider_multiplier * -100) / beat_length if beat_length else INF), 0.001)
 						var meter := int(line_data[2])
 						
 						# make timing point array
@@ -145,7 +148,7 @@ static func convert_chart(file_path: String):
 						if current_timing.is_empty() and uninherited:
 							current_timing["Time"] = time
 							current_timing["BPM"] = timing_value
-							current_timing["Velocity"] = slider_multiplier * timing_value
+							current_timing["Velocity"] = slider_multiplier * timing_value * current_timing["BPM"]
 						
 						elif next_timing_time == null:
 							next_timing_time = time
@@ -170,15 +173,15 @@ static func convert_chart(file_path: String):
 									if timing[1]: # if bpm change...
 										current_timing["BPM"] = timing[2]
 										current_timing["Velocity"] = timing[2] * slider_multiplier
-										#print(slider_multiplier)
 									
 									else: # if sv change...
-										current_timing["Velocity"] = timing[2]
+										current_timing["Velocity"] = timing[2] * slider_multiplier * current_timing["BPM"]
+										#print(current_timing["Velocity"], " = ", timing[2], " * ", slider_multiplier , " * ", current_timing["BPM"])
 							
 							else:
 								next_timing_time = null
 						
-						var velocity : float = current_timing["Velocity"] * slider_multiplier
+						var velocity : float = current_timing["Velocity"]
 						
 						var finisher := bool(2 & int(line_data[4]) >= 2)
 						

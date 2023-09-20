@@ -46,6 +46,7 @@ func _unhandled_input(event) -> void:
 		if obj_container.get_child_count() > cur_object:
 			# set variable as intended hit object
 			var hit_object := obj_container.get_child(cur_object) #as HitObject
+			print(hit_object.timing, " - ", hit_object.speed)
 			# let hit object do hit check
 			if hit_object.hit(inputs, _cur_time):
 				# set cur_object to next hit object
@@ -107,7 +108,8 @@ func load_chart(chart: Chart) -> void:
 	# treating everything as a note for now
 	for h_obj in chart.hit_objects:
 		var note = note_scene.instantiate()
-		note.change_properties(h_obj[0], h_obj[1], h_obj[2])
+		var is_kat = true if h_obj[2] == 3 else false
+		note.change_properties(h_obj[0], h_obj[1], is_kat)
 		obj_container.add_child(note)
 		
 	pass
