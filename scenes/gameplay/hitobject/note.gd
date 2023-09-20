@@ -1,4 +1,4 @@
-extends TextureRect
+extends Control
 
 @export var timing := 0.0
 @export var speed := 0.0
@@ -12,7 +12,7 @@ func change_properties(new_timing : float, new_speed : float, new_kat : bool, ne
 	speed = new_speed
 	is_kat = new_kat
 	finisher = new_finisher
-	self_modulate = SkinManager.colour_kat if is_kat else SkinManager.colour_don
+	$Sprite.self_modulate = SkinManager.colour_kat if is_kat else SkinManager.colour_don
 
 func move(cur_time : float) -> void:
 	position.x = speed * (timing - cur_time)

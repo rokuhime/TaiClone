@@ -66,7 +66,7 @@ func _unhandled_input(event) -> void:
 				hit_indicator_tween = create_tween()
 				
 				hit_indicator.self_modulate = Color.WHITE
-				hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
+				hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
 				
 				# accurate hit
 				hit_indicator.texture = SkinManager.hitin_accurate
