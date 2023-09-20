@@ -1,5 +1,8 @@
 extends Control
 
+# TODO: for some reason theres a huge lag between starting the song and the chart???
+# does not happen when the things in play_chart() is put in _ready()
+
 @onready var obj_container := $Lane/ObjectContainers/TaikoSV
 @onready var audio_container := $Audio
 @onready var drum_indicator := $Lane/DrumIndicator
@@ -24,11 +27,15 @@ var hit_indicator_tween : Tween
 # tween for miss indicator
 var miss_indicator_tween : Tween
 
+var playing := false
+
 var _cur_time := 0.0
 var _time_begin := 0.0
 var cur_object := 0
 
 func _ready() -> void:
+	get_viewport().files_dropped.connect(on_files_dropped)
+	
 	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Project Files/Post 2hu/assets/stella/LeoNeed x Hatsune Miku - Stella (Nanatsu) [Inner Oni].osu", true)
 	if typeof(chart_path) == TYPE_INT:
 		# error, shoot a notif to let the user know what happened
@@ -36,10 +43,7 @@ func _ready() -> void:
 	
 	# TODO: rename ChartLoader.load_chart or something, this is stupid
 	load_chart(ChartLoader.load_chart(chart_path))
-	
-	# set time when song starts, using AudioServer to help with latency
-	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-	music.play()
+	play_chart()
 
 func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.is_pressed():
@@ -126,6 +130,14 @@ func play_keypress_tween(input : String) -> void:
 	keypress_tweens[input].tween_property(target, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
 
 func load_chart(chart: Chart) -> void:
+	# stop chart
+	playing = false
+	music.stop()
+	
+	# delete all previous notes
+	for note in obj_container.get_children():
+		note.queue_free()
+	
 	music.stream = chart.audio 
 	background.texture = chart.background
 	
@@ -142,3 +154,20 @@ func load_chart(chart: Chart) -> void:
 				break
 	
 	cur_object = obj_container.get_child_count() - 1
+	
+	play_chart()
+
+func on_files_dropped(file_paths) -> void:
+	print()
+	var chart_path = ChartLoader.get_chart_path(file_paths[0], true)
+	if typeof(chart_path) == TYPE_INT:
+		# error, shoot a notif to let the user know what happened
+		pass
+	
+	load_chart(ChartLoader.load_chart(chart_path))
+
+func play_chart() -> void:
+	# set time when song starts, using AudioServer to help with latency
+	music.play()
+	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	
