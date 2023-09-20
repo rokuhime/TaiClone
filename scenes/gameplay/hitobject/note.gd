@@ -17,7 +17,7 @@ func change_properties(new_timing : float, new_speed : float, new_kat : bool, ne
 func move(cur_time : float) -> void:
 	position.x = speed * (timing - cur_time)
 
-func hit(inputs, cur_time : float) -> bool:
+func hit(inputs, cur_time : float) -> int:
 	# ensure its in hit window
 	if cur_time < timing + Global.INACC_TIMING and cur_time > timing - Global.INACC_TIMING:
 		# cycle through given inputs
@@ -31,8 +31,11 @@ func hit(inputs, cur_time : float) -> bool:
 			# object has been hit, hide to minimize lag and set state
 			hide()
 			state = -1
-			return true
-	return false
+		
+			if cur_time < timing + Global.ACC_TIMING and cur_time > timing - Global.ACC_TIMING:
+				return 2 # accurate hit
+			return 1 # inaccurate hit
+	return 0 # miss
 
 func miss() -> void:
 	# change colour to translucent and set state

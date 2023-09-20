@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dc3sc6e2gotjc"]
+[gd_scene load_steps=7 format=3 uid="uid://dc3sc6e2gotjc"]
 
 [ext_resource type="Texture2D" uid="uid://juyo6h056khs" path="res://assets/default_skin/taikohitcircle.png" id="1_0hcx1"]
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_6riuo"]
 [ext_resource type="PackedScene" uid="uid://xvvxl6iet160" path="res://scenes/global/volume_control.tscn" id="4_gef3x"]
+[ext_resource type="Texture2D" uid="uid://eq5iad8gv08e" path="res://assets/default_skin/taiko-hit300k.png" id="4_umg3i"]
+[ext_resource type="Texture2D" uid="uid://2q6355uwgp3g" path="res://assets/default_skin/taiko-hit0.png" id="5_cdksb"]
 [ext_resource type="Texture2D" uid="uid://kog7coscf8qa" path="res://assets/dev_art/background.png" id="5_epojv"]
 
 [node name="Gameplay" type="Control"]
@@ -116,6 +118,36 @@ grow_vertical = 2
 texture = ExtResource("1_0hcx1")
 expand_mode = 1
 metadata/_edit_lock_ = true
+
+[node name="HitIndicator" type="TextureRect" parent="Lane/ObjectContainers/Target"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_umg3i")
+expand_mode = 1
+
+[node name="MissIndicator" type="TextureRect" parent="Lane/ObjectContainers/Target"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_cdksb")
+expand_mode = 1
 
 [node name="Audio" type="Node" parent="."]
 

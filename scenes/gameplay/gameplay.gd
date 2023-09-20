@@ -5,6 +5,8 @@ extends Control
 @onready var drum_indicator := $Lane/DrumIndicator
 @onready var music := $Music
 @onready var background := $Background
+@onready var hit_indicator := $Lane/ObjectContainers/Target/HitIndicator
+@onready var miss_indicator := $Lane/ObjectContainers/Target/MissIndicator
 
 var note_scene = load("res://scenes/gameplay/hitobject/note.tscn")
 
@@ -15,6 +17,12 @@ const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 # includes every currently playing drum indicator tween, index'd through input name (see above)
 var keypress_tweens := {}
+
+# tween for accurate/inaccurate hit indicator
+var hit_indicator_tween : Tween
+
+# tween for miss indicator
+var miss_indicator_tween : Tween
 
 var _cur_time := 0.0
 var _time_begin := 0.0
@@ -48,8 +56,23 @@ func _unhandled_input(event) -> void:
 		if obj_container.get_child_count() > cur_object:
 			# set variable as intended hit object
 			var hit_object := obj_container.get_child(cur_object) #as HitObject
+			
 			# let hit object do hit check
-			if hit_object.hit(inputs, _cur_time):
+			var hit_check = hit_object.hit(inputs, _cur_time)
+			if bool(hit_check):
+				
+				if hit_indicator_tween:
+					hit_indicator_tween.kill()
+				hit_indicator_tween = create_tween()
+				
+				hit_indicator.self_modulate = Color.WHITE
+				hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
+				
+				# accurate hit
+				hit_indicator.texture = SkinManager.hitin_accurate
+				if hit_check == 1: # inaccurate hit
+					hit_indicator.texture = SkinManager.hitin_inaccurate
+				
 				# set cur_object to next hit object
 				cur_object += 1
 
