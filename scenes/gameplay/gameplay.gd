@@ -74,7 +74,7 @@ func _unhandled_input(event) -> void:
 					hit_indicator.texture = SkinManager.hitin_inaccurate
 				
 				# set cur_object to next hit object
-				cur_object += 1
+				cur_object -= 1
 
 		for key in inputs:
 			play_audio(str(key))
@@ -92,10 +92,10 @@ func _process(_delta) -> void:
 
 		# miss check
 		if obj.get_index() == cur_object:
-			if obj.timing < _cur_time - Global.INACC_TIMING:
+			if obj.time < _cur_time - Global.INACC_TIMING:
 				obj.miss()
 				# set cur_object to next hit object
-				cur_object += 1
+				cur_object -= 1
 
 func play_audio(input : String, finisher := false) -> void:
 	# find intended position of the audio
@@ -134,6 +134,11 @@ func load_chart(chart: Chart) -> void:
 		var note = note_scene.instantiate()
 		var is_kat = true if h_obj[2] == 3 else false
 		note.change_properties(h_obj[0], h_obj[1] * VELOCITY_MULTIPLIER, is_kat)
-		obj_container.add_child(note)
 		
-	pass
+		obj_container.add_child(note)
+		for i in range(obj_container.get_child_count()):
+			if note.time > (obj_container.get_child(i)).time:
+				obj_container.move_child(note, i)
+				break
+	
+	cur_object = obj_container.get_child_count() - 1

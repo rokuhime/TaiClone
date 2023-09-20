@@ -1,6 +1,6 @@
 extends Control
 
-@export var timing := 0.0
+@export var time := 0.0
 @export var speed := 0.0
 @export var finisher := false
 
@@ -8,18 +8,18 @@ extends Control
 var state := 1
 
 func change_properties(new_timing : float, new_speed : float, new_kat : bool, new_finisher := false) -> void:
-	timing = new_timing
+	time = new_timing
 	speed = new_speed
 	is_kat = new_kat
 	finisher = new_finisher
 	$Sprite.self_modulate = SkinManager.colour_kat if is_kat else SkinManager.colour_don
 
 func move(cur_time : float) -> void:
-	position.x = speed * (timing - cur_time)
+	position.x = speed * (time - cur_time)
 
 func hit(inputs, cur_time : float) -> int:
 	# ensure its in hit window
-	if cur_time < timing + Global.INACC_TIMING and cur_time > timing - Global.INACC_TIMING:
+	if cur_time < time + Global.INACC_TIMING and cur_time > time - Global.INACC_TIMING:
 		# cycle through given inputs
 		for key in inputs:
 			# make sure its the needed input for hitting
@@ -32,7 +32,7 @@ func hit(inputs, cur_time : float) -> int:
 			hide()
 			state = -1
 		
-			if cur_time < timing + Global.ACC_TIMING and cur_time > timing - Global.ACC_TIMING:
+			if cur_time < time + Global.ACC_TIMING and cur_time > time - Global.ACC_TIMING:
 				return 2 # accurate hit
 			return 1 # inaccurate hit
 	return 0 # miss

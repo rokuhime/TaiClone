@@ -1,7 +1,7 @@
 class_name HitObject
 extends Node
 
-var timing := 0
+var time := 0
 var speed := 0.0
 enum VELOCITIES {TAIKO, MANIA}
 var velocity_type := 0
