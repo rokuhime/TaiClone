@@ -8,6 +8,8 @@ extends Control
 
 var note_scene = load("res://scenes/gameplay/hitobject/note.tscn")
 
+const VELOCITY_MULTIPLIER := 1.9
+
 ## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
@@ -19,7 +21,7 @@ var _time_begin := 0.0
 var cur_object := 0
 
 func _ready() -> void:
-	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/duskinovernight/N_dog - Dusk in overnight (6_6) [Eclipse].osu", true)
+	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Project Files/Post 2hu/assets/stella/LeoNeed x Hatsune Miku - Stella (Nanatsu) [Inner Oni].osu", true)
 	if typeof(chart_path) == TYPE_INT:
 		# error, shoot a notif to let the user know what happened
 		pass
@@ -109,7 +111,7 @@ func load_chart(chart: Chart) -> void:
 	for h_obj in chart.hit_objects:
 		var note = note_scene.instantiate()
 		var is_kat = true if h_obj[2] == 3 else false
-		note.change_properties(h_obj[0], h_obj[1], is_kat)
+		note.change_properties(h_obj[0], h_obj[1] * VELOCITY_MULTIPLIER, is_kat)
 		obj_container.add_child(note)
 		
 	pass

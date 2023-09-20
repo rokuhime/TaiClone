@@ -126,7 +126,7 @@ static func convert_chart(file_path: String):
 						
 						# parse bpm changes/sv, based on uninherited
 						var beat_length := float(line_data[1])
-						var timing_value := snappedf(((60000 if uninherited else slider_multiplier * -100) / beat_length if beat_length else INF), 0.001)
+						var timing_value := snappedf(((60000 if uninherited else -100) / beat_length if beat_length else INF), 0.001)
 						var meter := int(line_data[2])
 						
 						# make timing point array
@@ -148,7 +148,7 @@ static func convert_chart(file_path: String):
 						if current_timing.is_empty() and uninherited:
 							current_timing["Time"] = time
 							current_timing["BPM"] = timing_value
-							current_timing["Velocity"] = slider_multiplier * timing_value * current_timing["BPM"]
+							current_timing["Velocity"] = slider_multiplier * timing_value
 						
 						elif next_timing_time == null:
 							next_timing_time = time
@@ -172,19 +172,18 @@ static func convert_chart(file_path: String):
 									current_timing["Time"] = timing[0]
 									if timing[1]: # if bpm change...
 										current_timing["BPM"] = timing[2]
-										current_timing["Velocity"] = timing[2] * slider_multiplier
+										current_timing["Velocity"] = 1.0
 									
 									else: # if sv change...
-										current_timing["Velocity"] = timing[2] * slider_multiplier * current_timing["BPM"]
+										current_timing["Velocity"] = timing[2]
 										#print(current_timing["Velocity"], " = ", timing[2], " * ", slider_multiplier , " * ", current_timing["BPM"])
 							
 							else:
 								next_timing_time = null
 						
-						var velocity : float = current_timing["Velocity"]
+						var velocity : float = current_timing["Velocity"] * slider_multiplier * current_timing["BPM"]
 						
-						var finisher := bool(2 & int(line_data[4]) >= 2)
-						
+						var finisher := bool(2 << 1 & int(line_data[4]))
 						# distinct between osu object types and taiclone types, as they are stored differently
 						var tc_type
 						
