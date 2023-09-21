@@ -1,0 +1,206 @@
+[gd_scene load_steps=6 format=3 uid="uid://dkot1mate8jvs"]
+
+[ext_resource type="Script" path="res://scenes/global/options.gd" id="1_0le0k"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_o6kn8"]
+font_size = 32
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_58oma"]
+color = Color(1, 1, 1, 1)
+thickness = 2
+
+[sub_resource type="LabelSettings" id="LabelSettings_nd7b7"]
+font_size = 24
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_8lqbf"]
+color = Color(0.627451, 0.627451, 0.627451, 1)
+grow_begin = -50.0
+grow_end = -50.0
+thickness = 2
+
+[node name="Options" type="ColorRect"]
+custom_minimum_size = Vector2(260, 0)
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+color = Color(0.196078, 0.196078, 0.196078, 1)
+script = ExtResource("1_0le0k")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="Contents" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="ScrollContainer/Contents"]
+layout_mode = 2
+text = "Options"
+label_settings = SubResource("LabelSettings_o6kn8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/Contents/Title"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_58oma")
+
+[node name="Sound" type="VBoxContainer" parent="ScrollContainer/Contents"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="ScrollContainer/Contents/Sound"]
+layout_mode = 2
+text = "Sound"
+label_settings = SubResource("LabelSettings_nd7b7")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/Contents/Sound/SectionTitle"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_8lqbf")
+
+[node name="Offset" type="HBoxContainer" parent="ScrollContainer/Contents/Sound"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/Contents/Sound/Offset"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Offset"
+horizontal_alignment = 2
+
+[node name="SpinBox" type="SpinBox" parent="ScrollContainer/Contents/Sound/Offset"]
+layout_mode = 2
+min_value = -100.0
+allow_greater = true
+allow_lesser = true
+alignment = 1
+
+[node name="Offset" type="Control" parent="ScrollContainer/Contents/Sound/Offset"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Input" type="VBoxContainer" parent="ScrollContainer/Contents"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="ScrollContainer/Contents/Input"]
+layout_mode = 2
+text = "Input"
+label_settings = SubResource("LabelSettings_nd7b7")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/Contents/Input/SectionTitle"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_8lqbf")
+
+[node name="LeftKat" type="HBoxContainer" parent="ScrollContainer/Contents/Input"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/Contents/Input/LeftKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Left Kat"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/Contents/Input/LeftKat"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Spacebar"
+text_overrun_behavior = 3
+
+[node name="Offset" type="Control" parent="ScrollContainer/Contents/Input/LeftKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="LeftDon" type="HBoxContainer" parent="ScrollContainer/Contents/Input"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/Contents/Input/LeftDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Left Don"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/Contents/Input/LeftDon"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Spacebar"
+text_overrun_behavior = 3
+
+[node name="Offset" type="Control" parent="ScrollContainer/Contents/Input/LeftDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="RightDon" type="HBoxContainer" parent="ScrollContainer/Contents/Input"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/Contents/Input/RightDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Right Don"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/Contents/Input/RightDon"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Spacebar"
+text_overrun_behavior = 3
+
+[node name="Offset" type="Control" parent="ScrollContainer/Contents/Input/RightDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="RightKat" type="HBoxContainer" parent="ScrollContainer/Contents/Input"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/Contents/Input/RightKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Right Kat"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/Contents/Input/RightKat"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Spacebar"
+text_overrun_behavior = 3
+
+[node name="Offset" type="Control" parent="ScrollContainer/Contents/Input/RightKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[connection signal="value_changed" from="ScrollContainer/Contents/Sound/Offset/SpinBox" to="." method="change_offset"]

@@ -6,6 +6,8 @@ var expiring_audio = preload("res://scenes/global/expiring_audio.tscn")
 const ACC_TIMING := 0.03
 const INACC_TIMING := 0.07
 
+var offset := 0.0
+
 func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + VERSION, 0)
 

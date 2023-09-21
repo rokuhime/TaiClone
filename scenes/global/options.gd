@@ -6,6 +6,8 @@ var keychange_target := ""
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	toggled = visible
+	
 	for input in input_section.get_children():
 		if input.name == "SectionTitle":
 			continue
@@ -42,3 +44,6 @@ func change_key(target):
 		InputMap.action_add_event(keychange_target, target)
 		
 		keychange_target = ""
+
+func change_offset(new_offset) -> void:
+	Global.offset = new_offset / 1000
