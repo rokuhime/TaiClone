@@ -10,6 +10,7 @@ extends Control
 @onready var background := $Background
 @onready var hit_indicator := $Lane/ObjectContainers/Target/HitIndicator
 @onready var miss_indicator := $Lane/ObjectContainers/Target/MissIndicator
+@onready var mobile_controls := $MobileControls
 
 var note_scene = load("res://scenes/gameplay/hitobject/note.tscn")
 
@@ -180,4 +181,36 @@ func play_chart() -> void:
 	# set time when song starts, using AudioServer to help with latency
 	music.play()
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-	
+
+func _on_static_body_2d_input_event(viewport, event, shape_idx):
+	print("cunt", event)
+
+func mobile_input(event, type):
+	if event is InputEventMouseButton and event.is_pressed():
+		play_keypress_tween(type)
+		# hit detection
+		# basic invalid index check
+		if obj_container.get_child_count() > cur_object:
+			# set variable as intended hit object
+			var hit_object := obj_container.get_child(cur_object) #as HitObject
+			
+			# let hit object do hit check
+			var hit_check = hit_object.hit([type], _cur_time)
+			if bool(hit_check):
+				
+				if hit_indicator_tween:
+					hit_indicator_tween.kill()
+				hit_indicator_tween = create_tween()
+				
+				hit_indicator.self_modulate = Color.WHITE
+				hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
+				
+				# accurate hit
+				hit_indicator.texture = SkinManager.hitin_accurate
+				if hit_check == 1: # inaccurate hit
+					hit_indicator.texture = SkinManager.hitin_inaccurate
+				
+				# set cur_object to next hit object
+				cur_object -= 1
+
+			play_audio(type)

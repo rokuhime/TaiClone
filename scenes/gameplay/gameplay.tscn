@@ -166,3 +166,51 @@ grow_vertical = 0
 
 [node name="Options" parent="." instance=ExtResource("7_x3q17")]
 layout_mode = 1
+
+[node name="MobileControls" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 381.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MobileControls"]
+modulate = Color(1, 1, 1, 0.34902)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -267.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="LeftKat" type="ColorRect" parent="MobileControls/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.262745, 0.556863, 0.678431, 1)
+
+[node name="LeftDon" type="ColorRect" parent="MobileControls/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+color = Color(0.921569, 0.270588, 0.168627, 1)
+
+[node name="RightDon" type="ColorRect" parent="MobileControls/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+color = Color(0.921569, 0.270588, 0.168627, 1)
+
+[node name="RightKat" type="ColorRect" parent="MobileControls/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.262745, 0.556863, 0.678431, 1)
+
+[connection signal="gui_input" from="MobileControls/HBoxContainer/LeftKat" to="." method="mobile_input" binds= ["LeftKat"]]
+[connection signal="gui_input" from="MobileControls/HBoxContainer/LeftDon" to="." method="mobile_input" binds= ["LeftDon"]]
+[connection signal="gui_input" from="MobileControls/HBoxContainer/RightDon" to="." method="mobile_input" binds= ["RightDon"]]
+[connection signal="gui_input" from="MobileControls/HBoxContainer/RightKat" to="." method="mobile_input" binds= ["RightKat"]]
