@@ -100,6 +100,16 @@ func _process(_delta) -> void:
 				obj.miss()
 				# set cur_object to next hit object
 				cur_object -= 1
+				
+				# visuals
+				if miss_indicator_tween:
+					miss_indicator_tween.kill()
+				miss_indicator_tween = create_tween()
+				
+				miss_indicator.self_modulate = Color.WHITE
+				miss_indicator_tween.tween_property(miss_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
+				
+				miss_indicator.texture = SkinManager.hitin_miss
 
 func play_audio(input : String, finisher := false) -> void:
 	# find intended position of the audio
