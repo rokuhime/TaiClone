@@ -9,11 +9,6 @@ var state := 1
 #enum VELOCITIES {TAIKO, MANIA}
 #var velocity_type := 0
 
-## acts as _init() function, see gameplay load_chart()
-func change_properties(new_timing : float, new_speed : float, new_kat : bool, new_finisher := false) -> void:
-	time = new_timing
-	speed = new_speed
-
 ## moves hitobject across playfield
 func move(cur_time : float) -> void:
 	position.x = speed * (time - cur_time)
