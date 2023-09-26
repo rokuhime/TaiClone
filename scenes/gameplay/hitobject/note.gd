@@ -1,3 +1,4 @@
+class_name Note
 extends Control
 
 @export var time := 0.0

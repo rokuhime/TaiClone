@@ -60,6 +60,24 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/separator = SubResource("StyleBoxLine_58oma")
 
+[node name="Auto" type="HBoxContainer" parent="ScrollContainer/Contents"]
+layout_mode = 2
+
+[node name="OffsetL" type="Control" parent="ScrollContainer/Contents/Auto"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Toggle" type="CheckButton" parent="ScrollContainer/Contents/Auto"]
+layout_mode = 2
+text = "Auto"
+alignment = 1
+
+[node name="OffsetR" type="Control" parent="ScrollContainer/Contents/Auto"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
 [node name="Sound" type="VBoxContainer" parent="ScrollContainer/Contents"]
 layout_mode = 2
 
@@ -204,4 +222,5 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.5
 
+[connection signal="toggled" from="ScrollContainer/Contents/Auto/Toggle" to="." method="toggle_auto"]
 [connection signal="value_changed" from="ScrollContainer/Contents/Sound/Offset/SpinBox" to="." method="change_offset"]

@@ -29,6 +29,7 @@ var hit_indicator_tween : Tween
 var miss_indicator_tween : Tween
 
 var playing := false
+var auto := false
 
 var _cur_time := 0.0
 var _time_begin := 0.0
@@ -47,7 +48,7 @@ func _ready() -> void:
 	play_chart()
 
 func _unhandled_input(event) -> void:
-	if event is InputEventKey and event.is_pressed():
+	if event is InputEventKey and event.is_pressed() and !auto:
 		# collect all inputs into an array to check
 		var inputs := []
 
@@ -95,9 +96,33 @@ func _process(_delta) -> void:
 		if obj.state == -1:
 			continue
 
-		# miss check
+		# auto / miss check
 		if obj.get_index() == cur_object:
-			if obj.time < _cur_time - Global.INACC_TIMING:
+			if auto:
+				if obj.time < _cur_time:
+					var inputs := []
+					if obj is Note:
+						var new_input = "LeftKat" if obj.is_kat else "LeftDon"
+						inputs.push_front(new_input)
+						play_audio(new_input)
+					
+					var hit_check = obj.hit(inputs, _cur_time)
+					if hit_indicator_tween:
+						hit_indicator_tween.kill()
+					hit_indicator_tween = create_tween()
+					
+					hit_indicator.self_modulate = Color.WHITE
+					hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
+					
+					# accurate hit
+					hit_indicator.texture = SkinManager.hitin_accurate
+					if hit_check == 1: # inaccurate hit
+						hit_indicator.texture = SkinManager.hitin_inaccurate
+					
+					# set cur_object to next hit object
+					cur_object -= 1
+					
+			elif obj.time < _cur_time - Global.INACC_TIMING:
 				obj.miss()
 				# set cur_object to next hit object
 				cur_object -= 1

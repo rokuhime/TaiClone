@@ -47,3 +47,6 @@ func change_key(target):
 
 func change_offset(new_offset) -> void:
 	Global.offset = new_offset / 1000
+	
+func toggle_auto(new_auto) -> void:
+		get_node("..").auto = new_auto
