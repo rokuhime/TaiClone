@@ -88,9 +88,9 @@ func change_focus(new_mouse_inside := false) -> void:
 	timeout_tween = create_tween()
 	timeout_tween.tween_property(timeout_bar, "value", 0, timer.wait_time)
 
-func change_visibility(visible : bool) -> void:
+func change_visibility(new_visible : bool) -> void:
 	var new_colour : Color
-	new_colour = Color.WHITE if visible else Color(1,1,1,0)
+	new_colour = Color.WHITE if new_visible else Color(1,1,1,0)
 	
 	if visible_tween:
 		visible_tween.kill()
@@ -98,7 +98,7 @@ func change_visibility(visible : bool) -> void:
 	visible_tween.tween_property(self, "modulate", new_colour, 0.2)
 	
 	# change cur_bus to master if left to go invisible
-	if not visible:
+	if not new_visible:
 		change_cur_bus(0)
 
 # automatically disposing tween, works best if same duration so it writes over possible dupiclates

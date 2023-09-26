@@ -112,7 +112,7 @@ func _process(_delta) -> void:
 				
 				miss_indicator.texture = SkinManager.hitin_miss
 
-func play_audio(input : String, finisher := false) -> void:
+func play_audio(input : String, finisher := false):
 	# find intended position of the audio
 	var x =  ProjectSettings.get_setting("display/window/size/viewport_width") / 2
 	var y =  ProjectSettings.get_setting("display/window/size/viewport_height") / 2
@@ -181,9 +181,6 @@ func play_chart() -> void:
 	# set time when song starts, using AudioServer to help with latency
 	music.play()
 	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-
-func _on_static_body_2d_input_event(viewport, event, shape_idx):
-	print("cunt", event)
 
 func mobile_input(event, type):
 	if event is InputEventMouseButton and event.is_pressed():

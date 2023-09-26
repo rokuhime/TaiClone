@@ -2,12 +2,12 @@
 # only really intended for use with things that may overlap other sounds, or things that spawn audio on deletion
 extends AudioStreamPlayer2D
 
-func ini(parent: Node, source: AudioStream, new_bus := "Master", position := Vector2.ZERO) -> void:
+func ini(parent: Node, source: AudioStream, new_bus := "Master", new_position := Vector2.ZERO) -> void:
 	# add to the given parent so it doesnt just dissapear into nothingness
 	parent.add_child(self)
 	# if a position is given, move itsself to that
 	if position:
-		global_position = position
+		global_position = new_position
 	
 	# set audio settings and play
 	stream = source

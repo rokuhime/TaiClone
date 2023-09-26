@@ -15,17 +15,11 @@ func _init() -> void:
 func format_time(time) -> String:
 	if time <= 0:
 		return "00:00.00"
-	var min : int = floor(time / 60)
-	var sec : int = fmod(time, 60)
-	var mil : int = fmod((time * 1000), 1000) / 10
-	var str := "%02d:%02d.%02d" % [min, sec, mil]
-	return str
-
-func load_file(directory):
-	var file = FileAccess.open("user://save_game.dat", FileAccess.READ)
-	var content = file.get_as_text()
-	file.close() # i aint makin any memory leaks you got me MESSED UP
-	return content
+	var minute : int = floor(time / 60)
+	var second : int = fmod(time, 60)
+	var millisecond : int = fmod((time * 1000), 1000) / 10
+	var new_str := "%02d:%02d.%02d" % [minute, second, millisecond]
+	return new_str
 
 func load_image(file_path: String, crop_transparent := true) -> Texture:
 	var image = Image.load_from_file(file_path)
