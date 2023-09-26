@@ -9,7 +9,3 @@ var colour_kat := Color("438EAD")
 @onready var hitin_accurate := load("res://assets/default_skin/taiko-hit300k.png")
 @onready var hitin_inaccurate := load("res://assets/default_skin/taiko-hit100k.png")
 @onready var hitin_miss := load("res://assets/default_skin/taiko-hit0.png")
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.

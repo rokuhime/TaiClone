@@ -85,7 +85,7 @@ func _unhandled_input(event) -> void:
 			play_audio(str(key))
 
 func _process(_delta) -> void:
-	_cur_time = (Time.get_ticks_usec() / 1000.0) / 1000 - _time_begin
+	_cur_time = (Time.get_ticks_usec() / 1000.0) / 1000 - _time_begin + Global.offset
 	
 	# make all hitobjects move
 	for obj in obj_container.get_children():

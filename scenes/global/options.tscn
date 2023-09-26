@@ -92,7 +92,8 @@ horizontal_alignment = 2
 
 [node name="SpinBox" type="SpinBox" parent="ScrollContainer/Contents/Sound/Offset"]
 layout_mode = 2
-min_value = -100.0
+min_value = -1000.0
+max_value = 1000.0
 allow_greater = true
 allow_lesser = true
 alignment = 1
