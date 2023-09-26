@@ -14,7 +14,7 @@ extends Control
 
 var note_scene = load("res://scenes/gameplay/hitobject/note.tscn")
 
-const VELOCITY_MULTIPLIER := 1.9
+const VELOCITY_MULTIPLIER := 3
 
 ## The [Array] of customizable key-binds used in [Gameplay].
 const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
