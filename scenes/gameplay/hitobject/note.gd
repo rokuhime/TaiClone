@@ -1,12 +1,9 @@
 class_name Note
-extends Control
+extends HitObject
 
-@export var time := 0.0
-@export var speed := 0.0
 @export var finisher := false
 
 @export var is_kat := false
-var state := 1
 
 func change_properties(new_timing : float, new_speed : float, new_kat : bool, new_finisher := false) -> void:
 	time = new_timing
@@ -14,9 +11,6 @@ func change_properties(new_timing : float, new_speed : float, new_kat : bool, ne
 	is_kat = new_kat
 	finisher = new_finisher
 	$Sprite.self_modulate = SkinManager.colour_kat if is_kat else SkinManager.colour_don
-
-func move(cur_time : float) -> void:
-	position.x = speed * (time - cur_time)
 
 func hit(inputs, cur_time : float) -> int:
 	# ensure its in hit window

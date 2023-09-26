@@ -18,6 +18,10 @@ size_flags_vertical = 4
 texture = ExtResource("1_kdqiw")
 expand_mode = 1
 script = ExtResource("2_aimsf")
+time = null
+speed = null
+finisher = null
+is_kat = null
 
 [node name="Sprite" type="TextureRect" parent="."]
 layout_mode = 1
