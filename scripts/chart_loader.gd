@@ -9,8 +9,6 @@ class_name ChartLoader
 # sv types could be named "default", "slide", "scale"
 # respectively taiko, mania, piu
 
-enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
-
 const TC_VERSION := "v0.0.1"
 
 ## sees if chart needs to be converted, and then gives the .tc file path
@@ -193,21 +191,21 @@ static func convert_chart(file_path: String):
 						
 						if bool(1 << 3 & int(line_data[3])): # spinner
 							ex["Length"] = float(line_data[5]) / 1000
-							tc_type = NOTETYPE.SPINNER
+							tc_type = Global.NOTETYPE.SPINNER
 						
 						elif bool(1 << 1 & int(line_data[3])): # slider
-							tc_type = NOTETYPE.ROLL
+							tc_type = Global.NOTETYPE.ROLL
 							
 							# unnessacary variables, but breaking this down for readability
 							# osu holds slider length extremely strangely, so this converts the slider's "length" into seconds
 							var length = float(line_data[7])
 							var repeats = int(line_data[6])
-							var beat_length = current_timing["BPM"] / 60000
-							ex["Length"] = (length * repeats / (slider_multiplier * 100 * current_timing["Velocity"]) * beat_length) / 1000
+							ex["BeatLength"] = current_timing["BPM"] / 60 # was 60000 :?
+							ex["Length"] = (length * repeats / (slider_multiplier * 100 * current_timing["Velocity"]) * ex["BeatLength"])
 						
 						else:
 							# everything else is parsed as a note, don/kat based on hitsounding as expected
-							tc_type = NOTETYPE.KAT if bool(1 << 1 & int(line_data[4])) else NOTETYPE.DON
+							tc_type = Global.NOTETYPE.KAT if bool(1 << 1 & int(line_data[4])) else Global.NOTETYPE.DON
 						
 						if bool(1 << 2 & int(line_data[3])): # new combo
 							ex["New_Combo"] = true

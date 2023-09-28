@@ -13,6 +13,7 @@ extends Control
 @onready var mobile_controls := $MobileControls
 
 var note_scene = load("res://scenes/gameplay/hitobject/note.tscn")
+var roll_scene = load("res://scenes/gameplay/hitobject/roll.tscn")
 
 const VELOCITY_MULTIPLIER := 3
 
@@ -38,8 +39,8 @@ var cur_object := 0
 func _ready() -> void:
 	get_viewport().files_dropped.connect(on_files_dropped)
 	
-	#var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/shintakarajima/sakanaction - Shin Takarajima (6_6) [test].osu", true)
-	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Project Files/Post 2hu/assets/stella/LeoNeed x Hatsune Miku - Stella (Nanatsu) [Inner Oni].osu", true)
+	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/shintakarajima/sakanaction - Shin Takarajima (6_6) [test].osu", true)
+	#var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Project Files/Post 2hu/assets/stella/LeoNeed x Hatsune Miku - Stella (Nanatsu) [Inner Oni].osu", true)
 	if typeof(chart_path) == TYPE_INT:
 		# error, shoot a notif to let the user know what happened
 		pass
@@ -180,15 +181,30 @@ func load_chart(chart: Chart) -> void:
 	
 	# treating everything as a note for now
 	for h_obj in chart.hit_objects:
-		var note = note_scene.instantiate()
-		var is_kat = true if h_obj[2] == 3 else false
-		note.change_properties(h_obj[0], h_obj[1] * VELOCITY_MULTIPLIER, is_kat)
-		
-		obj_container.add_child(note)
-		for i in range(obj_container.get_child_count()):
-			if note.time > (obj_container.get_child(i)).time:
-				obj_container.move_child(note, i)
-				break
+				
+		match h_obj[2]:
+			Global.NOTETYPE.ROLL:
+				var roll = roll_scene.instantiate()
+				var length : float = float(h_obj[4]["Length"])
+				var beat_length : float = float(h_obj[4]["BeatLength"])
+				roll.change_properties(h_obj[0], h_obj[1] * VELOCITY_MULTIPLIER, length, false, beat_length)
+				
+				obj_container.add_child(roll)
+				for i in range(obj_container.get_child_count()):
+					if roll.time > (obj_container.get_child(i)).time:
+						obj_container.move_child(roll, i)
+						break
+
+			_:
+				var note = note_scene.instantiate()
+				var is_kat = true if h_obj[2] == 3 else false
+				note.change_properties(h_obj[0], h_obj[1] * VELOCITY_MULTIPLIER, is_kat)
+				
+				obj_container.add_child(note)
+				for i in range(obj_container.get_child_count()):
+					if note.time > (obj_container.get_child(i)).time:
+						obj_container.move_child(note, i)
+						break
 	
 	cur_object = obj_container.get_child_count() - 1
 	

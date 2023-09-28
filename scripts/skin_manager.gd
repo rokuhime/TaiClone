@@ -2,6 +2,7 @@ extends Node
 
 var colour_don := Color("EB452B")
 var colour_kat := Color("438EAD")
+var colour_roll := Color("FCB806")
 
 @onready var audio_don := load("res://assets/default_skin/h_don.wav")
 @onready var audio_kat := load("res://assets/default_skin/h_kat.wav")

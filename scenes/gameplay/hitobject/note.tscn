@@ -15,7 +15,6 @@ grow_vertical = 2
 pivot_offset = Vector2(64, 74)
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = ExtResource("1_kdqiw")
 expand_mode = 1
 script = ExtResource("2_aimsf")
 finisher = null

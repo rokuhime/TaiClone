@@ -2,6 +2,8 @@ extends Node
 
 const VERSION := "v0.0.1 - how many branches does it take to screw in a lightbulb?"
 
+enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
+
 var expiring_audio = preload("res://scenes/global/expiring_audio.tscn")
 const ACC_TIMING := 0.03
 const INACC_TIMING := 0.07
