@@ -38,6 +38,7 @@ var cur_object := 0
 func _ready() -> void:
 	get_viewport().files_dropped.connect(on_files_dropped)
 	
+	#var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/shintakarajima/sakanaction - Shin Takarajima (6_6) [test].osu", true)
 	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Project Files/Post 2hu/assets/stella/LeoNeed x Hatsune Miku - Stella (Nanatsu) [Inner Oni].osu", true)
 	if typeof(chart_path) == TYPE_INT:
 		# error, shoot a notif to let the user know what happened

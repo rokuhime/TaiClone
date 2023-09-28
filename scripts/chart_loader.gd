@@ -148,7 +148,7 @@ static func convert_chart(file_path: String):
 						if current_timing.is_empty() and uninherited:
 							current_timing["Time"] = time
 							current_timing["BPM"] = timing_value
-							current_timing["Velocity"] = slider_multiplier * timing_value
+							current_timing["Velocity"] = 1.0
 						
 						elif next_timing_time == null:
 							next_timing_time = time
