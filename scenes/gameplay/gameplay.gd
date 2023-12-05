@@ -1,255 +1,222 @@
 extends Control
+# TODO: last thing i started was actual input registration with notes, but i didnt get past making next_note_idx
+# spinners are given the correct value(?) but are not playable atm, sliders are correct length but no ticks
 
-# TODO: for some reason theres a huge lag between starting the song and the chart???
-# does not happen when the things in play_chart() is put in _ready()
-
-@onready var obj_container := $Lane/ObjectContainers/TaikoSV
-@onready var audio_container := $Audio
-@onready var drum_indicator := $Lane/DrumIndicator
+@onready var hit_object_container := $Track/HitPoint/HitObjectContainer
 @onready var music := $Music
-@onready var background := $Background
-@onready var hit_indicator := $Lane/ObjectContainers/Target/HitIndicator
-@onready var miss_indicator := $Lane/ObjectContainers/Target/MissIndicator
-@onready var mobile_controls := $MobileControls
+@onready var audio_queuer := $AudioQueuer as AudioQueuer
+@onready var fps_label := $fps as Label
+@onready var score_manager := $ScoreManager as ScoreManager
 
-var note_scene = load("res://scenes/gameplay/hitobject/note.tscn")
-var roll_scene = load("res://scenes/gameplay/hitobject/roll.tscn")
+@onready var drum_indicator: Node = $Track/DrumIndicator
+var drum_indicator_tweens : Array = [null, null, null, null]
 
-const VELOCITY_MULTIPLIER := 3
-
-## The [Array] of customizable key-binds used in [Gameplay].
-const KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
-
-# includes every currently playing drum indicator tween, index'd through input name (see above)
-var keypress_tweens := {}
-
-# tween for accurate/inaccurate hit indicator
-var hit_indicator_tween : Tween
-
-# tween for miss indicator
-var miss_indicator_tween : Tween
-
+var current_chart : Chart
+@export var current_time := 0.0
+@export var start_time := 0.0
+var current_play_offset := 0.0
 var playing := false
-var auto := false
 
-var _cur_time := 0.0
-var _time_begin := 0.0
-var cur_object := 0
+@export var next_note_idx := 0
 
+var rhythm_inputs := [ "LeftKat", "LeftDon", "RightDon", "RightKat" ]
+enum SIDE { NONE, LEFT, RIGHT }
+var last_side_input := SIDE.NONE
+var active_finisher_note: Note
+
+enum HITSOUND_STATES {NONE, NORMAL, FINISHER}
+var current_hitsound_state = HITSOUND_STATES.NORMAL
+
+var don_audio := AudioLoader.load_file("res://assets/default_skin/h_don.wav") as AudioStream
+var kat_audio := AudioLoader.load_file("res://assets/default_skin/h_kat.wav") as AudioStream
+var donfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_don.wav") as AudioStream
+var katfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_kat.wav") as AudioStream
+
+# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	get_viewport().files_dropped.connect(on_files_dropped)
-	
-	var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Songs/osu/shintakarajima/sakanaction - Shin Takarajima (6_6) [test].osu", true)
-	#var chart_path = ChartLoader.get_chart_path("/home/roku/Documents/Programming/TaiClone/Project Files/Post 2hu/assets/stella/LeoNeed x Hatsune Miku - Stella (Nanatsu) [Inner Oni].osu", true)
-	if typeof(chart_path) == TYPE_INT:
-		# error, shoot a notif to let the user know what happened
-		pass
-	
-	# TODO: rename ChartLoader.load_chart or something, this is stupid
-	load_chart(ChartLoader.load_chart(chart_path))
-	play_chart()
-
-func _unhandled_input(event) -> void:
-	if event is InputEventKey and event.is_pressed() and !auto:
-		# collect all inputs into an array to check
-		var inputs := []
-
-		for key in KEYS:
-			if event.is_action_pressed(str(key), false, true):
-				inputs.append(str(key))
-				play_keypress_tween(key)
-
-		# hit detection
-		# basic invalid index check
-		if obj_container.get_child_count() > cur_object:
-			# set variable as intended hit object
-			var hit_object := obj_container.get_child(cur_object) #as HitObject
-			
-			# let hit object do hit check
-			var hit_check = hit_object.hit(inputs, _cur_time)
-			if bool(hit_check):
-				
-				if hit_indicator_tween:
-					hit_indicator_tween.kill()
-				hit_indicator_tween = create_tween()
-				
-				hit_indicator.self_modulate = Color.WHITE
-				hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
-				
-				# accurate hit
-				hit_indicator.texture = SkinManager.hitin_accurate
-				if hit_check == 1: # inaccurate hit
-					hit_indicator.texture = SkinManager.hitin_inaccurate
-				
-				# set cur_object to next hit object
-				cur_object -= 1
-
-		for key in inputs:
-			play_audio(str(key))
+	get_window().size = Vector2i(1280, 720)
+	get_window().move_to_center()
+	get_tree().root.files_dropped.connect(file_dropped)
+	pass # Replace with function body.
 
 func _process(_delta) -> void:
-	_cur_time = (Time.get_ticks_usec() / 1000.0) / 1000 - _time_begin + Global.offset
+	fps_label.text = "FPS: " + str(Engine.get_frames_per_second()) + "\nstart_time: " + str(start_time) + "\ncurrent_time: " + str(current_time) + "\nnext_note_idx: " + str(next_note_idx)
 	
-	# make all hitobjects move
-	for obj in obj_container.get_children():
-		obj.move(_cur_time)
+	if playing:
+		current_time = Time.get_ticks_msec() / 1000.0 - start_time
+		
+		for hobj in hit_object_container.get_children():
+			hobj.position.x = (hobj.speed * Global.resolution_multiplier) * (hobj.timing - current_time)
+		
+		if next_note_idx <= 0:
+			return
+			
+		var next_note : Note = get_next_note()
+		if next_note.timing + Global.INACC_TIMING < current_time:
+			apply_score(next_note.timing - current_time, next_note)
+			pass
 
-		# if already hit, skip misscheck
-		if obj.state == -1:
-			continue
+func _unhandled_input(event) -> void:
+	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
+		var next_note: Note = get_next_note()
+		if next_note == null:
+			return
+		if Input.is_action_just_pressed("SkipIntro") and playing and next_note.timing > 2:
+			skip_intro()
+		
+		# get rhythm gameplay input
+		var pressed_input := ""
+		
+		for rhythm_input in rhythm_inputs:
+			if Input.is_action_just_pressed(rhythm_input):
+				pressed_input = rhythm_input
+				break
+		
+		if pressed_input == "" or !playing or next_note_idx <= 0: 
+			return
+		
+		current_hitsound_state = HITSOUND_STATES.NORMAL
+		update_input_indicator(rhythm_inputs.find(pressed_input))
+		
+		var current_side_input = SIDE.LEFT if pressed_input.contains("Left") else SIDE.RIGHT
+		var is_input_kat := false if pressed_input.contains("Don") else true
+		
+		hit_check(current_side_input, is_input_kat, next_note)
+		play_audio(current_side_input, is_input_kat)
 
-		# auto / miss check
-		if obj.get_index() == cur_object:
-			if auto:
-				if obj.time < _cur_time:
-					var inputs := []
-					if obj is Note:
-						var new_input = "LeftKat" if obj.is_kat else "LeftDon"
-						inputs.push_front(new_input)
-						play_audio(new_input)
-					
-					var hit_check = obj.hit(inputs, _cur_time)
-					if hit_indicator_tween:
-						hit_indicator_tween.kill()
-					hit_indicator_tween = create_tween()
-					
-					hit_indicator.self_modulate = Color.WHITE
-					hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
-					
-					# accurate hit
-					hit_indicator.texture = SkinManager.hitin_accurate
-					if hit_check == 1: # inaccurate hit
-						hit_indicator.texture = SkinManager.hitin_inaccurate
-					
-					# set cur_object to next hit object
-					cur_object -= 1
-					
-			elif obj.time < _cur_time - Global.INACC_TIMING:
-				obj.miss()
-				# set cur_object to next hit object
-				cur_object -= 1
-				
-				# visuals
-				if miss_indicator_tween:
-					miss_indicator_tween.kill()
-				miss_indicator_tween = create_tween()
-				
-				miss_indicator.self_modulate = Color.WHITE
-				miss_indicator_tween.tween_property(miss_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
-				
-				miss_indicator.texture = SkinManager.hitin_miss
+func play_audio(input_side: SIDE, is_input_kat: bool):
+	var stream_audio = kat_audio if is_input_kat else don_audio
+	match current_hitsound_state:
+		HITSOUND_STATES.NONE:
+			return
+		HITSOUND_STATES.FINISHER:
+			stream_audio = katfinisher_audio if is_input_kat else donfinisher_audio
+	
+	# audio
+	var stream_pos_offset = 250 if input_side == SIDE.RIGHT else -250
+	var stream_position := Vector2(0, ProjectSettings.get_setting("display/window/size/viewport_height") / 2)
+	stream_position.x = ProjectSettings.get_setting("display/window/size/viewport_width") / 2 + stream_pos_offset
+	
+	audio_queuer.play_audio(stream_audio, stream_position)
 
-func play_audio(input : String, finisher := false):
-	# find intended position of the audio
-	var x =  ProjectSettings.get_setting("display/window/size/viewport_width") / 2
-	var y =  ProjectSettings.get_setting("display/window/size/viewport_height") / 2
+func hit_check(input_side: SIDE, is_input_kat: bool, target_note: Note ) -> void:
+	if active_finisher_note:  #for secondary finisher hit
+		if (active_finisher_note.timing - current_time) > Global.INACC_TIMING:
+			pass
+		elif active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
+			apply_finisher_score(active_finisher_note.timing - current_time)
+			current_hitsound_state = HITSOUND_STATES.NONE
+			#print("secondary finisher hit")
+			return
+		# if the input is the same side/different colour, null the active finisher and look at next circle
+		elif active_finisher_note.last_side_hit == input_side or active_finisher_note.is_kat != is_input_kat:
+			active_finisher_note = null 
+			#print("redirecting finisher hit to normal hit")
 	
-	# add offset, and make spawn pos var
-	var offset : int
-	offset = 200 if input.contains("Right") else -200
-	var spawn_pos = Vector2(x + offset,y)
+	# if not hittable yet
+	if abs(target_note.timing - current_time) > Global.INACC_TIMING:
+		#print("not hittable")
+		return
 	
-	# play sound
-	if input.contains("Kat"):
-		return Global.expiring_audio.instantiate().ini(audio_container, SkinManager.audio_kat, "SFX", spawn_pos)
-	return Global.expiring_audio.instantiate().ini(audio_container, SkinManager.audio_don, "SFX", spawn_pos)
+	# wrong input type miss
+	elif target_note.is_kat != is_input_kat:
+		#print("wrong kat")
+		apply_score(target_note.timing - current_time, target_note, true)
+		return
+	
+	# new finisher hit
+	if target_note.is_finisher and !active_finisher_note:
+		#print("new finisher")
+		current_hitsound_state = HITSOUND_STATES.FINISHER
+		active_finisher_note = target_note
+		target_note.last_side_hit = input_side as Note.SIDE
+	
+	#print("hitting note")
+	apply_score(target_note.timing - current_time, target_note)
 
-func play_keypress_tween(input : String) -> void:
-	# if its already playing, remove it to make a new one
-	if keypress_tweens.has(input):
-		keypress_tweens[input].kill()
-	
-	# get wanted section of drum indicator
-	var target = drum_indicator.get_child(0).get_node(input)
-	
-	# create tween, set initial colour, and tween it
-	keypress_tweens[input] = create_tween()
-	target.self_modulate = Color.WHITE
-	keypress_tweens[input].tween_property(target, "self_modulate", Color(Color.WHITE, 0.2196), 0.2)
+func apply_finisher_score(hit_time_difference: float) -> void:
+	score_manager.add_finisher_score(hit_time_difference)
+	active_finisher_note = null
 
-func load_chart(chart: Chart) -> void:
-	# stop chart
-	playing = false
-	music.stop()
-	
-	# delete all previous notes
-	for note in obj_container.get_children():
-		note.queue_free()
-	
-	music.stream = chart.audio 
-	background.texture = chart.background
-	
-	# treating everything as a note for now
-	for h_obj in chart.hit_objects:
-				
-		match h_obj[2]:
-			Global.NOTETYPE.ROLL:
-				var roll = roll_scene.instantiate()
-				var length : float = float(h_obj[4]["Length"])
-				var beat_length : float = float(h_obj[4]["BeatLength"])
-				roll.change_properties(h_obj[0], h_obj[1] * VELOCITY_MULTIPLIER, length, false, beat_length)
-				
-				obj_container.add_child(roll)
-				for i in range(obj_container.get_child_count()):
-					if roll.time > (obj_container.get_child(i)).time:
-						obj_container.move_child(roll, i)
-						break
+func apply_score(hit_time_difference: float, target_hit_obj: HitObject, missed := false) -> void:
+	next_note_idx -= 1
+	target_hit_obj.visible = false
+	score_manager.add_score(hit_time_difference, missed)
 
-			_:
-				var note = note_scene.instantiate()
-				var is_kat = true if h_obj[2] == 3 else false
-				note.change_properties(h_obj[0], h_obj[1] * VELOCITY_MULTIPLIER, is_kat)
-				
-				obj_container.add_child(note)
-				for i in range(obj_container.get_child_count()):
-					if note.time > (obj_container.get_child(i)).time:
-						obj_container.move_child(note, i)
-						break
+func file_dropped(files: PackedStringArray) -> void:
+	var target_file = files[0]
+	if files.size() > 1:
+		print("multiple files dropped! only using first found file, ", target_file)
+	var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(target_file, true))
+	load_chart(chart)
+
+func load_chart(requested_chart: Chart) -> void:
+	for hobj in hit_object_container.get_children():
+		hobj.queue_free()
+	active_finisher_note = null 
+	score_manager.reset()
 	
-	cur_object = obj_container.get_child_count() - 1
+	current_chart = requested_chart
+	for hobj in requested_chart.hit_objects:
+		hit_object_container.add_child(hobj)
+	music.stream = requested_chart.audio
+	
+	next_note_idx = current_chart.hit_objects.size() - 1
 	
 	play_chart()
 
-func on_files_dropped(file_paths) -> void:
-	print()
-	var chart_path = ChartLoader.get_chart_path(file_paths[0], true)
-	if typeof(chart_path) == TYPE_INT:
-		# error, shoot a notif to let the user know what happened
-		pass
-	
-	load_chart(ChartLoader.load_chart(chart_path))
-
 func play_chart() -> void:
-	# set time when song starts, using AudioServer to help with latency
+	if current_chart == null:
+		printerr("Gameplay: tried to play without a valid chart!")
+		return
+	
+	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	var next_hit_object: HitObject = get_next_note()
+	if next_hit_object == null:
+		return
+	
+	# TODO: timer causes early audio desync (i cant figure out why for the life of me)
+	
+	start_time = Time.get_ticks_msec() / 1000.0 + current_play_offset
+	#var aaaaa := 0.0
+	#if next_hit_object.timing < 2.0:
+		#aaaaa = 2.0 - next_hit_object.timing
+		#start_time += aaaaa
+	playing = true;
+	
+	# delay audio playing if theres a positive (late) offset
+	#if aaaaa:
+		#await get_tree().create_timer(aaaaa + current_play_offset).timeout
 	music.play()
-	_time_begin += Time.get_ticks_usec() / 1000000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	# callable version:
+	# var play_music := Callable(music, "play")
+	# get_tree().create_timer(start_offset).timeout.connect(play_music)
 
-func mobile_input(event, type):
-	if event is InputEventMouseButton and event.is_pressed():
-		play_keypress_tween(type)
-		# hit detection
-		# basic invalid index check
-		if obj_container.get_child_count() > cur_object:
-			# set variable as intended hit object
-			var hit_object := obj_container.get_child(cur_object) #as HitObject
-			
-			# let hit object do hit check
-			var hit_check = hit_object.hit([type], _cur_time)
-			if bool(hit_check):
-				
-				if hit_indicator_tween:
-					hit_indicator_tween.kill()
-				hit_indicator_tween = create_tween()
-				
-				hit_indicator.self_modulate = Color.WHITE
-				hit_indicator_tween.tween_property(hit_indicator, "self_modulate", Color(Color.WHITE, 0), 0.3)
-				
-				# accurate hit
-				hit_indicator.texture = SkinManager.hitin_accurate
-				if hit_check == 1: # inaccurate hit
-					hit_indicator.texture = SkinManager.hitin_inaccurate
-				
-				# set cur_object to next hit object
-				cur_object -= 1
+func update_input_indicator(part_index: int) -> void:
+	var indicator_target: Control = drum_indicator.get_children()[part_index]
+	
+	if drum_indicator_tweens[part_index]:
+		drum_indicator_tweens[part_index].kill()
+	
+	drum_indicator_tweens[part_index] = create_tween()
+	drum_indicator_tweens[part_index].tween_property(indicator_target, "modulate:a", 0.0, 0.2).from(1.0)
 
-			play_audio(type)
+func skip_intro() -> void:
+	print("skipping intro!")
+	var next_hit_object: HitObject = get_next_note()
+	if next_hit_object == null:
+		return
+	start_time -= next_hit_object.timing - 2.0 - current_time
+	music.seek(current_play_offset + next_hit_object.timing - 2.0)
+
+func get_next_note() -> Note:
+	if hit_object_container.get_child_count() == 0:
+		return null;
+	
+	var next_note : HitObject 
+	var next_note_offset = 0
+	while !(next_note is Note):
+		if hit_object_container.get_children()[next_note_idx - next_note_offset] is Note:
+			next_note = hit_object_container.get_children()[next_note_idx - next_note_offset]
+		next_note_offset += 1
+	return next_note

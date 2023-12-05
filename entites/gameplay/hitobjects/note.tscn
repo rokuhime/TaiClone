@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://0fk2w5ctpdnt"]
+
+[ext_resource type="Texture2D" uid="uid://juyo6h056khs" path="res://assets/default_skin/taikohitcircle.png" id="1_dxuri"]
+[ext_resource type="Script" path="res://entites/gameplay/hitobjects/note.gd" id="2_qegwt"]
+[ext_resource type="Texture2D" uid="uid://dwaoriutsples" path="res://assets/default_skin/taikohitcircleoverlay.png" id="2_rqbsx"]
+
+[node name="Note" type="TextureRect"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -61.0
+offset_top = -61.0
+offset_right = 67.0
+offset_bottom = 67.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(64, 64)
+texture = ExtResource("1_dxuri")
+expand_mode = 1
+script = ExtResource("2_qegwt")
+
+[node name="Overlay" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_rqbsx")
+expand_mode = 1

@@ -1,0 +1,98 @@
+[gd_scene load_steps=6 format=3 uid="uid://cetwhypdquydw"]
+
+[ext_resource type="Script" path="res://entites/gameplay/hitobjects/spinner.gd" id="1_nk4qg"]
+[ext_resource type="Texture2D" uid="uid://dhlgt26k8cwx0" path="res://assets/default_skin/spinner-warning.png" id="1_s0d8t"]
+[ext_resource type="Texture2D" uid="uid://cc2862jtndgph" path="res://assets/default_skin/spinner-approachcircle@2x.png" id="2_eqisr"]
+[ext_resource type="Texture2D" uid="uid://ryvlpflckd6q" path="res://assets/default_skin/spinner-circle.png" id="3_4l1fg"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_1xbsh"]
+font_size = 50
+outline_size = 6
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Spinner" type="Control"]
+layout_mode = 3
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+grow_vertical = 2
+script = ExtResource("1_nk4qg")
+
+[node name="SpinnerWarn" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -67.0
+offset_right = 134.0
+offset_bottom = 67.0
+grow_vertical = 2
+pivot_offset = Vector2(64, 64)
+texture = ExtResource("1_s0d8t")
+
+[node name="SpinnerGameplay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 67.0
+offset_top = 375.0
+offset_right = 67.0
+offset_bottom = 375.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="NeededHits" type="Label" parent="SpinnerGameplay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -43.5
+offset_top = 65.5
+offset_right = 43.5
+offset_bottom = 134.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "100"
+label_settings = SubResource("LabelSettings_1xbsh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Outside" type="TextureRect" parent="SpinnerGameplay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -225.0
+offset_top = -225.0
+offset_right = 225.0
+offset_bottom = 225.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(225, 225)
+texture = ExtResource("2_eqisr")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Inside" type="TextureRect" parent="SpinnerGameplay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -225.0
+offset_top = -225.0
+offset_right = 225.0
+offset_bottom = 225.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(225, 225)
+texture = ExtResource("3_4l1fg")
+expand_mode = 1
