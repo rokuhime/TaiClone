@@ -1,3 +1,4 @@
+class_name Gameplay
 extends Control
 # TODO: last thing i started was actual input registration with notes, but i didnt get past making next_note_idx
 # spinners are given the correct value(?) but are not playable atm, sliders are correct length but no ticks
@@ -16,6 +17,7 @@ var current_chart : Chart
 @export var start_time := 0.0
 var current_play_offset := 0.0
 var playing := false
+var skip_time := 0.0
 
 @export var next_note_idx := 0
 
@@ -31,13 +33,6 @@ var don_audio := AudioLoader.load_file("res://assets/default_skin/h_don.wav") as
 var kat_audio := AudioLoader.load_file("res://assets/default_skin/h_kat.wav") as AudioStream
 var donfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_don.wav") as AudioStream
 var katfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_kat.wav") as AudioStream
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	get_window().size = Vector2i(1280, 720)
-	get_window().move_to_center()
-	get_tree().root.files_dropped.connect(file_dropped)
-	pass # Replace with function body.
 
 func _process(_delta) -> void:
 	fps_label.text = "FPS: " + str(Engine.get_frames_per_second()) + "\nstart_time: " + str(start_time) + "\ncurrent_time: " + str(current_time) + "\nnext_note_idx: " + str(next_note_idx)
@@ -61,7 +56,7 @@ func _unhandled_input(event) -> void:
 		var next_note: Note = get_next_note()
 		if next_note == null:
 			return
-		if Input.is_action_just_pressed("SkipIntro") and playing and next_note.timing > 2:
+		if Input.is_action_just_pressed("SkipIntro") and playing:
 			skip_intro()
 		
 		# get rhythm gameplay input
@@ -143,13 +138,6 @@ func apply_score(hit_time_difference: float, target_hit_obj: HitObject, missed :
 	target_hit_obj.visible = false
 	score_manager.add_score(hit_time_difference, missed)
 
-func file_dropped(files: PackedStringArray) -> void:
-	var target_file = files[0]
-	if files.size() > 1:
-		print("multiple files dropped! only using first found file, ", target_file)
-	var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(target_file, true))
-	load_chart(chart)
-
 func load_chart(requested_chart: Chart) -> void:
 	for hobj in hit_object_container.get_children():
 		hobj.queue_free()
@@ -158,6 +146,8 @@ func load_chart(requested_chart: Chart) -> void:
 	
 	current_chart = requested_chart
 	for hobj in requested_chart.hit_objects:
+		if !skip_time:
+			skip_time = hobj.timing - 2
 		hit_object_container.add_child(hobj)
 	music.stream = requested_chart.audio
 	
@@ -202,6 +192,9 @@ func update_input_indicator(part_index: int) -> void:
 	drum_indicator_tweens[part_index].tween_property(indicator_target, "modulate:a", 0.0, 0.2).from(1.0)
 
 func skip_intro() -> void:
+	if next_note_idx < current_chart.hit_objects.size() or current_time >= skip_time:
+		return
+	
 	print("skipping intro!")
 	var next_hit_object: HitObject = get_next_note()
 	if next_hit_object == null:

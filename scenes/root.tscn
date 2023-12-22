@@ -1,14 +1,39 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1x0cuqexagsr"]
+[gd_scene load_steps=5 format=3 uid="uid://b1x0cuqexagsr"]
 
-[ext_resource type="PackedScene" uid="uid://duw1w1bhgtct6" path="res://scenes/gameplay/gameplay.tscn" id="1_ekf0v"]
+[ext_resource type="Script" path="res://scenes/root.gd" id="1_djqkq"]
+[ext_resource type="Texture2D" uid="uid://dwt423n8lubbv" path="res://assets/textures/dev_art/background.png" id="2_ii7io"]
+[ext_resource type="PackedScene" uid="uid://cd5gwotq82dtk" path="res://scenes/global/volume_control/volume_control.tscn" id="5_ljgve"]
+[ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="6_6gusu"]
 
-[node name="root" type="Control"]
+[node name="root" type="Control" groups=["Root"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_djqkq")
 
-[node name="Gameplay" parent="." instance=ExtResource("1_ekf0v")]
+[node name="Background" type="TextureRect" parent="."]
+self_modulate = Color(0.501961, 0.501961, 0.501961, 1)
 layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_ii7io")
+
+[node name="AudioQueuer" type="Node2D" parent="."]
+script = ExtResource("6_6gusu")
+audio_players = 10
+
+[node name="VolumeControl" parent="." instance=ExtResource("5_ljgve")]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -380.0
+offset_bottom = -120.0
+grow_vertical = 0

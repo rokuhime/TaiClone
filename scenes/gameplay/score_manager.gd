@@ -104,3 +104,14 @@ func update_judgement(type: int):
 	
 	judgement_indicator_tweens[type] = create_tween()
 	judgement_indicator_tweens[type].tween_property(target_judgement, "modulate:a", 0.0, 0.4).from(1.0)
+
+func get_packaged_score() -> Dictionary:
+	var score_dict := {}
+	score_dict["Score"] = score
+	score_dict["TopCombo"] = top_combo
+	
+	score_dict["AccurateHits"] = accurate_hits
+	score_dict["InaccurateHits"] = inaccurate_hits
+	score_dict["MissCount"] = miss_count
+	
+	return score_dict

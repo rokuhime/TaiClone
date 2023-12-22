@@ -127,9 +127,8 @@ static func load_file(filepath):
 
 	#if file is ogg
 	elif filepath.ends_with(".ogg"):
-		var newstream = AudioStreamOggVorbis.new()
-		newstream.data = bytes
-		return newstream
+		#var newstream = AudioStreamOggVorbis.new()
+		return load(filepath)
 
 	#if file is mp3
 	elif filepath.ends_with(".mp3"):

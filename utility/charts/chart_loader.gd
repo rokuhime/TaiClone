@@ -19,11 +19,11 @@ static var spinner_scene = preload("res://entites/gameplay/hitobjects/spinner.ts
 ## sees if chart needs to be converted, and then gives the .tc file path
 static func get_chart_path(file_path: String, force_convert := false) -> String:
 	if not file_path.ends_with(".tc"):
-		if FileAccess.file_exists("user://ConvertedSongs/" + file_path.get_file() + ".tc") and not force_convert:
+		if FileAccess.file_exists("user://ConvertedCharts" + file_path.get_file() + ".tc") and not force_convert:
 			
 			# chart isnt .tc, and is converted
 			print("ChartLoader: converted file found!")
-			return "user://ConvertedSongs/" + file_path.get_file() + ".tc"
+			return "user://ConvertedCharts" + file_path.get_file() + ".tc"
 			
 		# chart isnt .tc, and is NOT converted. attempt to convert
 		print("ChartLoader: attempting to convert file...")
@@ -228,7 +228,7 @@ static func convert_chart(file_path: String):
 	# save newly made taiclone file
 	if not DirAccess.dir_exists_absolute("user://ConvertedSongs"):
 		DirAccess.make_dir_absolute("user://ConvertedSongs")
-	var new_file = FileAccess.open("user://ConvertedSongs/" + file_path.trim_prefix(file_path.get_base_dir()) + ".tc", FileAccess.WRITE)
+	var new_file = FileAccess.open("user://ConvertedCharts" + file_path.trim_prefix(file_path.get_base_dir()) + ".tc", FileAccess.WRITE)
 	
 	# top info
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
@@ -255,6 +255,10 @@ static func convert_chart(file_path: String):
 ## loads .tc files and spits out Chart variable
 static func get_chart(file_path: String) -> Chart:
 	var file := FileAccess.open(file_path, FileAccess.READ)
+	if !file:
+		print("ChartLoader: bad file provided for get_chart at ", file_path)
+		return
+	
 	var line := ""
 	var section := ""
 	
@@ -328,8 +332,6 @@ static func get_chart(file_path: String) -> Chart:
 	hit_objects.sort_custom(
 		func(a: HitObject, b: HitObject): return a.timing > b.timing
 	)
-
-	print("ChartLoader: chart loaded successfully!")
 	return Chart.new(audio, background, chart_info, timing_points, hit_objects)
 
 ## formats objects into a string

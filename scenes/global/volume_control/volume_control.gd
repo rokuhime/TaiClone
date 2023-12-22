@@ -60,6 +60,10 @@ func _unhandled_input(event):
 		return
 	
 	if not is_mouse_inside:
+		if pressed_input == "VolumeBusNext" or pressed_input == "VolumeBusPrevious":
+			if !is_active:
+				return
+		
 		change_active(true)
 		timeout_timer.start()
 	

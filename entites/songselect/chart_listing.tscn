@@ -1,0 +1,86 @@
+[gd_scene load_steps=5 format=3 uid="uid://lf2mpbwnrksw"]
+
+[ext_resource type="Script" path="res://entites/songselect/chart_listing.gd" id="1_cs84o"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2kokt"]
+bg_color = Color(0, 0, 0, 0.75)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_pia3p"]
+font_size = 22
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddjy1"]
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 9
+
+[node name="SongListing" type="Panel"]
+custom_minimum_size = Vector2(0, 74.505)
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -695.0
+offset_top = -63.0
+offset_bottom = 63.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2kokt")
+script = ExtResource("1_cs84o")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -686.0
+offset_top = 9.0
+offset_right = -5.0
+offset_bottom = -9.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="SongInfo" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Sanae-San - RD-Sounds feat. Meramipop"
+label_settings = SubResource("LabelSettings_pia3p")
+
+[node name="ChartInfo" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Hell Oni - Genjuro"
+label_settings = SubResource("LabelSettings_pia3p")
+
+[node name="Labels" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Difficulty" type="PanelContainer" parent="VBoxContainer/Labels"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ddjy1")
+
+[node name="Label" type="Label" parent="VBoxContainer/Labels/Difficulty"]
+layout_mode = 2
+text = " 8.01 "
+label_settings = SubResource("LabelSettings_pia3p")
+
+[node name="Status" type="PanelContainer" parent="VBoxContainer/Labels"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ddjy1")
+
+[node name="Label" type="Label" parent="VBoxContainer/Labels/Status"]
+layout_mode = 2
+text = " UNKNOWN "
+label_settings = SubResource("LabelSettings_pia3p")
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
