@@ -33,10 +33,9 @@ func _on_gui_input(event):
 		if not selected:
 			selected = true
 			var a = get_tree().get_first_node_in_group("SongSelect")
-			print("selecting thign")
 			get_tree().get_first_node_in_group("SongSelect").select_listing(self)
 		elif selected:
-			print("waow go gameplay gay")
+			print("ChartListing: Changing to gameplay with chart ", chart.chart_info["Song_Title"])
 			get_tree().get_first_node_in_group("SongSelect").transition_to_gameplay()
 			pass
 		

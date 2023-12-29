@@ -1,0 +1,138 @@
+[gd_scene load_steps=4 format=3 uid="uid://doli71bfmeej7"]
+
+[ext_resource type="Script" path="res://entites/global/settings_panel/settings_panel.gd" id="1_d3qaa"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_qm3nu"]
+font_size = 48
+
+[sub_resource type="LabelSettings" id="LabelSettings_pk7v3"]
+font_size = 24
+
+[node name="SettingsPanel" type="Panel" groups=["SettingsPanel"]]
+custom_minimum_size = Vector2(450, 0)
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("1_d3qaa")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 70.0
+grow_horizontal = 2
+text = "Settings"
+label_settings = SubResource("LabelSettings_qm3nu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="KeybindList" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/KeybindList"]
+layout_mode = 2
+text = "Keybinds"
+label_settings = SubResource("LabelSettings_pk7v3")
+horizontal_alignment = 1
+
+[node name="LeftKat" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/KeybindList/LeftKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Left Kat"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/KeybindList/LeftKat"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Input"
+text_overrun_behavior = 3
+
+[node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/LeftKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="LeftDon" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/KeybindList/LeftDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Left Don"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/KeybindList/LeftDon"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Input"
+text_overrun_behavior = 3
+
+[node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/LeftDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="RightDon" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/KeybindList/RightDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Right Don"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/KeybindList/RightDon"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Input"
+text_overrun_behavior = 3
+
+[node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/RightDon"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="RightKat" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/KeybindList/RightKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Right Kat"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/KeybindList/RightKat"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Input"
+text_overrun_behavior = 3
+
+[node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/RightKat"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftKat/Button" to="." method="change_key" binds= ["LeftKat"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftDon/Button" to="." method="change_key" binds= ["LeftDon"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightDon/Button" to="." method="change_key" binds= ["RightDon"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightKat/Button" to="." method="change_key" binds= ["RightKat"]]

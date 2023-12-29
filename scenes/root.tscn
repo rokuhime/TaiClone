@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://b1x0cuqexagsr"]
+[gd_scene load_steps=6 format=3 uid="uid://b1x0cuqexagsr"]
 
 [ext_resource type="Script" path="res://scenes/root.gd" id="1_djqkq"]
 [ext_resource type="Texture2D" uid="uid://dwt423n8lubbv" path="res://assets/textures/dev_art/background.png" id="2_ii7io"]
-[ext_resource type="PackedScene" uid="uid://cd5gwotq82dtk" path="res://scenes/global/volume_control/volume_control.tscn" id="5_ljgve"]
+[ext_resource type="PackedScene" uid="uid://doli71bfmeej7" path="res://entites/global/settings_panel/settings_panel.tscn" id="5_jiurb"]
+[ext_resource type="PackedScene" uid="uid://cd5gwotq82dtk" path="res://entites/global/volume_control/volume_control.tscn" id="5_ljgve"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="6_6gusu"]
 
 [node name="root" type="Control" groups=["Root"]]
@@ -37,3 +38,6 @@ anchor_bottom = 1.0
 offset_top = -380.0
 offset_bottom = -120.0
 grow_vertical = 0
+
+[node name="SettingsPanel" parent="." instance=ExtResource("5_jiurb")]
+layout_mode = 1

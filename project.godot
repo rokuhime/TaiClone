@@ -11,9 +11,10 @@ config_version=5
 [application]
 
 config/name="TaiClone Take 4"
-config/version="v2023-12-04 - finishers!????!?"
+config/version="v2023-12-28 - basic settings"
 run/main_scene="res://scenes/root.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
+boot_splash/image="res://assets/textures/dev_art/logo.png"
 config/icon="res://assets/textures/dev_art/logo.png"
 boot_splash/icon="res://assets/textures/dev_art/logo.png"
 
