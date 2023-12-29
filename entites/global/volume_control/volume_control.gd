@@ -103,6 +103,9 @@ func change_volume(change_amount: float, change_exact := false):
 	# play sound
 	change_sound_player.pitch_scale = new_volume + 0.5
 	change_sound_player.play()
+	
+	# save new volume
+	get_tree().get_first_node_in_group("SettingsPanel").save_settings()
 
 func update_bar(bus_index: int):
 	var volume_slider: TextureProgressBar = bus_sections[bus_index].get_node("TextureProgressBar")

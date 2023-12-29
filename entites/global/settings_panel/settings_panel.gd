@@ -26,7 +26,7 @@ func _process(delta):
 		visible = true
 
 func _unhandled_input(event):
-	if event is InputEventMouseMotion or event.is_echo() or !event.is_pressed():
+	if event is InputEventMouse or event.is_echo() or !event.is_pressed():
 		return
 	
 	if event is InputEventWithModifiers:
@@ -72,7 +72,7 @@ func change_key(target := keychange_target):
 		if keychange_timeout:
 			keychange_timeout.queue_free()
 
-func change_input_action(input_name: String, new_binding: InputEvent):
+func change_input_action(input_name: String, new_binding: InputEvent, called_by_user := true):
 	# ensure the keychange target is correct
 	keychange_target = input_name
 	
@@ -81,11 +81,15 @@ func change_input_action(input_name: String, new_binding: InputEvent):
 	
 	InputMap.action_add_event(input_name, new_binding)
 	change_key(keychange_target)
-	save_settings()
+	
+	if called_by_user:
+		save_settings()
 
 func save_settings() -> void:
-	print("SettingsPanel: Saving config...")
 	var config_file := ConfigFile.new()
+	
+	for bus_index in AudioServer.bus_count:
+		config_file.set_value("Audio", AudioServer.get_bus_name(bus_index), db_to_linear(AudioServer.get_bus_volume_db(bus_index)))
 	
 	for key in gameplay_keys:
 		config_file.set_value("Keybinds", key, InputMap.action_get_events(key)[0])
@@ -103,8 +107,14 @@ func load_settings() -> void:
 		print("SettingsPanel: Config failed to load at user://settings.cfg with code ", err)
 		return
 	
+	var audio_settings = config_file.get_section_keys("Audio")
+	for setting in audio_settings:
+		var bus_volume = config_file.get_value("Audio", setting, 1)
+		AudioServer.set_bus_volume_db(AudioServer.get_bus_index(setting), linear_to_db(bus_volume))
+	
 	var keys = config_file.get_section_keys("Keybinds")
 	for key in keys:
 		var keybind = config_file.get_value("Keybinds", key, null)
 		if keybind:
-			change_input_action(key, keybind)
+			change_input_action(key, keybind, false)
+	print("SettingsPanel: Config loaded!")
