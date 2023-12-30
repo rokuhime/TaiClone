@@ -1,6 +1,7 @@
 extends Control
 
 enum GAMESTATE { MAIN_MENU, SONG_SELECT, GAMEPLAY }
+var default_background = load("res://assets/textures/dev_art/background.png")
 var current_state := GAMESTATE.MAIN_MENU
 var current_state_node: Node
 var gamestate_scenes := [
@@ -41,8 +42,11 @@ func change_to_gameplay(requested_chart: Chart):
 func play_ui_sound(target_stream: AudioStream, offset := Vector2.ZERO):
 	default_sfx_audio_queuer.play_audio(target_stream, offset)
 
-func set_background():
-	background.texture
+func set_background(new_background):
+	if new_background:
+		background.texture = new_background
+		return
+	background.texture = default_background
 
 func file_dropped(files: PackedStringArray) -> void:
 	var target_file = files[0]
@@ -54,3 +58,10 @@ func file_dropped(files: PackedStringArray) -> void:
 		change_state(GAMESTATE.SONG_SELECT)
 	current_state_node.create_new_listing(chart)
 	current_state_node.update_visual()
+
+func refresh_song_select() -> void:
+	if current_state != GAMESTATE.SONG_SELECT:
+		# will automatically be done as its loaded atm
+		change_state(GAMESTATE.SONG_SELECT)
+		return
+	current_state_node.refresh_listings_from_song_folders()

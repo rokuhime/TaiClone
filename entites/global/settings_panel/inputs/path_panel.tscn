@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dvqndpfypjsp0"]
+
+[ext_resource type="Script" path="res://entites/global/settings_panel/inputs/path_panel.gd" id="1_oxfhk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w4cbf"]
+bg_color = Color(0.25098, 0.25098, 0.25098, 1)
+
+[node name="PathPanel" type="PanelContainer"]
+self_modulate = Color(0.501961, 0.501961, 0.501961, 1)
+custom_minimum_size = Vector2(0, 30)
+theme_override_styles/panel = SubResource("StyleBoxFlat_w4cbf")
+script = ExtResource("1_oxfhk")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Path"
+autowrap_mode = 1
+
+[connection signal="gui_input" from="." to="." method="on_gui_input"]

@@ -12,7 +12,7 @@ var unselected_tuck_amount := 100.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	create_listings_from_folder()
+	refresh_listings_from_song_folders()
 	update_visual()
 
 func _unhandled_key_input(event):
@@ -23,15 +23,30 @@ func _unhandled_key_input(event):
 		selected_list_idx = (selected_list_idx + 1) % listings.size()
 		update_visual()
 
-func create_listings_from_folder() -> void:
+func refresh_listings_from_song_folders() -> void:
+	# roku note 2023-12-29
+	# no matter what listings cant be fully cleared, listings.clear() doesnt work nor does below
+	# it just leaves null values for some reason, which breaks menu navigation
+	# see line 66 mayb
+	listings = []
+	for listing in listing_container.get_children():
+		listing.queue_free()
+	
 	for chart_folder in Global.get_chart_folders():
-		if !DirAccess.dir_exists_absolute(chart_folder):
-			print("cant access chart folder at ", chart_folder)
+		if !DirAccess.dir_exists_absolute(chart_folder) or chart_folder.is_empty():
+			print("SongSelect: cant access chart folder at ", chart_folder)
 			continue
+		
+		# get chart files
 		var diraccess = DirAccess.open(chart_folder)
 		for file_name in diraccess.get_files():
-			var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(chart_folder + "/" + file_name))
-			create_new_listing(chart)
+			print("file_name extention: ", file_name.get_extension())
+			if Global.SUPPORTED_CHART_FILETYPES.has(file_name.get_extension()):
+				var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(chart_folder + "/" + file_name))
+				if not listing_already_exists(chart):
+					create_new_listing(chart)
+	selected_list_idx = 0
+	update_visual()
 
 func create_new_listing(chart: Chart) -> void:
 	var new_song_listing = song_listing_scene.instantiate()
@@ -48,7 +63,7 @@ func update_visual() -> void:
 	var list_idx := 0
 	
 	for listing in listing_container.get_children():
-		if not listings.has(listing):
+		if not listings.has(listing) and listing != null:
 			listings.append(listing)
 		
 		# get default position
@@ -81,3 +96,10 @@ func update_visual() -> void:
 
 func transition_to_gameplay() -> void:
 	get_tree().get_first_node_in_group("Root").change_to_gameplay(listings[selected_list_idx].chart)
+
+func listing_already_exists(chart: Chart) -> bool:
+	for listing in listing_container.get_children():
+		if listing.chart == chart:
+			print("found identical chart! - ", chart)
+			return true
+	return false

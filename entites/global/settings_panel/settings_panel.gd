@@ -2,20 +2,21 @@ extends Panel
 
 var keychange_timeout: Timer
 var movement_tween: Tween
-
-var gameplay_keys := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 var keychange_target := ""
 var is_visible := false
 
+@onready var chart_path_changer: ChartPathChanger = $ScrollContainer/VBoxContainer/ChartPathChanger
 @onready var keybind_list := $ScrollContainer/VBoxContainer/KeybindList
+@onready var chartpath_textedit: TextEdit = $ScrollContainer/VBoxContainer/VBoxContainer/TextEdit
 
 func _ready():
 	load_settings()
+	chart_path_changer.refresh_paths()
 	
 	if not is_visible:
 		position.x = get_viewport_rect().size.x
 	
-	for key in gameplay_keys:
+	for key in Global.GAMEPLAY_KEYS:
 		keychange_target = key
 		change_key(key)
 
@@ -91,7 +92,7 @@ func save_settings() -> void:
 	for bus_index in AudioServer.bus_count:
 		config_file.set_value("Audio", AudioServer.get_bus_name(bus_index), db_to_linear(AudioServer.get_bus_volume_db(bus_index)))
 	
-	for key in gameplay_keys:
+	for key in Global.GAMEPLAY_KEYS:
 		config_file.set_value("Keybinds", key, InputMap.action_get_events(key)[0])
 	
 	var err = config_file.save("user://settings.cfg")

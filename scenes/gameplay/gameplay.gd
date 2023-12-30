@@ -21,7 +21,6 @@ var skip_time := 0.0
 
 @export var next_note_idx := 0
 
-var rhythm_inputs := [ "LeftKat", "LeftDon", "RightDon", "RightKat" ]
 enum SIDE { NONE, LEFT, RIGHT }
 var last_side_input := SIDE.NONE
 var active_finisher_note: Note
@@ -62,16 +61,16 @@ func _unhandled_input(event) -> void:
 		# get rhythm gameplay input
 		var pressed_input := ""
 		
-		for rhythm_input in rhythm_inputs:
-			if Input.is_action_just_pressed(rhythm_input):
-				pressed_input = rhythm_input
+		for gameplay_input in Global.GAMEPLAY_KEYS:
+			if Input.is_action_just_pressed(gameplay_input):
+				pressed_input = gameplay_input
 				break
 		
 		if pressed_input == "" or !playing or next_note_idx <= 0: 
 			return
 		
 		current_hitsound_state = HITSOUND_STATES.NORMAL
-		update_input_indicator(rhythm_inputs.find(pressed_input))
+		update_input_indicator(Global.GAMEPLAY_KEYS.find(pressed_input))
 		
 		var current_side_input = SIDE.LEFT if pressed_input.contains("Left") else SIDE.RIGHT
 		var is_input_kat := false if pressed_input.contains("Don") else true

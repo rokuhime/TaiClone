@@ -1,7 +1,9 @@
 extends Node
 
 const CONVERTED_CHART_FOLDER := "user://ConvertedCharts"
-var chart_folder_locations := ["mybualls"]
+const SUPPORTED_CHART_FILETYPES := ["tc", "osu", "tja"]
+var chart_paths := ["mybualls"]
+const GAMEPLAY_KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
 # consider; judgement timing array. you could have as many judgements as you want,
 # going from most accurate to inaccurate
@@ -17,7 +19,7 @@ func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + ProjectSettings.get_setting("application/config/version"), 0)
 
 func get_chart_folders() -> Array:
-	return chart_folder_locations + [CONVERTED_CHART_FOLDER]
+	return chart_paths + [CONVERTED_CHART_FOLDER]
 
 #static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
 	#if obj.connect(signal_name, signal_target, method):

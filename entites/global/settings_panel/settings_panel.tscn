@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://doli71bfmeej7"]
+[gd_scene load_steps=5 format=3 uid="uid://doli71bfmeej7"]
 
 [ext_resource type="Script" path="res://entites/global/settings_panel/settings_panel.gd" id="1_d3qaa"]
+[ext_resource type="Script" path="res://entites/global/settings_panel/inputs/chart_path_changer.gd" id="2_xltdr"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_qm3nu"]
 font_size = 48
@@ -132,7 +133,63 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.75
 
+[node name="ChartPathChanger" type="VBoxContainer" parent="ScrollContainer/VBoxContainer" groups=["ChartPathChanger"]]
+layout_mode = 2
+script = ExtResource("2_xltdr")
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/ChartPathChanger"]
+layout_mode = 2
+text = "Chart Paths"
+label_settings = SubResource("LabelSettings_pk7v3")
+horizontal_alignment = 1
+
+[node name="Panel" type="Panel" parent="ScrollContainer/VBoxContainer/ChartPathChanger"]
+custom_minimum_size = Vector2(350, 200)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ScrollContainer/VBoxContainer/ChartPathChanger/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/ChartPathChanger/Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/ChartPathChanger"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 1
+
+[node name="AddButton" type="Button" parent="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add"
+
+[node name="FileDialog" type="FileDialog" parent="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton"]
+title = "Open a Directory"
+initial_position = 2
+size = Vector2i(600, 400)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[node name="RemoveButton" type="Button" parent="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Remove"
+
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftKat/Button" to="." method="change_key" binds= ["LeftKat"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftDon/Button" to="." method="change_key" binds= ["LeftDon"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightDon/Button" to="." method="change_key" binds= ["RightDon"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightKat/Button" to="." method="change_key" binds= ["RightKat"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton" to="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" method="show"]
+[connection signal="dir_selected" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="add_path"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/RemoveButton" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="delete_selected_path"]
