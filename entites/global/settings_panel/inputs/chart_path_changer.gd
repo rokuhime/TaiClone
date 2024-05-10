@@ -25,8 +25,9 @@ func add_path(chart_path: String) -> void:
 	path_container.add_child(new_path)
 	select_path(new_path)
 	
-	Global.chart_paths.append(chart_path)
-	get_tree().get_first_node_in_group("Root").refresh_song_select()
+	if Global.chart_paths.find(chart_path) == -1:
+		Global.chart_paths.append(chart_path)
+	#get_tree().get_first_node_in_group("Root").refresh_song_select()
 
 # called by path panels
 func select_path(target_path_panel: PathPanel) -> void:

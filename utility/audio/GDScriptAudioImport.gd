@@ -49,6 +49,9 @@ func report_errors(err, filepath):
 
 static func load_file(filepath):
 	var file = FileAccess.open(filepath, FileAccess.READ)
+	if file == null:
+		printerr("AudioLoader: Returned as null!")
+		return null;
 	if file.get_open_error():
 		printerr("AudioLoader: Error opening file! ", file.get_open_error())
 		return null;

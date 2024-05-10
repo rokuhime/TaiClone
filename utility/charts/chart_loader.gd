@@ -19,7 +19,7 @@ static var spinner_scene = preload("res://entites/gameplay/hitobjects/spinner.ts
 ## sees if chart needs to be converted, and then gives the .tc file path
 static func get_chart_path(file_path: String, force_convert := false) -> String:
 	if not file_path.ends_with(".tc"):
-		if FileAccess.file_exists("user://ConvertedCharts" + file_path.get_file() + ".tc") and not force_convert:
+		if FileAccess.file_exists("user://ConvertedCharts/" + file_path.get_file() + ".tc") and not force_convert:
 			
 			# chart isnt .tc, and is converted
 			print("ChartLoader: converted file found!")

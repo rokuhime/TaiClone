@@ -89,12 +89,15 @@ func change_input_action(input_name: String, new_binding: InputEvent, called_by_
 func save_settings() -> void:
 	var config_file := ConfigFile.new()
 	
+	config_file.set_value("General", "ChartPaths", Global.chart_paths)
+	
 	for bus_index in AudioServer.bus_count:
 		config_file.set_value("Audio", AudioServer.get_bus_name(bus_index), db_to_linear(AudioServer.get_bus_volume_db(bus_index)))
 	
 	for key in Global.GAMEPLAY_KEYS:
 		config_file.set_value("Keybinds", key, InputMap.action_get_events(key)[0])
 	
+	# save file
 	var err = config_file.save("user://settings.cfg")
 	if err != OK:
 		print("SettingsPanel: Config failed to save with code ", err)
@@ -107,6 +110,8 @@ func load_settings() -> void:
 	if err != OK:
 		print("SettingsPanel: Config failed to load at user://settings.cfg with code ", err)
 		return
+	
+	Global.chart_paths = config_file.get_value("General", "ChartPaths", null)
 	
 	var audio_settings = config_file.get_section_keys("Audio")
 	for setting in audio_settings:
