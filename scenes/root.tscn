@@ -41,3 +41,6 @@ grow_vertical = 0
 
 [node name="SettingsPanel" parent="." instance=ExtResource("5_jiurb")]
 layout_mode = 1
+
+[node name="Music" type="AudioStreamPlayer" parent="." groups=["RootMusic"]]
+bus = &"Music"

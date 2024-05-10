@@ -229,7 +229,7 @@ static func convert_chart(file_path: String):
 	if not DirAccess.dir_exists_absolute("user://ConvertedCharts"):
 		DirAccess.make_dir_absolute("user://ConvertedCharts")
 	var new_file = FileAccess.open("user://ConvertedCharts" + file_path.trim_prefix(file_path.get_base_dir()) + ".tc", FileAccess.WRITE)
-	print("new file: ", new_file)
+	
 	# top info
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
 	if origin != null:
@@ -325,6 +325,9 @@ static func get_chart(file_path: String) -> Chart:
 					"Background":
 						background = ImageLoader.load_image(file_path.get_base_dir() + "/" + data_value)
 
+					"Preview_Point":
+						chart_info["PreviewPoint"] = int(data_value) / 1000.0
+
 					_:
 						chart_info[data_name] = data_value
 				continue
@@ -336,6 +339,7 @@ static func get_chart(file_path: String) -> Chart:
 	# error check
 	if audio == null or hit_objects.is_empty() or timing_points.is_empty():
 		print("ChartLoader: chart at ", file_path, " is corrupted! skipped")
+		return
 	
 	return Chart.new(audio, background, chart_info, timing_points, hit_objects)
 

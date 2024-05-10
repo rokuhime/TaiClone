@@ -1,5 +1,6 @@
 extends Control
 
+var music: AudioStreamPlayer
 var listings := []
 var song_listing_scene := preload("res://entites/songselect/chart_listing.tscn")
 
@@ -12,6 +13,8 @@ var unselected_tuck_amount := 100.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	music = get_tree().get_first_node_in_group("RootMusic")
+	
 	refresh_listings_from_song_folders()
 	update_visual()
 
@@ -21,10 +24,14 @@ func _unhandled_key_input(event):
 	
 	if event.is_action_pressed("LeftKat"):
 		selected_list_idx = listings.size() - 1 if selected_list_idx - 1 < 0 else selected_list_idx - 1
-		update_visual()
+		select_listing(listings[selected_list_idx])
 	elif event.is_action_pressed("RightKat"):
 		selected_list_idx = (selected_list_idx + 1) % listings.size()
-		update_visual()
+		select_listing(listings[selected_list_idx])
+	elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon"):
+		transition_to_gameplay()
+	
+	# refresh listings
 	elif event is InputEventKey and event.keycode == KEY_F5:
 		refresh_listings_from_song_folders()
 
@@ -61,11 +68,8 @@ func add_charts_from_folder(directory: String) -> void:
 	for file_name in diraccess.get_files():
 		if Global.SUPPORTED_CHART_FILETYPES.has(file_name.get_extension()):
 			var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(directory + "/" + file_name))
-			if chart == null:
-				continue
-			if not listing_already_exists(chart):
+			if not listing_already_exists(chart) and chart != null:
 				create_new_listing(chart)
-	
 
 func create_new_listing(chart: Chart) -> void:
 	var new_song_listing = song_listing_scene.instantiate()
@@ -76,6 +80,18 @@ func select_listing(listing: ChartListing) -> void:
 	listings[selected_list_idx].selected = false
 	selected_list_idx = listings.find(listing)
 	update_visual()
+	
+	# play preview
+	if listings[selected_list_idx].chart.audio != null:
+		if music.stream != null:
+			# if last selected song and new song are same, dont change preview
+			if music.stream.data == listings[selected_list_idx].chart.audio.data:
+				return
+		
+		# set song, get preview timing, and play
+		music.stream = listings[selected_list_idx].chart.audio
+		var prev_point: float = listings[selected_list_idx].chart.chart_info["PreviewPoint"] if listings[selected_list_idx].chart.chart_info["PreviewPoint"] else 0
+		music.play(prev_point)
 
 func update_visual() -> void:
 	var listing_size: Vector2

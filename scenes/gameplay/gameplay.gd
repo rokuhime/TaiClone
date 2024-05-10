@@ -4,7 +4,7 @@ extends Control
 # spinners are given the correct value(?) but are not playable atm, sliders are correct length but no ticks
 
 @onready var hit_object_container := $Track/HitPoint/HitObjectContainer
-@onready var music := $Music
+var music: AudioStreamPlayer
 @onready var audio_queuer := $AudioQueuer as AudioQueuer
 @onready var fps_label := $fps as Label
 @onready var score_manager := $ScoreManager as ScoreManager
@@ -32,6 +32,9 @@ var don_audio := AudioLoader.load_file("res://assets/default_skin/h_don.wav") as
 var kat_audio := AudioLoader.load_file("res://assets/default_skin/h_kat.wav") as AudioStream
 var donfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_don.wav") as AudioStream
 var katfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_kat.wav") as AudioStream
+
+func _ready() -> void:
+	music = Global.music
 
 func _process(_delta) -> void:
 	fps_label.text = "FPS: " + str(Engine.get_frames_per_second()) + "\nstart_time: " + str(start_time) + "\ncurrent_time: " + str(current_time) + "\nnext_note_idx: " + str(next_note_idx)
