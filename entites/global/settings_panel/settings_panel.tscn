@@ -175,11 +175,10 @@ text = "Add"
 [node name="FileDialog" type="FileDialog" parent="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton"]
 title = "Open a Directory"
 initial_position = 2
-size = Vector2i(600, 400)
+size = Vector2i(705, 400)
 ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
-use_native_dialog = true
 
 [node name="RemoveButton" type="Button" parent="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer"]
 layout_mode = 2

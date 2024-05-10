@@ -30,7 +30,7 @@ static func get_chart_path(file_path: String, force_convert := false) -> String:
 		file_path = convert_chart(file_path)
 	
 	# chart is .tc, nothing to do!
-	print("ChartLoader: intended chart path grabbed!")
+	#print("ChartLoader: intended chart path grabbed!")
 	return file_path
 
 ## converts charts from other games to .tc
@@ -226,10 +226,10 @@ static func convert_chart(file_path: String):
 			return -3
 	
 	# save newly made taiclone file
-	if not DirAccess.dir_exists_absolute("user://ConvertedSongs"):
-		DirAccess.make_dir_absolute("user://ConvertedSongs")
+	if not DirAccess.dir_exists_absolute("user://ConvertedCharts"):
+		DirAccess.make_dir_absolute("user://ConvertedCharts")
 	var new_file = FileAccess.open("user://ConvertedCharts" + file_path.trim_prefix(file_path.get_base_dir()) + ".tc", FileAccess.WRITE)
-	
+	print("new file: ", new_file)
 	# top info
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
 	if origin != null:
@@ -332,6 +332,11 @@ static func get_chart(file_path: String) -> Chart:
 	hit_objects.sort_custom(
 		func(a: HitObject, b: HitObject): return a.timing > b.timing
 	)
+	
+	# error check
+	if audio == null or hit_objects.is_empty() or timing_points.is_empty():
+		print("ChartLoader: chart at ", file_path, " is corrupted! skipped")
+	
 	return Chart.new(audio, background, chart_info, timing_points, hit_objects)
 
 ## formats objects into a string

@@ -128,7 +128,8 @@ static func load_file(filepath):
 	#if file is ogg
 	elif filepath.ends_with(".ogg"):
 		#var newstream = AudioStreamOggVorbis.new()
-		return load(filepath)
+		#print("AudioLoader: .ogg is currently not supported!")
+		return null
 
 	#if file is mp3
 	elif filepath.ends_with(".mp3"):

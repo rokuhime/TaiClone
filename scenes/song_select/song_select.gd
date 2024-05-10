@@ -16,14 +16,20 @@ func _ready():
 	update_visual()
 
 func _unhandled_key_input(event):
+	if listings.size() <= 0:
+		return
+	
 	if event.is_action_pressed("LeftKat"):
 		selected_list_idx = listings.size() - 1 if selected_list_idx - 1 < 0 else selected_list_idx - 1
 		update_visual()
 	elif event.is_action_pressed("RightKat"):
 		selected_list_idx = (selected_list_idx + 1) % listings.size()
 		update_visual()
+	elif event is InputEventKey and event.keycode == KEY_F5:
+		refresh_listings_from_song_folders()
 
 func refresh_listings_from_song_folders() -> void:
+	print("SongSelect: refreshing song listings!")
 	# roku note 2023-12-29
 	# no matter what listings cant be fully cleared, listings.clear() doesnt work nor does below
 	# it just leaves null values for some reason, which breaks menu navigation
@@ -33,20 +39,33 @@ func refresh_listings_from_song_folders() -> void:
 		listing.queue_free()
 	
 	for chart_folder in Global.get_chart_folders():
+		print("chart folder: ", chart_folder)
 		if !DirAccess.dir_exists_absolute(chart_folder) or chart_folder.is_empty():
 			print("SongSelect: cant access chart folder at ", chart_folder)
 			continue
 		
 		# get chart files
-		var diraccess = DirAccess.open(chart_folder)
-		for file_name in diraccess.get_files():
-			print("file_name extention: ", file_name.get_extension())
-			if Global.SUPPORTED_CHART_FILETYPES.has(file_name.get_extension()):
-				var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(chart_folder + "/" + file_name))
-				if not listing_already_exists(chart):
-					create_new_listing(chart)
+		if chart_folder == Global.CONVERTED_CHART_FOLDER:
+			add_charts_from_folder(chart_folder)
+		
+		else:
+			for inner_chart_folder in DirAccess.get_directories_at(chart_folder):
+				add_charts_from_folder(chart_folder + "/" + inner_chart_folder)
+	
 	selected_list_idx = 0
 	update_visual()
+
+func add_charts_from_folder(directory: String) -> void:
+	print("SongSelect: adding charts from ", directory)
+	var diraccess = DirAccess.open(directory)
+	for file_name in diraccess.get_files():
+		if Global.SUPPORTED_CHART_FILETYPES.has(file_name.get_extension()):
+			var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(directory + "/" + file_name))
+			if chart == null:
+				continue
+			if not listing_already_exists(chart):
+				create_new_listing(chart)
+	
 
 func create_new_listing(chart: Chart) -> void:
 	var new_song_listing = song_listing_scene.instantiate()

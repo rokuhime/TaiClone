@@ -1,21 +1,21 @@
 [gd_scene load_steps=18 format=3 uid="uid://duw1w1bhgtct6"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_3gk3b"]
-[ext_resource type="Texture2D" uid="uid://uwfi7yvyd16r" path="res://assets/textures/screenshot387.jpg" id="1_hg67d"]
-[ext_resource type="Texture2D" uid="uid://bsvwraja2y1d1" path="res://assets/default_skin/taiko-bar-right@2x.png" id="2_e5vbt"]
-[ext_resource type="Texture2D" uid="uid://duc1opv4katn" path="res://assets/default_skin/taiko-bar-left@2x.png" id="3_fdmyn"]
-[ext_resource type="Texture2D" uid="uid://bgu0u7gnx7vj5" path="res://assets/default_skin/taiko-drum-outer@2x.png" id="4_enqju"]
-[ext_resource type="Texture2D" uid="uid://bvhxbxiv6sw8j" path="res://assets/default_skin/taiko-drum-inner@2x.png" id="5_i31tg"]
-[ext_resource type="Texture2D" uid="uid://cvegpba3ep5rg" path="res://assets/default_skin/taikohitcircle.png" id="6_j2wxl"]
-[ext_resource type="Texture2D" uid="uid://k4t643vmxd8h" path="res://assets/default_skin/approachcircle.png" id="7_13i7v"]
+[ext_resource type="Texture2D" uid="uid://coxghef0nw6j6" path="res://assets/textures/screenshot387.jpg" id="1_hg67d"]
+[ext_resource type="Texture2D" uid="uid://clawvamc08lke" path="res://assets/default_skin/taiko-bar-right@2x.png" id="2_e5vbt"]
+[ext_resource type="Texture2D" uid="uid://80ovw3jdt0id" path="res://assets/default_skin/taiko-bar-left@2x.png" id="3_fdmyn"]
+[ext_resource type="Texture2D" uid="uid://dk4p0o7k8be8y" path="res://assets/default_skin/taiko-drum-outer@2x.png" id="4_enqju"]
+[ext_resource type="Texture2D" uid="uid://ymlpf61n1fv8" path="res://assets/default_skin/taiko-drum-inner@2x.png" id="5_i31tg"]
+[ext_resource type="Texture2D" uid="uid://b46qmmhrha5hh" path="res://assets/default_skin/taikohitcircle.png" id="6_j2wxl"]
+[ext_resource type="Texture2D" uid="uid://cx3y7mnvf74yt" path="res://assets/default_skin/approachcircle.png" id="7_13i7v"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="9_tgle1"]
-[ext_resource type="Texture2D" uid="uid://d1g3e0agicyil" path="res://assets/default_skin/taiko-hit300.png" id="12_cbuc6"]
+[ext_resource type="Texture2D" uid="uid://b0mb0jk6hdolv" path="res://assets/default_skin/taiko-hit300.png" id="12_cbuc6"]
 [ext_resource type="Script" path="res://scenes/gameplay/score_manager.gd" id="13_evyiw"]
-[ext_resource type="AudioStream" uid="uid://7cd7garny8ig" path="res://assets/default_skin/combobreak.wav" id="13_kii7l"]
-[ext_resource type="Texture2D" uid="uid://kc1oeu2a2by6" path="res://assets/default_skin/scorebar-bg@2x.png" id="14_npcy7"]
-[ext_resource type="Texture2D" uid="uid://2o44yuo7vdis" path="res://assets/default_skin/scorebar-colour@2x.png" id="15_o6ggk"]
-[ext_resource type="Texture2D" uid="uid://byvvf50k1xbuj" path="res://assets/default_skin/taiko-hit100.png" id="17_pqxbr"]
-[ext_resource type="Texture2D" uid="uid://fn75ol8otggh" path="res://assets/default_skin/taiko-hit0@2x.png" id="18_t1emc"]
+[ext_resource type="AudioStream" uid="uid://hfq4u36ekcwg" path="res://assets/default_skin/combobreak.wav" id="13_kii7l"]
+[ext_resource type="Texture2D" uid="uid://ex1rl72k684" path="res://assets/default_skin/scorebar-bg@2x.png" id="14_npcy7"]
+[ext_resource type="Texture2D" uid="uid://d15gp2oikqff3" path="res://assets/default_skin/scorebar-colour@2x.png" id="15_o6ggk"]
+[ext_resource type="Texture2D" uid="uid://c1p1gflvaar81" path="res://assets/default_skin/taiko-hit100.png" id="17_pqxbr"]
+[ext_resource type="Texture2D" uid="uid://drwpakhqk5tm" path="res://assets/default_skin/taiko-hit0@2x.png" id="18_t1emc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_u26yd"]
 font_size = 64
@@ -223,10 +223,13 @@ tint_under = Color(0.2, 0.2, 0.2, 1)
 
 [node name="Combo" type="Label" parent="ScoreManager"]
 layout_mode = 1
-offset_left = 1.0
-offset_top = 400.0
-offset_right = 251.0
-offset_bottom = 486.0
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -149.0
+offset_right = 250.0
+offset_bottom = -55.0
+grow_vertical = 2
 text = "0"
 label_settings = SubResource("LabelSettings_u26yd")
 horizontal_alignment = 1
@@ -258,9 +261,15 @@ inaccurate: 0
 miss: 0"
 
 [node name="Judgements" type="Control" parent="ScoreManager"]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 362.0
+offset_top = -97.0
+offset_right = 362.0
+offset_bottom = -97.0
+grow_vertical = 2
 
 [node name="Accurate" type="TextureRect" parent="ScoreManager/Judgements"]
 modulate = Color(1, 1, 1, 0)
@@ -270,10 +279,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 156.0
-offset_top = 236.0
-offset_right = 525.0
-offset_bottom = 610.0
+offset_left = -184.5
+offset_top = -187.0
+offset_right = 184.5
+offset_bottom = 187.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("12_cbuc6")
@@ -288,10 +297,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 156.0
-offset_top = 236.0
-offset_right = 525.0
-offset_bottom = 610.0
+offset_left = -184.5
+offset_top = -187.0
+offset_right = 184.5
+offset_bottom = 187.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("17_pqxbr")
@@ -306,10 +315,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 156.0
-offset_top = 236.0
-offset_right = 525.0
-offset_bottom = 610.0
+offset_left = -184.5
+offset_top = -187.0
+offset_right = 184.5
+offset_bottom = 187.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("18_t1emc")
