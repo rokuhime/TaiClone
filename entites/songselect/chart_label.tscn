@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://dd22ydt1whwtl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddjy1"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 9
+
+[sub_resource type="LabelSettings" id="LabelSettings_pia3p"]
+font_size = 22
+
+[node name="ChartLabel" type="PanelContainer"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_ddjy1")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "LABEL"
+label_settings = SubResource("LabelSettings_pia3p")

@@ -27,7 +27,7 @@ func change_state(requested_scene):
 	
 	var new_state_scene: Node
 	if requested_scene >= GAMESTATE.size():
-		print("Root: invalid index called to change_state(), voided current_state_node and bailed!")
+		printerr("Root: invalid index called to change_state(), voided current_state_node and bailed!")
 		return
 	new_state_scene = gamestate_scenes[requested_scene].instantiate()
 	current_state_node = new_state_scene

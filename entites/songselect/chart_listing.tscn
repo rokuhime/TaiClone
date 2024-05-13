@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://lf2mpbwnrksw"]
+[gd_scene load_steps=4 format=3 uid="uid://lf2mpbwnrksw"]
 
 [ext_resource type="Script" path="res://entites/songselect/chart_listing.gd" id="1_cs84o"]
 
@@ -11,12 +11,6 @@ border_width_bottom = 5
 
 [sub_resource type="LabelSettings" id="LabelSettings_pia3p"]
 font_size = 22
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddjy1"]
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 9
 
 [node name="SongListing" type="Panel"]
 custom_minimum_size = Vector2(0, 74.505)
@@ -62,25 +56,5 @@ label_settings = SubResource("LabelSettings_pia3p")
 [node name="Labels" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-
-[node name="Difficulty" type="PanelContainer" parent="VBoxContainer/Labels"]
-visible = false
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ddjy1")
-
-[node name="Label" type="Label" parent="VBoxContainer/Labels/Difficulty"]
-layout_mode = 2
-text = " 8.01 "
-label_settings = SubResource("LabelSettings_pia3p")
-
-[node name="Status" type="PanelContainer" parent="VBoxContainer/Labels"]
-visible = false
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ddjy1")
-
-[node name="Label" type="Label" parent="VBoxContainer/Labels/Status"]
-layout_mode = 2
-text = " UNKNOWN "
-label_settings = SubResource("LabelSettings_pia3p")
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]

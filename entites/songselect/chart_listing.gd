@@ -1,8 +1,10 @@
 class_name ChartListing
 extends Panel
 
-var chart: Chart
+static var chart_label = preload("res://entites/songselect/chart_label.tscn")
+@onready var chart_label_container := $VBoxContainer/Labels
 
+var chart: Chart
 @onready var song_info_label := $VBoxContainer/SongInfo
 @onready var chart_info_label := $VBoxContainer/ChartInfo
 
@@ -22,6 +24,7 @@ func _ready():
 	if chart:
 		song_info_label.text = chart.chart_info["Song_Title"] + " - " + chart.chart_info["Song_Artist"]
 		chart_info_label.text = chart.chart_info["Chart_Title"] + " - " + chart.chart_info["Chart_Artist"]
+		generate_chart_labels()
 	else:
 		print("wtf!@!!!")
 	
@@ -37,4 +40,24 @@ func _on_gui_input(event):
 			print("ChartListing: Changing to gameplay with chart ", chart.chart_info["Song_Title"])
 			get_tree().get_first_node_in_group("SongSelect").transition_to_gameplay()
 			pass
-		
+
+func generate_chart_labels():
+	# go through values
+	# add relevant labels with add_chart_label(value, color)
+	# spesifically looking at .osu converts, checvk if its even made for taiko to be able to add warning
+	# OSU, CONVERT
+	
+	match chart.chart_info.get("Origin_Type", "").to_lower():
+		"osu":
+			add_chart_label(ChartLabelInfo.ORIGIN_OSU)
+		"convert":
+			add_chart_label(ChartLabelInfo.ORIGIN_CONVERT)
+		_:
+			add_chart_label(ChartLabelInfo.ORIGIN_UNKNOWN)
+
+# uses ChartLabelInfo arrays to set info
+func add_chart_label(label_info: Array):
+	var new_label = chart_label.instantiate()
+	new_label.get_node("Label").text = label_info[0]
+	new_label.self_modulate = label_info[1]
+	chart_label_container.add_child(new_label)

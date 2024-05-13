@@ -85,10 +85,18 @@ static func convert_chart(file_path: String):
 				match section:
 					"General", "Metadata", "Difficulty":
 						data_name = line.substr(0, line.find(':'))
+						data_value = line.substr(line.find(':') + 1, line.length()).strip_edges()
+
 						
 						if valid_variables.has(data_name):
-							data_value = line.substr(line.find(':') + 1, line.length())
 							chart_info[ translated_variables[valid_variables.find(data_name)] ] = data_value
+						
+						elif data_name == "Mode":
+							print("mode time :DDDDDDDDD = ", data_value)
+							if data_value == "1":
+								chart_info["Origin_Type"] = "Osu"
+							else:
+								chart_info["Origin_Type"] = "Convert"
 						
 						elif data_name == "SliderMultiplier":
 							data_value = line.substr(line.find(':') + 1, line.length())
@@ -318,6 +326,9 @@ static func get_chart(file_path: String) -> Chart:
 				match data_name:
 					"Origin":
 						file_path = data_value
+					
+					"Origin_Type":
+						chart_info["Origin_Type"] = data_value
 
 					"Audio_Path":
 						audio = AudioLoader.load_file(file_path.get_base_dir() + "/" + data_value)
