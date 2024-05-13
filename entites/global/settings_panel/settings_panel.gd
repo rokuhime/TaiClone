@@ -116,6 +116,8 @@ func load_settings() -> void:
 	for setting in audio_settings:
 		var bus_volume = config_file.get_value("Audio", setting, 1)
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index(setting), linear_to_db(bus_volume))
+		
+	get_tree().get_first_node_in_group("VolumeControl").update_bar()
 	
 	var keys = config_file.get_section_keys("Keybinds")
 	for key in keys:

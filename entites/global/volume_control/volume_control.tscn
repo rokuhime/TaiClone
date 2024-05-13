@@ -20,7 +20,7 @@ line_spacing = 4.0
 font_size = 18
 outline_size = 1
 
-[node name="VolumeControl" type="ColorRect"]
+[node name="VolumeControl" type="ColorRect" groups=["VolumeControl"]]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5

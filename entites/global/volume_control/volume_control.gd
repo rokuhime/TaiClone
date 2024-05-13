@@ -23,7 +23,6 @@ var current_bus_index := 0
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	bus_sections.append(get_node("Bars/Master"))
-	update_bar(0)
 	
 	for bar_idx in get_node("Bars/Specifics").get_child_count():
 		var target_bus: Control = get_node("Bars/Specifics").get_child(bar_idx)
@@ -107,8 +106,14 @@ func change_volume(change_amount: float, change_exact := false):
 	# save new volume
 	get_tree().get_first_node_in_group("SettingsPanel").save_settings()
 
-func update_bar(bus_index: int):
+func update_bar(bus_index: int = -1):
 	var volume_slider: TextureProgressBar = bus_sections[bus_index].get_node("TextureProgressBar")
+	
+	# if no bus index specified, update all
+	if bus_index == -1:
+		for i in bus_bar_size_tweens.size():
+			update_bar(i)
+		return
 	
 	# stop any current tweens happening to bar visual
 	if bus_bar_size_tweens[bus_index]:
