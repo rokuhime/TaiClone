@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://0fk2w5ctpdnt"]
 
-[ext_resource type="Texture2D" uid="uid://cvegpba3ep5rg" path="res://assets/default_skin/taikohitcircle.png" id="1_dxuri"]
+[ext_resource type="Texture2D" uid="uid://b46qmmhrha5hh" path="res://assets/default_skin/taikohitcircle.png" id="1_dxuri"]
 [ext_resource type="Script" path="res://entites/gameplay/hitobjects/note.gd" id="2_qegwt"]
-[ext_resource type="Texture2D" uid="uid://bfsvqcqfvmm3b" path="res://assets/default_skin/taikohitcircleoverlay.png" id="2_rqbsx"]
+[ext_resource type="Texture2D" uid="uid://b205j5inokbyq" path="res://assets/default_skin/taikohitcircleoverlay.png" id="2_rqbsx"]
 
 [node name="Note" type="TextureRect"]
 anchors_preset = 8

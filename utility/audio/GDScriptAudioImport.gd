@@ -164,7 +164,7 @@ static func convert_to_16bit(data: PackedByteArray, from: int) -> PackedByteArra
 			data[j] = data[i+1]
 			data[j+1] = data[i+2]
 			j += 2
-		data.resize(data.size() * 2 / 3)
+		@warning_ignore("integer_division") data.resize(data.size() * 2 / 3)
 	# 32 bit .wav's are typically stored as floating point numbers
 	# so we need to grab all 4 bytes and interpret them as a float first
 	if from == 32:
@@ -174,10 +174,10 @@ static func convert_to_16bit(data: PackedByteArray, from: int) -> PackedByteArra
 		for i in range(0, data.size(), 4):
 			spb.data_array = data.slice(i, i+3)
 			single_float = spb.get_float()
-			value = single_float * 32768
-			data[i/2] = value
-			data[i/2+1] = value >> 8
-		data.resize(data.size() / 2)
+			value = int(single_float * 32768)
+			@warning_ignore("integer_division") data[i/2] = value
+			@warning_ignore("integer_division") data[i/2+1] = value >> 8
+		@warning_ignore("integer_division") data.resize(data.size() / 2)
 	#print("Took %f seconds for slow conversion" % ((Time.get_ticks_msec() - time) / 1000.0))
 	return data
 

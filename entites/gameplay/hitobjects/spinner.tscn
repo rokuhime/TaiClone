@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=3 uid="uid://cetwhypdquydw"]
 
 [ext_resource type="Script" path="res://entites/gameplay/hitobjects/spinner.gd" id="1_nk4qg"]
-[ext_resource type="Texture2D" uid="uid://b2kmhfivs1sc6" path="res://assets/default_skin/spinner-warning.png" id="1_s0d8t"]
-[ext_resource type="Texture2D" uid="uid://cvwnn4xvbldby" path="res://assets/default_skin/spinner-approachcircle@2x.png" id="2_eqisr"]
-[ext_resource type="Texture2D" uid="uid://n6tewg7w8nxn" path="res://assets/default_skin/spinner-circle.png" id="3_4l1fg"]
+[ext_resource type="Texture2D" uid="uid://ctsrf72bpg1wx" path="res://assets/default_skin/spinner-warning.png" id="1_s0d8t"]
+[ext_resource type="Texture2D" uid="uid://y7keb0cqkget" path="res://assets/default_skin/spinner-approachcircle@2x.png" id="2_eqisr"]
+[ext_resource type="Texture2D" uid="uid://jqmi4awxlrg7" path="res://assets/default_skin/spinner-circle.png" id="3_4l1fg"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1xbsh"]
 font_size = 50
