@@ -17,6 +17,7 @@ func _ready():
 	
 	refresh_listings_from_song_folders()
 	update_visual()
+	select_listing(listings[selected_list_idx])
 
 func _unhandled_key_input(event):
 	if listings.size() <= 0:
@@ -106,7 +107,7 @@ func update_visual() -> void:
 		# get default position
 		if !listing_size:
 			listing_size = listing.size
-		var default_position := Vector2(listing_size.x, listing_size.y / 2) * -1
+		#var default_position := Vector2(listing_size.x, listing_size.y / 2) * -1
 		
 		# stop any current tweens
 		if listing.movement_tween:

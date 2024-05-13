@@ -10,14 +10,14 @@ func _ready():
 		new_stream.bus = "SFX"
 		add_child(new_stream)
 
-func play_audio(audio: AudioStream, position := Vector2.ZERO):
+func play_audio(audio: AudioStream, pos := Vector2.ZERO):
 	if audio == null:
 		print("AudioQueuer: PlayAudio called without valid AudioStream!")
 		return
 	
 	var stream : AudioStreamPlayer2D = get_child(current_audio_player % audio_players)
 	
-	stream.position = position
+	stream.position = pos
 	stream.stream = audio
 	stream.play()
 	current_audio_player += 1

@@ -34,7 +34,7 @@ func _ready():
 	modulate = Color(1,1,1,0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	# ensure control's visual is correct so no weird mouse inputs happen
 	if modulate.a == 0 and visible:
 		visible = false
@@ -47,7 +47,7 @@ func _process(delta):
 	elif is_mouse_inside and timeout_bar.value != 1:
 		timeout_bar.value = 1
 
-func _unhandled_input(event):
+func _unhandled_input(_event):
 	# parse for wanted inputs
 	var pressed_input := ""
 	
@@ -131,7 +131,7 @@ func change_current_bus(wanted_bus_index: int):
 	for bus_index in bus_sections.size():
 		# stop any tweens happening to bar visual
 		if bus_bar_alpha_tweens[bus_index]:
-			bus_bar_alpha_tweens[bus_index]
+			bus_bar_alpha_tweens[bus_index].kill()
 		
 		# update bus section alpha
 		bus_bar_alpha_tweens[bus_index] = create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)

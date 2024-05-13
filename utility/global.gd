@@ -1,6 +1,6 @@
 extends Node
 
-const CONVERTED_CHART_FOLDER := "user://ConvertedCharts/"
+const CONVERTED_CHART_FOLDER := "user://ConvertedCharts"
 const SUPPORTED_CHART_FILETYPES := ["tc", "osu", "tja"]
 var chart_paths := []
 const GAMEPLAY_KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]

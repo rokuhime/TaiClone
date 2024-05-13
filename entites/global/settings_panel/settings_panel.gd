@@ -7,7 +7,6 @@ var is_visible := false
 
 @onready var chart_path_changer: ChartPathChanger = $ScrollContainer/VBoxContainer/ChartPathChanger
 @onready var keybind_list := $ScrollContainer/VBoxContainer/KeybindList
-@onready var chartpath_textedit: TextEdit = $ScrollContainer/VBoxContainer/VBoxContainer/TextEdit
 
 func _ready():
 	load_settings()
@@ -20,7 +19,7 @@ func _ready():
 		keychange_target = key
 		change_key(key)
 
-func _process(delta):
+func _process(_delta):
 	if position == Vector2(get_viewport_rect().size.x, 0) and visible == true:
 		visible = false
 	elif position != Vector2(get_viewport_rect().size.x, 0) and visible == false:

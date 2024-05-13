@@ -22,8 +22,8 @@ static func get_chart_path(file_path: String, force_convert := false) -> String:
 		if FileAccess.file_exists("user://ConvertedCharts/" + file_path.get_file() + ".tc") and not force_convert:
 			
 			# chart isnt .tc, and is converted
-			print("ChartLoader: converted file found!")
-			return "user://ConvertedCharts" + file_path.get_file() + ".tc"
+			#print("ChartLoader: converted file found!")
+			return "user://ConvertedCharts/" + file_path.get_file() + ".tc"
 			
 		# chart isnt .tc, and is NOT converted. attempt to convert
 		print("ChartLoader: attempting to convert file...")
@@ -338,7 +338,7 @@ static func get_chart(file_path: String) -> Chart:
 	
 	# error check
 	if audio == null or hit_objects.is_empty() or timing_points.is_empty():
-		print("ChartLoader: chart at ", file_path, " is corrupted! skipped")
+		print_rich("[color=yellow]ChartLoader: chart at ", file_path, " is corrupted! skipped[/color]")
 		return
 	
 	return Chart.new(audio, background, chart_info, timing_points, hit_objects)

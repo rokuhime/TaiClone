@@ -1,10 +1,10 @@
+# TODO: roku u GOTTA refactor this, its a web of strange starts and ends and needs cleaning up desperately
 class_name ChartPathChanger
 extends VBoxContainer
 
 var path_panel_scene := load("res://entites/global/settings_panel/inputs/path_panel.tscn")
 var selected_path_panel: PathPanel
 
-@onready var template_path := $Panel/ScrollContainer/VBoxContainer/TemplatePath
 @onready var path_container := $Panel/ScrollContainer/VBoxContainer
 
 func refresh_paths() -> void:

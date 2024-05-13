@@ -52,8 +52,8 @@ static func load_file(filepath):
 	if file == null:
 		printerr("AudioLoader: Returned as null!")
 		return null;
-	if file.get_open_error():
-		printerr("AudioLoader: Error opening file! ", file.get_open_error())
+	if FileAccess.get_open_error():
+		printerr("AudioLoader: Error opening file! ", FileAccess.get_open_error())
 		return null;
 
 	var bytes = file.get_buffer(file.get_length())
@@ -71,19 +71,19 @@ static func load_file(filepath):
 
 			if those4bytes == "fmt ":
 				#get format subchunk size, 4 bytes next to "fmt " are an int32
-				var formatsubchunksize = bytes[i+4] + (bytes[i+5] << 8) + (bytes[i+6] << 16) + (bytes[i+7] << 24)
+				#var formatsubchunksize = bytes[i+4] + (bytes[i+5] << 8) + (bytes[i+6] << 16) + (bytes[i+7] << 24)
 				
 				#using formatsubchunk index so it's easier to understand what's going on
 				var fsc0 = i+8 #fsc0 is byte 8 after start of "fmt "
 
 				#get format code [Bytes 0-1]
 				var format_code = bytes[fsc0] + (bytes[fsc0+1] << 8)
-				var format_name
-				if format_code == 0: format_name = "8_BITS"
-				elif format_code == 1: format_name = "16_BITS"
-				elif format_code == 2: format_name = "IMA_ADPCM"
+				var _format_name
+				if format_code == 0: _format_name = "8_BITS"
+				elif format_code == 1: _format_name = "16_BITS"
+				elif format_code == 2: _format_name = "IMA_ADPCM"
 				else: 
-					format_name = "UNKNOWN (trying to interpret as 16_BITS)"
+					_format_name = "UNKNOWN (trying to interpret as 16_BITS)"
 					format_code = 1
 				#assign format to our AudioStreamSample
 				newstream.format = format_code
@@ -99,10 +99,10 @@ static func load_file(filepath):
 				newstream.mix_rate = sample_rate
 				
 				#get byte_rate [Bytes 8-11] because we can
-				var byte_rate = bytes[fsc0+8] + (bytes[fsc0+9] << 8) + (bytes[fsc0+10] << 16) + (bytes[fsc0+11] << 24)
+				#var byte_rate = bytes[fsc0+8] + (bytes[fsc0+9] << 8) + (bytes[fsc0+10] << 16) + (bytes[fsc0+11] << 24)
 				
 				#same with bits*sample*channel [Bytes 12-13]
-				var bits_sample_channel = bytes[fsc0+12] + (bytes[fsc0+13] << 8)
+				#var bits_sample_channel = bytes[fsc0+12] + (bytes[fsc0+13] << 8)
 				
 				#aaaand bits per sample/bitrate [Bytes 14-15]
 				bits_per_sample = bytes[fsc0+14] + (bytes[fsc0+15] << 8)
@@ -155,7 +155,7 @@ static func load_file(filepath):
 # I don't wanna risk it always being slower on other files
 # And really, the solution would be to handle it in a low-level language
 static func convert_to_16bit(data: PackedByteArray, from: int) -> PackedByteArray:
-	var time = Time.get_ticks_msec()
+	#var time = Time.get_ticks_msec()
 	# 24 bit .wav's are typically stored as integers
 	# so we just grab the 2 most significant bytes and ignore the other
 	if from == 24:
