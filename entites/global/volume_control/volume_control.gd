@@ -102,18 +102,15 @@ func change_volume(change_amount: float, change_exact := false):
 	# play sound
 	change_sound_player.pitch_scale = new_volume + 0.5
 	change_sound_player.play()
-	
-	# save new volume
-	get_tree().get_first_node_in_group("SettingsPanel").save_settings()
 
 func update_bar(bus_index: int = -1):
-	var volume_slider: TextureProgressBar = bus_sections[bus_index].get_node("TextureProgressBar")
-	
 	# if no bus index specified, update all
 	if bus_index == -1:
 		for i in bus_bar_size_tweens.size():
 			update_bar(i)
 		return
+	
+	var volume_slider: TextureProgressBar = bus_sections[bus_index].get_node("TextureProgressBar")
 	
 	# stop any current tweens happening to bar visual
 	if bus_bar_size_tweens[bus_index]:
@@ -165,7 +162,8 @@ func change_active(new_active: bool):
 	)
 	
 	if not new_active:
-		# save settings
+		# save and go back to selecting master
+		Global.save_settings()
 		change_current_bus(0)
 
 # toggles is_mouse_inside for pausing the timeout timer
