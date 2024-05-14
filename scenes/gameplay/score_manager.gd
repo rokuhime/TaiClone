@@ -47,9 +47,9 @@ func update_visuals() -> void:
 	
 	accuracy_label.text = "%2.2f%%" % accuracy
 	
-	
 	raw_info.text = "accurate: " + str(accurate_hits) + "\ninaccurate: " + str(inaccurate_hits) + "\nmiss: " + str(miss_count) + "\ntop combo: " + str(top_combo)
 
+# add score data (hits, misses)
 func add_score(hit_time_difference: float, missed := false) -> void:
 	var score_type := 0
 	if abs(hit_time_difference) <= Global.INACC_TIMING and missed == false:
@@ -90,6 +90,7 @@ func add_score(hit_time_difference: float, missed := false) -> void:
 	update_judgement(score_type)
 	update_visuals()
 
+# add second hit to a finisher's score
 func add_finisher_score(hit_time_difference: float) -> void:
 	var accurate := false
 	if abs(hit_time_difference) <= Global.ACC_TIMING:
@@ -101,6 +102,7 @@ func add_finisher_score(hit_time_difference: float) -> void:
 	score += 300 if accurate else 150
 	update_visuals()
 
+# reset score variables
 func reset() -> void:
 	score = 0
 	accurate_hits = 0
@@ -113,6 +115,7 @@ func reset() -> void:
 	top_combo = 0
 	current_combo = 0
 
+# updates visual for hits (acc, inacc, miss)
 func update_judgement(type: int):
 	var target_judgement = judgement_indicators.get_child(2 - type)
 	
@@ -122,6 +125,7 @@ func update_judgement(type: int):
 	judgement_indicator_tweens[type] = create_tween()
 	judgement_indicator_tweens[type].tween_property(target_judgement, "modulate:a", 0.0, 0.4).from(1.0)
 
+# condences current score for result screen
 func get_packaged_score() -> Dictionary:
 	var score_dict := {}
 	score_dict["Score"] = score
