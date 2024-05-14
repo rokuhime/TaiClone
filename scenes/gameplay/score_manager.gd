@@ -3,7 +3,9 @@ extends Control
 
 var score := 0
 var accurate_hits := 0
+var f_accurate_hits := 0
 var inaccurate_hits := 0
+var f_inaccurate_hits := 0
 var miss_count := 0
 
 var early_hits := 0
@@ -63,9 +65,17 @@ func add_score(hit_time_difference: float, missed := false) -> void:
 			score += 300
 	
 	if score_type > 0:
+		# combo handling
 		current_combo += 1
 		if current_combo > top_combo:
 			top_combo = current_combo
+		
+		# if inaccurate, count late/early
+		if score_type == 1:
+			if hit_time_difference > 0:
+				late_hits += 1
+			else:
+				early_hits += 1
 	
 	#hit_error_bar.add_point(hit_time_difference)
 	update_judgement(score_type)
@@ -75,6 +85,9 @@ func add_finisher_score(hit_time_difference: float) -> void:
 	var accurate := false
 	if abs(hit_time_difference) <= Global.ACC_TIMING:
 		accurate = true
+		f_accurate_hits += 1
+	else:
+		f_inaccurate_hits += 1
 
 	score += 300 if accurate else 150
 	update_visuals()
@@ -82,7 +95,9 @@ func add_finisher_score(hit_time_difference: float) -> void:
 func reset() -> void:
 	score = 0
 	accurate_hits = 0
+	f_accurate_hits = 0
 	inaccurate_hits = 0
+	f_inaccurate_hits = 0
 	miss_count = 0
 	early_hits = 0
 	late_hits = 0
@@ -104,7 +119,12 @@ func get_packaged_score() -> Dictionary:
 	score_dict["TopCombo"] = top_combo
 	
 	score_dict["AccurateHits"] = accurate_hits
+	score_dict["FAccurateHits"] = accurate_hits
 	score_dict["InaccurateHits"] = inaccurate_hits
+	score_dict["FInaccurateHits"] = inaccurate_hits
 	score_dict["MissCount"] = miss_count
+	
+	score_dict["EarlyHits"] = early_hits
+	score_dict["LateHits"] = late_hits
 	
 	return score_dict

@@ -36,3 +36,6 @@ func set_score(score: Dictionary):
 	accurate_label.text = str(score_data["AccurateHits"])
 	inaccurate_label.text = str(score_data["InaccurateHits"])
 	miss_label.text = str(score_data["MissCount"])
+	
+	early_label.text = str(score_data["EarlyHits"]) + " Early"
+	late_label.text = str(score_data["LateHits"]) + " Late"

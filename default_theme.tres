@@ -6,7 +6,7 @@
 base_font = ExtResource("1_wy7e6")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_afhvv"]
-bg_color = Color(0.196078, 0.196078, 0.196078, 0.784314)
+bg_color = Color(0.137255, 0.137255, 0.137255, 0.882353)
 border_width_left = 10
 border_width_top = 10
 border_width_right = 10
