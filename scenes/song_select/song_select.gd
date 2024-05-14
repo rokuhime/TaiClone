@@ -16,7 +16,6 @@ func _ready():
 	music = get_tree().get_first_node_in_group("RootMusic")
 	
 	refresh_listings_from_song_folders()
-	update_visual()
 	select_listing(listings[selected_list_idx])
 
 func _unhandled_key_input(event):
@@ -84,6 +83,10 @@ func select_listing(listing: ChartListing) -> void:
 	selected_list_idx = listings.find(listing)
 	update_visual()
 	
+	# TODO: check before setting? it would be annoying to get from here for not much performance increase
+	# none the less would be a good idea
+	Global.set_background(listings[selected_list_idx].chart.background)
+	
 	# play preview
 	if listings[selected_list_idx].chart.audio != null:
 		if music.stream != null:
@@ -129,7 +132,7 @@ func update_visual() -> void:
 	list_movement_tween.tween_property(
 		listing_container, 
 		"position", 
-		Vector2(listing_container.position.x, (get_viewport_rect().size.y / 2) - (selected_list_idx * listing_size.y)), 
+		Vector2(get_viewport_rect().size.x, (get_viewport_rect().size.y / 2) - (selected_list_idx * listing_size.y)), 
 		0.5 )
 
 func transition_to_gameplay() -> void:

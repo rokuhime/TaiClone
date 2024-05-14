@@ -42,6 +42,9 @@ func _process(_delta) -> void:
 	if playing:
 		current_time = Time.get_ticks_msec() / 1000.0 - start_time
 		
+		if current_time >= hit_object_container.get_child(0).timing + 2:
+			get_tree().get_first_node_in_group("Root").change_to_results(score_manager.get_packaged_score())
+		
 		for hobj in hit_object_container.get_children():
 			hobj.position.x = (hobj.speed * Global.resolution_multiplier) * (hobj.timing - current_time)
 		
@@ -54,6 +57,10 @@ func _process(_delta) -> void:
 			pass
 
 func _unhandled_input(event) -> void:
+	# back to song select
+	if event is InputEventKey and event.keycode == KEY_ESCAPE:
+		get_tree().get_first_node_in_group("Root").change_to_results(score_manager.get_packaged_score())
+	
 	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
 		var next_note: Note = get_next_note()
 		if next_note == null:
@@ -69,7 +76,7 @@ func _unhandled_input(event) -> void:
 				pressed_input = gameplay_input
 				break
 		
-		if pressed_input == "" or !playing or next_note_idx <= 0: 
+		if pressed_input == "" or !playing: 
 			return
 		
 		current_hitsound_state = HITSOUND_STATES.NORMAL
@@ -78,7 +85,8 @@ func _unhandled_input(event) -> void:
 		var current_side_input = SIDE.LEFT if pressed_input.contains("Left") else SIDE.RIGHT
 		var is_input_kat := false if pressed_input.contains("Don") else true
 		
-		hit_check(current_side_input, is_input_kat, next_note)
+		if next_note_idx > 0:
+			hit_check(current_side_input, is_input_kat, next_note)
 		play_audio(current_side_input, is_input_kat)
 
 func play_audio(input_side: SIDE, is_input_kat: bool):

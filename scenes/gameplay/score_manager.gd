@@ -31,19 +31,13 @@ func update_visuals() -> void:
 	score_label.text = "%07d" % score
 	combo_label.text = str(current_combo)
 	
-	var accuracy_text : String = "%0.2f%%" % get_accuracy()
+	var accuracy_text : String = "%0.2f%%" % Global.get_accuracy(accurate_hits, inaccurate_hits, miss_count)
 	if accuracy_text.length() < 6:
 		for i in 6 - accuracy_text.length():
 			accuracy_text = "0" + accuracy_text
 	accuracy_label.text = accuracy_text
 	
-	raw_info.text = "accurate: " + str(accurate_hits) + "\ninaccurate: " + str(inaccurate_hits) + "\nmiss: " + str(miss_count)
-
-func get_accuracy() -> float:
-	var acc_hit_count : float = (accurate_hits + float(inaccurate_hits / 2.0))
-	if acc_hit_count == 0:
-		return 0.0
-	return (acc_hit_count / float(accurate_hits + inaccurate_hits + miss_count)) * 100.0
+	raw_info.text = "accurate: " + str(accurate_hits) + "\ninaccurate: " + str(inaccurate_hits) + "\nmiss: " + str(miss_count) + "\ntop combo: " + str(top_combo)
 
 func add_score(hit_time_difference: float, missed := false) -> void:
 	var score_type := 0
@@ -54,9 +48,6 @@ func add_score(hit_time_difference: float, missed := false) -> void:
 	
 	match score_type:
 		0:  # miss
-			if current_combo > top_combo:
-				top_combo = current_combo
-			
 			if current_combo > 10:
 				combo_break_player.play()
 			
@@ -73,6 +64,8 @@ func add_score(hit_time_difference: float, missed := false) -> void:
 	
 	if score_type > 0:
 		current_combo += 1
+		if current_combo > top_combo:
+			top_combo = current_combo
 	
 	#hit_error_bar.add_point(hit_time_difference)
 	update_judgement(score_type)

@@ -1,10 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://b1x0cuqexagsr"]
+[gd_scene load_steps=8 format=3 uid="uid://b1x0cuqexagsr"]
 
 [ext_resource type="Script" path="res://scenes/root.gd" id="1_djqkq"]
 [ext_resource type="Texture2D" uid="uid://qyk77pakrphh" path="res://assets/textures/dev_art/background.png" id="2_ii7io"]
 [ext_resource type="PackedScene" uid="uid://doli71bfmeej7" path="res://entites/global/settings_panel/settings_panel.tscn" id="5_jiurb"]
 [ext_resource type="PackedScene" uid="uid://cd5gwotq82dtk" path="res://entites/global/volume_control/volume_control.tscn" id="5_ljgve"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="6_6gusu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7uk4f"]
+bg_color = Color(0, 0, 0, 0.607843)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qj1u2"]
+font_size = 24
 
 [node name="root" type="Control" groups=["Root"]]
 layout_mode = 3
@@ -24,6 +30,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ii7io")
+expand_mode = 2
+stretch_mode = 6
 
 [node name="AudioQueuer" type="Node2D" parent="."]
 script = ExtResource("6_6gusu")
@@ -44,3 +52,26 @@ layout_mode = 1
 
 [node name="Music" type="AudioStreamPlayer" parent="." groups=["RootMusic"]]
 bus = &"Music"
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -157.0
+offset_top = -81.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_7uk4f")
+
+[node name="CornerInfo" type="Label" parent="PanelContainer"]
+layout_mode = 2
+text = "TaiClone v1.0
+FPS: 100"
+label_settings = SubResource("LabelSettings_qj1u2")
+horizontal_alignment = 2
+vertical_alignment = 2

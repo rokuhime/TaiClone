@@ -1,0 +1,364 @@
+[gd_scene load_steps=10 format=3 uid="uid://dn88wm23c23om"]
+
+[ext_resource type="Theme" uid="uid://21k2l6wak2d2" path="res://default_theme.tres" id="1_3isl6"]
+[ext_resource type="Script" path="res://scenes/results/results.gd" id="1_umc1a"]
+[ext_resource type="Texture2D" uid="uid://dh836ppj76rb6" path="res://assets/textures/dev_art/brehd.png" id="3_fykk1"]
+[ext_resource type="Texture2D" uid="uid://b0mb0jk6hdolv" path="res://assets/default_skin/taiko-hit300.png" id="4_fnmyj"]
+[ext_resource type="Texture2D" uid="uid://c1p1gflvaar81" path="res://assets/default_skin/taiko-hit100.png" id="5_gondt"]
+[ext_resource type="Texture2D" uid="uid://drwpakhqk5tm" path="res://assets/default_skin/taiko-hit0@2x.png" id="6_jeb85"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_brp07"]
+font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_7nqsk"]
+font_size = 48
+
+[sub_resource type="LabelSettings" id="LabelSettings_4b6mn"]
+font_size = 24
+
+[node name="Results" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_3isl6")
+script = ExtResource("1_umc1a")
+metadata/_edit_lock_ = true
+
+[node name="MainPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -259.0
+offset_top = -371.5
+offset_right = 259.0
+offset_bottom = 371.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 11.0
+offset_right = -10.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Rank" type="TextureRect" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("3_fykk1")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Mods" type="HBoxContainer" parent="MainPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+alignment = 1
+
+[node name="Rank" type="TextureRect" parent="MainPanel/VBoxContainer/Mods"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("3_fykk1")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Score" type="VBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.35
+theme_override_constants/separation = -8
+
+[node name="Title" type="Label" parent="MainPanel/VBoxContainer/Score"]
+layout_mode = 2
+text = "Score
+"
+label_settings = SubResource("LabelSettings_brp07")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="MainPanel/VBoxContainer/Score"]
+layout_mode = 2
+text = "1,000,000"
+label_settings = SubResource("LabelSettings_7nqsk")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.35
+
+[node name="Accuracy" type="VBoxContainer" parent="MainPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -8
+
+[node name="Title" type="Label" parent="MainPanel/VBoxContainer/HBoxContainer/Accuracy"]
+layout_mode = 2
+text = "Accuracy"
+label_settings = SubResource("LabelSettings_brp07")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="MainPanel/VBoxContainer/HBoxContainer/Accuracy"]
+layout_mode = 2
+text = "100.00%"
+label_settings = SubResource("LabelSettings_7nqsk")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Combo" type="VBoxContainer" parent="MainPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -8
+
+[node name="Title" type="Label" parent="MainPanel/VBoxContainer/HBoxContainer/Combo"]
+layout_mode = 2
+text = "Combo"
+label_settings = SubResource("LabelSettings_brp07")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/HBoxContainer/Combo"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="MainPanel/VBoxContainer/HBoxContainer/Combo/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1000"
+label_settings = SubResource("LabelSettings_7nqsk")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="MaxValue" type="Label" parent="MainPanel/VBoxContainer/HBoxContainer/Combo/HBoxContainer"]
+self_modulate = Color(0.501407, 0.501406, 0.501406, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.75
+text = "/1000"
+label_settings = SubResource("LabelSettings_brp07")
+vertical_alignment = 1
+
+[node name="RightSide" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 278.0
+offset_top = -311.0
+offset_right = 690.0
+offset_bottom = 312.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="JudgementPanel" type="Panel" parent="RightSide"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="RightSide/JudgementPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -11.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+
+[node name="AccurateCount" type="HBoxContainer" parent="RightSide/JudgementPanel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="RightSide/JudgementPanel/GridContainer/AccurateCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_fnmyj")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="RightSide/JudgementPanel/GridContainer/AccurateCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1,000"
+label_settings = SubResource("LabelSettings_brp07")
+vertical_alignment = 1
+
+[node name="AccFinishCount" type="HBoxContainer" parent="RightSide/JudgementPanel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="RightSide/JudgementPanel/GridContainer/AccFinishCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_fnmyj")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="RightSide/JudgementPanel/GridContainer/AccFinishCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_brp07")
+vertical_alignment = 1
+
+[node name="InaccCount" type="HBoxContainer" parent="RightSide/JudgementPanel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="RightSide/JudgementPanel/GridContainer/InaccCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("5_gondt")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="RightSide/JudgementPanel/GridContainer/InaccCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1,000"
+label_settings = SubResource("LabelSettings_brp07")
+vertical_alignment = 1
+
+[node name="InaccFinishCount" type="HBoxContainer" parent="RightSide/JudgementPanel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="RightSide/JudgementPanel/GridContainer/InaccFinishCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("5_gondt")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="RightSide/JudgementPanel/GridContainer/InaccFinishCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_brp07")
+vertical_alignment = 1
+
+[node name="MissCount" type="HBoxContainer" parent="RightSide/JudgementPanel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="RightSide/JudgementPanel/GridContainer/MissCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("6_jeb85")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="RightSide/JudgementPanel/GridContainer/MissCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1,000"
+label_settings = SubResource("LabelSettings_brp07")
+vertical_alignment = 1
+
+[node name="LateEarlyCount" type="VBoxContainer" parent="RightSide/JudgementPanel/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Early" type="Label" parent="RightSide/JudgementPanel/GridContainer/LateEarlyCount"]
+self_modulate = Color(0.541176, 0.654902, 1, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "1000 Early"
+label_settings = SubResource("LabelSettings_brp07")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Late" type="Label" parent="RightSide/JudgementPanel/GridContainer/LateEarlyCount"]
+self_modulate = Color(1, 0.541176, 0.541176, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "1000 Late"
+label_settings = SubResource("LabelSettings_brp07")
+horizontal_alignment = 1
+
+[node name="JudgeTimeline" type="Panel" parent="RightSide"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="ColorRect" type="ColorRect" parent="RightSide/JudgeTimeline"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 11.0
+offset_top = -0.5
+offset_right = -11.0
+offset_bottom = 1.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.720467, 0.720468, 0.720467, 1)
+
+[node name="Late" type="Label" parent="RightSide/JudgeTimeline"]
+self_modulate = Color(1, 0.541176, 0.541176, 1)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -69.0
+offset_top = 162.0
+offset_right = -10.0
+offset_bottom = 197.0
+grow_horizontal = 0
+text = "Late"
+label_settings = SubResource("LabelSettings_4b6mn")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Early" type="Label" parent="RightSide/JudgeTimeline"]
+self_modulate = Color(0.541176, 0.654902, 1, 1)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -76.0
+offset_top = -197.0
+offset_right = -10.0
+offset_bottom = -162.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Early"
+label_settings = SubResource("LabelSettings_4b6mn")
+horizontal_alignment = 1
+
+[node name="JudgementContainer" type="Control" parent="RightSide/JudgeTimeline"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 11.0
+offset_bottom = -11.0
+grow_vertical = 2

@@ -92,7 +92,6 @@ static func convert_chart(file_path: String):
 							chart_info[ translated_variables[valid_variables.find(data_name)] ] = data_value
 						
 						elif data_name == "Mode":
-							print("mode time :DDDDDDDDD = ", data_value)
 							if data_value == "1":
 								chart_info["Origin_Type"] = "Osu"
 							else:

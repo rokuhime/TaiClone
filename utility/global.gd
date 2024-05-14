@@ -5,6 +5,7 @@ const SUPPORTED_CHART_FILETYPES := ["tc", "osu", "tja"]
 var chart_paths := []
 const GAMEPLAY_KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 
+var root: Control
 var music: AudioStreamPlayer
 var volume_control: VolumeControl
 var settings_panel: SettingsPanel
@@ -22,6 +23,7 @@ func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + ProjectSettings.get_setting("application/config/version"), 0)
 
 func _ready() -> void:
+	root = get_tree().get_first_node_in_group("Root")
 	music = get_tree().get_first_node_in_group("RootMusic")
 	volume_control = get_tree().get_first_node_in_group("VolumeControl")
 	settings_panel = get_tree().get_first_node_in_group("SettingsPanel")
@@ -72,6 +74,16 @@ func load_settings() -> void:
 	
 	settings_panel.load_keybinds(keybinds)
 	print("SettingsPanel: Config loaded!")
+
+static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: int) -> float:
+	var acc_hit_count : float = (accurate_hits + float(inaccurate_hits / 2.0))
+	if acc_hit_count == 0:
+		return 0.0
+	return (acc_hit_count / float(accurate_hits + inaccurate_hits + miss_count)) * 100.0
+
+# shorthand to make setting bgs easier
+func set_background(new_background: Texture2D):
+	root.set_background(new_background)
 
 #static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
 	#if obj.connect(signal_name, signal_target, method):
