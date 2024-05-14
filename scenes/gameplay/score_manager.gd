@@ -41,10 +41,8 @@ func update_visuals() -> void:
 	
 	# tint accuracy golden for ss
 	if accuracy != 100 and accuracy_label.self_modulate != Color.WHITE:
-		print("swapping to white")
 		accuracy_label.self_modulate = Color.WHITE
 	elif accuracy == 100 and accuracy_label.self_modulate == Color.WHITE:
-		print("swapping to gold")
 		accuracy_label.self_modulate = Color("fff096")
 	
 	accuracy_label.text = "%2.2f%%" % accuracy
