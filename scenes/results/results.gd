@@ -28,8 +28,13 @@ func get_accuracy() -> float:
 func set_score(score: Dictionary):
 	score_data = score
 	
-	score_label.text = str(score_data["Score"])
-	accuracy_label.text = "%0.2f%%" % Global.get_accuracy(score_data["AccurateHits"], score_data["InaccurateHits"], score_data["MissCount"])
+	var accuracy := Global.get_accuracy(score_data["AccurateHits"], score_data["InaccurateHits"], score_data["MissCount"])
+	accuracy_label.text = "%0.2f%%" % accuracy
+	# tint accuracy golden for ss
+	if accuracy == 100:
+		accuracy_label.self_modulate = Color("fff096")
+	
+	score_label.text = "%07d" % score_data["Score"]
 	combo_label.text = str(score_data["TopCombo"])
 	max_combo_label.text = "/" + str(score_data["AccurateHits"] + score_data["InaccurateHits"] + score_data["MissCount"])
 	

@@ -159,13 +159,6 @@ script = ExtResource("9_tgle1")
 [node name="Music" type="AudioStreamPlayer" parent="."]
 bus = &"Music"
 
-[node name="fps" type="Label" parent="."]
-layout_mode = 0
-offset_top = 46.0
-offset_right = 66.0
-offset_bottom = 69.0
-text = "FPS: XXX"
-
 [node name="ScoreManager" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -199,7 +192,7 @@ offset_top = 41.0
 offset_right = -7.0
 offset_bottom = 127.0
 grow_horizontal = 0
-text = "100.00%"
+text = "00.00%"
 label_settings = SubResource("LabelSettings_u26yd")
 horizontal_alignment = 2
 
@@ -239,6 +232,7 @@ vertical_alignment = 1
 layout_mode = 0
 offset_right = 1298.0
 offset_bottom = 40.0
+scale = Vector2(0.75, 0.75)
 value = 100.0
 texture_under = ExtResource("14_npcy7")
 texture_progress = ExtResource("15_o6ggk")
@@ -249,13 +243,9 @@ bus = &"SFX"
 
 [node name="RawInfo" type="Label" parent="ScoreManager"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -498.0
-offset_right = -274.0
-offset_bottom = 97.0
-grow_horizontal = 0
+offset_top = 32.0
+offset_right = 224.0
+offset_bottom = 129.0
 text = "accurate: 0
 inaccurate: 0
 miss: 0"

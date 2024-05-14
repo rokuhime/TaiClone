@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://dn88wm23c23om"]
 
-[ext_resource type="Theme" uid="uid://21k2l6wak2d2" path="res://default_theme.tres" id="1_3isl6"]
+[ext_resource type="Theme" uid="uid://21k2l6wak2d2" path="res://values/default_theme.tres" id="1_3isl6"]
 [ext_resource type="Script" path="res://scenes/results/results.gd" id="1_umc1a"]
 [ext_resource type="Texture2D" uid="uid://dh836ppj76rb6" path="res://assets/textures/dev_art/brehd.png" id="3_fykk1"]
 [ext_resource type="Texture2D" uid="uid://b0mb0jk6hdolv" path="res://assets/default_skin/taiko-hit300.png" id="4_fnmyj"]

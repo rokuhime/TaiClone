@@ -29,15 +29,26 @@ var judgement_indicator_tweens : Array = [null, null, null]
 
 #@onready var hit_error_bar: HitErrorBar = $HitErrorBar
 
+# TODO: move this out and make a ui manager
+func update_progress(cur_time: float, finish_time: float, start_time: float):
+	song_progress_bar.value = cur_time / finish_time
+
 func update_visuals() -> void:
 	score_label.text = "%07d" % score
 	combo_label.text = str(current_combo)
 	
-	var accuracy_text : String = "%0.2f%%" % Global.get_accuracy(accurate_hits, inaccurate_hits, miss_count)
-	if accuracy_text.length() < 6:
-		for i in 6 - accuracy_text.length():
-			accuracy_text = "0" + accuracy_text
-	accuracy_label.text = accuracy_text
+	var accuracy := Global.get_accuracy(accurate_hits, inaccurate_hits, miss_count)
+	
+	# tint accuracy golden for ss
+	if accuracy != 100 and accuracy_label.self_modulate != Color.WHITE:
+		print("swapping to white")
+		accuracy_label.self_modulate = Color.WHITE
+	elif accuracy == 100 and accuracy_label.self_modulate == Color.WHITE:
+		print("swapping to gold")
+		accuracy_label.self_modulate = Color("fff096")
+	
+	accuracy_label.text = "%2.2f%%" % accuracy
+	
 	
 	raw_info.text = "accurate: " + str(accurate_hits) + "\ninaccurate: " + str(inaccurate_hits) + "\nmiss: " + str(miss_count) + "\ntop combo: " + str(top_combo)
 

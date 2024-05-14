@@ -37,7 +37,7 @@ func _ready() -> void:
 	music = Global.music
 
 func _process(_delta) -> void:
-	fps_label.text = "FPS: " + str(Engine.get_frames_per_second()) + "\nstart_time: " + str(start_time) + "\ncurrent_time: " + str(current_time) + "\nnext_note_idx: " + str(next_note_idx)
+	score_manager.update_progress(current_time, hit_object_container.get_child(0).timing + 2, start_time)
 	
 	if playing:
 		current_time = Time.get_ticks_msec() / 1000.0 - start_time

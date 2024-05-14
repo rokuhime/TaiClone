@@ -20,7 +20,7 @@ boot_splash/icon="res://assets/textures/dev_art/logo.png"
 
 [audio]
 
-buses/default_bus_layout="res://audio_bus_layout.tres"
+buses/default_bus_layout="res://values/audio_bus_layout.tres"
 
 [autoload]
 
