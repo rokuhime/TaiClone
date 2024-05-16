@@ -27,7 +27,6 @@ func _ready() -> void:
 
 func create_ticks() -> void:
 	var tick_count = int(ceil(length / tick_duration)) + 1
-	print("tick_duration = ", tick_duration, ", tick_count = ", tick_count)
 	# tick distance = body length / tick count - 1 to ensure the first tick is on 0, and the last tick is on the body's end
 	var tick_distance = length * speed * Global.resolution_multiplier / (tick_count - 1)
 	
@@ -44,10 +43,10 @@ func get_tick_idx(cur_time: float) -> int:
 # roku note 2024-05-16
 # feels weird as hell, it does take the closest timing but inputs can often get swallowed by nearby notes making it feel pretty blecky
 # work on get_tick_idx to make it basically hone in on the closest NOT HIT tick maybe?
-func hit_check(cur_time: float) -> bool:
+func hit_check(cur_time: float) -> HIT_RESULT:
 	var tick_idx = clampi(get_tick_idx(cur_time), 0, tick_container.get_child_count() - 1)
 	var tick = tick_container.get_child(tick_idx)
 	if tick.visible:
 		tick.visible = false
-		return true
-	return false
+		return HIT_RESULT.HIT
+	return HIT_RESULT.INVALID

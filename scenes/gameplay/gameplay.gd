@@ -54,7 +54,7 @@ func _process(_delta) -> void:
 			return
 		
 		# miss check
-		var next_note : Note = get_next_note()
+		var next_note: HitObject = get_next_note()
 		if next_note.timing + Global.INACC_TIMING < current_time:
 			apply_score(next_note.timing - current_time, next_note)
 			pass
@@ -87,6 +87,10 @@ func _unhandled_input(event) -> void:
 		
 		# hit check
 		if next_note_idx >= 0:
+			# check if this hit is going to a finisher, if not then continue
+			if finisher_hit_check(current_side_input, is_input_kat):
+				return
+			
 			# check next note
 			var next_note: Note = get_next_note()
 			if next_note != null:
@@ -113,38 +117,42 @@ func play_audio(input_side: SIDE, is_input_kat: bool):
 	
 	audio_queuer.play_audio(stream_audio, stream_position)
 
-func hit_check(input_side: SIDE, is_input_kat: bool, target_note: Note ) -> void:
-	# secondary finisher hit check
+func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> void:
+	# normal hit check
+	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
+	match hit_result:
+		HitObject.HIT_RESULT.HIT:
+			if target_hobj is Note:
+				apply_score(target_hobj.timing - current_time, target_hobj)
+		
+		# assume hitobject is Note for now
+		HitObject.HIT_RESULT.HIT_FINISHER:
+			active_finisher_note = target_hobj
+			current_hitsound_state = HITSOUND_STATES.FINISHER
+			
+			apply_score(target_hobj.timing - current_time, target_hobj)
+		
+		HitObject.HIT_RESULT.MISS:
+			apply_score(target_hobj.timing - current_time, target_hobj, true)
+		
+		_:
+			return
+
+# finisher second hit check, returns if it was successful or not
+func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 	if active_finisher_note:
 		if (active_finisher_note.timing - current_time) > Global.INACC_TIMING:
-			pass
+			return false
+		
 		elif active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
 			apply_finisher_score(active_finisher_note.timing - current_time)
 			current_hitsound_state = HITSOUND_STATES.NONE
-			return
+			return true
 		
-		# if the input is the same side/different colour, null the active finisher and look at next circle
+		# if the input is the same side/different colour, null the active finisher and return false
 		elif active_finisher_note.last_side_hit == input_side or active_finisher_note.is_kat != is_input_kat:
 			active_finisher_note = null 
-	
-	# normal hit check
-	
-	# if not hittable yet
-	if abs(target_note.timing - current_time) > Global.INACC_TIMING:
-		return
-	
-	# wrong input type miss
-	elif target_note.is_kat != is_input_kat:
-		apply_score(target_note.timing - current_time, target_note, true)
-		return
-	
-	# new finisher hit
-	if target_note.is_finisher and !active_finisher_note:
-		current_hitsound_state = HITSOUND_STATES.FINISHER
-		active_finisher_note = target_note
-		target_note.last_side_hit = input_side as Note.SIDE
-	
-	apply_score(target_note.timing - current_time, target_note)
+	return false
 
 func apply_finisher_score(hit_time_difference: float) -> void:
 	score_manager.add_finisher_score(hit_time_difference)
@@ -222,6 +230,7 @@ func skip_intro() -> void:
 	start_time -= next_hit_object.timing - 2.0 - current_time
 	music.seek(current_play_offset + next_hit_object.timing - 2.0)
 
+# returns next valid note object
 func get_next_note() -> Note:
 	if hit_object_container.get_child_count() == 0:
 		return null;

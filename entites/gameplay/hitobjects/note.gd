@@ -10,3 +10,20 @@ func _ready() -> void:
 	
 	if is_finisher:
 		scale = Vector2.ONE * FINISHER_SCALE
+
+func hit_check(current_time: float, input_side: SIDE, is_input_kat: bool) -> HIT_RESULT:
+	# if not hittable yet
+	if abs(timing - current_time) > Global.INACC_TIMING:
+		return HIT_RESULT.INVALID
+	
+	# wrong input type miss
+	elif is_kat != is_input_kat:
+		#apply_score(target_note.timing - current_time, target_note, true)
+		return HIT_RESULT.MISS
+	
+	# new finisher hit
+	if is_finisher:
+		last_side_hit = input_side as SIDE
+		return HIT_RESULT.HIT_FINISHER
+	
+	return HIT_RESULT.HIT
