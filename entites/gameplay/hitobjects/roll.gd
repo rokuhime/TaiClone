@@ -7,10 +7,10 @@ extends HitObject
 
 @onready var middle_node := $Middle as Control
 var length: float
+var tick_duration: float
 
 @onready var tick_container: Control = $Ticks
 var tick_scene := load("res://entites/gameplay/hitobjects/roll_tick.tscn")
-var ticks := []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -25,10 +25,9 @@ func _ready() -> void:
 	
 	middle_node.size.x = body_length
 
-func create_ticks(bpm: float) -> void:
-	var beat_length = 60.0 / bpm
-	var quarter_beat_length = beat_length / 4.0
-	var tick_count = int(ceil(length / quarter_beat_length)) + 1
+func create_ticks() -> void:
+	var tick_count = int(ceil(length / tick_duration)) + 1
+	print("tick_duration = ", tick_duration, ", tick_count = ", tick_count)
 	# tick distance = body length / tick count - 1 to ensure the first tick is on 0, and the last tick is on the body's end
 	var tick_distance = length * speed * Global.resolution_multiplier / (tick_count - 1)
 	
@@ -38,3 +37,17 @@ func create_ticks(bpm: float) -> void:
 		tick_container.add_child(new_tick)
 		
 		new_tick.position.x = tick_idx * tick_distance
+
+func get_tick_idx(cur_time: float) -> int:
+	return int(round( (cur_time - timing) / tick_duration ))
+
+# roku note 2024-05-16
+# feels weird as hell, it does take the closest timing but inputs can often get swallowed by nearby notes making it feel pretty blecky
+# work on get_tick_idx to make it basically hone in on the closest NOT HIT tick maybe?
+func hit_check(cur_time: float) -> bool:
+	var tick_idx = clampi(get_tick_idx(cur_time), 0, tick_container.get_child_count() - 1)
+	var tick = tick_container.get_child(tick_idx)
+	if tick.visible:
+		tick.visible = false
+		return true
+	return false

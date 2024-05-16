@@ -87,10 +87,14 @@ func _unhandled_input(event) -> void:
 		
 		# hit check
 		if next_note_idx >= 0:
+			# check next note
 			var next_note: Note = get_next_note()
-			if next_note == null:
-				return
-			hit_check(current_side_input, is_input_kat, next_note)
+			if next_note != null:
+				hit_check(current_side_input, is_input_kat, next_note)
+			
+			# check special notes (spinners, rolls)
+			for hobj in get_active_hitobjects():
+				var result = hobj.hit_check(current_time)
 		play_audio(current_side_input, is_input_kat)
 
 # plays note audio
@@ -224,7 +228,7 @@ func get_next_note() -> Note:
 	
 	var next_note : HitObject 
 	var next_note_offset = 0
-	# check hitobjects for next valid note, otherwise return the last object
+	# check hitobjects for next valid note
 	while !(next_note is Note):
 		if hit_object_container.get_children()[next_note_idx - next_note_offset] is Note:
 			next_note = hit_object_container.get_children()[next_note_idx - next_note_offset]
@@ -234,3 +238,31 @@ func get_next_note() -> Note:
 	
 	# no notes left
 	return null
+
+# returns any hit objects with length that have started but not ended
+func get_active_hitobjects() -> Array:
+	var active_hobjs := []
+	var next_hobj: HitObject
+	var next_hobj_offset = hit_object_container.get_child_count() - 1
+	
+	# check hitobjects for next valid note, otherwise return the last object
+	while next_hobj_offset >= 0:
+		next_hobj = hit_object_container.get_children()[next_hobj_offset]
+		
+		# if it has length...
+		if next_hobj is Roll or next_hobj is Spinner:
+			# if hit object timing is after current_time, bail out
+			if next_hobj.timing - Global.INACC_TIMING > current_time:
+				break
+			
+			# if hit object timing has passed but has not ended, add to array
+			# allows for stacking sliders/spinners/whatever else (hypothetically)
+			if next_hobj.timing + next_hobj.length + Global.INACC_TIMING > current_time:
+				active_hobjs.append(next_hobj)
+		next_hobj_offset -= 1
+		
+		# if last hitobj, break and return hit objects
+		if next_hobj_offset <= 0:
+			break
+	
+	return active_hobjs

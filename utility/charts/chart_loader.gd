@@ -401,7 +401,8 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 				new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
 			
 			(new_hit_object as Roll).length = ex_vars["Length"]
-			(new_hit_object as Roll).create_ticks(intended_timing_point[1])
+			(new_hit_object as Roll).tick_duration = (60.0 / intended_timing_point[1]) / 4.0
+			(new_hit_object as Roll).create_ticks()
 			
 			return new_hit_object 
 		
