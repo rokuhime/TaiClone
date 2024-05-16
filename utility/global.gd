@@ -58,7 +58,8 @@ func load_settings() -> void:
 		print("SettingsPanel: Config failed to load at user://settings.cfg with code ", err)
 		return
 	
-	chart_paths = config_file.get_value("General", "ChartPaths", null)
+	if config_file.get_value("General", "ChartPaths", null):
+		chart_paths = config_file.get_value("General", "ChartPaths", null)
 	
 	var audio_settings = config_file.get_section_keys("Audio")
 	for setting in audio_settings:

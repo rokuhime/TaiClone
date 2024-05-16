@@ -19,21 +19,19 @@ func _ready():
 	select_listing(listings[selected_list_idx])
 
 func _unhandled_key_input(event):
-	if listings.size() <= 0:
-		return
-	
-	if event.is_action_pressed("LeftKat"):
-		selected_list_idx = listings.size() - 1 if selected_list_idx - 1 < 0 else selected_list_idx - 1
-		select_listing(listings[selected_list_idx])
-	elif event.is_action_pressed("RightKat"):
-		selected_list_idx = (selected_list_idx + 1) % listings.size()
-		select_listing(listings[selected_list_idx])
-	elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon"):
-		transition_to_gameplay()
-	
 	# refresh listings
-	elif event is InputEventKey and event.keycode == KEY_F5:
+	if event is InputEventKey and event.keycode == KEY_F5:
 		refresh_listings_from_song_folders()
+	
+	if listings.size() > 0:
+		if event.is_action_pressed("LeftKat"):
+			selected_list_idx = listings.size() - 1 if selected_list_idx - 1 < 0 else selected_list_idx - 1
+			select_listing(listings[selected_list_idx])
+		elif event.is_action_pressed("RightKat"):
+			selected_list_idx = (selected_list_idx + 1) % listings.size()
+			select_listing(listings[selected_list_idx])
+		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon"):
+			transition_to_gameplay()
 
 func refresh_listings_from_song_folders() -> void:
 	print("SongSelect: refreshing song listings...")

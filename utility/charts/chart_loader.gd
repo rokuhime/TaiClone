@@ -199,6 +199,7 @@ static func convert_chart(file_path: String):
 							var length = float(line_data[7])
 							var repeats = int(line_data[6])
 							ex["Length"] = length / (slider_multiplier * 100000.0 * current_timing["Velocity"]) * (60000.0 / current_timing["BPM"]) * repeats
+							
 						
 						else:
 							# everything else is parsed as a note, don/kat based on hitsounding as expected
@@ -400,6 +401,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 				new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
 			
 			(new_hit_object as Roll).length = ex_vars["Length"]
+			(new_hit_object as Roll).create_ticks(intended_timing_point[1])
 			
 			return new_hit_object 
 		
