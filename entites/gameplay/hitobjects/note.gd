@@ -2,8 +2,7 @@ class_name Note
 extends HitObject
 
 var is_kat := false
-enum SIDE {NONE, LEFT, RIGHT}
-var last_side_hit := SIDE.NONE
+var last_side_hit := Gameplay.SIDE.NONE
 
 func _ready() -> void:
 	self_modulate = Color("438EAD") if is_kat else Color("EB452B")
@@ -11,7 +10,7 @@ func _ready() -> void:
 	if is_finisher:
 		scale = Vector2.ONE * FINISHER_SCALE
 
-func hit_check(current_time: float, input_side: SIDE, is_input_kat: bool) -> HIT_RESULT:
+func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
 	# if not hittable yet
 	if abs(timing - current_time) > Global.INACC_TIMING:
 		return HIT_RESULT.INVALID
@@ -23,7 +22,7 @@ func hit_check(current_time: float, input_side: SIDE, is_input_kat: bool) -> HIT
 	
 	# new finisher hit
 	if is_finisher:
-		last_side_hit = input_side as SIDE
+		last_side_hit = input_side as Gameplay.SIDE
 		return HIT_RESULT.HIT_FINISHER
 	
 	return HIT_RESULT.HIT

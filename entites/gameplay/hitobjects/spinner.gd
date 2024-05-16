@@ -35,35 +35,20 @@ func _process(delta) -> void:
 		inside_rotation_speed -= delta * 0.25
 		inside.rotation += inside_rotation_speed
 
-func _unhandled_input(event) -> void:
-	if hit_status > hit_type.INACTIVE:  # if its not inactive...
-		if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
-			var pressed_input := ""
-			
-			for rhythm_input in rhythm_inputs:
-				if Input.is_action_just_pressed(rhythm_input):
-					pressed_input = rhythm_input
-					break
-			
-			if pressed_input == "": 
-				return
-			
-			# get what kind of hit was given
-			var input_type = hit_type.DON if pressed_input.contains("Don") else hit_type.KAT
-			if hit_status == input_type or hit_status == hit_type.ANY:
-				needed_hits -= 1
-				needed_hit_label.text = str(needed_hits)
-				
-				if needed_hits <= 0:
-					finished()
-					return
-				
-				inside_rotation_speed = min(inside_rotation_speed + 0.05, 0.3)
-				
-				# alternate hit input
-				hit_status = hit_type.DON if input_type == hit_type.KAT else hit_type.KAT
-
 func finished() -> void:
 	hit_status = hit_type.FINISHED
 	await get_tree().create_timer(1).timeout
 	# kill self
+
+func hit_check(current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
+	if hit_status == int(is_input_kat) or hit_status == hit_type.ANY:
+		needed_hits -= 1
+		needed_hit_label.text = str(needed_hits)
+		inside_rotation_speed = min(inside_rotation_speed + 0.05, 0.3)
+		
+		if needed_hits <= 0:
+			finished()
+			return HIT_RESULT.SPINNER_FINISH
+		else:
+			return HIT_RESULT.HIT
+	return HIT_RESULT.INVALID

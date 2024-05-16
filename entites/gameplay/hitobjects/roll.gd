@@ -43,8 +43,8 @@ func get_tick_idx(cur_time: float) -> int:
 # roku note 2024-05-16
 # feels weird as hell, it does take the closest timing but inputs can often get swallowed by nearby notes making it feel pretty blecky
 # work on get_tick_idx to make it basically hone in on the closest NOT HIT tick maybe?
-func hit_check(cur_time: float) -> HIT_RESULT:
-	var tick_idx = clampi(get_tick_idx(cur_time), 0, tick_container.get_child_count() - 1)
+func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: bool) -> HIT_RESULT:
+	var tick_idx = clampi(get_tick_idx(current_time), 0, tick_container.get_child_count() - 1)
 	var tick = tick_container.get_child(tick_idx)
 	if tick.visible:
 		tick.visible = false

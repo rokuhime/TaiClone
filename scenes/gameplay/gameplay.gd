@@ -98,7 +98,7 @@ func _unhandled_input(event) -> void:
 			
 			# check special notes (spinners, rolls)
 			for hobj in get_active_hitobjects():
-				var result = hobj.hit_check(current_time)
+				var result = hobj.hit_check(current_time, current_side_input, is_input_kat)
 		play_audio(current_side_input, is_input_kat)
 
 # plays note audio
@@ -117,13 +117,20 @@ func play_audio(input_side: SIDE, is_input_kat: bool):
 	
 	audio_queuer.play_audio(stream_audio, stream_position)
 
+# give hitobject hit info, gets result, and applies score
 func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> void:
-	# normal hit check
 	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
+	
 	match hit_result:
 		HitObject.HIT_RESULT.HIT:
 			if target_hobj is Note:
 				apply_score(target_hobj.timing - current_time, target_hobj)
+			if target_hobj is Roll:
+				# add score
+				pass
+			if target_hobj is Spinner:
+				# add score
+				pass
 		
 		# assume hitobject is Note for now
 		HitObject.HIT_RESULT.HIT_FINISHER:
@@ -144,8 +151,11 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 		if (active_finisher_note.timing - current_time) > Global.INACC_TIMING:
 			return false
 		
+		# successful hit
 		elif active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
-			apply_finisher_score(active_finisher_note.timing - current_time)
+			# add score, reset finisher variables
+			score_manager.add_finisher_score(active_finisher_note.timing - current_time)
+			active_finisher_note = null
 			current_hitsound_state = HITSOUND_STATES.NONE
 			return true
 		
@@ -153,10 +163,6 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 		elif active_finisher_note.last_side_hit == input_side or active_finisher_note.is_kat != is_input_kat:
 			active_finisher_note = null 
 	return false
-
-func apply_finisher_score(hit_time_difference: float) -> void:
-	score_manager.add_finisher_score(hit_time_difference)
-	active_finisher_note = null
 
 func apply_score(hit_time_difference: float, target_hit_obj: HitObject, missed := false) -> void:
 	next_note_idx -= 1

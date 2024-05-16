@@ -6,8 +6,9 @@ var is_finisher := false
 @export var timing: float
 @export var speed: float
 var new_combo := false
-enum HIT_RESULT {INVALID = -1, MISS, HIT, HIT_FINISHER}
+enum HIT_RESULT {INVALID = -1, MISS, HIT, HIT_FINISHER, SPINNER_FINISH}
 
-# roku note 2024-05-16
-# all hitobjects require a hit_check() and miss_check()
-# not included here because of function signature dumbness
+func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: bool) -> HIT_RESULT:
+	return HIT_RESULT.INVALID
+func miss_check(current_time: float) -> void:
+	return
