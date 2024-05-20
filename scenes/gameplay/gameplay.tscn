@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://cx3y7mnvf74yt" path="res://assets/default_skin/approachcircle.png" id="7_13i7v"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="9_tgle1"]
 [ext_resource type="Texture2D" uid="uid://b0mb0jk6hdolv" path="res://assets/default_skin/taiko-hit300.png" id="12_cbuc6"]
-[ext_resource type="Script" path="res://scenes/gameplay/score_manager.gd" id="13_evyiw"]
+[ext_resource type="Script" path="res://entites/gameplay/score_manager.gd" id="13_evyiw"]
 [ext_resource type="AudioStream" uid="uid://hfq4u36ekcwg" path="res://assets/default_skin/combobreak.wav" id="13_kii7l"]
 [ext_resource type="Texture2D" uid="uid://ex1rl72k684" path="res://assets/default_skin/scorebar-bg@2x.png" id="14_npcy7"]
 [ext_resource type="Texture2D" uid="uid://d15gp2oikqff3" path="res://assets/default_skin/scorebar-colour@2x.png" id="15_o6ggk"]

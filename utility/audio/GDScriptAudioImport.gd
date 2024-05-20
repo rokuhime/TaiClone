@@ -48,7 +48,6 @@ func report_errors(err, filepath):
 		printerr("AudioLoader: Unknown error with file ", filepath, " error code: ", err)
 
 static func load_file(filepath):
-	print("AudioLoader: loading from ", filepath)
 	var file = FileAccess.open(filepath, FileAccess.READ)
 	if file == null:
 		printerr("AudioLoader: Error opening file! ", FileAccess.get_open_error())

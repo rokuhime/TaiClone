@@ -31,6 +31,7 @@ pivot_offset = Vector2(64, 64)
 texture = ExtResource("1_s0d8t")
 
 [node name="SpinnerGameplay" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5

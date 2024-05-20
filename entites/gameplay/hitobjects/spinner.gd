@@ -1,36 +1,49 @@
+# TODO: make a good miss_check() you dummy
 class_name Spinner
 extends HitObject
 
 var rhythm_inputs := [ "LeftKat", "LeftDon", "RightDon", "RightKat" ]
 
 @onready var spinner_warn := $SpinnerWarn
+
+@onready var spinner_gameplay := $SpinnerGameplay
 @onready var inside := $SpinnerGameplay/Inside
 @onready var outside := $SpinnerGameplay/Outside
-@onready var needed_hit_label := $SpinnerGameplay/NeededHits
+@onready var hit_count_label := $SpinnerGameplay/NeededHits
 
 var spinner_warn_tween: Tween  # for alpha fade
 var outside_tween: Tween  # for outside scale
+var last_gameplay_position := Vector2.ZERO
 
 enum hit_type { FINISHED = -2, INACTIVE = -1, ANY, DON, KAT}
 var hit_status := hit_type.INACTIVE
 var length: float
 var needed_hits := 50
+var current_hits := 0
 
 @export var inside_rotation_speed := 0.0
+
+func _ready() -> void:
+	current_hits = needed_hits
+	hit_count_label.text = str(current_hits)
 
 func transition_to_playable() -> void:
 	hit_status = hit_type.ANY
 	
+	# this is stupid, dont do it like this
 	spinner_warn_tween = create_tween()
 	spinner_warn_tween.tween_property(spinner_warn, "self_modulate", Color(1,1,1,0), 0.5)
+	
+	var tween = create_tween()
+	tween.tween_property(get_node("SpinnerGameplay"), "modulate", Color(1,1,1,1), 0.2)
 	
 	outside_tween = create_tween()
 	outside_tween.tween_property(outside, "size", Vector2.ONE * 0.1, length)
 
-func _ready() -> void:
-	needed_hit_label.text = str(needed_hits)
-
 func _process(delta) -> void:
+	if hit_status != hit_type.INACTIVE:
+		spinner_gameplay.set_global_position(last_gameplay_position)
+	
 	if inside_rotation_speed > 0:
 		inside_rotation_speed -= delta * 0.25
 		inside.rotation += inside_rotation_speed
@@ -42,13 +55,26 @@ func finished() -> void:
 
 func hit_check(current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
 	if hit_status == int(is_input_kat) or hit_status == hit_type.ANY:
-		needed_hits -= 1
-		needed_hit_label.text = str(needed_hits)
+		current_hits -= 1
+		hit_count_label.text = str(current_hits)
 		inside_rotation_speed = min(inside_rotation_speed + 0.05, 0.3)
 		
-		if needed_hits <= 0:
+		if current_hits <= 0:
 			finished()
 			return HIT_RESULT.SPINNER_FINISH
 		else:
 			return HIT_RESULT.HIT
+	return HIT_RESULT.INVALID
+
+func miss_check():
+	if hit_status == hit_type.INACTIVE:
+		last_gameplay_position = spinner_gameplay.global_position
+		transition_to_playable()
+	
+	# spinner was not finished
+	elif hit_status != hit_type.FINISHED:
+		print("haiii its spinner end time :3")
+		if current_hits / needed_hits >= 0.5:
+			return HIT_RESULT.HIT
+		return HIT_RESULT.MISS
 	return HIT_RESULT.INVALID

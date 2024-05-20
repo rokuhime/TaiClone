@@ -54,10 +54,16 @@ func _process(_delta) -> void:
 			return
 		
 		# miss check
-		var next_note: HitObject = get_next_note()
-		if next_note.timing + Global.INACC_TIMING < current_time:
-			apply_score(next_note.timing - current_time, next_note)
-			pass
+		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+			var hit_object := hit_object_container.get_child(i) as HitObject
+			if hit_object.visible != false && hit_object.timing <= current_time:
+				# add more classes here mayb eventually hee hee
+				if hit_object is Note:
+					miss_check(hit_object)
+				elif hit_object is Spinner:
+					if hit_object.hit_status == Spinner.hit_type.INACTIVE:
+						print("INACTIVE speener")
+						miss_check(hit_object)
 
 func _unhandled_input(event) -> void:
 	# back to song select
@@ -144,6 +150,28 @@ func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) ->
 		
 		_:
 			return
+
+func miss_check(next_note: HitObject) -> void:
+	var miss_result = next_note.miss_check()
+		
+	match next_note.get_class():
+		"Note":
+			apply_score(next_note.timing - current_time, next_note)
+		
+		# roku note 2024-05-17
+		# no roku, NO. BAD
+		# this is stupid, score_manager.add_score() needs to be reworked for manual score adding (for ticks n such)
+		"Spinner":
+			match miss_result:
+				HitObject.HIT_RESULT.INVALID:
+					print("miss_check invalid spinner result")
+					get_tree().create_timer(1).timeout.connect(func(): miss_check(next_note))
+				# more than half hit
+				HitObject.HIT_RESULT.HIT:
+					score_manager.add_score(Global.INACC_TIMING)
+				# less than half hit
+				HitObject.HIT_RESULT.MISS:
+					score_manager.add_score(Global.INACC_TIMING + 5)
 
 # finisher second hit check, returns if it was successful or not
 func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:

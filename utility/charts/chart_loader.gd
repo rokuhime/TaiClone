@@ -26,7 +26,7 @@ static func get_chart_path(file_path: String, force_convert := false) -> String:
 			return "user://ConvertedCharts/" + file_path.get_file() + ".tc"
 			
 		# chart isnt .tc, and is NOT converted. attempt to convert
-		print("ChartLoader: attempting to convert file...")
+		print_rich("[color=green]ChartLoader: attempting to convert ", file_path, "[/color]")
 		file_path = convert_chart(file_path)
 	
 	# chart is .tc, nothing to do!
@@ -261,12 +261,13 @@ static func convert_chart(file_path: String):
 	return new_path
 
 ## loads .tc files and spits out Chart variable
-static func get_chart(file_path: String) -> Chart:
+static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	if !file:
 		print("ChartLoader: bad file provided for get_chart at ", file_path)
 		return
 	
+	var origin_file_path := file_path
 	var line := ""
 	var section := ""
 	
@@ -287,6 +288,10 @@ static func get_chart(file_path: String) -> Chart:
 		# change current section
 		if line.begins_with("[") and line.ends_with("]"):
 			section = line.substr(1, line.length() - 2)
+			continue
+		
+		# if were only grabbing metadata, ignore everything else
+		if only_grab_metadata and (section == "Timing Points" or section == "Hit Objects"):
 			continue
 		
 		# split line into array by commas
@@ -325,16 +330,16 @@ static func get_chart(file_path: String) -> Chart:
 				
 				match data_name:
 					"Origin":
-						file_path = data_value
+						origin_file_path = data_value
 					
 					"Origin_Type":
 						chart_info["Origin_Type"] = data_value
 
 					"Audio_Path":
-						audio = AudioLoader.load_file(file_path.get_base_dir() + "/" + data_value)
+						audio = AudioLoader.load_file(origin_file_path.get_base_dir() + "/" + data_value)
 
 					"Background":
-						background = ImageLoader.load_image(file_path.get_base_dir() + "/" + data_value)
+						background = ImageLoader.load_image(origin_file_path.get_base_dir() + "/" + data_value)
 
 					"Preview_Point":
 						chart_info["PreviewPoint"] = int(data_value) / 1000.0
@@ -348,11 +353,11 @@ static func get_chart(file_path: String) -> Chart:
 	)
 	
 	# error check
-	if audio == null or hit_objects.is_empty() or timing_points.is_empty():
-		print_rich("[color=yellow]ChartLoader: chart at ", file_path, " is corrupted! skipped[/color]")
+	if audio == null:
+		print_rich("[color=yellow]ChartLoader: chart at ", origin_file_path, " is corrupted! skipped[/color]")
 		return
 	
-	return Chart.new(audio, background, chart_info, timing_points, hit_objects)
+	return Chart.new(file_path, audio, background, chart_info, timing_points, hit_objects)
 
 ## formats objects into a string
 static func get_object_string(is_hobj: bool, data: Array) -> String:

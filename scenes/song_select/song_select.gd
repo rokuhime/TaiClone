@@ -2,7 +2,7 @@ extends Control
 
 var music: AudioStreamPlayer
 var listings := []
-var song_listing_scene := preload("res://entites/songselect/chart_listing.tscn")
+var chart_listing_scene := preload("res://entites/songselect/chart_listing.tscn")
 
 @onready var listing_container := $ListingContainer
 var list_movement_tween: Tween
@@ -16,7 +16,8 @@ func _ready():
 	music = get_tree().get_first_node_in_group("RootMusic")
 	
 	refresh_listings_from_song_folders()
-	select_listing(listings[selected_list_idx])
+	if not listings.is_empty():
+		select_listing(listings[selected_list_idx])
 
 func _unhandled_key_input(event):
 	# refresh listings
@@ -57,7 +58,6 @@ func refresh_listings_from_song_folders() -> void:
 			for inner_chart_folder in DirAccess.get_directories_at(chart_folder):
 				add_charts_from_folder(chart_folder + "/" + inner_chart_folder)
 	
-	selected_list_idx = 0
 	update_visual()
 
 func add_charts_from_folder(directory: String) -> void:
@@ -65,16 +65,16 @@ func add_charts_from_folder(directory: String) -> void:
 	var diraccess = DirAccess.open(directory)
 	for file_name in diraccess.get_files():
 		if Global.SUPPORTED_CHART_FILETYPES.has(file_name.get_extension()):
-			var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(directory + "/" + file_name))
+			var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(directory + "/" + file_name), true)
 			if chart == null:
 				continue
 			if not listing_already_exists(chart):
 				create_new_listing(chart)
 
 func create_new_listing(chart: Chart) -> void:
-	var new_song_listing = song_listing_scene.instantiate()
-	new_song_listing.init(chart)
-	listing_container.add_child(new_song_listing)
+	var new_chart_listing = chart_listing_scene.instantiate()
+	new_chart_listing.init(chart)
+	listing_container.add_child(new_chart_listing)
 
 func select_listing(listing: ChartListing) -> void:
 	listings[selected_list_idx].selected = false
@@ -134,8 +134,11 @@ func update_visual() -> void:
 		0.5 )
 
 func transition_to_gameplay() -> void:
-	get_tree().get_first_node_in_group("Root").change_to_gameplay(listings[selected_list_idx].chart)
+	print("!1!!!!!!!!!!!!!! ", listings[selected_list_idx].chart.file_path)
+	var selected_chart = ChartLoader.get_chart(listings[selected_list_idx].chart.file_path)
+	get_tree().get_first_node_in_group("Root").change_to_gameplay(selected_chart)
 
+# TODO: check hash instead
 func listing_already_exists(chart: Chart) -> bool:
 	for listing in listing_container.get_children():
 		if listing.chart.chart_info == chart.chart_info:
