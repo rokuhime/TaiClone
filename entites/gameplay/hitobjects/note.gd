@@ -11,18 +11,27 @@ func _ready() -> void:
 		scale = Vector2.ONE * FINISHER_SCALE
 
 func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
-	# if not hittable yet
-	if abs(timing - current_time) > Global.INACC_TIMING:
-		return HIT_RESULT.INVALID
+	var result := HIT_RESULT.INVALID
 	
-	# wrong input type miss
-	elif is_kat != is_input_kat:
-		#apply_score(target_note.timing - current_time, target_note, true)
-		return HIT_RESULT.MISS
+	# if hittable
+	if active and abs(timing - current_time) <= Global.INACC_TIMING:
+		# default to being hit, 
+		result = HIT_RESULT.HIT
+		active = false
+		
+		# wrong input type miss
+		if is_kat != is_input_kat:
+			result = HIT_RESULT.MISS
+		
+		# new finisher hit
+		elif is_finisher:
+			last_side_hit = input_side as Gameplay.SIDE
+			result = HIT_RESULT.HIT_FINISHER
 	
-	# new finisher hit
-	if is_finisher:
-		last_side_hit = input_side as Gameplay.SIDE
-		return HIT_RESULT.HIT_FINISHER
-	
-	return HIT_RESULT.HIT
+	return result
+
+func miss_check(current_time: float) -> bool:
+	if active and timing + Global.INACC_TIMING < current_time:
+		active = false
+		return true
+	return false

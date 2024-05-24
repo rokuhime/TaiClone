@@ -20,6 +20,7 @@ var skip_time := 0.0
 @export var next_note_idx := 0
 
 enum SIDE { NONE, LEFT, RIGHT }
+enum SCORETYPE { MISS, INACCURATE, ACCURATE }
 var last_side_input := SIDE.NONE
 var active_finisher_note: Note
 
@@ -56,14 +57,10 @@ func _process(_delta) -> void:
 		# miss check
 		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 			var hit_object := hit_object_container.get_child(i) as HitObject
-			if hit_object.visible != false && hit_object.timing <= current_time:
-				# add more classes here mayb eventually hee hee
-				if hit_object is Note:
-					miss_check(hit_object)
-				elif hit_object is Spinner:
-					if hit_object.hit_status == Spinner.hit_type.INACTIVE:
-						print("INACTIVE speener")
-						miss_check(hit_object)
+			if hit_object.timing <= current_time:
+				var miss_result := hit_object.miss_check(current_time)
+				if miss_result:
+					apply_score(hit_object)
 
 func _unhandled_input(event) -> void:
 	# back to song select
@@ -92,19 +89,24 @@ func _unhandled_input(event) -> void:
 		var is_input_kat := false if pressed_input.contains("Don") else true
 		
 		# hit check
-		if next_note_idx >= 0:
-			# check if this hit is going to a finisher, if not then continue
+		if active_finisher_note:
+			var finisher_note_idx = active_finisher_note.get_index()
 			if finisher_hit_check(current_side_input, is_input_kat):
-				return
-			
-			# check next note
-			var next_note: Note = get_next_note()
-			if next_note != null:
-				hit_check(current_side_input, is_input_kat, next_note)
-			
-			# check special notes (spinners, rolls)
-			for hobj in get_active_hitobjects():
-				var result = hobj.hit_check(current_time, current_side_input, is_input_kat)
+				play_audio(current_side_input, is_input_kat)
+				
+				# if the next hit object is outside of accurate timing, swallow the input to stop it from checking more notes
+				if abs(hit_object_container.get_child(finisher_note_idx - 1).timing - current_time) > Global.ACC_TIMING:
+					return
+		
+		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+			var hit_object := hit_object_container.get_child(i) as HitObject
+			if hit_object != null:
+				# if its past being valid
+				if hit_object.timing - current_time > Global.INACC_TIMING:
+					break
+				elif hit_check(current_side_input, is_input_kat, hit_object):
+					break
+		
 		play_audio(current_side_input, is_input_kat)
 
 # plays note audio
@@ -124,39 +126,39 @@ func play_audio(input_side: SIDE, is_input_kat: bool):
 	audio_queuer.play_audio(stream_audio, stream_position)
 
 # give hitobject hit info, gets result, and applies score
-func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> void:
+# returns true if hit was used on a note, otherwise returns false
+func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> bool:
 	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
 	
 	match hit_result:
 		HitObject.HIT_RESULT.HIT:
 			if target_hobj is Note:
-				apply_score(target_hobj.timing - current_time, target_hobj)
-			if target_hobj is Roll:
-				# add score
-				pass
-			if target_hobj is Spinner:
-				# add score
-				pass
+				apply_score(target_hobj)
 		
-		# assume hitobject is Note for now
 		HitObject.HIT_RESULT.HIT_FINISHER:
 			active_finisher_note = target_hobj
 			current_hitsound_state = HITSOUND_STATES.FINISHER
 			
-			apply_score(target_hobj.timing - current_time, target_hobj)
+			apply_score(target_hobj)
 		
 		HitObject.HIT_RESULT.MISS:
-			apply_score(target_hobj.timing - current_time, target_hobj, true)
+			apply_score(target_hobj, true)
 		
 		_:
-			return
+			return false
+	
+	# if the hit object was a note, the hit was used. return true
+	if target_hobj is Note:
+		return true
+	# if it was given to a spinner/roll, allow the input still be valid for another hit object
+	return false
 
 func miss_check(next_note: HitObject) -> void:
-	var miss_result = next_note.miss_check()
+	var miss_result = next_note.miss_check(current_time)
 		
 	match next_note.get_class():
 		"Note":
-			apply_score(next_note.timing - current_time, next_note)
+			apply_score(next_note, true)
 		
 		# roku note 2024-05-17
 		# no roku, NO. BAD
@@ -176,26 +178,22 @@ func miss_check(next_note: HitObject) -> void:
 # finisher second hit check, returns if it was successful or not
 func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 	if active_finisher_note:
-		if (active_finisher_note.timing - current_time) > Global.INACC_TIMING:
-			return false
-		
-		# successful hit
-		elif active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
-			# add score, reset finisher variables
-			score_manager.add_finisher_score(active_finisher_note.timing - current_time)
-			active_finisher_note = null
-			current_hitsound_state = HITSOUND_STATES.NONE
-			return true
-		
-		# if the input is the same side/different colour, null the active finisher and return false
-		elif active_finisher_note.last_side_hit == input_side or active_finisher_note.is_kat != is_input_kat:
-			active_finisher_note = null 
+		if (active_finisher_note.timing - current_time) < Global.ACC_TIMING:
+			# in time
+			if active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
+				# add score, reset finisher variables
+				score_manager.add_finisher_score(active_finisher_note.timing - current_time)
+				active_finisher_note = null
+				current_hitsound_state = HITSOUND_STATES.NONE
+				return true
+	
+	active_finisher_note = null 
 	return false
 
-func apply_score(hit_time_difference: float, target_hit_obj: HitObject, missed := false) -> void:
+func apply_score(target_hit_obj: HitObject, missed := false) -> void:
 	next_note_idx -= 1
 	target_hit_obj.visible = false
-	score_manager.add_score(hit_time_difference, missed)
+	score_manager.add_score(target_hit_obj.timing - current_time, missed)
 
 func load_chart(requested_chart: Chart) -> void:
 	# empty out existing hit objects and reset stats just incasies
@@ -223,8 +221,7 @@ func play_chart() -> void:
 		printerr("Gameplay: tried to play without a valid chart! abandoning...")
 		return
 	
-	var next_hit_object: HitObject = get_next_note()
-	if next_hit_object == null:
+	if hit_object_container.get_child_count() <= 0:
 		printerr("Gameplay: tried to play a chart without notes! abandoning...")
 		return
 	
@@ -232,9 +229,10 @@ func play_chart() -> void:
 	
 	# delay the chart if first note is less than 2 seconds into the song
 	var first_note_delay := 0.0
-	if next_hit_object.timing < 2.0:
-		first_note_delay = 2.0 - next_hit_object.timing
-	current_play_offset += first_note_delay
+	var first_hit_object = hit_object_container.get_child(hit_object_container.get_child_count() - 1)
+	if first_hit_object.timing < 2.0:
+		first_note_delay = 2.0 - first_hit_object.timing
+		current_play_offset += first_note_delay
 	
 	start_time = Time.get_ticks_msec() / 1000.0 + current_play_offset
 	playing = true;
@@ -258,54 +256,6 @@ func skip_intro() -> void:
 		return
 	
 	# get first note timing and seek to it
-	var next_hit_object: HitObject = get_next_note()
-	if next_hit_object == null:
-		return
-	start_time -= next_hit_object.timing - 2.0 - current_time
-	music.seek(current_play_offset + next_hit_object.timing - 2.0)
-
-# returns next valid note object
-func get_next_note() -> Note:
-	if hit_object_container.get_child_count() == 0:
-		return null;
-	
-	var next_note : HitObject 
-	var next_note_offset = 0
-	# check hitobjects for next valid note
-	while !(next_note is Note):
-		if hit_object_container.get_children()[next_note_idx - next_note_offset] is Note:
-			next_note = hit_object_container.get_children()[next_note_idx - next_note_offset]
-		next_note_offset += 1
-	if next_note:
-		return next_note
-	
-	# no notes left
-	return null
-
-# returns any hit objects with length that have started but not ended
-func get_active_hitobjects() -> Array:
-	var active_hobjs := []
-	var next_hobj: HitObject
-	var next_hobj_offset = hit_object_container.get_child_count() - 1
-	
-	# check hitobjects for next valid note, otherwise return the last object
-	while next_hobj_offset >= 0:
-		next_hobj = hit_object_container.get_children()[next_hobj_offset]
-		
-		# if it has length...
-		if next_hobj is Roll or next_hobj is Spinner:
-			# if hit object timing is after current_time, bail out
-			if next_hobj.timing - Global.INACC_TIMING > current_time:
-				break
-			
-			# if hit object timing has passed but has not ended, add to array
-			# allows for stacking sliders/spinners/whatever else (hypothetically)
-			if next_hobj.timing + next_hobj.length + Global.INACC_TIMING > current_time:
-				active_hobjs.append(next_hobj)
-		next_hobj_offset -= 1
-		
-		# if last hitobj, break and return hit objects
-		if next_hobj_offset <= 0:
-			break
-	
-	return active_hobjs
+	var first_hit_object = hit_object_container.get_child(hit_object_container.get_child_count() - 1)
+	start_time -= first_hit_object.timing - 2.0 - current_time
+	music.seek(current_play_offset + first_hit_object.timing - 2.0)

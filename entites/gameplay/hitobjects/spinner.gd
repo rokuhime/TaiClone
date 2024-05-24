@@ -15,7 +15,7 @@ var spinner_warn_tween: Tween  # for alpha fade
 var outside_tween: Tween  # for outside scale
 var last_gameplay_position := Vector2.ZERO
 
-enum hit_type { FINISHED = -2, INACTIVE = -1, ANY, DON, KAT}
+enum hit_type { FINISHED = -3, INACTIVE = -2, ANY = -1, DON, KAT}
 var hit_status := hit_type.INACTIVE
 var length: float
 var needed_hits := 50
@@ -26,6 +26,35 @@ var current_hits := 0
 func _ready() -> void:
 	current_hits = needed_hits
 	hit_count_label.text = str(current_hits)
+
+func _process(delta) -> void:
+	if hit_status > hit_type.INACTIVE:
+		spinner_gameplay.set_global_position(last_gameplay_position)
+	
+	if inside_rotation_speed > 0:
+		inside_rotation_speed -= delta * 0.25
+		inside.rotation += inside_rotation_speed
+
+func hit_check(current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
+	if hit_status == int(is_input_kat) or hit_status == hit_type.ANY:
+		current_hits -= 1
+		hit_count_label.text = str(current_hits)
+		inside_rotation_speed = min(inside_rotation_speed + 0.05, 0.3)
+		
+		if current_hits <= 0:
+			finished()
+			return HIT_RESULT.SPINNER_FINISH
+		else:
+			# alternate requested hit type, and report back that it was hit
+			hit_status = int(not is_input_kat)
+			return HIT_RESULT.HIT
+	return HIT_RESULT.INVALID
+
+func miss_check(hit_time: float) -> bool:
+	if timing <= hit_time and hit_status == hit_type.INACTIVE:
+		last_gameplay_position = spinner_gameplay.global_position
+		transition_to_playable()
+	return false
 
 func transition_to_playable() -> void:
 	hit_status = hit_type.ANY
@@ -40,41 +69,7 @@ func transition_to_playable() -> void:
 	outside_tween = create_tween()
 	outside_tween.tween_property(outside, "size", Vector2.ONE * 0.1, length)
 
-func _process(delta) -> void:
-	if hit_status != hit_type.INACTIVE:
-		spinner_gameplay.set_global_position(last_gameplay_position)
-	
-	if inside_rotation_speed > 0:
-		inside_rotation_speed -= delta * 0.25
-		inside.rotation += inside_rotation_speed
-
 func finished() -> void:
 	hit_status = hit_type.FINISHED
 	await get_tree().create_timer(1).timeout
 	# kill self
-
-func hit_check(current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
-	if hit_status == int(is_input_kat) or hit_status == hit_type.ANY:
-		current_hits -= 1
-		hit_count_label.text = str(current_hits)
-		inside_rotation_speed = min(inside_rotation_speed + 0.05, 0.3)
-		
-		if current_hits <= 0:
-			finished()
-			return HIT_RESULT.SPINNER_FINISH
-		else:
-			return HIT_RESULT.HIT
-	return HIT_RESULT.INVALID
-
-func miss_check():
-	if hit_status == hit_type.INACTIVE:
-		last_gameplay_position = spinner_gameplay.global_position
-		transition_to_playable()
-	
-	# spinner was not finished
-	elif hit_status != hit_type.FINISHED:
-		print("haiii its spinner end time :3")
-		if current_hits / needed_hits >= 0.5:
-			return HIT_RESULT.HIT
-		return HIT_RESULT.MISS
-	return HIT_RESULT.INVALID

@@ -134,7 +134,6 @@ func update_visual() -> void:
 		0.5 )
 
 func transition_to_gameplay() -> void:
-	print("!1!!!!!!!!!!!!!! ", listings[selected_list_idx].chart.file_path)
 	var selected_chart = ChartLoader.get_chart(listings[selected_list_idx].chart.file_path)
 	get_tree().get_first_node_in_group("Root").change_to_gameplay(selected_chart)
 
