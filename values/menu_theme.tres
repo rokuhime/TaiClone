@@ -1,0 +1,18 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://dncqvenqwlml1"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_qbfel"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_kfe4j"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_macr1"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_87ct8"]
+color = Color(0.0980392, 0.0980392, 0.0980392, 1)
+thickness = 32
+
+[resource]
+HSlider/constants/center_grabber = 1
+HSlider/icons/grabber = SubResource("ImageTexture_qbfel")
+HSlider/icons/grabber_disabled = SubResource("ImageTexture_kfe4j")
+HSlider/icons/grabber_highlight = SubResource("ImageTexture_macr1")
+HSlider/styles/slider = SubResource("StyleBoxLine_87ct8")

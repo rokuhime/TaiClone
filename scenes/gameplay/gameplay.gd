@@ -40,7 +40,7 @@ func _process(_delta) -> void:
 	score_manager.update_progress(current_time, hit_object_container.get_child(0).timing + 2, start_time)
 	
 	if playing:
-		current_time = Time.get_ticks_msec() / 1000.0 - start_time
+		current_time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - start_time
 		
 		# chart end check
 		if current_time >= hit_object_container.get_child(0).timing + 2:

@@ -1,12 +1,17 @@
-[gd_scene load_steps=5 format=3 uid="uid://doli71bfmeej7"]
+[gd_scene load_steps=8 format=3 uid="uid://doli71bfmeej7"]
 
+[ext_resource type="Theme" uid="uid://dncqvenqwlml1" path="res://values/menu_theme.tres" id="1_2j0hn"]
 [ext_resource type="Script" path="res://entites/global/settings_panel/settings_panel.gd" id="1_d3qaa"]
 [ext_resource type="Script" path="res://entites/global/settings_panel/inputs/chart_path_changer.gd" id="2_xltdr"]
+[ext_resource type="Script" path="res://entites/global/settings_panel/inputs/offset_changer.gd" id="5_kfb0v"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_qm3nu"]
 font_size = 48
 
 [sub_resource type="LabelSettings" id="LabelSettings_pk7v3"]
+font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_xg8nn"]
 font_size = 24
 
 [node name="SettingsPanel" type="Panel" groups=["SettingsPanel"]]
@@ -17,6 +22,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 2
+theme = ExtResource("1_2j0hn")
 script = ExtResource("1_d3qaa")
 
 [node name="Title" type="Label" parent="."]
@@ -185,6 +191,38 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Remove"
 
+[node name="Offset" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_2j0hn")
+script = ExtResource("5_kfb0v")
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Offset"]
+layout_mode = 2
+text = "Offset"
+label_settings = SubResource("LabelSettings_xg8nn")
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="ScrollContainer/VBoxContainer/Offset"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+min_value = -500.0
+max_value = 500.0
+step = 5.0
+allow_greater = true
+allow_lesser = true
+
+[node name="SpinBox" type="SpinBox" parent="ScrollContainer/VBoxContainer/Offset"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+min_value = -500.0
+max_value = 500.0
+step = 5.0
+allow_greater = true
+allow_lesser = true
+alignment = 1
+
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftKat/Button" to="." method="change_key" binds= ["LeftKat"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftDon/Button" to="." method="change_key" binds= ["LeftDon"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightDon/Button" to="." method="change_key" binds= ["RightDon"]]
@@ -192,3 +230,5 @@ text = "Remove"
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton" to="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" method="show"]
 [connection signal="dir_selected" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="add_path"]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/RemoveButton" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="delete_selected_path"]
+[connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/HSlider" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [false]]
+[connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [true]]

@@ -17,7 +17,7 @@ const ACC_TIMING := 0.03
 const INACC_TIMING := 0.07
 
 var resolution_multiplier = 4.0
-var offset := 0.0
+var global_offset := 0.0
 
 func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + ProjectSettings.get_setting("application/config/version"), 0)
@@ -36,7 +36,8 @@ func get_chart_folders() -> Array:
 func save_settings() -> void:
 	var config_file := ConfigFile.new()
 	
-	config_file.set_value("General", "ChartPaths", Global.chart_paths)
+	config_file.set_value("General", "ChartPaths", chart_paths)
+	config_file.set_value("General", "GlobalOffset", global_offset)
 	
 	for bus_index in AudioServer.bus_count:
 		config_file.set_value("Audio", AudioServer.get_bus_name(bus_index), db_to_linear(AudioServer.get_bus_volume_db(bus_index)))
@@ -60,6 +61,8 @@ func load_settings() -> void:
 	
 	if config_file.get_value("General", "ChartPaths", null):
 		chart_paths = config_file.get_value("General", "ChartPaths", null)
+	if config_file.get_value("General", "GlobalOffset", null):
+		global_offset = config_file.get_value("General", "GlobalOffset", 0)
 	
 	var audio_settings = config_file.get_section_keys("Audio")
 	for setting in audio_settings:
@@ -85,6 +88,10 @@ static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: i
 # shorthand to make setting bgs easier
 func set_background(new_background: Texture2D):
 	root.set_background(new_background)
+
+func change_global_offset(new_offset: float):
+	global_offset = new_offset
+	save_settings()
 
 #static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
 	#if obj.connect(signal_name, signal_target, method):
