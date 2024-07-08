@@ -12,7 +12,6 @@ var rhythm_inputs := [ "LeftKat", "LeftDon", "RightDon", "RightKat" ]
 @onready var hit_count_label := $SpinnerGameplay/NeededHits
 
 var spinner_warn_tween: Tween  # for alpha fade
-var outside_tween: Tween  # for outside scale
 var last_gameplay_position := Vector2.ZERO
 
 enum hit_type { FINISHED = -3, INACTIVE = -2, ANY = -1, DON, KAT}
@@ -66,10 +65,32 @@ func transition_to_playable() -> void:
 	var tween = create_tween()
 	tween.tween_property(get_node("SpinnerGameplay"), "modulate", Color(1,1,1,1), 0.2)
 	
-	outside_tween = create_tween()
-	outside_tween.tween_property(outside, "size", Vector2.ONE * 0.1, length)
+	var outside_pos_tween = create_tween()
+	outside_pos_tween.tween_property(outside, "position", size / 2, length)
+	var outside_size_tween = create_tween()
+	outside_size_tween.tween_property(outside, "size", Vector2.ONE * 0.1, length)
+	outside_size_tween.finished.connect(Callable(finished))
 
 func finished() -> void:
+	if hit_status == hit_type.FINISHED:
+		return
+	
 	hit_status = hit_type.FINISHED
-	await get_tree().create_timer(1).timeout
+	print("spinner finished, ", needed_hits - current_hits, " / ", needed_hits, " = ", float(needed_hits - current_hits) / float(needed_hits))
+	if current_hits:
+		if float(needed_hits - current_hits) / float(needed_hits) >= 0.5:
+			# roku note 2024-07-02
+			# calling from tree here means multiplayer wouldnt work
+			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(1)
+			print("ok")
+		else:
+			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(0)
+			print("miss")
+	else:
+		get_tree().get_first_node_in_group("ScoreManager").add_manual_score(2)
+	
 	# kill self
+	var alpha_tween = create_tween()
+	alpha_tween.tween_property(self, "modulate:a", 0.0, 0.2)
+	await get_tree().create_timer(1).timeout
+	active = false

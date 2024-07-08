@@ -188,7 +188,7 @@ static func convert_chart(file_path: String):
 						# find note type, and add nessacary values
 						
 						if bool(1 << 3 & int(line_data[3])): # spinner
-							ex["Length"] = float(line_data[5]) / 1000
+							ex["Length"] = float(line_data[5]) / 1000 - time
 							tc_type = NOTETYPE.SPINNER
 						
 						elif bool(1 << 1 & int(line_data[3])): # slider

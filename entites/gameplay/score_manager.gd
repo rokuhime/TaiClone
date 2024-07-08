@@ -102,6 +102,34 @@ func add_finisher_score(hit_time_difference: float) -> void:
 	score += 300 if accurate else 150
 	update_visuals()
 
+# 2024-07-02
+# TODO: turn from int into enum, too lazy rn
+func add_manual_score(score_type: int):
+	match score_type:
+		0:  # miss
+			if current_combo > 10:
+				combo_break_player.play()
+			
+			current_combo = 0
+			miss_count += 1
+		
+		1:  # inaccurate
+			inaccurate_hits += 1
+			score += 150
+		
+		2:  # accurate
+			accurate_hits += 1
+			score += 300
+	
+	if score_type > 0:
+		# combo handling
+		current_combo += 1
+		if current_combo > top_combo:
+			top_combo = current_combo
+	
+	update_judgement(score_type)
+	update_visuals()
+
 # reset score variables
 func reset() -> void:
 	score = 0

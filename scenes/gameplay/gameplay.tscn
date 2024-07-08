@@ -159,7 +159,7 @@ script = ExtResource("9_tgle1")
 [node name="Music" type="AudioStreamPlayer" parent="."]
 bus = &"Music"
 
-[node name="ScoreManager" type="Control" parent="."]
+[node name="ScoreManager" type="Control" parent="." groups=["ScoreManager"]]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

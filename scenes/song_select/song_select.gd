@@ -31,7 +31,7 @@ func _unhandled_key_input(event):
 		elif event.is_action_pressed("RightKat"):
 			selected_list_idx = (selected_list_idx + 1) % listings.size()
 			select_listing(listings[selected_list_idx])
-		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon"):
+		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
 			transition_to_gameplay()
 
 func refresh_listings_from_song_folders() -> void:
