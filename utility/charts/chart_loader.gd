@@ -15,6 +15,7 @@ enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 static var note_scene = preload("res://entites/gameplay/hitobjects/note.tscn")
 static var roll_scene = preload("res://entites/gameplay/hitobjects/roll.tscn")
 static var spinner_scene = preload("res://entites/gameplay/hitobjects/spinner.tscn")
+static var timing_point_scene = preload("res://entites/gameplay/hitobjects/timing_point.tscn")
 
 ## sees if chart needs to be converted, and then gives the .tc file path
 static func get_chart_path(file_path: String, force_convert := false) -> String:
@@ -50,7 +51,6 @@ static func convert_chart(file_path: String):
 	
 	var current_timing := {}
 	var timing_points := []
-	var next_timing_time
 	
 	var hit_objects := []
 	
@@ -115,66 +115,62 @@ static func convert_chart(file_path: String):
 
 					"TimingPoints":
 						# ensure all required data is in line_data (compatibility)
-						if line_data.size() < 3:
+						if line_data.size() < 2: # meter
 							line_data.append("4")
 
-						if line_data.size() < 4:
+						if line_data.size() < 3: # sample set
 							line_data.append("0")
 
-						if line_data.size() < 5:
+						if line_data.size() < 4: # sample index
 							line_data.append("0")
 
-						if line_data.size() < 6:
+						if line_data.size() < 5: # volume
 							line_data.append("100")
 
-						if line_data.size() < 7:
+						if line_data.size() < 6: # uninherited
 							line_data.append("1")
 
 						# parse data
 						var time := float(line_data[0]) / 1000 # time in seconds
-						var uninherited = bool(int(line_data[6])) # silly, but lets it be treated as a bit to bool
+						# silly thing here; if the timing point is inherited/sv change, meter will be 0
+						# hence inherited == bool(meter)
+						var meter := int(line_data[2]) if bool(int(line_data[6])) else 0
 						
 						# parse bpm changes/sv, based on uninherited
 						var beat_length := float(line_data[1])
-						var timing_value := snappedf(((60000.0 if uninherited else -100.0) / beat_length if beat_length else INF), 0.001)
-						var meter := int(line_data[2])
+						var timing_value := snappedf(((60000.0 if meter else -100.0) / beat_length if beat_length else INF), 0.001)
+						var is_kiai_enabled := bool(1 << 0 & int(line_data[7]))
+						#if bool(1 << 3 & int(line_data[7])):
+							#ex["Omit_Barline"] = true
 						
 						# make timing point array
-						var timing_point := [time, uninherited, timing_value, meter]
+						var timing_point := [time, meter, timing_value, is_kiai_enabled]
 						
-						# check for extra variables
-						var ex := {}
-						# im not going to lie to you, i dont know why its 0 here but it works
-						if bool(1 << 0 & int(line_data[7])):
-							ex["Kiai"] = true
-						if bool(1 << 3 & int(line_data[7])):
-							ex["Omit_Barline"] = true
-						
-						# add extra variables if provided
-						if not ex.is_empty():
-							timing_point.append(ex)
-						
-						# queue up first timing point, if not already done
-						if current_timing.is_empty() and uninherited:
+						# queue up first uninherited timing point, if not already done
+						if current_timing.is_empty() and meter:
 							current_timing["Time"] = time
 							current_timing["BPM"] = timing_value
 							current_timing["Velocity"] = 1.0
-						
-						elif next_timing_time == null:
-							next_timing_time = time
+							current_timing["Kiai"] = is_kiai_enabled
+							current_timing["NextChangeTime"] = time
 						
 						# already parsed it, may aswell use it
 						timing_points.append(timing_point)
-						
 						continue
 
 					"HitObjects":
 						var time := float(line_data[2]) / 1000 # time in seconds
 						
 						# update current timing point if note object is past current timing
-						var intended_timing_point = get_intended_timing(time, timing_points)
-						current_timing["Velocity"] = intended_timing_point[2]
-						current_timing["BPM"] = intended_timing_point[1]
+						if not current_timing.is_empty():
+							if current_timing["NextChangeTime"]:
+								if time >= current_timing["NextChangeTime"]:
+									# update timing values
+									# var intended_timing := { "BPM": 0.0, "Velocity": 1.0, "Meter": 4, "Kiai": false, "NextChangeTime": null}
+									current_timing = get_intended_timing(time, timing_points)
+									# make timing object array
+									var timing_object := [time, current_timing["BPM"], NOTETYPE.TIMING_POINT, current_timing["Kiai"], current_timing["Meter"]]
+									hit_objects.append(timing_object)
 						
 						var velocity : float = current_timing["Velocity"] * slider_multiplier * current_timing["BPM"]
 						
@@ -248,6 +244,7 @@ static func convert_chart(file_path: String):
 		new_file.store_line(str(ci) + ": " + chart_info[ci])
 	
 	# store timing points, then hit objects
+	# BEEP BEEP BEEP BEEP BEEP BEEP THIS IS WHERE WE CHANGE IT ROKUUUUUUUU
 	new_file.store_line(get_object_string(false, timing_points))
 	new_file.store_line(get_object_string(true, hit_objects))
 	
@@ -394,7 +391,19 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			var data_value = ex.substr(ex.find(':') + 1, ex.length()).strip_edges()
 			ex_vars[data_name] = data_value
 	
+	# roku note 2024-07-16
+	# timing point changes fucked roll/spinner values, spinners now report 0 required hits
 	match type:
+		NOTETYPE.TIMING_POINT:
+			var new_hit_object = timing_point_scene.instantiate() as TimingPoint
+			
+			new_hit_object.timing = line_data[0]
+			new_hit_object.bpm = line_data[1]
+			new_hit_object.speed = float(line_data[1]) # velocity
+			new_hit_object.is_finisher = line_data[3] == "true"
+			
+			return new_hit_object
+		
 		NOTETYPE.ROLL:
 			var new_hit_object = roll_scene.instantiate() as Roll
 			
@@ -406,7 +415,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 				new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
 			
 			(new_hit_object as Roll).length = ex_vars["Length"]
-			(new_hit_object as Roll).tick_duration = (60.0 / intended_timing_point[1]) / 4.0
+			(new_hit_object as Roll).tick_duration = (60.0 / intended_timing_point["BPM"]) / 4.0
 			(new_hit_object as Roll).create_ticks()
 			
 			return new_hit_object 
@@ -423,9 +432,9 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			
 			(new_hit_object as Spinner).length = ex_vars["Length"]
 			
-			var beat_measure : int = intended_timing_point[3]
+			var beat_measure : int = intended_timing_point["Meter"]
 			var beat_divisor := 4
-			var beat_in_seconds : float = (60.0 * beat_measure) / intended_timing_point[1]
+			var beat_in_seconds : float = (60.0 * beat_measure) / intended_timing_point["BPM"]
 			(new_hit_object as Spinner).needed_hits = floor(float(ex_vars["Length"]) / (beat_in_seconds / beat_divisor) )
 			return new_hit_object 
 		
@@ -443,20 +452,23 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			
 			return new_hit_object 
 
-static func get_intended_timing(current_time: float, timing_points):
-	var timing := 0.0
-	var bpm := 0.0
-	var velocity := 1.0
-	var meter := 4
+# return all relevant timing related info from a timestamp
+static func get_intended_timing(current_time: float, timing_points) -> Dictionary:
+	var intended_timing := { "BPM": 0.0, "Velocity": 1.0, "Meter": 4, "Kiai": false, "NextChangeTime": null}
 	
 	for tp in timing_points:
+		# if timing point takes place after current_time, return results
 		if tp[0] > current_time:
+			intended_timing["NextChangeTime"] = tp[0]
 			break
 		
+		intended_timing["Kiai"] = tp[3]
+		
 		if tp[1]:  # if inherited (bpm)
-			bpm = tp[2]
-			meter = tp[3]
+			intended_timing["Meter"] = tp[1]
+			intended_timing["BPM"] = tp[2]
 			continue
-		velocity = tp[2]
+		# uninherited (sv change)
+		intended_timing["Velocity"] = tp[2]
 	
-	return [timing, bpm, velocity, meter]
+	return intended_timing
