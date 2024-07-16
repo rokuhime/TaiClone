@@ -1,15 +1,12 @@
 class_name ChartLoader
 
-# TODO: Audio_Path and Preview_Point include extra spaces at the start?
-# TODO: dont include inherited points, unless kiai (inherit the last bpm)
-# TODO: its not writing the velocity :((((((((((((((((((((((((((((((((((((((
-# TODO: length is also grossly incorrect
+# TODO: remove section stuff and make it based off of an empty line splitting sections
 
 # stupid notes to roku
 # sv types could be named "default", "slide", "scale"
 # respectively taiko, mania, piu
 
-const TC_VERSION := "v0.0.1"
+const TC_VERSION := "v0.0.2"
 enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 
 static var note_scene = preload("res://entites/gameplay/hitobjects/note.tscn")
@@ -237,16 +234,14 @@ static func convert_chart(file_path: String):
 	# top info
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
 	if origin != null:
-		new_file.store_line("Origin: " + file_path + "\n")
+		new_file.store_line("Origin: " + file_path)
 	
 	# chart info section
 	for ci in chart_info:
 		new_file.store_line(str(ci) + ": " + chart_info[ci])
 	
 	# store timing points, then hit objects
-	# BEEP BEEP BEEP BEEP BEEP BEEP THIS IS WHERE WE CHANGE IT ROKUUUUUUUU
-	new_file.store_line(get_object_string(false, timing_points))
-	new_file.store_line(get_object_string(true, hit_objects))
+	new_file.store_line(get_object_string(hit_objects))
 	
 	# save path and close 
 	var new_path = new_file.get_path()
@@ -266,7 +261,8 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 	
 	var origin_file_path := file_path
 	var line := ""
-	var section := ""
+	# 0 = metadata, 1 = hit objects
+	var section := 0
 	
 	var audio : AudioStream
 	var background
@@ -279,16 +275,18 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 	while file.get_position() < file.get_length():
 		line = file.get_line().strip_edges()
 		
-		if line.is_empty() or line.begins_with("TaiClone Chart"):
+		if line.begins_with("TaiClone Chart"):
 			continue
 		
 		# change current section
-		if line.begins_with("[") and line.ends_with("]"):
-			section = line.substr(1, line.length() - 2)
+		# roku note 2024-07-16
+		# if this stays like this, itll be really easy to corrupt .tc files by adding extra linebreaks. be careful
+		if line.is_empty():
+			section += 1
 			continue
 		
 		# if were only grabbing metadata, ignore everything else
-		if only_grab_metadata and (section == "Timing Points" or section == "Hit Objects"):
+		if only_grab_metadata and section == 1:
 			continue
 		
 		# split line into array by commas
@@ -305,23 +303,7 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 		var data_value := ""
 		
 		match section:
-			"Timing Points":
-				var obj_arr := []
-				
-				# set basic variables 
-				obj_arr.push_back(float(line_data[0])) # timing
-				obj_arr.push_back(line_data[1] == "true") # bpm change (this is silly and will be fixed!)
-				obj_arr.push_back(float(line_data[2])) # bpm value
-				obj_arr.push_back(int(line_data[3])) # time signature (assumes 4/x)
-				
-				timing_points.push_back(obj_arr)
-				continue
-
-			"Hit Objects":
-				hit_objects.push_back( generate_hit_object( (int(line_data[2]) as NOTETYPE), line_data, timing_points) )
-				continue
-
-			_: # chart info
+			0: # chart info
 				data_name = line.substr(0, line.find(':'))
 				data_value = line.substr(line.find(':') + 1, line.length()).strip_edges()
 				
@@ -344,6 +326,21 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 					_:
 						chart_info[data_name] = data_value
 				continue
+				
+			1:
+				if int(line_data[2]) == NOTETYPE.TIMING_POINT:
+					var obj_arr := []
+
+					# set basic variables 
+					obj_arr.push_back(float(line_data[0])) # timing
+					obj_arr.push_back(line_data[1] == "true") # bpm change (this is silly and will be fixed!)
+					obj_arr.push_back(float(line_data[2])) # bpm value
+					obj_arr.push_back(int(line_data[3])) # time signature (assumes 4/x)
+
+					timing_points.push_back(obj_arr)
+				
+				hit_objects.push_back( generate_hit_object( (int(line_data[2]) as NOTETYPE), line_data, timing_points) )
+				continue
 
 	hit_objects.sort_custom(
 		func(a: HitObject, b: HitObject): return a.timing > b.timing
@@ -357,13 +354,8 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 	return Chart.new(file_path, audio, background, chart_info, timing_points, hit_objects)
 
 ## formats objects into a string
-static func get_object_string(is_hobj: bool, data: Array) -> String:
-	var intended_str := ""
-	
-	if is_hobj:
-		intended_str += "\n[Hit Objects]\n"
-	else:
-		intended_str += "\n[Timing Points]\n"
+static func get_object_string(data: Array) -> String:
+	var intended_str := "\n" # start with a linebreak to separate metadata and hit objects
 	
 	for obj in data:
 		var line := ""
@@ -392,7 +384,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			ex_vars[data_name] = data_value
 	
 	# roku note 2024-07-16
-	# timing point changes fucked roll/spinner values, spinners now report 0 required hits
+	# timing point changes messed up roll/spinner values, spinners now report 0 required hits
 	match type:
 		NOTETYPE.TIMING_POINT:
 			var new_hit_object = timing_point_scene.instantiate() as TimingPoint
