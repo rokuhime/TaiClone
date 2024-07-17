@@ -163,11 +163,13 @@ static func convert_chart(file_path: String):
 							if current_timing["NextChangeTime"]:
 								if time >= current_timing["NextChangeTime"]:
 									# update timing values
-									# var intended_timing := { "BPM": 0.0, "Velocity": 1.0, "Meter": 4, "Kiai": false, "NextChangeTime": null}
+									var old_kiai: bool = current_timing["Kiai"]
 									current_timing = get_intended_timing(time, timing_points)
-									# make timing object array
-									var timing_object := [time, current_timing["BPM"], NOTETYPE.TIMING_POINT, current_timing["Kiai"], current_timing["Meter"]]
-									hit_objects.append(timing_object)
+									
+									if current_timing["LastChangeInherited"] or old_kiai != current_timing["Kiai"]:
+										# make timing object array
+										var timing_object := [time, current_timing["BPM"], NOTETYPE.TIMING_POINT, current_timing["Kiai"], current_timing["Meter"]]
+										hit_objects.append(timing_object)
 						
 						var velocity : float = current_timing["Velocity"] * slider_multiplier * current_timing["BPM"]
 						
@@ -446,7 +448,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 
 # return all relevant timing related info from a timestamp
 static func get_intended_timing(current_time: float, timing_points) -> Dictionary:
-	var intended_timing := { "BPM": 0.0, "Velocity": 1.0, "Meter": 4, "Kiai": false, "NextChangeTime": null}
+	var intended_timing := { "BPM": 0.0, "Velocity": 1.0, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null}
 	
 	for tp in timing_points:
 		# if timing point takes place after current_time, return results
@@ -459,8 +461,10 @@ static func get_intended_timing(current_time: float, timing_points) -> Dictionar
 		if tp[1]:  # if inherited (bpm)
 			intended_timing["Meter"] = tp[1]
 			intended_timing["BPM"] = tp[2]
+			intended_timing["LastChangeInherited"] = true
 			continue
 		# uninherited (sv change)
+		intended_timing["LastChangeInherited"] = false
 		intended_timing["Velocity"] = tp[2]
 	
 	return intended_timing
