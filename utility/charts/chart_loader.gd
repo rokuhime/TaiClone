@@ -146,10 +146,15 @@ static func convert_chart(file_path: String):
 						# queue up first uninherited timing point, if not already done
 						if current_timing.is_empty() and meter:
 							current_timing["Time"] = time
+							current_timing["Meter"] = meter
 							current_timing["BPM"] = timing_value
 							current_timing["Velocity"] = 1.0
 							current_timing["Kiai"] = is_kiai_enabled
 							current_timing["NextChangeTime"] = time
+							
+							# below doesnt find first timing point, so implement it here
+							var timing_object := [time, current_timing["BPM"], NOTETYPE.TIMING_POINT, current_timing["Kiai"], current_timing["Meter"]]
+							hit_objects.append(timing_object)
 						
 						# already parsed it, may aswell use it
 						timing_points.append(timing_point)
@@ -169,7 +174,8 @@ static func convert_chart(file_path: String):
 									if current_timing["LastChangeInherited"] or old_kiai != current_timing["Kiai"]:
 										# make timing object array
 										var timing_object := [time, current_timing["BPM"], NOTETYPE.TIMING_POINT, current_timing["Kiai"], current_timing["Meter"]]
-										hit_objects.append(timing_object)
+										if not hit_objects.has(timing_object):
+											hit_objects.append(timing_object)
 						
 						var velocity : float = current_timing["Velocity"] * slider_multiplier * current_timing["BPM"]
 						

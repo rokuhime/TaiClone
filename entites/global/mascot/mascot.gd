@@ -38,8 +38,6 @@ func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0):
 func toast():
 	toast_lock = true
 	test2_player.play()
-	# update the anim_start_time to ensure it syncs properly
-	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
 	
 	# await toast to end, then go back to appropriate sprite
 	for i in toast_sprites.size():

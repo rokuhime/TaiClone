@@ -225,12 +225,13 @@ func load_chart(requested_chart: Chart) -> void:
 	
 	current_chart = requested_chart
 	
-	# set skip time to the first hit object's timing - 2 secs
-	skip_time = requested_chart.hit_objects[requested_chart.hit_objects.size() - 1].timing - 2
 	# add all hit objects to container
 	for hobj in requested_chart.hit_objects:
 		hit_object_container.add_child(hobj)
 	music.stream = requested_chart.audio
+	
+	# set skip time to the first hit object's timing - 2 secs
+	skip_time = get_first_hitobject().timing - 2
 	
 	# ensure next note is correct and play
 	next_note_idx = current_chart.hit_objects.size() - 1
@@ -250,7 +251,8 @@ func play_chart() -> void:
 	
 	# delay the chart if first note is less than 2 seconds into the song
 	var first_note_delay := 0.0
-	var first_hit_object = hit_object_container.get_child(hit_object_container.get_child_count() - 1)
+	var first_hit_object = get_first_hitobject()
+	
 	if first_hit_object.timing < 2.0:
 		first_note_delay = 2.0 - first_hit_object.timing
 		current_play_offset += first_note_delay
@@ -269,7 +271,6 @@ func play_chart() -> void:
 	if first_note_delay:
 		await get_tree().create_timer(first_note_delay).timeout
 	music.play()
-	
 
 func update_input_indicator(part_index: int) -> void:
 	var indicator_target: Control = drum_indicator.get_children()[part_index]
@@ -283,11 +284,10 @@ func update_input_indicator(part_index: int) -> void:
 func skip_intro() -> void:
 	if current_time >= skip_time:
 		return
-	
-	# get first note timing and seek to it
-	var first_hit_object = hit_object_container.get_child(hit_object_container.get_child_count() - 1)
+	var first_hit_object = get_first_hitobject()
 	start_time -= first_hit_object.timing - 2.0 - current_time
 	music.seek(current_play_offset + first_hit_object.timing - 2.0)
+	mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
 
 func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 	current_bps = 60.0 / timing_point.bpm
@@ -296,3 +296,13 @@ func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 	mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
 							current_bps, 
 							timing_point.timing - current_time)
+
+func get_first_hitobject() -> HitObject:
+	# get first hit object thats not a timing point
+	var first_hit_object: HitObject
+	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+		var hit_object := hit_object_container.get_child(i) as HitObject
+		if hit_object is TimingPoint:
+			continue
+		return hit_object
+	return null
