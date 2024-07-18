@@ -3,6 +3,7 @@ extends Control
 var music: AudioStreamPlayer
 var listings := []
 var chart_listing_scene := preload("res://entites/songselect/chart_listing.tscn")
+var auto_enabled := false
 
 @onready var listing_container := $ListingContainer
 var list_movement_tween: Tween
@@ -135,7 +136,7 @@ func update_visual() -> void:
 
 func transition_to_gameplay() -> void:
 	var selected_chart = ChartLoader.get_chart(listings[selected_list_idx].chart.file_path)
-	get_tree().get_first_node_in_group("Root").change_to_gameplay(selected_chart)
+	get_tree().get_first_node_in_group("Root").change_to_gameplay(selected_chart, auto_enabled)
 
 # TODO: check hash instead
 func listing_already_exists(chart: Chart) -> bool:
@@ -143,3 +144,6 @@ func listing_already_exists(chart: Chart) -> bool:
 		if listing.chart.chart_info == chart.chart_info:
 			return true
 	return false
+
+func toggle_auto(new_auto_enabled: bool) -> void:
+	auto_enabled = new_auto_enabled

@@ -40,8 +40,9 @@ func change_state(requested_scene):
 	move_child(current_state_node, 1)  # 1 to ensure the background stays at the bottom
 	return new_state_scene
 
-func change_to_gameplay(requested_chart: Chart):
+func change_to_gameplay(requested_chart: Chart, auto_enabled: bool):
 	change_state(GAMESTATE.GAMEPLAY).load_chart(requested_chart)
+	current_state_node.auto_enabled = auto_enabled
 
 # used to bundle ui sounds into one AudioQueuer, saves memory
 func play_ui_sound(target_stream: AudioStream, offset := Vector2.ZERO):

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://da2jq5ltku5n2"]
 
 [ext_resource type="Script" path="res://scenes/song_select/song_select.gd" id="1_lm221"]
-[ext_resource type="Texture2D" uid="uid://bxocvsgmwfxwn" path="res://assets/textures/taiclone song select concept 2.png" id="2_85603"]
+[ext_resource type="Texture2D" uid="uid://dvspeqnrmdj5h" path="res://assets/textures/taiclone song select concept 2 43.png" id="2_netgx"]
 
 [node name="SongSelect" type="Control" groups=["SongSelect"]]
 layout_mode = 3
@@ -21,7 +21,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_85603")
+texture = ExtResource("2_netgx")
 
 [node name="ListingContainer" type="Control" parent="."]
 layout_mode = 1
@@ -32,3 +32,15 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 grow_horizontal = 0
 grow_vertical = 2
+
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -46.0
+offset_right = 91.0
+grow_vertical = 0
+text = "Auto"
+
+[connection signal="toggled" from="CheckBox" to="." method="toggle_auto"]

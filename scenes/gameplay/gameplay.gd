@@ -15,6 +15,8 @@ var drum_indicator_tweens : Array = [null, null, null, null]
 @onready var mascot := $Mascot as TextureRect
 var current_bps := 0.0	# beats per second
 
+var auto_enabled := false
+
 # Data
 @export var current_time := 0.0
 @export var start_time := 0.0
@@ -68,7 +70,8 @@ func _process(_delta) -> void:
 		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 			var hit_object := hit_object_container.get_child(i) as HitObject
 			if hit_object.timing <= current_time:
-				if hit_object.active and hit_object is Note:
+				# auto
+				if hit_object.active and hit_object is Note and auto_enabled:
 					hit_check(SIDE.LEFT, hit_object.is_kat, hit_object)
 					play_audio(SIDE.LEFT, hit_object.is_kat)
 					current_hitsound_state = HITSOUND_STATES.NORMAL
@@ -91,6 +94,9 @@ func _unhandled_input(event) -> void:
 	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
 		if Input.is_action_just_pressed("SkipIntro") and playing:
 			skip_intro()
+		
+		if auto_enabled:
+			return
 		
 		# get rhythm gameplay input
 		var pressed_input := ""

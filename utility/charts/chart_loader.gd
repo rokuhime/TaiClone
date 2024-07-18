@@ -126,6 +126,9 @@ static func convert_chart(file_path: String):
 
 						if line_data.size() < 6: # uninherited
 							line_data.append("1")
+						
+						if line_data.size() < 6: # kiai
+							line_data.append("0")
 
 						# parse data
 						var time := float(line_data[0]) / 1000 # time in seconds
