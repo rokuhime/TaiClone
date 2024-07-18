@@ -82,8 +82,6 @@ func select_listing(listing: ChartListing) -> void:
 	selected_list_idx = listings.find(listing)
 	update_visual()
 	
-	# TODO: check before setting? it would be annoying to get from here for not much performance increase
-	# none the less would be a good idea
 	Global.set_background(listings[selected_list_idx].chart.background)
 	
 	# play preview

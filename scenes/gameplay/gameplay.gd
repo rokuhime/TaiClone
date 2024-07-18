@@ -85,6 +85,8 @@ func _process(_delta) -> void:
 						return
 					
 					apply_score(hit_object)
+					if mascot.current_state != mascot.SPRITETYPES.FAIL:
+						mascot.start_animation(mascot.SPRITETYPES.FAIL, current_bps, hit_object.timing)
 
 func _unhandled_input(event) -> void:
 	# back to song select
@@ -132,6 +134,8 @@ func _unhandled_input(event) -> void:
 				if hit_object.timing - current_time > Global.INACC_TIMING:
 					break
 				elif hit_check(current_side_input, is_input_kat, hit_object):
+					if mascot.current_state != mascot.SPRITETYPES.IDLE:
+						mascot.start_animation(mascot.SPRITETYPES.IDLE, current_bps, hit_object.timing)
 					break
 		
 		play_audio(current_side_input, is_input_kat)
