@@ -2,28 +2,37 @@ class_name Gameplay
 extends Control
 # TODO: spinners are *sometimes* given the correct value(?) but are not playable atm, sliders are correct length but no ticks
 
+# UI
 @onready var hit_object_container := $Track/HitPoint/HitObjectContainer
-var music: AudioStreamPlayer
 @onready var audio_queuer := $AudioQueuer as AudioQueuer
 @onready var score_manager := $ScoreManager as ScoreManager
+var music: AudioStreamPlayer
 
 @onready var drum_indicator: Node = $Track/DrumIndicator
 var drum_indicator_tweens : Array = [null, null, null, null]
 
-var current_chart : Chart
+# Mascot
+@onready var mascot := $Mascot as TextureRect
+var current_bps := 0.0	# beats per second
+
+# Data
 @export var current_time := 0.0
 @export var start_time := 0.0
+var current_chart : Chart
 var current_play_offset := 0.0
 var playing := false
 var skip_time := 0.0
+var in_kiai := false
 
 @export var next_note_idx := 0
 
+# Input
 enum SIDE { NONE, LEFT, RIGHT }
 enum SCORETYPE { MISS, INACCURATE, ACCURATE }
 var last_side_input := SIDE.NONE
 var active_finisher_note: Note
 
+# Hitsounds
 enum HITSOUND_STATES {NONE, NORMAL, FINISHER}
 var current_hitsound_state = HITSOUND_STATES.NORMAL
 
@@ -58,8 +67,24 @@ func _process(_delta) -> void:
 		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 			var hit_object := hit_object_container.get_child(i) as HitObject
 			if hit_object.timing <= current_time:
+				if hit_object.active and hit_object is Note:
+					hit_check(SIDE.LEFT, hit_object.is_kat, hit_object)
+					play_audio(SIDE.LEFT, hit_object.is_kat)
+					current_hitsound_state = HITSOUND_STATES.NORMAL
+					return
+				
 				var miss_result := hit_object.miss_check(current_time)
 				if miss_result:
+					# if passing a timing point, set mascot animation variables
+					if hit_object is TimingPoint:
+						print("!!! hit timing point")
+						current_bps = 60.0 / hit_object.bpm
+						if hit_object.is_finisher != in_kiai:
+							in_kiai = hit_object.is_finisher
+							
+						mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, current_bps)
+						return
+					
 					apply_score(hit_object)
 
 func _unhandled_input(event) -> void:
