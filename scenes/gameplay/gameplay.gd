@@ -76,14 +76,9 @@ func _process(_delta) -> void:
 				
 				var miss_result := hit_object.miss_check(current_time)
 				if miss_result:
-					# if passing a timing point, set mascot animation variables
+					# if passing a timing point, apply it
 					if hit_object is TimingPoint:
-						print("!!! hit timing point")
-						current_bps = 60.0 / hit_object.bpm
-						if hit_object.is_finisher != in_kiai:
-							in_kiai = hit_object.is_finisher
-							
-						mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, current_bps)
+						apply_timing_point(hit_object, current_time)
 						return
 					
 					apply_score(hit_object)
@@ -261,12 +256,20 @@ func play_chart() -> void:
 		current_play_offset += first_note_delay
 	
 	start_time = Time.get_ticks_msec() / 1000.0 + current_play_offset
-	playing = true;
+	playing = true
+	
+	# get first timing point and apply
+	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+		var hit_object = hit_object_container.get_child(i)
+		if hit_object is TimingPoint:
+			apply_timing_point(hit_object, start_time)
+			break
 	
 	# delay audio playing if theres a positive (late) offset
 	if first_note_delay:
 		await get_tree().create_timer(first_note_delay).timeout
 	music.play()
+	
 
 func update_input_indicator(part_index: int) -> void:
 	var indicator_target: Control = drum_indicator.get_children()[part_index]
@@ -285,3 +288,11 @@ func skip_intro() -> void:
 	var first_hit_object = hit_object_container.get_child(hit_object_container.get_child_count() - 1)
 	start_time -= first_hit_object.timing - 2.0 - current_time
 	music.seek(current_play_offset + first_hit_object.timing - 2.0)
+
+func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
+	current_bps = 60.0 / timing_point.bpm
+	if timing_point.is_finisher != in_kiai:
+		in_kiai = timing_point.is_finisher
+	mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
+							current_bps, 
+							timing_point.timing - current_time)
