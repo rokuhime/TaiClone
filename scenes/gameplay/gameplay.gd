@@ -43,6 +43,7 @@ var katfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_kat
 
 func _ready() -> void:
 	music = Global.music
+	score_manager.connect("toast", Callable(mascot, "toast"))
 
 func _process(_delta) -> void:
 	# update progress bar

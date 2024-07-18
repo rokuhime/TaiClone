@@ -29,6 +29,9 @@ var judgement_indicator_tweens : Array = [null, null, null]
 
 #@onready var hit_error_bar: HitErrorBar = $HitErrorBar
 
+signal toast()
+var toast_values := [50,100,150,200,250,500,1000]
+
 # TODO: move this out and make a ui manager
 func update_progress(cur_time: float, finish_time: float, start_time: float):
 	song_progress_bar.value = cur_time / finish_time
@@ -78,6 +81,8 @@ func add_score(hit_time_difference: float, missed := false) -> void:
 		current_combo += 1
 		if current_combo > top_combo:
 			top_combo = current_combo
+		if toast_values.has(current_combo):
+			toast.emit()
 		
 		# if inaccurate, count late/early
 		if score_type == 1:
