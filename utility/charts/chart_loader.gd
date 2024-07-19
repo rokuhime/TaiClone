@@ -187,12 +187,12 @@ static func convert_chart(file_path: String):
 						var tc_type
 						
 						# variable to hold any extra variables for objects
-						var ex := {}
+						var ex := []
 						
 						# find note type, and add nessacary values
 						
 						if bool(1 << 3 & int(line_data[3])): # spinner
-							ex["Length"] = float(line_data[5]) / 1000 - time
+							ex.append(float(line_data[5]) / 1000 - time)
 							tc_type = NOTETYPE.SPINNER
 						
 						elif bool(1 << 1 & int(line_data[3])): # slider
@@ -202,7 +202,7 @@ static func convert_chart(file_path: String):
 							# osu holds slider length extremely strangely, so this converts the slider's "length" into seconds
 							var length = float(line_data[7])
 							var repeats = int(line_data[6])
-							ex["Length"] = length / (slider_multiplier * 100000.0 * current_timing["Velocity"]) * (60000.0 / current_timing["BPM"]) * repeats
+							ex.append(length / (slider_multiplier * 100000.0 * current_timing["Velocity"]) * (60000.0 / current_timing["BPM"]) * repeats)
 							
 						
 						else:
@@ -214,11 +214,12 @@ static func convert_chart(file_path: String):
 							else:
 								tc_type = NOTETYPE.DON
 						
-						if bool(1 << 2 & int(line_data[3])): # new combo
-							ex["New_Combo"] = true
+						#if bool(1 << 2 & int(line_data[3])): # new combo
+							#ex["New_Combo"] = true
 						
 						# make hit object array
-						var hit_object := [time, velocity, tc_type, finisher, ex]
+						var hit_object := [time, velocity, tc_type, finisher]
+						hit_object.append_array(ex)
 						
 						hit_objects.append(hit_object)
 						continue
@@ -338,15 +339,15 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 						chart_info[data_name] = data_value
 				continue
 				
-			1:
+			1: # hit objects
 				if int(line_data[2]) == NOTETYPE.TIMING_POINT:
 					var obj_arr := []
 
 					# set basic variables 
 					obj_arr.push_back(float(line_data[0])) # timing
-					obj_arr.push_back(line_data[1] == "true") # bpm change (this is silly and will be fixed!)
-					obj_arr.push_back(float(line_data[2])) # bpm value
-					obj_arr.push_back(int(line_data[3])) # time signature (assumes 4/x)
+					obj_arr.push_back(float(line_data[1])) # bpm value
+					obj_arr.push_back(line_data[3] == "true") # kiai
+					obj_arr.push_back(int(line_data[4])) # time signature (assumes 4/x)
 
 					timing_points.push_back(obj_arr)
 				
@@ -385,14 +386,12 @@ static func get_object_string(data: Array) -> String:
 	return intended_str
 
 static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitObject:
-	var ex_vars := {}
+	var ex_vars := []
 	var intended_timing_point = get_intended_timing(float(line_data[0]), timing_data)
 	
 	if line_data.size() > 4: # if ex vars exist...
 		for ex in line_data.slice(4, line_data.size()):
-			var data_name = ex.substr(0, ex.find(':')).strip_edges()
-			var data_value = ex.substr(ex.find(':') + 1, ex.length()).strip_edges()
-			ex_vars[data_name] = data_value
+			ex_vars.append(ex)
 	
 	# roku note 2024-07-16
 	# timing point changes messed up roll/spinner values, spinners now report 0 required hits
@@ -414,14 +413,14 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			new_hit_object.speed = float(line_data[1]) # velocity
 			new_hit_object.is_finisher = line_data[3] == "true"
 			
-			if ex_vars.keys().has("New_Combo"):
-				new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
+			#if ex_vars.keys().has("New_Combo"):
+				#new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
 			
-			(new_hit_object as Roll).length = ex_vars["Length"]
+			(new_hit_object as Roll).length = ex_vars[0]
 			(new_hit_object as Roll).tick_duration = (60.0 / intended_timing_point["BPM"]) / 4.0
 			(new_hit_object as Roll).create_ticks()
 			
-			return new_hit_object 
+			return new_hit_object
 		
 		NOTETYPE.SPINNER:
 			var new_hit_object = spinner_scene.instantiate() as Spinner
@@ -430,15 +429,15 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			new_hit_object.speed = float(line_data[1]) # velocity
 			new_hit_object.is_finisher = line_data[3] == "true"
 			
-			if ex_vars.keys().has("New_Combo"):
-				new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
+			#if ex_vars.keys().has("New_Combo"):
+				#new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
 			
-			(new_hit_object as Spinner).length = ex_vars["Length"]
+			(new_hit_object as Spinner).length = ex_vars[0]
 			
 			var beat_measure : int = intended_timing_point["Meter"]
 			var beat_divisor := 4
 			var beat_in_seconds : float = (60.0 * beat_measure) / intended_timing_point["BPM"]
-			(new_hit_object as Spinner).needed_hits = floor(float(ex_vars["Length"]) / (beat_in_seconds / beat_divisor) )
+			(new_hit_object as Spinner).needed_hits = floor(float(ex_vars[0]) / (beat_in_seconds / beat_divisor) )
 			return new_hit_object 
 		
 		_:  # note
@@ -448,8 +447,8 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			new_hit_object.speed = float(line_data[1]) # velocity
 			new_hit_object.is_finisher = line_data[3] == "true"
 			
-			if ex_vars.keys().has("New_Combo"):
-				new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
+			#if ex_vars.keys().has("New_Combo"):
+				#new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
 			
 			(new_hit_object as Note).is_kat = type == NOTETYPE.KAT
 			
@@ -457,7 +456,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 
 # return all relevant timing related info from a timestamp
 static func get_intended_timing(current_time: float, timing_points) -> Dictionary:
-	var intended_timing := { "BPM": 0.0, "Velocity": 1.0, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null}
+	var intended_timing := { "BPM": 0.0, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null}
 	
 	for tp in timing_points:
 		# if timing point takes place after current_time, return results
@@ -465,15 +464,8 @@ static func get_intended_timing(current_time: float, timing_points) -> Dictionar
 			intended_timing["NextChangeTime"] = tp[0]
 			break
 		
-		intended_timing["Kiai"] = tp[3]
-		
-		if tp[1]:  # if inherited (bpm)
-			intended_timing["Meter"] = tp[1]
-			intended_timing["BPM"] = tp[2]
-			intended_timing["LastChangeInherited"] = true
-			continue
-		# uninherited (sv change)
-		intended_timing["LastChangeInherited"] = false
-		intended_timing["Velocity"] = tp[2]
+		intended_timing["Kiai"] = tp[2]
+		intended_timing["Meter"] = tp[3]
+		intended_timing["BPM"] = tp[1]
 	
 	return intended_timing

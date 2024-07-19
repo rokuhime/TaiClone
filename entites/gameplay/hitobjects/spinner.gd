@@ -76,7 +76,7 @@ func finished() -> void:
 		return
 	
 	hit_status = hit_type.FINISHED
-	print("spinner finished, ", needed_hits - current_hits, " / ", needed_hits, " = ", float(needed_hits - current_hits) / float(needed_hits))
+	#print("spinner finished, ", needed_hits - current_hits, " / ", needed_hits, " = ", float(needed_hits - current_hits) / float(needed_hits))
 	if current_hits:
 		if float(needed_hits - current_hits) / float(needed_hits) >= 0.5:
 			# roku note 2024-07-02

@@ -41,9 +41,10 @@ func refresh_listings_from_song_folders() -> void:
 	# no matter what listings cant be fully cleared, listings.clear() doesnt work nor does below
 	# it just leaves null values for some reason, which breaks menu navigation
 	# see line 66 mayb 
-	listings = []
 	for listing in listing_container.get_children():
 		listing.queue_free()
+	listings = []
+	selected_list_idx = 0
 	
 	for chart_folder in Global.get_chart_folders():
 		print("SongSelect: scanning chart folder ", chart_folder)
