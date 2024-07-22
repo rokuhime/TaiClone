@@ -134,8 +134,10 @@ func _unhandled_input(event) -> void:
 				if hit_object.timing - current_time > Global.INACC_TIMING:
 					break
 				elif hit_check(current_side_input, is_input_kat, hit_object):
-					if mascot.current_state != mascot.SPRITETYPES.IDLE:
-						mascot.start_animation(mascot.SPRITETYPES.IDLE, current_bps, hit_object.timing)
+					if mascot.current_state != mascot.SPRITETYPES.IDLE and mascot.current_state != mascot.SPRITETYPES.KIAI:
+						mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
+							current_bps, 
+							hit_object.timing)
 					break
 		
 		play_audio(current_side_input, is_input_kat)

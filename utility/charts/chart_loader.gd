@@ -393,8 +393,6 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 		for ex in line_data.slice(4, line_data.size()):
 			ex_vars.append(ex)
 	
-	# roku note 2024-07-16
-	# timing point changes messed up roll/spinner values, spinners now report 0 required hits
 	match type:
 		NOTETYPE.TIMING_POINT:
 			var new_hit_object = timing_point_scene.instantiate() as TimingPoint

@@ -82,10 +82,8 @@ func finished() -> void:
 			# roku note 2024-07-02
 			# calling from tree here means multiplayer wouldnt work
 			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(1)
-			print("ok")
 		else:
 			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(0)
-			print("miss")
 	else:
 		get_tree().get_first_node_in_group("ScoreManager").add_manual_score(2)
 	
