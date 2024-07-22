@@ -93,6 +93,20 @@ func change_global_offset(new_offset: float):
 	global_offset = new_offset
 	save_settings()
 
+func get_hash(file_path: String) -> PackedByteArray:
+	# Start a SHA-256 context.
+	var ctx = HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	# Open the file to hash.
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	# Update the context after reading each chunk.
+	while not file.eof_reached():
+		ctx.update(file.get_buffer(1028))
+	# Get the computed hash.
+	var res = ctx.finish()
+	return res
+
+
 #static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
 	#if obj.connect(signal_name, signal_target, method):
 		#push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])

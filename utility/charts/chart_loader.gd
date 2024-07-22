@@ -8,6 +8,7 @@ class_name ChartLoader
 
 const TC_VERSION := "v0.0.2"
 enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
+const SUPPORTED_FILETYPES := ["tc", "osu"]
 
 static var note_scene = preload("res://entites/gameplay/hitobjects/note.tscn")
 static var roll_scene = preload("res://entites/gameplay/hitobjects/roll.tscn")
@@ -272,13 +273,14 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 		return
 	
 	var origin_file_path := file_path
+	var hash := Global.get_hash(file_path)
+	
 	var line := ""
 	# 0 = metadata, 1 = hit objects
 	var section := 0
 	
 	var audio : AudioStream
 	var background
-	
 	var chart_info := {}
 	
 	var timing_points := []
@@ -363,7 +365,7 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 		print_rich("[color=yellow]ChartLoader: chart at ", origin_file_path, " is corrupted! skipped[/color]")
 		return
 	
-	return Chart.new(file_path, audio, background, chart_info, timing_points, hit_objects)
+	return Chart.new(file_path, audio, background, chart_info, timing_points, hit_objects, hash)
 
 ## formats objects into a string
 static func get_object_string(data: Array) -> String:
