@@ -10,23 +10,28 @@ var list_movement_tween: Tween
 
 func populate_from_folder(folder_path: String) -> void:
 	if not DirAccess.dir_exists_absolute(folder_path):
-		print_rich("[color=cyan]SongSelectV2:[/color] [color=red]attempted to populate from bad folder: %s[/color]" % folder_path)
+		Global.push_console("SongSelectV2", "attempted to populate from bad folder: %s" % folder_path, 2)
+	Global.push_console("SongSelectV2", "populating from: %s" % folder_path)
 	
-	print_rich("[color=cyan]SongSelectV2:[/color] populating from %s..." % folder_path)
 	for file in DirAccess.get_files_at(folder_path):
 		if ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
 			var chart := ChartLoader.get_chart(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
+			
 			# ensure were not making a duplicate listing before adding
 			if not listing_exists(chart):
-				print_rich("[color=cyan]SongSelectV2:[/color] added chart %s - %s [%s]" % [chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]])
+				Global.push_console("SongSelectV2", "added chart %s - %s [%s]" % [
+					chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]
+					])
 				create_listing(chart)
 				continue
-			print_rich("[color=cyan]SongSelectV2:[/color] [color=yellow]duplicate chart found: %s[/color]" % file)
+				
+			Global.push_console("SongSelectV2", "ignoring duplicate chart: %s" % file, 1)
 			continue
-		print_rich("[color=cyan]SongSelectV2:[/color] [color=red]bad filetype: %s[/color]" % file)
+			
+		Global.push_console("SongSelectV2", "bad filetype: %s" % file, 2)
 		continue
 	
-	print_rich("[color=cyan]SongSelectV2:[/color] finished!")
+	Global.push_console("SongSelectV2", "finished!", 0)
 
 func create_listing(chart: Chart) -> ChartListing:
 	var listing := chart_listing_scene.instantiate() as ChartListing

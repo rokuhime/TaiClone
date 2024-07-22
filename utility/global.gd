@@ -19,6 +19,9 @@ const INACC_TIMING := 0.07
 var resolution_multiplier = 4.0
 var global_offset := 0.0
 
+# lowest level of priority that will appear to console
+var console_filter := -1
+
 func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + ProjectSettings.get_setting("application/config/version"), 0)
 
@@ -106,6 +109,29 @@ func get_hash(file_path: String) -> PackedByteArray:
 	var res = ctx.finish()
 	return res
 
+# roku note 2024-07-22
+# consider notification priority being the same as console priority, makes it easier to push notifs & have the console echo the same
+
+# simple function to color and timestamp console messages
+# urgency -1 = step/unimportant, 0 = success, 1 = warning, 2 = failiure
+func push_console(origin: String, message: String, urgency := -1):
+	# color and timestamp origin
+	match origin:
+		"SongSelectV2":
+			origin = "[" + Time.get_time_string_from_system() + "] [color=cyan]" + origin + "[/color]: "
+		_:
+			origin = "[" + Time.get_time_string_from_system() + "] [color=grey]" + origin + "[/color]: "
+	
+	# color message by urgency
+	match urgency:
+		0:
+			message = "[color=green]" + message + "[/color]"
+		1:
+			message = "[color=yellow]" + message + "[/color]"
+		2:
+			message = "[color=red]" + message + "[/color]"
+	
+	print_rich(origin + message)
 
 #static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
 	#if obj.connect(signal_name, signal_target, method):
