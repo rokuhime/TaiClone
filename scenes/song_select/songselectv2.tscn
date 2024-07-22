@@ -21,18 +21,14 @@ anchor_bottom = 0.5
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Button" type="Button" parent="."]
-layout_mode = 0
-offset_right = 495.0
-offset_bottom = 132.0
-text = "folder1"
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -24.0
+offset_right = 24.0
+grow_vertical = 0
+text = "Auto"
 
-[node name="Button2" type="Button" parent="."]
-layout_mode = 0
-offset_top = 168.0
-offset_right = 495.0
-offset_bottom = 300.0
-text = "folder2"
-
-[connection signal="pressed" from="Button" to="." method="populate_from_folder" binds= ["/home/roku/.local/share/godot/app_userdata/TaiClone/ConvertedCharts"]]
-[connection signal="pressed" from="Button2" to="." method="populate_from_folder" binds= ["/home/roku/.local/share/godot/app_userdata/TaiClone/Songs"]]
+[connection signal="pressed" from="CheckBox" to="." method="toggle_auto"]

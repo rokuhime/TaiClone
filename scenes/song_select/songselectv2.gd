@@ -13,7 +13,42 @@ const LISTING_SEPARATION := 10.0
 const TUCK_AMOUNT := 150.0
 const LISTING_MOVEMENT_TIME := 0.5
 
-func populate_from_folder(folder_path: String) -> void:
+var auto_enabled := false
+
+func _ready():
+	music = get_tree().get_first_node_in_group("RootMusic")
+	refresh_from_chart_folders()
+	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
+	apply_listing_data(listing_container.get_child(0))
+	update_visual(true)
+
+# --- loading listings ---
+
+# roku note 2024-07-22
+# u gotta come up with better names to distinguish btwn populate_from_folder() and populate_from_chart_folder()
+# just generally having a name for the chart's folder and a folder that holds charts would be REALLY USEFUL and LESS CONFUSING
+
+# hard updates do every folder, otherwise only scan converted chart folder (temporary)
+func refresh_from_chart_folders(hard_update := false) -> void:
+	Global.push_console("SongSelectV2", "refreshing charts from global chart folders!")
+	populate_from_chart_folder(Global.CONVERTED_CHART_FOLDER)
+	
+	# cycle through chart folders to convert
+	if hard_update:
+		for folder in Global.get_chart_folders():
+			if !DirAccess.dir_exists_absolute(folder) or folder.is_empty():
+				Global.push_console("SongSelectV2", "bad folder in global chart folder array: %s" % folder, 2)
+				continue
+			
+			Global.push_console("SongSelectV2", "finding chart folders in: %s" % folder)
+			for chart_folder in DirAccess.get_directories_at(folder):
+				populate_from_chart_folder(folder.path_join(chart_folder))
+				
+	Global.push_console("SongSelectV2", "done refreshing charts!", 0)
+	update_visual(true)
+
+# creates listings from a folder containing chart files
+func populate_from_chart_folder(folder_path: String) -> void:
 	if not DirAccess.dir_exists_absolute(folder_path):
 		Global.push_console("SongSelectV2", "attempted to populate from bad folder: %s" % folder_path, 2)
 	Global.push_console("SongSelectV2", "populating from: %s" % folder_path)
@@ -25,19 +60,13 @@ func populate_from_folder(folder_path: String) -> void:
 			# ensure were not making a duplicate listing before adding
 			if not listing_exists(chart):
 				Global.push_console("SongSelectV2", "added chart %s - %s [%s]" % [
-					chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]
-					])
+					chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]],
+					-2)
 				create_listing(chart)
 				continue
 				
 			Global.push_console("SongSelectV2", "ignoring duplicate chart: %s" % file, 1)
 			continue
-			
-		Global.push_console("SongSelectV2", "bad filetype: %s" % file, 2)
-		continue
-	
-	Global.push_console("SongSelectV2", "finished!", 0)
-	update_visual(true)
 
 func create_listing(chart: Chart) -> ChartListing:
 	var listing := chart_listing_scene.instantiate() as ChartListing
@@ -52,6 +81,21 @@ func listing_exists(chart: Chart) -> bool:
 			if chart.hash == listing.chart.hash:
 				return true
 	return false
+
+# --- changing listing position/functions ---
+
+func _unhandled_input(event):
+	# refresh listings
+	if event is InputEventKey and event.keycode == KEY_F5:
+		refresh_from_chart_folders()
+	
+	if listing_container.get_child_count() > 0:
+		if event.is_action_pressed("LeftKat"):
+			change_selected_listing(-1)
+		elif event.is_action_pressed("RightKat"):
+			change_selected_listing(1)
+		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
+			transition_to_gameplay()
 
 # changes position of listings and listingcontainer
 # hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
@@ -92,25 +136,37 @@ func update_visual(hard_update := false) -> void:
 	
 	listing_container_tween.tween_property(listing_container, "position:y", listing_container_y_pos, LISTING_MOVEMENT_TIME)
 
-func _unhandled_input(event):
-	# refresh listings
-	#if event is InputEventKey and event.keycode == KEY_F5:
-		#refresh_listings_from_song_folders()
-	
-	if listing_container.get_child_count() > 0:
-		if event.is_action_pressed("LeftKat"):
-			change_selected_listing(-1)
-		elif event.is_action_pressed("RightKat"):
-			change_selected_listing(1)
-		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
-			#transition_to_gameplay()
-			Global.push_console("SongSelectV2", "transition_to_gameplay()")
-
-func change_selected_listing(idx: int, exact := false):
+func change_selected_listing(idx: int, exact := false) -> void:
 	last_selected_listing_idx = selected_listing_idx
 	
 	if exact:
 		selected_listing_idx = idx % listing_container.get_child_count()
 	else:
 		selected_listing_idx = wrap((selected_listing_idx + idx) % listing_container.get_child_count(), 0, listing_container.get_child_count())
+	apply_listing_data(listing_container.get_child(selected_listing_idx))
 	update_visual()
+
+# applies bg/audio
+func apply_listing_data(listing: ChartListing) -> void:
+	Global.set_background(listing.chart.background)
+	
+	# play preview
+	if not listing.chart.audio:
+		return
+	
+	# roku note 2024-07-22
+	# once .oggs are reimplemented, this wont work
+	if music.stream:
+		if music.stream.data == listing.chart.audio.data:
+			return
+		
+	# set song, get preview timing, and play
+	music.stream = listing.chart.audio
+	var prev_point: float = listing.chart.chart_info["PreviewPoint"] if listing.chart.chart_info["PreviewPoint"] else 0
+	music.play(prev_point)
+
+func toggle_auto(new_auto: bool) -> void:
+	auto_enabled = new_auto
+
+func transition_to_gameplay() -> void:
+	get_tree().get_first_node_in_group("Root").change_to_gameplay(listing_container.get_child(selected_listing_idx).chart, auto_enabled)

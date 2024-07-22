@@ -20,7 +20,7 @@ var resolution_multiplier = 4.0
 var global_offset := 0.0
 
 # lowest level of priority that will appear to console
-var console_filter := -1
+var console_filter := -2
 
 func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + ProjectSettings.get_setting("application/config/version"), 0)
@@ -113,8 +113,11 @@ func get_hash(file_path: String) -> PackedByteArray:
 # consider notification priority being the same as console priority, makes it easier to push notifs & have the console echo the same
 
 # simple function to color and timestamp console messages
-# urgency -1 = step/unimportant, 0 = success, 1 = warning, 2 = failiure
+# -2 = step, -1 = generic, 0 = success, 1 = warning, 2 = error
 func push_console(origin: String, message: String, urgency := -1):
+	if console_filter > urgency:
+		return
+	
 	# color and timestamp origin
 	match origin:
 		"SongSelectV2":
@@ -124,11 +127,13 @@ func push_console(origin: String, message: String, urgency := -1):
 	
 	# color message by urgency
 	match urgency:
-		0:
+		-2: # step
+			message = "[color=gray]" + message + "[/color]"
+		0: # success
 			message = "[color=green]" + message + "[/color]"
-		1:
+		1: # warning
 			message = "[color=yellow]" + message + "[/color]"
-		2:
+		2: # error
 			message = "[color=red]" + message + "[/color]"
 	
 	print_rich(origin + message)
