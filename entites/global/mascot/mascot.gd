@@ -1,3 +1,4 @@
+class_name Mascot
 extends TextureRect
 
 # 0 = idle, 1 = kiai, 2 = clear, 3 = fail
@@ -10,17 +11,14 @@ extends TextureRect
 	load("res://assets/default_skin/pippidonclear3.png"), load("res://assets/default_skin/pippidonclear4.png"), load("res://assets/default_skin/pippidonclear5.png"),
 	load("res://assets/default_skin/pippidonclear6.png")]
 	
-@onready var test_player := $"../AudioStreamPlayer" as AudioStreamPlayer
-@onready var test2_player := $"../wawo" as AudioStreamPlayer
 enum SPRITETYPES {IDLE, KIAI, FAIL}
 var current_state := SPRITETYPES.IDLE
 
-# for animations that dont follow bps (clear)
-var toast_framerate := 0.2
-var bps := 3.0
-
 var anim_start_time := 0.0
 var current_frame := 0
+var bps := 3.0 # beats per second
+
+var toast_framerate := 0.2
 var toast_lock := false
 
 # restart the current animation cycle and update sprite to match the given state
@@ -32,17 +30,15 @@ func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0):
 	current_frame = 0
 	bps = new_bps
 	
-	test2_player.play()
 	update_frame()
 
 func toast():
 	toast_lock = true
-	test2_player.play()
-	
 	# await toast to end, then go back to appropriate sprite
 	for i in toast_sprites.size():
 		texture = toast_sprites[i]
 		await get_tree().create_timer(toast_framerate).timeout
+	
 	toast_lock = false
 	update_frame()
 
@@ -62,5 +58,3 @@ func _process(delta):
 
 func update_frame():
 	texture = sprites[int(current_state)][current_frame]
-	if current_frame == 0:
-		test_player.play()
