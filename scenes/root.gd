@@ -6,7 +6,7 @@ var current_state := GAMESTATE.MAIN_MENU
 var current_state_node: Node
 var gamestate_scenes := [
 	null,
-	load("res://scenes/song_select/songselectv2.tscn"),
+	load("res://scenes/song_select/song_select.tscn"),
 	load("res://scenes/gameplay/gameplay.tscn"),
 	load("res://scenes/results/results.tscn")
 ]

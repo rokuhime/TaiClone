@@ -1,148 +1,186 @@
+class_name SongSelect
 extends Control
 
 var music: AudioStreamPlayer
-var listings := []
 var chart_listing_scene := preload("res://entites/songselect/chart_listing.tscn")
-var auto_enabled := false
 
 @onready var listing_container := $ListingContainer
-var list_movement_tween: Tween
+var listing_container_tween: Tween
 
-@export var selected_list_idx := 0
+@export var selected_listing_idx := 0
+var last_selected_listing_idx := -1
 
-var unselected_tuck_amount := 100.0
+const LISTING_SEPARATION := 10.0
+const TUCK_AMOUNT := 150.0
+const LISTING_MOVEMENT_TIME := 0.5
 
-# Called when the node enters the scene tree for the first time.
+var auto_enabled := false
+
 func _ready():
 	music = get_tree().get_first_node_in_group("RootMusic")
 	
-	refresh_listings_from_song_folders()
-	if not listings.is_empty():
-		select_listing(listings[selected_list_idx])
+	refresh_from_chart_folders()
+	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
+	
+	apply_listing_data(listing_container.get_child(0))
+	update_visual(true)
 
-func _unhandled_key_input(event):
+# --- loading listings ---
+
+# roku note 2024-07-22
+# u gotta come up with better names to distinguish btwn populate_from_folder() and populate_from_chart_folder()
+# just generally having a name for the chart's folder and a folder that holds charts would be REALLY USEFUL and LESS CONFUSING
+
+# hard updates do every folder, otherwise only scan converted chart folder (temporary)
+func refresh_from_chart_folders(hard_update := false) -> void:
+	Global.push_console("SongSelectV2", "refreshing charts from global chart folders!")
+	populate_from_chart_folder(Global.CONVERTED_CHART_FOLDER)
+	
+	# cycle through chart folders to convert
+	if hard_update:
+		for folder in Global.get_chart_folders():
+			if !DirAccess.dir_exists_absolute(folder) or folder.is_empty():
+				Global.push_console("SongSelectV2", "bad folder in global chart folder array: %s" % folder, 2)
+				continue
+			
+			Global.push_console("SongSelectV2", "finding chart folders in: %s" % folder)
+			for chart_folder in DirAccess.get_directories_at(folder):
+				populate_from_chart_folder(folder.path_join(chart_folder))
+				
+	Global.push_console("SongSelectV2", "done refreshing charts!", 0)
+	update_visual(true)
+
+# creates listings from a folder containing chart files
+func populate_from_chart_folder(folder_path: String) -> void:
+	if not DirAccess.dir_exists_absolute(folder_path):
+		Global.push_console("SongSelectV2", "attempted to populate from bad folder: %s" % folder_path, 2)
+	Global.push_console("SongSelectV2", "populating from: %s" % folder_path)
+	
+	for file in DirAccess.get_files_at(folder_path):
+		if ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
+			var chart := ChartLoader.get_chart(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
+			
+			# ensure were not making a duplicate listing before adding
+			if not listing_exists(chart):
+				Global.push_console("SongSelectV2", "added chart %s - %s [%s]" % [
+					chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]],
+					-2)
+				create_listing(chart)
+				continue
+				
+			Global.push_console("SongSelectV2", "ignoring duplicate chart: %s" % file, 1)
+			continue
+
+func create_listing(chart: Chart) -> ChartListing:
+	var listing := chart_listing_scene.instantiate() as ChartListing
+	listing.init(chart)
+	listing.selected_via_mouse.connect(handle_listing_input.bind(listing_container.get_child_count()))
+	listing_container.add_child(listing)
+	
+	return listing
+
+# goes through existing chart listings, returns true if a chart's hash is the same as the given chart
+func listing_exists(chart: Chart) -> bool:
+	for listing in listing_container.get_children():
+		if listing is ChartListing:
+			if chart.hash == listing.chart.hash:
+				return true
+	return false
+
+# --- changing listing position/selection ---
+
+func _unhandled_input(event):
 	# refresh listings
 	if event is InputEventKey and event.keycode == KEY_F5:
-		refresh_listings_from_song_folders()
+		refresh_from_chart_folders()
 	
-	if listings.size() > 0:
+	if listing_container.get_child_count() > 0:
+		# cycle through listings
 		if event.is_action_pressed("LeftKat"):
-			selected_list_idx = listings.size() - 1 if selected_list_idx - 1 < 0 else selected_list_idx - 1
-			select_listing(listings[selected_list_idx])
+			change_selected_listing(-1)
 		elif event.is_action_pressed("RightKat"):
-			selected_list_idx = (selected_list_idx + 1) % listings.size()
-			select_listing(listings[selected_list_idx])
+			change_selected_listing(1)
+		
+		# select
 		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
 			transition_to_gameplay()
 
-func refresh_listings_from_song_folders() -> void:
-	print("SongSelect: refreshing song listings...")
-	# roku note 2023-12-29
-	# no matter what listings cant be fully cleared, listings.clear() doesnt work nor does below
-	# it just leaves null values for some reason, which breaks menu navigation
-	# see line 66 mayb 
+# changes position of listings and listingcontainer
+# hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
+func update_visual(hard_update := false) -> void:
+	var i := 0
+	var listing_size: Vector2
+	
 	for listing in listing_container.get_children():
-		listing.queue_free()
-	listings = []
-	selected_list_idx = 0
-	
-	for chart_folder in Global.get_chart_folders():
-		print("SongSelect: scanning chart folder ", chart_folder)
-		if !DirAccess.dir_exists_absolute(chart_folder) or chart_folder.is_empty():
-			print("SongSelect: cant access chart folder at ", chart_folder)
-			continue
+		# if past the two changing listings and not updating every listing, bail out. nothing else to change
+		if not hard_update and i > selected_listing_idx and i > last_selected_listing_idx:
+			break
 		
-		# get chart files
-		if chart_folder == Global.CONVERTED_CHART_FOLDER:
-			add_charts_from_folder(chart_folder)
+		# ensure we have a listing size
+		if not listing_size:
+			listing_size = listing.size
 		
-		else:
-			for inner_chart_folder in DirAccess.get_directories_at(chart_folder):
-				add_charts_from_folder(chart_folder + "/" + inner_chart_folder)
+		if [last_selected_listing_idx, selected_listing_idx].has(i) or hard_update:
+			# set y position of listing
+			listing.position.y = ((listing_size.y  + LISTING_SEPARATION) * i) - (listing_size.y / 2)
+			var listing_position_x := -listing_size.x if i == selected_listing_idx else -listing_size.x + TUCK_AMOUNT
+			
+			# ensure listing tween is good to go, then set x position via tween
+			if listing.movement_tween:
+				listing.movement_tween.kill()
+			listing.movement_tween = create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+			listing.movement_tween.tween_property(listing, "position:x", listing_position_x, LISTING_MOVEMENT_TIME)
+		i += 1
 	
+	# move listing container to center selected chart
+	if listing_container_tween:
+		listing_container_tween.kill()
+	listing_container_tween = create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	
+	# position of the selected listing
+	var selected_listing_location = (listing_size.y + LISTING_SEPARATION) * -selected_listing_idx
+	# center with middle of screen and middle of listing
+	var listing_container_y_pos = get_parent().size.y / 2 + selected_listing_location
+	
+	listing_container_tween.tween_property(listing_container, "position:y", listing_container_y_pos, LISTING_MOVEMENT_TIME)
+
+func change_selected_listing(idx: int, exact := false) -> void:
+	last_selected_listing_idx = selected_listing_idx
+	
+	if exact:
+		selected_listing_idx = idx % listing_container.get_child_count()
+	else:
+		selected_listing_idx = wrap((selected_listing_idx + idx) % listing_container.get_child_count(), 0, listing_container.get_child_count())
+	apply_listing_data(listing_container.get_child(selected_listing_idx))
 	update_visual()
 
-func add_charts_from_folder(directory: String) -> void:
-	print("SongSelect: adding charts from ", directory)
-	var diraccess = DirAccess.open(directory)
-	for file_name in diraccess.get_files():
-		if Global.SUPPORTED_CHART_FILETYPES.has(file_name.get_extension()):
-			var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(directory + "/" + file_name), true)
-			if chart == null:
-				continue
-			if not listing_already_exists(chart):
-				create_new_listing(chart)
-
-func create_new_listing(chart: Chart) -> void:
-	var new_chart_listing = chart_listing_scene.instantiate()
-	new_chart_listing.init(chart)
-	listing_container.add_child(new_chart_listing)
-
-func select_listing(listing: ChartListing) -> void:
-	listings[selected_list_idx].selected = false
-	selected_list_idx = listings.find(listing)
-	update_visual()
-	
-	Global.set_background(listings[selected_list_idx].chart.background)
+# applies bg/audio
+func apply_listing_data(listing: ChartListing) -> void:
+	Global.set_background(listing.chart.background)
 	
 	# play preview
-	if listings[selected_list_idx].chart.audio != null:
-		if music.stream != null:
-			# if last selected song and new song are same, dont change preview
-			if music.stream.data == listings[selected_list_idx].chart.audio.data:
-				return
+	if not listing.chart.audio:
+		return
+	
+	# roku note 2024-07-22
+	# once .oggs are reimplemented, this wont work
+	if music.stream:
+		if music.stream.data == listing.chart.audio.data:
+			return
 		
-		# set song, get preview timing, and play
-		music.stream = listings[selected_list_idx].chart.audio
-		var prev_point: float = listings[selected_list_idx].chart.chart_info["PreviewPoint"] if listings[selected_list_idx].chart.chart_info["PreviewPoint"] else 0
-		music.play(prev_point)
+	# set song, get preview timing, and play
+	music.stream = listing.chart.audio
+	var prev_point: float = listing.chart.chart_info["PreviewPoint"] if listing.chart.chart_info["PreviewPoint"] else 0
+	music.play(prev_point)
 
-func update_visual() -> void:
-	var listing_size: Vector2
-	var list_idx := 0
-	
-	for listing in listing_container.get_children():
-		if not listings.has(listing) and listing != null:
-			listings.append(listing)
-		
-		# get default position
-		if !listing_size:
-			listing_size = listing.size
-		#var default_position := Vector2(listing_size.x, listing_size.y / 2) * -1
-		
-		# stop any current tweens
-		if listing.movement_tween:
-			listing.movement_tween.kill()
-		
-		var new_pos := Vector2.ZERO
-		new_pos.x = -listing.size.x if listings[selected_list_idx] == listing else -listing.size.x + unselected_tuck_amount
-		new_pos.y = list_idx * listing.size.y
-		
-		listing.movement_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		listing.movement_tween.tween_property(listing, "position", new_pos, 0.2)
-		
-		list_idx += 1
-	
-	if list_movement_tween:
-		list_movement_tween.kill()
-	
-	list_movement_tween = create_tween().set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	list_movement_tween.tween_property(
-		listing_container, 
-		"position", 
-		Vector2(get_viewport_rect().size.x, (get_viewport_rect().size.y / 2) - (selected_list_idx * listing_size.y)), 
-		0.5 )
+func toggle_auto(new_auto: bool) -> void:
+	auto_enabled = new_auto
 
 func transition_to_gameplay() -> void:
-	var selected_chart = ChartLoader.get_chart(listings[selected_list_idx].chart.file_path)
-	get_tree().get_first_node_in_group("Root").change_to_gameplay(selected_chart, auto_enabled)
+	get_tree().get_first_node_in_group("Root").change_to_gameplay(listing_container.get_child(selected_listing_idx).chart, auto_enabled)
 
-# TODO: check hash instead
-func listing_already_exists(chart: Chart) -> bool:
-	for listing in listing_container.get_children():
-		if listing.chart.chart_info == chart.chart_info:
-			return true
-	return false
-
-func toggle_auto(new_auto_enabled: bool) -> void:
-	auto_enabled = new_auto_enabled
+func handle_listing_input(index: int) -> void:
+	if index == selected_listing_idx:
+		transition_to_gameplay()
+		return
+	change_selected_listing(index, true)

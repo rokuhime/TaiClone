@@ -10,7 +10,8 @@ var chart: Chart
 
 # used by songselect.gd
 var movement_tween: Tween
-var selected := false
+
+signal selected_via_mouse
 
 # roku note 2023-12-20
 # for some reason, instancing this through SongListing.new(chart) deletes every single child node???????
@@ -25,21 +26,12 @@ func _ready():
 		song_info_label.text = chart.chart_info["Song_Title"] + " - " + chart.chart_info["Song_Artist"]
 		chart_info_label.text = chart.chart_info["Chart_Title"] + " - " + chart.chart_info["Chart_Artist"]
 		generate_chart_labels()
-	else:
-		print("wtf!@!!!")
 	
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.is_echo() or event.button_index != MOUSE_BUTTON_LEFT or !event.is_pressed():
 			return
-		
-		if not selected:
-			selected = true
-			get_tree().get_first_node_in_group("SongSelect").select_listing(self)
-		elif selected:
-			print("ChartListing: Changing to gameplay with chart ", chart.chart_info["Song_Title"])
-			get_tree().get_first_node_in_group("SongSelect").transition_to_gameplay()
-			pass
+		selected_via_mouse.emit()
 
 func generate_chart_labels():
 	# go through values
