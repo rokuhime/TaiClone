@@ -51,15 +51,15 @@ func save_settings() -> void:
 	# save file
 	var err = config_file.save("user://settings.cfg")
 	if err != OK:
-		print("SettingsPanel: Config failed to save with code ", err)
+		push_console("Global", "Config failed to save with code %s" % err, 2)
 		return
-	print("SettingsPanel: Config saved!")
+	push_console("Global", "Config saved!", 0)
 
 func load_settings() -> void:
 	var config_file := ConfigFile.new()
 	var err = config_file.load("user://settings.cfg")
 	if err != OK:
-		print("SettingsPanel: Config failed to load at user://settings.cfg with code ", err)
+		push_console("Global", "Config failed to load user://settings.cfg with code %s" % err, 2)
 		return
 	
 	if config_file.get_value("General", "ChartPaths", null):
@@ -80,7 +80,7 @@ func load_settings() -> void:
 			keybinds[key] = keybind
 	
 	settings_panel.load_keybinds(keybinds)
-	print("SettingsPanel: Config loaded!")
+	push_console("Global", "Config loaded!")
 
 static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: int) -> float:
 	var acc_hit_count : float = (accurate_hits + float(inaccurate_hits / 2.0))
@@ -118,25 +118,35 @@ func push_console(origin: String, message: String, urgency := -1):
 	if console_filter > urgency:
 		return
 	
+	var formatted_message := "[" + Time.get_time_string_from_system() + "] [color=%s]" + origin + "[/color]: "
+	
 	# color and timestamp origin
 	match origin:
-		"SongSelectV2":
-			origin = "[" + Time.get_time_string_from_system() + "] [color=cyan]" + origin + "[/color]: "
+		"Global":
+			formatted_message = formatted_message % "green"
+		"Root":
+			formatted_message = formatted_message % "red"
+		"ChartLoader":
+			formatted_message = formatted_message % "magenta"
+		"SongSelect":
+			formatted_message = formatted_message % "cyan"
 		_:
-			origin = "[" + Time.get_time_string_from_system() + "] [color=grey]" + origin + "[/color]: "
+			formatted_message = formatted_message % "grey"
 	
 	# color message by urgency
 	match urgency:
 		-2: # step
-			message = "[color=gray]" + message + "[/color]"
+			formatted_message += "[color=gray]" + message + "[/color]"
 		0: # success
-			message = "[color=green]" + message + "[/color]"
+			formatted_message += "[color=green]" + message + "[/color]"
 		1: # warning
-			message = "[color=yellow]" + message + "[/color]"
+			formatted_message += "[color=yellow]" + message + "[/color]"
 		2: # error
-			message = "[color=red]" + message + "[/color]"
+			formatted_message += "[color=red]" + message + "[/color]"
+		_:
+			formatted_message += message
 	
-	print_rich(origin + message)
+	print_rich(formatted_message)
 
 #static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
 	#if obj.connect(signal_name, signal_target, method):

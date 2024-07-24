@@ -4,7 +4,7 @@ extends Node
 static func load_image(file_path: String, crop_transparent := true):
 	var image = Image.load_from_file(file_path)
 	if image == null:
-		print("ImageLoader: failed to get file at ", file_path)
+		Global.push_console("ImageLoader", "Failed to get file: %s" % file_path, 2)
 		return null;
 
 	# crops image to first visible pixels on every side

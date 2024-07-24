@@ -14,12 +14,12 @@ func refresh_paths() -> void:
 	for chart_path in Global.chart_paths:
 		add_path(chart_path)
 
-func add_path(chart_path: String) -> void:
+func add_path(chart_path: String, added_manually := false) -> void:
 	if not DirAccess.dir_exists_absolute(chart_path) or chart_path.is_empty():
-		print("ChartPathChanger: Bad chart path attempted to add at ", chart_path)
+		Global.push_console("ChartPathChanger", "Attempted to add bad chart path: %s" % chart_path, 2)
 		return
 	
-	print("ChartPathChanger: Adding chart path ", chart_path)
+	Global.push_console("ChartPathChanger", "Adding chart path: %s" % chart_path)
 	var new_path: PathPanel = path_panel_scene.instantiate()
 	new_path.set_path(chart_path)
 	path_container.add_child(new_path)
@@ -27,11 +27,13 @@ func add_path(chart_path: String) -> void:
 	
 	if Global.chart_paths.find(chart_path) == -1:
 		Global.chart_paths.append(chart_path)
+	if added_manually:
+		Global.save_settings()
 	#get_tree().get_first_node_in_group("Root").refresh_song_select()
 
 # called by path panels
 func select_path(target_path_panel: PathPanel) -> void:
-	if selected_path_panel:
+	if selected_path_panel != null:
 		selected_path_panel.self_modulate.v = .5
 	
 	selected_path_panel = target_path_panel
@@ -40,3 +42,4 @@ func select_path(target_path_panel: PathPanel) -> void:
 func delete_selected_path() -> void:
 	Global.chart_paths.erase(selected_path_panel.get_child(0).text)
 	selected_path_panel.queue_free()
+	Global.save_settings()

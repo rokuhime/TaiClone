@@ -31,16 +31,4 @@ offset_right = 24.0
 grow_vertical = 0
 text = "Auto"
 
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -1.0
-offset_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 0, 0, 1)
-
-[connection signal="pressed" from="CheckBox" to="." method="toggle_auto"]
+[connection signal="toggled" from="CheckBox" to="." method="toggle_auto"]

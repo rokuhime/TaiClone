@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://doli71bfmeej7"]
+[gd_scene load_steps=9 format=3 uid="uid://doli71bfmeej7"]
 
 [ext_resource type="Theme" uid="uid://dncqvenqwlml1" path="res://values/menu_theme.tres" id="1_2j0hn"]
 [ext_resource type="Script" path="res://entites/global/settings_panel/settings_panel.gd" id="1_d3qaa"]
@@ -10,6 +10,8 @@ font_size = 48
 
 [sub_resource type="LabelSettings" id="LabelSettings_pk7v3"]
 font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_q3ioc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xg8nn"]
 font_size = 24
@@ -149,6 +151,12 @@ text = "Chart Paths"
 label_settings = SubResource("LabelSettings_pk7v3")
 horizontal_alignment = 1
 
+[node name="Description" type="Label" parent="ScrollContainer/VBoxContainer/ChartPathChanger"]
+layout_mode = 2
+text = "Press F5 in Song Select to refresh charts."
+label_settings = SubResource("LabelSettings_q3ioc")
+horizontal_alignment = 1
+
 [node name="Panel" type="Panel" parent="ScrollContainer/VBoxContainer/ChartPathChanger"]
 custom_minimum_size = Vector2(350, 200)
 layout_mode = 2
@@ -228,7 +236,7 @@ alignment = 1
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightDon/Button" to="." method="change_key" binds= ["RightDon"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightKat/Button" to="." method="change_key" binds= ["RightKat"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton" to="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" method="show"]
-[connection signal="dir_selected" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="add_path"]
+[connection signal="dir_selected" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="add_path" binds= [true]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/RemoveButton" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="delete_selected_path"]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/HSlider" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [false]]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [true]]

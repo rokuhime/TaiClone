@@ -57,7 +57,7 @@ func set_background(new_background: Texture2D):
 func file_dropped(files: PackedStringArray) -> void:
 	var target_file = files[0]
 	if files.size() > 1:
-		print("multiple files dropped! only using first found file, ", target_file)
+		Global.push_console("Root", "Multiple files dropped! Only using first found file: %s" % target_file)
 		
 	var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(target_file))
 	if current_state != GAMESTATE.SONG_SELECT:

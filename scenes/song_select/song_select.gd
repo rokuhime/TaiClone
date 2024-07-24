@@ -22,7 +22,8 @@ func _ready():
 	refresh_from_chart_folders()
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
-	apply_listing_data(listing_container.get_child(0))
+	if listing_container.get_child_count():
+		apply_listing_data(listing_container.get_child(0))
 	update_visual(true)
 
 # --- loading listings ---
@@ -33,28 +34,29 @@ func _ready():
 
 # hard updates do every folder, otherwise only scan converted chart folder (temporary)
 func refresh_from_chart_folders(hard_update := false) -> void:
-	Global.push_console("SongSelectV2", "refreshing charts from global chart folders!")
+	Global.push_console("SongSelect", "refreshing converted charts!")
 	populate_from_chart_folder(Global.CONVERTED_CHART_FOLDER)
 	
 	# cycle through chart folders to convert
 	if hard_update:
+		Global.push_console("SongSelect", "scanning through global chart folders...")
 		for folder in Global.get_chart_folders():
 			if !DirAccess.dir_exists_absolute(folder) or folder.is_empty():
-				Global.push_console("SongSelectV2", "bad folder in global chart folder array: %s" % folder, 2)
+				Global.push_console("SongSelect", "bad folder in global chart folder array: %s" % folder, 2)
 				continue
 			
-			Global.push_console("SongSelectV2", "finding chart folders in: %s" % folder)
+			Global.push_console("SongSelect", "finding chart folders in: %s" % folder)
 			for chart_folder in DirAccess.get_directories_at(folder):
 				populate_from_chart_folder(folder.path_join(chart_folder))
 				
-	Global.push_console("SongSelectV2", "done refreshing charts!", 0)
+	Global.push_console("SongSelect", "done refreshing charts!", 0)
 	update_visual(true)
 
 # creates listings from a folder containing chart files
 func populate_from_chart_folder(folder_path: String) -> void:
-	if not DirAccess.dir_exists_absolute(folder_path):
-		Global.push_console("SongSelectV2", "attempted to populate from bad folder: %s" % folder_path, 2)
-	Global.push_console("SongSelectV2", "populating from: %s" % folder_path)
+	if not DirAccess.dir_exists_absolute(folder_path) and folder_path != Global.CONVERTED_CHART_FOLDER:
+		Global.push_console("SongSelect", "attempted to populate from bad folder: %s" % folder_path, 2)
+	Global.push_console("SongSelect", "populating from: %s" % folder_path)
 	
 	for file in DirAccess.get_files_at(folder_path):
 		if ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
@@ -62,13 +64,13 @@ func populate_from_chart_folder(folder_path: String) -> void:
 			
 			# ensure were not making a duplicate listing before adding
 			if not listing_exists(chart):
-				Global.push_console("SongSelectV2", "added chart %s - %s [%s]" % [
+				Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
 					chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]],
 					-2)
 				create_listing(chart)
 				continue
 				
-			Global.push_console("SongSelectV2", "ignoring duplicate chart: %s" % file, 1)
+			Global.push_console("SongSelect", "ignoring duplicate chart: %s" % file, 1)
 			continue
 
 func create_listing(chart: Chart) -> ChartListing:
@@ -92,7 +94,7 @@ func listing_exists(chart: Chart) -> bool:
 func _unhandled_input(event):
 	# refresh listings
 	if event is InputEventKey and event.keycode == KEY_F5:
-		refresh_from_chart_folders()
+		refresh_from_chart_folders(true)
 	
 	if listing_container.get_child_count() > 0:
 		# cycle through listings

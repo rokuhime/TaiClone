@@ -21,22 +21,21 @@ static func get_chart_path(file_path: String, force_convert := false) -> String:
 		if FileAccess.file_exists("user://ConvertedCharts/" + file_path.get_file() + ".tc") and not force_convert:
 			
 			# chart isnt .tc, and is converted
-			#print("ChartLoader: converted file found!")
 			return "user://ConvertedCharts/" + file_path.get_file() + ".tc"
 			
-		# chart isnt .tc, and is NOT converted. attempt to convert
-		print_rich("[color=green]ChartLoader: attempting to convert ", file_path, "[/color]")
+		# chart isnt .tc, and is NOT converted. attempt to convert\
 		file_path = convert_chart(file_path)
 	
 	# chart is .tc, nothing to do!
-	#print("ChartLoader: intended chart path grabbed!")
 	return file_path
 
 ## converts charts from other games to .tc
 static func convert_chart(file_path: String):
+	Global.push_console("ChartLoader", "Attempting to convert: %s" % file_path, -2)
+	
 	# throw err if file doesnt exist
 	if !FileAccess.file_exists(file_path):
-		print("ChartLoader: invalid file path given!")
+		Global.push_console("ChartLoader", "Tried to convert invalid file: %s" % file_path, 2)
 		return null
 	
 	#open and load
@@ -56,7 +55,7 @@ static func convert_chart(file_path: String):
 	
 	match file_path.get_extension():
 		"osu":
-			print("ChartLoader: parsing file as osu...")
+			Global.push_console("ChartLoader", "parsing file as .osu..." % file_path, -2)
 			origin = "osu"
 			
 			# variables that can be assigned while going through sections
@@ -145,7 +144,7 @@ static func convert_chart(file_path: String):
 							#ex["Omit_Barline"] = true
 						
 						# make timing point array
-						var timing_point := [time, meter, timing_value, is_kiai_enabled]
+						var timing_point := [time, timing_value, is_kiai_enabled, meter]
 						
 						# queue up first uninherited timing point, if not already done
 						if current_timing.is_empty() and meter:
@@ -229,14 +228,14 @@ static func convert_chart(file_path: String):
 						continue
 
 		"tc":
+			# tried to convert tc, ignore and bail
 			file.close()
-			print("ChartLoader: tried to convert .tc!")
 			return -2
 		
 		# throw err if file type isnt compatible
 		_:
 			file.close()
-			print("ChartLoader: invalid file type!")
+			Global.push_console("ChartLoader", "Tried to convert invalid file type: %s" % file_path, 1)
 			return -3
 	
 	# save newly made taiclone file
@@ -262,14 +261,14 @@ static func convert_chart(file_path: String):
 	new_file.close()
 	file.close()
 	
-	print("ChartLoader: done converting chart!")
+	Global.push_console("ChartLoader", "Chart successfully converted!", -1)
 	return new_path
 
 ## loads .tc files and spits out Chart variable
 static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	if !file:
-		print("ChartLoader: bad file provided for get_chart at ", file_path)
+		Global.push_console("ChartLoader", "Bad file provided for get_chart: " % file_path, 2)
 		return
 	
 	var origin_file_path := file_path
@@ -437,7 +436,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			var beat_measure : int = intended_timing_point["Meter"]
 			var beat_divisor := 4
 			var beat_in_seconds : float = (60.0 * beat_measure) / intended_timing_point["BPM"]
-			(new_hit_object as Spinner).needed_hits = floor(float(ex_vars[0]) / (beat_in_seconds / beat_divisor) )
+			(new_hit_object as Spinner).needed_hits = ceil(float(ex_vars[0]) / (beat_in_seconds / beat_divisor) )
 			return new_hit_object 
 		
 		_:  # note
@@ -456,16 +455,22 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 
 # return all relevant timing related info from a timestamp
 static func get_intended_timing(current_time: float, timing_points) -> Dictionary:
-	var intended_timing := { "BPM": 0.0, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null}
+	var intended_timing := { "BPM": 0.0, "Velocity": 1, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null}
 	
 	for tp in timing_points:
 		# if timing point takes place after current_time, return results
 		if tp[0] > current_time:
 			intended_timing["NextChangeTime"] = tp[0]
-			break
-		
+			break 
 		intended_timing["Kiai"] = tp[2]
-		intended_timing["Meter"] = tp[3]
-		intended_timing["BPM"] = tp[1]
+		
+		# if its uninherited (has meter)...
+		if tp[3]:
+			intended_timing["BPM"] = tp[1]
+			intended_timing["Meter"] = tp[3]
+			continue
+		
+		# inherited, only change velocity
+		intended_timing["Velocity"] = tp[1]
 	
 	return intended_timing

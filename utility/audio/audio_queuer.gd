@@ -12,7 +12,7 @@ func _ready():
 
 func play_audio(audio: AudioStream, pos := Vector2.ZERO):
 	if audio == null:
-		print("AudioQueuer: PlayAudio called without valid AudioStream!")
+		Global.push_console("AudioQueuer", "PlayAudio called without valid AudioStream!", 1)
 		return
 	
 	var stream : AudioStreamPlayer2D = get_child(current_audio_player % audio_players)
