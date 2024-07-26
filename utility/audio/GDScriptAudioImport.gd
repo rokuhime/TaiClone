@@ -131,9 +131,8 @@ static func load_file(filepath):
 
 	#if file is ogg
 	elif filepath.ends_with(".ogg"):
-		#var newstream = AudioStreamOggVorbis.new()
-		#print("AudioLoader: .ogg is currently not supported!")
-		return null
+		var newstream = AudioStreamOggVorbis.load_from_buffer(bytes)
+		return newstream
 
 	#if file is mp3
 	elif filepath.ends_with(".mp3"):
@@ -142,7 +141,7 @@ static func load_file(filepath):
 		return newstream
 
 	else:
-		printerr("AudioLoader: Wrong filetype or format")
+		Global.push_console("AudioLoader", "Wrong filetype/format: %s" % filepath, 2)
 	file.close()
 
 # Converts .wav data from 24 or 32 bits to 16

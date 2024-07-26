@@ -164,11 +164,18 @@ func apply_listing_data(listing: ChartListing) -> void:
 	if not listing.chart.audio:
 		return
 	
-	# roku note 2024-07-22
-	# once .oggs are reimplemented, this wont work
+	# if there is a currently playing song...
 	if music.stream:
-		if music.stream.data == listing.chart.audio.data:
-			return
+		# check if new song is .ogg, if the current song is .ogg aswell check it
+		if listing.chart.audio is AudioStreamOggVorbis and music.stream is AudioStreamOggVorbis:
+			if listing.chart.audio.packet_sequence.packet_data == music.stream.packet_sequence.packet_data:
+				return
+		
+		# if theyre both not .ogg
+		elif not music.stream is AudioStreamOggVorbis and not listing.chart.audio is AudioStreamOggVorbis:
+			# if the songs are the same, dont change
+			if music.stream.data == listing.chart.audio.data:
+				return
 		
 	# set song, get preview timing, and play
 	music.stream = listing.chart.audio

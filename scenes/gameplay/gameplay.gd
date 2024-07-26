@@ -18,15 +18,17 @@ var current_bps := 0.0	# beats per second
 var auto_enabled := false
 
 # Data
-@export var current_time := 0.0
-@export var start_time := 0.0
+var current_time := 0.0
+var start_time := 0.0
+var end_time := 0.0
+
 var current_chart : Chart
 var current_play_offset := 0.0
 var playing := false
 var skip_time := 0.0
 var in_kiai := false
 
-@export var next_note_idx := 0
+var next_note_idx := 0
 
 # Input
 enum SIDE { NONE, LEFT, RIGHT }
@@ -55,7 +57,7 @@ func _process(_delta) -> void:
 		current_time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - start_time
 		
 		# chart end check
-		if current_time >= hit_object_container.get_child(0).timing + 2:
+		if current_time >= end_time + 2:
 			get_tree().get_first_node_in_group("Root").change_to_results(score_manager.get_packaged_score())
 		
 		# move all hitobjects
@@ -244,6 +246,10 @@ func load_chart(requested_chart: Chart) -> void:
 	
 	# set skip time to the first hit object's timing - 2 secs
 	skip_time = get_first_hitobject().timing - 2
+	
+	end_time = current_chart.hit_objects[0].timing
+	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
+		end_time += current_chart.hit_objects[0].length
 	
 	# ensure next note is correct and play
 	next_note_idx = current_chart.hit_objects.size() - 1
