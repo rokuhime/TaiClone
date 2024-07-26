@@ -20,12 +20,12 @@ var auto_enabled := false
 # Data
 var current_time := 0.0
 var start_time := 0.0
-var end_time := 0.0
+var first_hobj_timing := 0.0
+var last_hobj_timing := 0.0
 
 var current_chart : Chart
 var current_play_offset := 0.0
 var playing := false
-var skip_time := 0.0
 var in_kiai := false
 
 var next_note_idx := 0
@@ -51,13 +51,13 @@ func _ready() -> void:
 
 func _process(_delta) -> void:
 	# update progress bar
-	score_manager.update_progress(current_time, hit_object_container.get_child(0).timing + 2, start_time)
+	score_manager.update_progress(current_time, first_hobj_timing, last_hobj_timing)
 	
 	if playing:
 		current_time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - start_time
 		
 		# chart end check
-		if current_time >= end_time + 1:
+		if current_time >= last_hobj_timing + 1:
 			get_tree().get_first_node_in_group("Root").change_to_results(score_manager.get_packaged_score())
 		
 		# move all hitobjects
@@ -246,12 +246,12 @@ func load_chart(requested_chart: Chart) -> void:
 		hit_object_container.add_child(hobj)
 	music.stream = requested_chart.audio
 	
-	# set skip time to the first hit object's timing - 2 secs
-	skip_time = get_first_hitobject().timing - 2
+	# set skip time to the first hit object's timing
+	first_hobj_timing = get_first_hitobject().timing
 	
-	end_time = current_chart.hit_objects[0].timing
+	last_hobj_timing = current_chart.hit_objects[0].timing
 	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
-		end_time += current_chart.hit_objects[0].length
+		last_hobj_timing += current_chart.hit_objects[0].length
 	
 	# ensure next note is correct and play
 	next_note_idx = current_chart.hit_objects.size() - 1
@@ -302,9 +302,10 @@ func update_input_indicator(part_index: int) -> void:
 	drum_indicator_tweens[part_index].tween_property(indicator_target, "modulate:a", 0.0, 0.2).from(1.0)
 
 func skip_intro() -> void:
-	if current_time >= skip_time:
+	if current_time >= first_hobj_timing - 2.0:
 		return
 	var first_hit_object = get_first_hitobject()
+	
 	start_time -= first_hit_object.timing - 2.0 - current_time
 	music.seek(current_play_offset + first_hit_object.timing - 2.0)
 	mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time

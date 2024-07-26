@@ -32,9 +32,29 @@ var judgement_indicator_tweens : Array = [null, null, null]
 signal toast()
 var toast_values := [50,100,150,200,250,500,1000]
 
+# temp, move to skin manager
+var progress_dark := Color("333333")
+var progress_light := Color("ffffff")
+var progress_pre := Color("8bff85")
+
 # TODO: move this out and make a ui manager
-func update_progress(cur_time: float, finish_time: float, start_time: float):
-	song_progress_bar.value = cur_time / finish_time
+func update_progress(cur_time: float, first_hobj_time: float, last_hobj_time: float):
+	# before 1st note
+	if cur_time < first_hobj_time:
+		# tint to show remaining time before starting
+		if song_progress_bar.tint_under != progress_pre:
+			song_progress_bar.tint_under = progress_pre
+			song_progress_bar.tint_progress = progress_dark
+		
+		song_progress_bar.value = cur_time / first_hobj_time
+		return
+	
+	# change color incase not changed
+	if song_progress_bar.tint_under != progress_dark:
+		song_progress_bar.tint_under = progress_dark
+		song_progress_bar.tint_progress = progress_light
+	
+	song_progress_bar.value = (cur_time - first_hobj_time) / (last_hobj_time - first_hobj_time)
 
 func update_visuals() -> void:
 	score_label.text = "%07d" % score
