@@ -176,7 +176,7 @@ func apply_listing_data(listing: ChartListing) -> void:
 			# if the songs are the same, dont change
 			if music.stream.data == listing.chart.audio.data:
 				return
-		
+	
 	# set song, get preview timing, and play
 	music.stream = listing.chart.audio
 	var prev_point: float = listing.chart.chart_info["PreviewPoint"] if listing.chart.chart_info["PreviewPoint"] else 0

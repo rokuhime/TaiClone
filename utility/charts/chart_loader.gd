@@ -55,7 +55,7 @@ static func convert_chart(file_path: String):
 	
 	match file_path.get_extension():
 		"osu":
-			Global.push_console("ChartLoader", "parsing file as .osu..." % file_path, -2)
+			Global.push_console("ChartLoader", "parsing file as .osu...", -2)
 			origin = "osu"
 			
 			# variables that can be assigned while going through sections

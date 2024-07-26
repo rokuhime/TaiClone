@@ -131,7 +131,7 @@ func push_console(origin: String, message: String, urgency := -1):
 		"SongSelect":
 			formatted_message = formatted_message % "cyan"
 		_:
-			formatted_message = formatted_message % "grey"
+			formatted_message = formatted_message % "gray"
 	
 	# color message by urgency
 	match urgency:

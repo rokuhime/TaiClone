@@ -57,7 +57,7 @@ func _process(_delta) -> void:
 		current_time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - start_time
 		
 		# chart end check
-		if current_time >= end_time + 2:
+		if current_time >= end_time + 1:
 			get_tree().get_first_node_in_group("Root").change_to_results(score_manager.get_packaged_score())
 		
 		# move all hitobjects
@@ -146,11 +146,13 @@ func _unhandled_input(event) -> void:
 
 # plays note audio
 func play_audio(input_side: SIDE, is_input_kat: bool):
+	var volume := 1.0
 	var stream_audio = kat_audio if is_input_kat else don_audio
 	match current_hitsound_state:
 		HITSOUND_STATES.NONE:
 			return
 		HITSOUND_STATES.FINISHER:
+			volume += 0.5
 			stream_audio = katfinisher_audio if is_input_kat else donfinisher_audio
 	
 	# audio
@@ -158,7 +160,7 @@ func play_audio(input_side: SIDE, is_input_kat: bool):
 	var stream_position := Vector2(0, ProjectSettings.get_setting("display/window/size/viewport_height") / 2)
 	stream_position.x = ProjectSettings.get_setting("display/window/size/viewport_width") / 2 + stream_pos_offset
 	
-	audio_queuer.play_audio(stream_audio, stream_position)
+	audio_queuer.play_audio(stream_audio, stream_position, volume)
 
 # give hitobject hit info, gets result, and applies score
 # returns true if hit was used on a note, otherwise returns false
