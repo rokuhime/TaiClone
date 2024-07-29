@@ -73,9 +73,9 @@ func update_visuals() -> void:
 	raw_info.text = "accurate: " + str(accurate_hits) + "\ninaccurate: " + str(inaccurate_hits) + "\nmiss: " + str(miss_count) + "\ntop combo: " + str(top_combo)
 
 # add score data (hits, misses)
-func add_score(hit_time_difference: float, missed := false) -> void:
+func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> void:
 	var score_type := 0
-	if abs(hit_time_difference) <= Global.INACC_TIMING and missed == false:
+	if abs(hit_time_difference) <= Global.INACC_TIMING and hit_result != HitObject.HIT_RESULT.MISS:
 		if abs(hit_time_difference) <= Global.ACC_TIMING:
 			score_type += 1
 		score_type += 1 

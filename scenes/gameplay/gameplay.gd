@@ -40,10 +40,10 @@ var active_finisher_note: Note
 enum HITSOUND_STATES {NONE, NORMAL, FINISHER}
 var current_hitsound_state = HITSOUND_STATES.NORMAL
 
-var don_audio := AudioLoader.load_file("res://assets/default_skin/h_don.wav") as AudioStream
-var kat_audio := AudioLoader.load_file("res://assets/default_skin/h_kat.wav") as AudioStream
-var donfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_don.wav") as AudioStream
-var katfinisher_audio := AudioLoader.load_file("res://assets/default_skin/hf_kat.wav") as AudioStream
+var don_audio := preload("res://assets/default_skin/h_don.wav") as AudioStream
+var kat_audio := preload("res://assets/default_skin/h_kat.wav") as AudioStream
+var donfinisher_audio := preload("res://assets/default_skin/hf_don.wav") as AudioStream
+var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as AudioStream
 
 func _ready() -> void:
 	music = Global.music
@@ -86,7 +86,7 @@ func _process(_delta) -> void:
 						apply_timing_point(hit_object, current_time)
 						return
 					
-					apply_score(hit_object)
+					apply_score(hit_object, HitObject.HIT_RESULT.MISS)
 					if mascot.current_state != mascot.SPRITETYPES.FAIL:
 						mascot.start_animation(mascot.SPRITETYPES.FAIL, current_bps, hit_object.timing)
 
@@ -103,46 +103,47 @@ func _unhandled_input(event) -> void:
 			return
 		
 		# get rhythm gameplay input
-		var pressed_input := ""
+		var pressed_inputs := []
 		
 		for gameplay_input in Global.GAMEPLAY_KEYS:
 			if Input.is_action_just_pressed(gameplay_input):
-				pressed_input = gameplay_input
+				pressed_inputs.append(gameplay_input)
 				break
 		
-		if pressed_input == "" or !playing: 
+		if pressed_inputs.is_empty() or !playing: 
 			return
 		
-		current_hitsound_state = HITSOUND_STATES.NORMAL
-		update_input_indicator(Global.GAMEPLAY_KEYS.find(pressed_input))
-		
-		var current_side_input = SIDE.LEFT if pressed_input.contains("Left") else SIDE.RIGHT
-		var is_input_kat := false if pressed_input.contains("Don") else true
-		
-		# hit check
-		if active_finisher_note:
-			var finisher_note_idx = active_finisher_note.get_index()
-			if finisher_hit_check(current_side_input, is_input_kat):
-				play_audio(current_side_input, is_input_kat)
-				
-				# if the next hit object is outside of accurate timing, swallow the input to stop it from checking more notes
-				if abs(hit_object_container.get_child(finisher_note_idx - 1).timing - current_time) > Global.ACC_TIMING:
-					return
-		
-		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
-			var hit_object := hit_object_container.get_child(i) as HitObject
-			if hit_object != null:
-				# if its past being valid
-				if hit_object.timing - current_time > Global.INACC_TIMING:
-					break
-				elif hit_check(current_side_input, is_input_kat, hit_object):
-					if mascot.current_state != mascot.SPRITETYPES.IDLE and mascot.current_state != mascot.SPRITETYPES.KIAI:
-						mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
-							current_bps, 
-							hit_object.timing)
-					break
-		
-		play_audio(current_side_input, is_input_kat)
+		for input in pressed_inputs:
+			current_hitsound_state = HITSOUND_STATES.NORMAL
+			update_input_indicator(Global.GAMEPLAY_KEYS.find(input))
+			
+			var current_side_input = SIDE.LEFT if input.contains("Left") else SIDE.RIGHT
+			var is_input_kat := false if input.contains("Don") else true
+			
+			# hit check
+			if active_finisher_note:
+				var finisher_note_idx = active_finisher_note.get_index()
+				if finisher_hit_check(current_side_input, is_input_kat):
+					play_audio(current_side_input, is_input_kat)
+					
+					# if the next hit object is outside of accurate timing, swallow the input to stop it from checking more notes
+					if abs(hit_object_container.get_child(finisher_note_idx - 1).timing - current_time) > Global.ACC_TIMING:
+						return
+			
+			for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+				var hit_object := hit_object_container.get_child(i) as HitObject
+				if hit_object != null:
+					# if its past being valid
+					if hit_object.timing - current_time > Global.INACC_TIMING:
+						break
+					elif hit_check(current_side_input, is_input_kat, hit_object):
+						if mascot.current_state != mascot.SPRITETYPES.IDLE and mascot.current_state != mascot.SPRITETYPES.KIAI:
+							mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
+								current_bps, 
+								hit_object.timing)
+						break
+			
+			play_audio(current_side_input, is_input_kat)
 
 # plays note audio
 func play_audio(input_side: SIDE, is_input_kat: bool):
@@ -170,16 +171,16 @@ func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) ->
 	match hit_result:
 		HitObject.HIT_RESULT.HIT:
 			if target_hobj is Note:
-				apply_score(target_hobj)
+				apply_score(target_hobj, hit_result)
 		
 		HitObject.HIT_RESULT.HIT_FINISHER:
 			active_finisher_note = target_hobj
 			current_hitsound_state = HITSOUND_STATES.FINISHER
 			
-			apply_score(target_hobj)
+			apply_score(target_hobj, hit_result)
 		
 		HitObject.HIT_RESULT.MISS:
-			apply_score(target_hobj, true)
+			apply_score(target_hobj, hit_result)
 		
 		_:
 			return false
@@ -195,7 +196,7 @@ func miss_check(next_note: HitObject) -> void:
 		
 	match next_note.get_class():
 		"Note":
-			apply_score(next_note, true)
+			apply_score(next_note, HitObject.HIT_RESULT.MISS)
 		
 		# roku note 2024-05-17
 		# no roku, NO. BAD
@@ -227,10 +228,10 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 	active_finisher_note = null 
 	return false
 
-func apply_score(target_hit_obj: HitObject, missed := false) -> void:
+func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) -> void:
 	next_note_idx -= 1
 	target_hit_obj.visible = false
-	score_manager.add_score(target_hit_obj.timing - current_time, missed)
+	score_manager.add_score(target_hit_obj.timing - current_time, hit_result)
 
 func load_chart(requested_chart: Chart) -> void:
 	# empty out existing hit objects and reset stats just incasies
