@@ -208,10 +208,10 @@ func miss_check(next_note: HitObject) -> void:
 					get_tree().create_timer(1).timeout.connect(func(): miss_check(next_note))
 				# more than half hit
 				HitObject.HIT_RESULT.HIT:
-					score_manager.add_score(Global.INACC_TIMING)
+					score_manager.add_score(Global.INACC_TIMING, HitObject.HIT_RESULT.HIT)
 				# less than half hit
 				HitObject.HIT_RESULT.MISS:
-					score_manager.add_score(Global.INACC_TIMING + 5)
+					score_manager.add_score(Global.INACC_TIMING + 5, HitObject.HIT_RESULT.MISS)
 
 # finisher second hit check, returns if it was successful or not
 func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
