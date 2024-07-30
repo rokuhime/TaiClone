@@ -43,7 +43,7 @@ func toggle_visible():
 	if movement_tween:
 		movement_tween.kill()
 	
-	movement_tween = create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	movement_tween = Global.create_smooth_tween()
 	movement_tween.tween_property(
 		self, 
 		"position:x", 

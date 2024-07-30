@@ -154,6 +154,6 @@ func push_console(origin: String, message: String, urgency := -1) -> void:
 	
 	print_rich(formatted_message)
 
-#static func send_signal(signal_target: Node, signal_name: String, obj: Object, method: String) -> void:
-	#if obj.connect(signal_name, signal_target, method):
-		#push_warning("Attempted to connect %s %s." % [obj.get_class(), signal_name])
+# shortcut to make smooth tweens consistent
+func create_smooth_tween() -> Tween:
+	return create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)

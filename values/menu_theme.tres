@@ -1,4 +1,54 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://dncqvenqwlml1"]
+[gd_resource type="Theme" load_steps=11 format=3 uid="uid://dncqvenqwlml1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sno48"]
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.295867, 0.295867, 0.295866, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ynslq"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dcyou"]
+bg_color = Color(0.226707, 0.226708, 0.226707, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cvjwh"]
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.194349, 0.194349, 0.194349, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1yurq"]
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0646965, 0.0646965, 0.0646965, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [sub_resource type="ImageTexture" id="ImageTexture_qbfel"]
 
@@ -10,9 +60,18 @@
 color = Color(0.0980392, 0.0980392, 0.0980392, 1)
 thickness = 32
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ipron"]
+bg_color = Color(0.0784314, 0.0784314, 0.0784314, 0.784314)
+
 [resource]
+Button/styles/disabled = SubResource("StyleBoxFlat_sno48")
+Button/styles/focus = SubResource("StyleBoxFlat_ynslq")
+Button/styles/hover = SubResource("StyleBoxFlat_dcyou")
+Button/styles/normal = SubResource("StyleBoxFlat_cvjwh")
+Button/styles/pressed = SubResource("StyleBoxFlat_1yurq")
 HSlider/constants/center_grabber = 1
 HSlider/icons/grabber = SubResource("ImageTexture_qbfel")
 HSlider/icons/grabber_disabled = SubResource("ImageTexture_kfe4j")
 HSlider/icons/grabber_highlight = SubResource("ImageTexture_macr1")
 HSlider/styles/slider = SubResource("StyleBoxLine_87ct8")
+Panel/styles/panel = SubResource("StyleBoxFlat_ipron")
