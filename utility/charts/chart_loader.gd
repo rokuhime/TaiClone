@@ -265,8 +265,8 @@ static func convert_chart(file_path: String):
 	Global.push_console("ChartLoader", "Chart successfully converted!", -1)
 	return new_path
 
-## loads .tc files and spits out Chart variable
-static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
+## gets metadata from a .tc file
+static func get_tc_metadata(file_path: String) -> Chart:
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	if !file:
 		Global.push_console("ChartLoader", "Bad file provided for get_chart: " % file_path, 2)
@@ -296,11 +296,81 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 		# roku note 2024-07-16
 		# if this stays like this, itll be really easy to corrupt .tc files by adding extra linebreaks. be careful
 		if line.is_empty():
+			break
+		
+		# split line into array by commas
+		var line_data := line.split(",")
+		
+		# this is stupid, but the alternative is line_data[line_data.find(line_data_segment)]
+		# strip edges of each value in line_data
+		var i := 0
+		for line_data_segment in line_data:
+			line_data[i] = line_data[i].strip_edges()
+			i += 1
+		
+		var data_name := line.substr(0, line.find(':'))
+		var data_value := line.substr(line.find(':') + 1, line.length()).strip_edges()
+		
+		match data_name:
+			"Origin":
+				origin_file_path = data_value
+			
+			"Origin_Type":
+				chart_info["Origin_Type"] = data_value
+
+			"Audio_Path":
+				audio = AudioLoader.load_file(origin_file_path.get_base_dir().path_join(data_value))
+
+			"Background":
+				background = ImageLoader.load_image(origin_file_path.get_base_dir().path_join(data_value))
+
+			"Preview_Point":
+				chart_info["PreviewPoint"] = int(data_value) / 1000.0
+
+			_:
+				chart_info[data_name] = data_value
+		continue
+	
+	file.close()
+	
+	# error check
+	if audio == null:
+		print_rich("[color=yellow]ChartLoader: chart at ", origin_file_path, " is corrupted! skipped[/color]")
+		return
+	
+	return Chart.new(file_path, audio, background, chart_info, [], [], hash)
+
+## gets hit objects from a .tc file
+static func get_tc_gamedata(file_path: String) -> Chart:
+	var file := FileAccess.open(file_path, FileAccess.READ)
+	if !file:
+		Global.push_console("ChartLoader", "Bad file provided for get_chart: " % file_path, 2)
+		return
+	
+	var hash := Global.get_hash(file_path)
+	
+	var line := ""
+	# 0 = metadata, 1 = hit objects
+	var section := 0
+	
+	var timing_points := []
+	var hit_objects := []
+	
+	while file.get_position() < file.get_length():
+		line = file.get_line().strip_edges()
+		
+		if line.begins_with("TaiClone Chart"):
+			continue
+		
+		# change current section
+		# roku note 2024-07-16
+		# if this stays like this, itll be really easy to corrupt .tc files by adding extra linebreaks. be careful
+		if line.is_empty():
 			section += 1
 			continue
 		
 		# if were only grabbing metadata, ignore everything else
-		if only_grab_metadata and section == 1:
+		if section != 1:
 			continue
 		
 		# split line into array by commas
@@ -316,57 +386,27 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 		var data_name := ""
 		var data_value := ""
 		
-		match section:
-			0: # chart info
-				data_name = line.substr(0, line.find(':'))
-				data_value = line.substr(line.find(':') + 1, line.length()).strip_edges()
-				
-				match data_name:
-					"Origin":
-						origin_file_path = data_value
-					
-					"Origin_Type":
-						chart_info["Origin_Type"] = data_value
+		if section: 
+			if int(line_data[2]) == NOTETYPE.TIMING_POINT:
+				var obj_arr := []
 
-					"Audio_Path":
-						audio = AudioLoader.load_file(origin_file_path.get_base_dir().path_join(data_value))
+				# set basic variables 
+				obj_arr.push_back(float(line_data[0])) # timing
+				obj_arr.push_back(float(line_data[1])) # bpm value
+				obj_arr.push_back(line_data[3] == "true") # kiai
+				obj_arr.push_back(int(line_data[4])) # time signature (assumes 4/x)
 
-					"Background":
-						background = ImageLoader.load_image(origin_file_path.get_base_dir().path_join(data_value))
-
-					"Preview_Point":
-						chart_info["PreviewPoint"] = int(data_value) / 1000.0
-
-					_:
-						chart_info[data_name] = data_value
-				continue
-				
-			1: # hit objects
-				if int(line_data[2]) == NOTETYPE.TIMING_POINT:
-					var obj_arr := []
-
-					# set basic variables 
-					obj_arr.push_back(float(line_data[0])) # timing
-					obj_arr.push_back(float(line_data[1])) # bpm value
-					obj_arr.push_back(line_data[3] == "true") # kiai
-					obj_arr.push_back(int(line_data[4])) # time signature (assumes 4/x)
-
-					timing_points.push_back(obj_arr)
-				
-				hit_objects.push_back( generate_hit_object( (int(line_data[2]) as NOTETYPE), line_data, timing_points) )
-				continue
+				timing_points.push_back(obj_arr)
+			
+			hit_objects.push_back( generate_hit_object( (int(line_data[2]) as NOTETYPE), line_data, timing_points) )
+			continue
 	file.close()
 
 	hit_objects.sort_custom(
 		func(a: HitObject, b: HitObject): return a.timing > b.timing
 	)
 	
-	# error check
-	if audio == null:
-		print_rich("[color=yellow]ChartLoader: chart at ", origin_file_path, " is corrupted! skipped[/color]")
-		return
-	
-	return Chart.new(file_path, audio, background, chart_info, timing_points, hit_objects, hash)
+	return Chart.new(file_path, null, null, {}, timing_points, hit_objects, hash)
 
 ## formats objects into a string
 static func get_object_string(data: Array) -> String:

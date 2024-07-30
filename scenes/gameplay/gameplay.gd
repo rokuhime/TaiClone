@@ -240,7 +240,7 @@ func load_chart(requested_chart: Chart) -> void:
 	active_finisher_note = null 
 	score_manager.reset()
 	
-	current_chart = requested_chart
+	current_chart = requested_chart.load_hit_objects()
 	
 	# add all hit objects to container
 	for hobj in requested_chart.hit_objects:

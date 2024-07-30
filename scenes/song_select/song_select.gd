@@ -60,7 +60,7 @@ func populate_from_chart_folder(folder_path: String) -> void:
 	
 	for file in DirAccess.get_files_at(folder_path):
 		if ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
-			var chart := ChartLoader.get_chart(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
+			var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
 			if chart:
 				# ensure were not making a duplicate listing before adding
 				if not listing_exists(chart):

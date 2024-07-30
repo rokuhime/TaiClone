@@ -59,7 +59,7 @@ func file_dropped(files: PackedStringArray) -> void:
 	if files.size() > 1:
 		Global.push_console("Root", "Multiple files dropped! Only using first found file: %s" % target_file)
 		
-	var chart = ChartLoader.get_chart(ChartLoader.get_chart_path(target_file))
+	var chart = ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(target_file))
 	if current_state != GAMESTATE.SONG_SELECT:
 		change_state(GAMESTATE.SONG_SELECT)
 	current_state_node.create_new_listing(chart)
