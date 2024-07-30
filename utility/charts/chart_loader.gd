@@ -329,10 +329,10 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 						chart_info["Origin_Type"] = data_value
 
 					"Audio_Path":
-						audio = AudioLoader.load_file(origin_file_path.get_base_dir() + "/" + data_value)
+						audio = AudioLoader.load_file(origin_file_path.get_base_dir().path_join(data_value))
 
 					"Background":
-						background = ImageLoader.load_image(origin_file_path.get_base_dir() + "/" + data_value)
+						background = ImageLoader.load_image(origin_file_path.get_base_dir().path_join(data_value))
 
 					"Preview_Point":
 						chart_info["PreviewPoint"] = int(data_value) / 1000.0

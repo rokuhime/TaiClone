@@ -102,6 +102,11 @@ func get_hash(file_path: String) -> PackedByteArray:
 	ctx.start(HashingContext.HASH_SHA256)
 	# Open the file to hash.
 	var file = FileAccess.open(file_path, FileAccess.READ)
+	
+	# this is a little stupid thing for .tc files to ignore version and source
+	file.get_line()
+	file.get_line()
+	
 	# Update the context after reading each chunk.
 	while not file.eof_reached():
 		ctx.update(file.get_buffer(1028))

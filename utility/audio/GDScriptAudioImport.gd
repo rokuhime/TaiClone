@@ -127,17 +127,20 @@ static func load_file(filepath):
 		#get samples and set loop end
 		var samplenum = newstream.data.size() / 4
 		newstream.loop_end = samplenum
+		file.close()
 		return newstream  #:D
 
 	#if file is ogg
 	elif filepath.ends_with(".ogg"):
 		var newstream = AudioStreamOggVorbis.load_from_buffer(bytes)
+		file.close()
 		return newstream
 
 	#if file is mp3
 	elif filepath.ends_with(".mp3"):
 		var newstream = AudioStreamMP3.new()
 		newstream.data = bytes
+		file.close()
 		return newstream
 
 	else:
