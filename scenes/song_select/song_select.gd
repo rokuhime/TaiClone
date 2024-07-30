@@ -182,7 +182,7 @@ func apply_listing_data(listing: ChartListing) -> void:
 	# set song, get preview timing, and play
 	music.stream = listing.chart.audio
 	var prev_point: float = listing.chart.chart_info["PreviewPoint"] if listing.chart.chart_info["PreviewPoint"] else 0
-	music.play(prev_point)
+	music.play(clamp(prev_point, 0, music.stream.get_length()))
 
 func toggle_auto(new_auto: bool) -> void:
 	auto_enabled = new_auto
