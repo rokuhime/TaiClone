@@ -226,6 +226,8 @@ static func convert_chart(file_path: String):
 
 					_:
 						continue
+			# end of file
+			file.close()
 
 		"tc":
 			# tried to convert tc, ignore and bail
@@ -354,6 +356,7 @@ static func get_chart(file_path: String, only_grab_metadata := false) -> Chart:
 				
 				hit_objects.push_back( generate_hit_object( (int(line_data[2]) as NOTETYPE), line_data, timing_points) )
 				continue
+	file.close()
 
 	hit_objects.sort_custom(
 		func(a: HitObject, b: HitObject): return a.timing > b.timing

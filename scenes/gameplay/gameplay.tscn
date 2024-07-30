@@ -168,6 +168,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("13_evyiw")
+metadata/_edit_lock_ = true
 
 [node name="Score" type="Label" parent="ScoreManager"]
 layout_mode = 1
@@ -244,9 +245,10 @@ bus = &"SFX"
 
 [node name="RawInfo" type="Label" parent="ScoreManager"]
 layout_mode = 1
-offset_top = 32.0
-offset_right = 224.0
-offset_bottom = 129.0
+offset_left = 969.0
+offset_top = 2.0
+offset_right = 1193.0
+offset_bottom = 99.0
 text = "accurate: 0
 inaccurate: 0
 miss: 0"
@@ -326,3 +328,4 @@ offset_top = -501.0
 offset_right = 380.0
 offset_bottom = -121.0
 grow_horizontal = 1
+metadata/_edit_lock_ = true
