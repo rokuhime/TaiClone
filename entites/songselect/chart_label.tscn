@@ -12,6 +12,7 @@ corner_radius_bottom_left = 9
 font_size = 22
 
 [node name="ChartLabel" type="PanelContainer"]
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_ddjy1")
 
 [node name="Label" type="Label" parent="."]

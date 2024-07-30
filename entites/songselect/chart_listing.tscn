@@ -46,12 +46,14 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "Sanae-San - RD-Sounds feat. Meramipop"
 label_settings = SubResource("LabelSettings_pia3p")
+text_overrun_behavior = 3
 
 [node name="ChartInfo" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 text = "Hell Oni - Genjuro"
 label_settings = SubResource("LabelSettings_pia3p")
+text_overrun_behavior = 3
 
 [node name="Labels" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
