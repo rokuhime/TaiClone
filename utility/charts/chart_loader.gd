@@ -45,7 +45,6 @@ static func convert_chart(file_path: String):
 	
 	var section := ""
 	var chart_info := {}
-	
 	var current_timing := {}
 	var timing_points := []
 	

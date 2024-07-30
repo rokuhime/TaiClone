@@ -61,16 +61,18 @@ func populate_from_chart_folder(folder_path: String) -> void:
 	for file in DirAccess.get_files_at(folder_path):
 		if ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
 			var chart := ChartLoader.get_chart(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
-			
-			# ensure were not making a duplicate listing before adding
-			if not listing_exists(chart):
-				Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
-					chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]],
-					-2)
-				create_listing(chart)
+			if chart:
+				# ensure were not making a duplicate listing before adding
+				if not listing_exists(chart):
+					Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
+						chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]],
+						-2)
+					create_listing(chart)
+					continue
+					
+				Global.push_console("SongSelect", "ignoring duplicate chart: %s" % file, 1)
 				continue
-				
-			Global.push_console("SongSelect", "ignoring duplicate chart: %s" % file, 1)
+			Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
 			continue
 
 func create_listing(chart: Chart) -> ChartListing:

@@ -89,10 +89,10 @@ static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: i
 	return (acc_hit_count / float(accurate_hits + inaccurate_hits + miss_count)) * 100.0
 
 # shorthand to make setting bgs easier
-func set_background(new_background: Texture2D):
+func set_background(new_background: Texture2D) -> void:
 	root.set_background(new_background)
 
-func change_global_offset(new_offset: float):
+func change_global_offset(new_offset: float) -> void:
 	global_offset = new_offset
 	save_settings()
 
@@ -107,6 +107,7 @@ func get_hash(file_path: String) -> PackedByteArray:
 		ctx.update(file.get_buffer(1028))
 	# Get the computed hash.
 	var res = ctx.finish()
+	file.close()
 	return res
 
 # roku note 2024-07-22
@@ -114,7 +115,7 @@ func get_hash(file_path: String) -> PackedByteArray:
 
 # simple function to color and timestamp console messages
 # -2 = step, -1 = generic, 0 = success, 1 = warning, 2 = error
-func push_console(origin: String, message: String, urgency := -1):
+func push_console(origin: String, message: String, urgency := -1) -> void:
 	if console_filter > urgency:
 		return
 	
