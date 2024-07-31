@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://bwqvkai2nr2gi"]
+[gd_scene load_steps=4 format=3 uid="uid://bwqvkai2nr2gi"]
 
 [ext_resource type="Script" path="res://scenes/song_select/song_select.gd" id="1_lm221"]
+[ext_resource type="Script" path="res://entites/songselect/mods/mod_panel.gd" id="2_iclas"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6lx67"]
+font_size = 32
 
 [node name="SongSelect" type="Control"]
 layout_mode = 3
@@ -10,6 +14,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lm221")
+selected_listing_idx = null
 
 [node name="ListingContainer" type="Control" parent="."]
 layout_mode = 1
@@ -21,14 +26,46 @@ anchor_bottom = 0.5
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="CheckBox" type="CheckBox" parent="."]
+[node name="ModPanel" type="Panel" parent="."]
 layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -24.0
-offset_right = 24.0
-grow_vertical = 0
-text = "Auto"
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -271.0
+offset_top = -189.0
+offset_right = 271.0
+offset_bottom = 189.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_iclas")
 
-[connection signal="toggled" from="CheckBox" to="." method="toggle_auto"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ModPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 21.0
+offset_right = -21.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="ModPanel/VBoxContainer"]
+layout_mode = 2
+text = "Mods"
+label_settings = SubResource("LabelSettings_6lx67")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ModContainer" type="GridContainer" parent="ModPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="ModPanel"]
+layout_mode = 0
+offset_right = 105.0
+offset_bottom = 39.0
+text = "test"
+
+[connection signal="pressed" from="ModPanel/Button" to="ModPanel" method="get_selected_mods"]

@@ -3,10 +3,10 @@ extends Control
 
 var music: AudioStreamPlayer
 var chart_listing_scene := preload("res://entites/songselect/chart_listing.tscn")
+@onready var mod_panel := $ModPanel as ModPanel
 
 @onready var listing_container := $ListingContainer
 var listing_container_tween: Tween
-
 @export var selected_listing_idx := 0
 var last_selected_listing_idx := -1
 
@@ -14,13 +14,15 @@ const LISTING_SEPARATION := 10.0
 const TUCK_AMOUNT := 150.0
 const LISTING_MOVEMENT_TIME := 0.5
 
-var auto_enabled := false
-
 func _ready():
 	music = get_tree().get_first_node_in_group("RootMusic")
 	
 	refresh_from_chart_folders()
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
+	
+	get_parent().set_navigation_bar_info(["Mods", null, null])
+	var button_signals = get_parent().get_navigation_bar_signals()
+	#button_signals[0].connect()
 	
 	if listing_container.get_child_count():
 		apply_listing_data(listing_container.get_child(0))
@@ -95,8 +97,11 @@ func listing_exists(chart: Chart) -> bool:
 
 func _unhandled_input(event):
 	# refresh listings
-	if event is InputEventKey and event.keycode == KEY_F5:
+	if event is InputEventKey and event.keycode == KEY_F5 and event.is_pressed():
 		refresh_from_chart_folders(true)
+	
+	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
+		mod_panel.toggle_visual()
 	
 	if listing_container.get_child_count() > 0:
 		# cycle through listings
@@ -184,10 +189,9 @@ func apply_listing_data(listing: ChartListing) -> void:
 	var prev_point: float = listing.chart.chart_info["PreviewPoint"] if listing.chart.chart_info["PreviewPoint"] else 0
 	music.play(clamp(prev_point, 0, music.stream.get_length()))
 
-func toggle_auto(new_auto: bool) -> void:
-	auto_enabled = new_auto
-
 func transition_to_gameplay() -> void:
+	var selected_mods := mod_panel.get_selected_mods()
+	var auto_enabled = selected_mods.has(0)
 	get_tree().get_first_node_in_group("Root").change_to_gameplay(listing_container.get_child(selected_listing_idx).chart, auto_enabled)
 
 func handle_listing_input(index: int) -> void:

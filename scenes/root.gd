@@ -18,6 +18,9 @@ var default_background = load("res://assets/textures/dev_art/background.png")
 
 var navigation_bar_tweens := []
 var navigation_bars_enabled := false
+@onready var navigation_bar_buttons := [
+	$NavigationBars/Bottom/Buttons/Button1, $NavigationBars/Bottom/Buttons/Button2, $NavigationBars/Bottom/Buttons/Button3
+]
 
 func _ready():
 	get_window().size = Vector2i(1280, 720)
@@ -32,10 +35,6 @@ func _ready():
 func _process(delta):
 	corner_info.text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
 
-func _unhandled_key_input(event):
-	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
-		toggle_navigation_bars(!navigation_bars_enabled)
-
 # -------- ui ----------
 
 # used to bundle ui sounds into one AudioQueuer, saves memory
@@ -48,12 +47,10 @@ func set_background(new_background: Texture2D):
 		return
 	background.texture = default_background
 
-func set_navigation_bar_info(new_info: Dictionary) -> void:
-	pass
-
 func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	navigation_bars_enabled = enabled
 	
+	# end any ongoing navbar tweens
 	if not navigation_bar_tweens.is_empty():
 		for tween in navigation_bar_tweens:
 			tween.kill()
@@ -65,6 +62,7 @@ func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	if enabled:
 		var top_tween := Global.create_smooth_tween()
 		var bottom_tween := Global.create_smooth_tween()
+		# slide into view
 		top_tween.tween_property(top_bar, "position:y", 0, 0.5 if smooth_transition else 0)
 		bottom_tween.tween_property(bottom_bar, "position:y", screen_size - bottom_bar.size.y, 0.5 if smooth_transition else 0)
 		
@@ -73,10 +71,35 @@ func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	
 	var top_tween := Global.create_smooth_tween()
 	var bottom_tween := Global.create_smooth_tween()
+	# slide out of view
 	top_tween.tween_property(top_bar, "position:y", -top_bar.size.y, 0.5 if smooth_transition else 0)
 	bottom_tween.tween_property(bottom_bar, "position:y", screen_size, 0.5 if smooth_transition else 0)
 	
+	# set vars to allow killing them early if needed
 	navigation_bar_tweens = [top_tween, bottom_tween]
+
+# sets navbar button text
+func set_navigation_bar_info(nav_info: Array) -> void:
+	var idx := 0
+	for button in navigation_bar_buttons:
+		# if the idx exists...
+		if nav_info.size() - 1 >= idx:
+			# if theres valid info...
+			if nav_info[idx] != null:
+				button.visible = true
+				button.text = nav_info[idx]
+				idx += 1
+				continue
+		# no info given, make invisible
+		button.visible = false
+		idx += 1
+
+# returns the pressed signal from navbar buttons
+func get_navigation_bar_signals() -> Array:
+	var button_signals := []
+	for button in navigation_bar_buttons:
+		button_signals.append(button.pressed)
+	return button_signals
 
 # -------- changing states ----------
 
