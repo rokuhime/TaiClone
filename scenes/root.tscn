@@ -250,4 +250,5 @@ offset_top = -380.0
 offset_bottom = -120.0
 grow_vertical = 0
 
+[connection signal="finished" from="Music" to="." method="on_music_end"]
 [connection signal="pressed" from="NavigationBars/Bottom/Buttons/BackButton" to="." method="back_button_pressed"]

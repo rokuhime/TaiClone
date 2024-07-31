@@ -189,3 +189,8 @@ func file_dropped(files: PackedStringArray) -> void:
 		change_state(GAMESTATE.SONG_SELECT)
 	current_state_node.create_new_listing(chart)
 	current_state_node.update_visual()
+
+# TODO: ...yeah i should really rework the current chart to go to root
+func on_music_end() -> void:
+	if current_state == GAMESTATE.SONG_SELECT:
+		$Music.play()

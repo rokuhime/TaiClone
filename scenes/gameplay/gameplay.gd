@@ -47,6 +47,7 @@ var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as Audi
 
 func _ready() -> void:
 	music = Global.music
+	music.stream
 	score_manager.connect("toast", Callable(mascot, "toast"))
 
 func _process(_delta) -> void:

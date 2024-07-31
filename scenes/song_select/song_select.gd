@@ -21,9 +21,10 @@ func _ready():
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
 	# set navbar info
-	get_parent().set_navbar_buttons(["Mods", null, null])
+	get_parent().set_navbar_buttons(["Mods", null, "Play"])
 	var button_signals = get_parent().get_navigation_bar_signals()
 	button_signals[0].connect(mod_panel.toggle_visual)
+	button_signals[2].connect(transition_to_gameplay)
 	
 	if listing_container.get_child_count():
 		apply_listing_data(listing_container.get_child(0))
@@ -32,7 +33,7 @@ func _ready():
 # --- loading listings ---
 
 # roku note 2024-07-22
-# u gotta come up with better names to distinguish btwn populate_from_folder() and populate_from_chart_folder()
+# u gotta come up with better names to distinguish btwn refresh_from_chart_folders() and populate_from_chart_folder()
 # just generally having a name for the chart's folder and a folder that holds charts would be REALLY USEFUL and LESS CONFUSING
 
 # hard updates do every folder, otherwise only scan converted chart folder (temporary)
