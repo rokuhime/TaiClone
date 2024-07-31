@@ -125,6 +125,13 @@ func change_state(requested_scene) -> Node:
 	
 	return new_state_scene
 
+func back_button_pressed() -> void:
+	match current_state:
+		GAMESTATE.SONG_SELECT:
+			pass
+		_:
+			change_state(GAMESTATE.SONG_SELECT)
+
 func change_to_gameplay(requested_chart: Chart, auto_enabled: bool):
 	toggle_navigation_bars(false)
 	change_state(GAMESTATE.GAMEPLAY).load_chart(requested_chart)

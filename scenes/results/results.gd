@@ -16,7 +16,11 @@ var score_data: Dictionary
 
 @onready var judgement_timeline: Control = $RightSide/JudgeTimeline/JudgementContainer
 
-func _unhandled_key_input(event):
+func _ready() -> void:
+	# set navbar info
+	get_parent().set_navigation_bar_info([])
+
+func _unhandled_key_input(event) -> void:
 	# back to song select
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
 		get_tree().get_first_node_in_group("Root").change_state(1)
@@ -25,7 +29,7 @@ func get_accuracy() -> float:
 	var total = score_data["AccurateHits"] + score_data["InaccurateHits"] + score_data["MissCount"]
 	return total / (score_data["AccurateHits"] + (score_data["InaccurateHits"] / 2)) * 100
 
-func set_score(score: Dictionary):
+func set_score(score: Dictionary) -> void:
 	score_data = score
 	
 	var accuracy := Global.get_accuracy(score_data["AccurateHits"], score_data["InaccurateHits"], score_data["MissCount"])
