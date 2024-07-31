@@ -5,12 +5,13 @@ var keychange_timeout: Timer
 var movement_tween: Tween
 var keychange_target := ""
 var is_visible := false
-
+@onready var player_name_edit := $ScrollContainer/VBoxContainer/Login/LineEdit
 @onready var chart_path_changer: ChartPathChanger = $ScrollContainer/VBoxContainer/ChartPathChanger
 @onready var keybind_list := $ScrollContainer/VBoxContainer/KeybindList
 
 func _ready():
 	chart_path_changer.refresh_paths()
+	player_name_edit.text = Global.player_name
 	
 	if not is_visible:
 		position.x = get_viewport_rect().size.x
@@ -89,3 +90,7 @@ func load_keybinds(keybinds) -> void:
 	await ready
 	for keybind in keybinds:
 		change_input_action(keybind, keybinds[keybind], false)
+
+func change_player_name(new_name: String) -> void:
+	Global.player_name = new_name
+	Global.save_settings()

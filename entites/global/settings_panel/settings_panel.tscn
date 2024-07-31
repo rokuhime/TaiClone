@@ -8,13 +8,13 @@
 [sub_resource type="LabelSettings" id="LabelSettings_qm3nu"]
 font_size = 48
 
+[sub_resource type="LabelSettings" id="LabelSettings_xg8nn"]
+font_size = 24
+
 [sub_resource type="LabelSettings" id="LabelSettings_pk7v3"]
 font_size = 24
 
 [sub_resource type="LabelSettings" id="LabelSettings_q3ioc"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_xg8nn"]
-font_size = 24
 
 [node name="SettingsPanel" type="Panel" groups=["SettingsPanel"]]
 custom_minimum_size = Vector2(450, 0)
@@ -50,6 +50,23 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+alignment = 1
+
+[node name="Login" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_2j0hn")
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Login"]
+layout_mode = 2
+text = "Player Name"
+label_settings = SubResource("LabelSettings_xg8nn")
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="ScrollContainer/VBoxContainer/Login"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+placeholder_text = "Player"
 alignment = 1
 
 [node name="KeybindList" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
@@ -231,6 +248,7 @@ allow_greater = true
 allow_lesser = true
 alignment = 1
 
+[connection signal="text_submitted" from="ScrollContainer/VBoxContainer/Login/LineEdit" to="." method="change_player_name"]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftKat/Button" to="." method="change_key" binds= ["LeftKat"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftDon/Button" to="." method="change_key" binds= ["LeftDon"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightDon/Button" to="." method="change_key" binds= ["RightDon"]]
