@@ -50,7 +50,9 @@ func set_score(score: Dictionary) -> void:
 	max_combo_label.text = "/" + str(score_data["AccurateHits"] + score_data["InaccurateHits"] + score_data["MissCount"])
 	
 	accurate_label.text = str(score_data["AccurateHits"])
+	f_accurate_label.text = str(score_data["FAccurateHits"])
 	inaccurate_label.text = str(score_data["InaccurateHits"])
+	f_inaccurate_label.text = str(score_data["FInaccurateHits"])
 	miss_label.text = str(score_data["MissCount"])
 	
 	early_label.text = str(score_data["EarlyHits"]) + " Early"

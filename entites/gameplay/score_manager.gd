@@ -78,7 +78,7 @@ func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> 
 	if abs(hit_time_difference) <= Global.INACC_TIMING and hit_result != HitObject.HIT_RESULT.MISS:
 		if abs(hit_time_difference) <= Global.ACC_TIMING:
 			score_type += 1
-		score_type += 1 
+		score_type += 1
 	
 	match score_type:
 		0:  # miss
@@ -185,9 +185,9 @@ func get_packaged_score() -> Dictionary:
 	score_dict["TopCombo"] = top_combo
 	
 	score_dict["AccurateHits"] = accurate_hits
-	score_dict["FAccurateHits"] = accurate_hits
+	score_dict["FAccurateHits"] = f_accurate_hits
 	score_dict["InaccurateHits"] = inaccurate_hits
-	score_dict["FInaccurateHits"] = inaccurate_hits
+	score_dict["FInaccurateHits"] = f_inaccurate_hits
 	score_dict["MissCount"] = miss_count
 	
 	score_dict["EarlyHits"] = early_hits
