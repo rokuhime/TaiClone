@@ -14,7 +14,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lm221")
-selected_listing_idx = null
 
 [node name="ListingContainer" type="Control" parent="."]
 layout_mode = 1
@@ -61,11 +60,3 @@ vertical_alignment = 1
 [node name="ModContainer" type="GridContainer" parent="ModPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="ModPanel"]
-layout_mode = 0
-offset_right = 105.0
-offset_bottom = 39.0
-text = "test"
-
-[connection signal="pressed" from="ModPanel/Button" to="ModPanel" method="get_selected_mods"]

@@ -94,10 +94,11 @@ func set_navigation_bar_info(nav_info: Array) -> void:
 		button.visible = false
 		idx += 1
 
-# returns the pressed signal from navbar buttons
+# wipes previous connections, and returns the pressed signals from navbar buttons
 func get_navigation_bar_signals() -> Array:
 	var button_signals := []
 	for button in navigation_bar_buttons:
+		# add connect callable to array
 		button_signals.append(button.pressed)
 	return button_signals
 

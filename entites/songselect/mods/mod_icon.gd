@@ -5,14 +5,11 @@ var mod_id := -1
 var enabled := false
 var color_tween: Tween
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	# get texture from SkinManager using mod_id
-	
 	update_visual()
 
 func update_visual() -> void:
+	# get texture from SkinManager using mod_id	
 	if color_tween:
 		color_tween.kill()
 	color_tween = Global.create_smooth_tween()

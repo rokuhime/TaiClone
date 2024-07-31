@@ -20,9 +20,10 @@ func _ready():
 	refresh_from_chart_folders()
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
+	# set navbar info
 	get_parent().set_navigation_bar_info(["Mods", null, null])
 	var button_signals = get_parent().get_navigation_bar_signals()
-	#button_signals[0].connect()
+	button_signals[0].connect(mod_panel.toggle_visual)
 	
 	if listing_container.get_child_count():
 		apply_listing_data(listing_container.get_child(0))
