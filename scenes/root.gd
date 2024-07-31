@@ -1,5 +1,9 @@
 extends Control
 
+# roku note 2024-07-31
+# consider having the currently selected chart here; 
+# would make it much easier to pass chart data from menu to menu
+
 enum GAMESTATE { MAIN_MENU, SONG_SELECT, GAMEPLAY, RESULTS }
 const NAV_BAR_ENABLED_STATES := [GAMESTATE.SONG_SELECT, GAMESTATE.RESULTS]
 var current_state := GAMESTATE.MAIN_MENU
@@ -20,6 +24,10 @@ var navigation_bar_tweens := []
 var navigation_bars_enabled := false
 @onready var navigation_bar_buttons := [
 	$NavigationBars/Bottom/Buttons/Button1, $NavigationBars/Bottom/Buttons/Button2, $NavigationBars/Bottom/Buttons/Button3
+]
+@onready var navigation_bar_labels := [
+	$NavigationBars/Top/HBoxContainer/LeftInfo/TopLabel, $NavigationBars/Top/HBoxContainer/LeftInfo/BottomLabel,
+	$NavigationBars/Top/HBoxContainer/RightInfo/TopLabel, $NavigationBars/Top/HBoxContainer/RightInfo/BottomLabel
 ]
 
 func _ready():
@@ -79,19 +87,36 @@ func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	navigation_bar_tweens = [top_tween, bottom_tween]
 
 # sets navbar button text
-func set_navigation_bar_info(nav_info: Array) -> void:
+func set_navbar_buttons(button_info: Array) -> void:
 	var idx := 0
 	for button in navigation_bar_buttons:
 		# if the idx exists...
-		if nav_info.size() - 1 >= idx:
+		if button_info.size() - 1 >= idx:
 			# if theres valid info...
-			if nav_info[idx] != null:
+			if button_info[idx] != null:
 				button.visible = true
-				button.text = nav_info[idx]
+				button.text = button_info[idx]
 				idx += 1
 				continue
 		# no info given, make invisible
 		button.visible = false
+		idx += 1
+
+# sets test part of navbar
+# 0, 1 = left, 2, 3 = right
+func set_navbar_text(text_info: Array) -> void:
+	var idx := 0
+	for label in navigation_bar_labels:
+		# if the idx exists...
+		if text_info.size() - 1 >= idx:
+			# if theres valid info...
+			if text_info[idx] != null:
+				label.visible = true
+				label.text = text_info[idx]
+				idx += 1
+				continue
+		# no info given, make invisible
+		label.visible = false
 		idx += 1
 
 # wipes previous connections, and returns the pressed signals from navbar buttons
@@ -137,11 +162,12 @@ func change_to_gameplay(requested_chart: Chart, auto_enabled: bool):
 	change_state(GAMESTATE.GAMEPLAY).load_chart(requested_chart)
 	current_state_node.auto_enabled = auto_enabled
 
-func change_to_results(score: Dictionary):
+func change_to_results(requested_chart: Chart, score: Dictionary):
 	if current_state != GAMESTATE.RESULTS:
 		# will automatically be done as its loaded atm
 		change_state(GAMESTATE.RESULTS)
 	current_state_node.set_score(score)
+	current_state_node.current_chart = requested_chart
 
 func refresh_song_select() -> void:
 	if current_state != GAMESTATE.SONG_SELECT:

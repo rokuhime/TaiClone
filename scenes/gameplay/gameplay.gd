@@ -58,7 +58,7 @@ func _process(_delta) -> void:
 		
 		# chart end check
 		if current_time >= last_hobj_timing + 1:
-			get_tree().get_first_node_in_group("Root").change_to_results(score_manager.get_packaged_score())
+			get_tree().get_first_node_in_group("Root").change_to_results(current_chart, score_manager.get_packaged_score())
 		
 		# move all hitobjects
 		for hobj in hit_object_container.get_children():
@@ -93,7 +93,7 @@ func _process(_delta) -> void:
 func _unhandled_input(event) -> void:
 	# back to song select
 	if event is InputEventKey and event.keycode == KEY_ESCAPE:
-		get_tree().get_first_node_in_group("Root").change_to_results(score_manager.get_packaged_score())
+		get_tree().get_first_node_in_group("Root").change_to_results(current_chart, score_manager.get_packaged_score())
 	
 	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
 		if Input.is_action_just_pressed("SkipIntro") and playing:

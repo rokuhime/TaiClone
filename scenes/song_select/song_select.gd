@@ -21,7 +21,7 @@ func _ready():
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
 	# set navbar info
-	get_parent().set_navigation_bar_info(["Mods", null, null])
+	get_parent().set_navbar_buttons(["Mods", null, null])
 	var button_signals = get_parent().get_navigation_bar_signals()
 	button_signals[0].connect(mod_panel.toggle_visual)
 	
@@ -131,6 +131,13 @@ func update_visual(hard_update := false) -> void:
 			listing_size = listing.size
 		
 		if [last_selected_listing_idx, selected_listing_idx].has(i) or hard_update:
+			# update navbar text if we're looking at the selected listing
+			if i == selected_listing_idx and listing.chart.chart_info:
+				get_parent().set_navbar_text([
+					listing.chart.chart_info["Song_Title"] + " - " + listing.chart.chart_info["Song_Artist"],
+					listing.chart.chart_info["Chart_Title"] + " - " + listing.chart.chart_info["Chart_Artist"]
+					])
+			
 			# set y position of listing
 			listing.position.y = ((listing_size.y  + LISTING_SEPARATION) * i) - (listing_size.y / 2)
 			var listing_position_x := -listing_size.x if i == selected_listing_idx else -listing_size.x + TUCK_AMOUNT

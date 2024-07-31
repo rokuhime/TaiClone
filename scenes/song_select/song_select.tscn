@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bwqvkai2nr2gi"]
+[gd_scene load_steps=5 format=3 uid="uid://bwqvkai2nr2gi"]
 
 [ext_resource type="Script" path="res://scenes/song_select/song_select.gd" id="1_lm221"]
 [ext_resource type="Script" path="res://entites/songselect/mods/mod_panel.gd" id="2_iclas"]
+[ext_resource type="Texture2D" uid="uid://dvspeqnrmdj5h" path="res://assets/textures/taiclone song select concept 2 43.png" id="2_wtfc7"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6lx67"]
 font_size = 32
@@ -15,6 +16,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lm221")
 
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_wtfc7")
+
 [node name="ListingContainer" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 6
@@ -26,6 +37,7 @@ grow_horizontal = 0
 grow_vertical = 2
 
 [node name="ModPanel" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

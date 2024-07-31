@@ -1,5 +1,6 @@
 extends Control
 
+var current_chart: Chart
 var score_data: Dictionary
 
 @onready var score_label: Label = $MainPanel/VBoxContainer/Score/Value
@@ -18,12 +19,18 @@ var score_data: Dictionary
 
 func _ready() -> void:
 	# set navbar info
-	get_parent().set_navigation_bar_info([])
+	get_parent().set_navbar_buttons([])
+	await get_tree().process_frame
+	get_parent().set_navbar_text([
+					current_chart.chart_info["Song_Title"] + " - " + current_chart.chart_info["Song_Artist"],
+					current_chart.chart_info["Chart_Title"] + " - " + current_chart.chart_info["Chart_Artist"],
+					"Played by %s" % Global.player_name,
+					Time.get_datetime_string_from_system(false, true)
+					])
 
-func _unhandled_key_input(event) -> void:
-	# back to song select
+func _unhandled_input(event):
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
-		get_tree().get_first_node_in_group("Root").change_state(1)
+		get_parent().back_button_pressed()
 
 func get_accuracy() -> float:
 	var total = score_data["AccurateHits"] + score_data["InaccurateHits"] + score_data["MissCount"]

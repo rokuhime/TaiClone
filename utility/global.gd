@@ -4,6 +4,7 @@ const CONVERTED_CHART_FOLDER := "user://ConvertedCharts"
 const SUPPORTED_CHART_FILETYPES := ["tc", "osu", "tja"]
 var chart_paths := []
 const GAMEPLAY_KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
+var player_name := "Player"
 
 var root: Control
 var music: AudioStreamPlayer
@@ -39,6 +40,8 @@ func get_chart_folders() -> Array:
 func save_settings() -> void:
 	var config_file := ConfigFile.new()
 	
+	config_file.set_value("General", "OfflinePlayerName", player_name)
+	
 	config_file.set_value("General", "ChartPaths", chart_paths)
 	config_file.set_value("General", "GlobalOffset", global_offset)
 	
@@ -62,10 +65,11 @@ func load_settings() -> void:
 		push_console("Global", "Config failed to load user://settings.cfg with code %s" % err, 2)
 		return
 	
+	player_name = config_file.get_value("General", "OfflinePlayerName", "Player")
+	
 	if config_file.get_value("General", "ChartPaths", null):
 		chart_paths = config_file.get_value("General", "ChartPaths", null)
-	if config_file.get_value("General", "GlobalOffset", null):
-		global_offset = config_file.get_value("General", "GlobalOffset", 0)
+	global_offset = config_file.get_value("General", "GlobalOffset", 0)
 	
 	var audio_settings = config_file.get_section_keys("Audio")
 	for setting in audio_settings:
