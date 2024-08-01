@@ -16,8 +16,7 @@ signal selected_via_mouse
 # roku note 2023-12-20
 # for some reason, instancing this through SongListing.new(chart) deletes every single child node???????
 # im assuming its because it extends Panel its using Panel.new(). no idea how to overwrite that as
-# naming this function _init doesnt overwrite it
-# instantiate instead and manually invoke this
+# naming this function _init doesnt overwrite it. instantiate instead and manually invoke this
 func init(wanted_chart: Chart):
 	chart = wanted_chart
 

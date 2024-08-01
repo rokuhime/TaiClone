@@ -1,4 +1,3 @@
-# TODO: make a good miss_check() you dummy
 class_name Spinner
 extends HitObject
 
@@ -81,6 +80,7 @@ func finished() -> void:
 		if float(needed_hits - current_hits) / float(needed_hits) >= 0.5:
 			# roku note 2024-07-02
 			# calling from tree here means multiplayer wouldnt work
+			# TODO: change this into a signal to connect to ScoreManager via Gameplay
 			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(1)
 		else:
 			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(0)

@@ -1,7 +1,5 @@
 class_name ChartLoader
 
-# TODO: remove section stuff and make it based off of an empty line splitting sections
-
 # stupid notes to roku
 # sv types could be named "default", "slide", "scale"
 # respectively taiko, mania, piu

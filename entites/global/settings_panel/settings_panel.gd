@@ -11,7 +11,7 @@ var is_visible := false
 
 # -------- system -------
 
-func _ready():
+func _ready() -> void:
 	chart_path_changer.refresh_paths()
 	player_name_edit.text = Global.player_name
 	
@@ -22,13 +22,13 @@ func _ready():
 		keychange_target = key
 		change_key(key)
 
-func _process(_delta):
+func _process(_delta) -> void:
 	if position == Vector2(get_viewport_rect().size.x, 0) and visible == true:
 		visible = false
 	elif position != Vector2(get_viewport_rect().size.x, 0) and visible == false:
 		visible = true
 
-func _unhandled_input(event):
+func _unhandled_input(event) -> void:
 	if event is InputEventMouse or event.is_echo() or !event.is_pressed():
 		return
 	
@@ -42,7 +42,7 @@ func _unhandled_input(event):
 
 # -------- keybind changing -------
 
-func change_key(target := keychange_target):
+func change_key(target := keychange_target) -> void:
 	if keychange_target.is_empty():
 		Global.change_focus(keybind_list)
 		keychange_target = target
@@ -89,7 +89,7 @@ func load_keybinds(keybinds) -> void:
 # -------- etc -------
 
 # toggle visibility of the panel with a lil sliding animation
-func toggle_visible():
+func toggle_visible() -> void:
 	is_visible = not is_visible
 	
 	if movement_tween:

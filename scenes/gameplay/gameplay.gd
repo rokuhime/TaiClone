@@ -1,6 +1,5 @@
 class_name Gameplay
 extends Control
-# TODO: spinners are *sometimes* given the correct value(?) but are not playable atm, sliders are correct length but no ticks
 
 # UI
 @onready var hit_object_container := $Track/HitPoint/HitObjectContainer
@@ -267,13 +266,10 @@ func miss_check(next_note: HitObject) -> void:
 		"Note":
 			apply_score(next_note, HitObject.HIT_RESULT.MISS)
 		
-		# roku note 2024-05-17
-		# no roku, NO. BAD
-		# this is stupid, score_manager.add_score() needs to be reworked for manual score adding (for ticks n such)
 		"Spinner":
 			match miss_result:
 				HitObject.HIT_RESULT.INVALID:
-					print("miss_check invalid spinner result")
+					Global.push_console("Gameplay", "miss_check invalid spinner result, retrying in 1s", -1)
 					get_tree().create_timer(1).timeout.connect(func(): miss_check(next_note))
 				# more than half hit
 				HitObject.HIT_RESULT.HIT:

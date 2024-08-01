@@ -13,6 +13,8 @@ const LISTING_SEPARATION := 10.0
 const TUCK_AMOUNT := 150.0
 const LISTING_MOVEMENT_TIME := 0.5
 
+# -------- system -------
+
 func _ready():
 	refresh_from_chart_folders()
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
@@ -27,7 +29,30 @@ func _ready():
 		apply_listing_data(listing_container.get_child(0))
 	update_visual(true)
 
-# --- loading listings ---
+func _unhandled_input(event) -> void:
+	# refresh listings
+	if event is InputEventKey and event.keycode == KEY_F5 and event.is_pressed():
+		refresh_from_chart_folders(true)
+	
+	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
+		mod_panel.toggle_visual()
+	
+	# if were focused on a ui element, ignore any inputs
+	if Global.focus_target:
+		return
+	
+	if listing_container.get_child_count() > 0:
+		# cycle through listings
+		if event.is_action_pressed("LeftKat"):
+			change_selected_listing(-1)
+		elif event.is_action_pressed("RightKat"):
+			change_selected_listing(1)
+		
+		# select
+		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
+			transition_to_gameplay()
+
+# -------- loading listings -------
 
 # roku note 2024-07-22
 # u gotta come up with better names to distinguish btwn refresh_from_chart_folders() and populate_from_chart_folder()
@@ -92,30 +117,17 @@ func listing_exists(chart: Chart) -> bool:
 				return true
 	return false
 
-# --- changing listing position/selection ---
+# -------- changing listing position/selection -------
 
-func _unhandled_input(event):
-	# refresh listings
-	if event is InputEventKey and event.keycode == KEY_F5 and event.is_pressed():
-		refresh_from_chart_folders(true)
+func change_selected_listing(idx: int, exact := false) -> void:
+	last_selected_listing_idx = selected_listing_idx
 	
-	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
-		mod_panel.toggle_visual()
-	
-	# if were focused on a ui element, ignore any inputs
-	if Global.focus_target:
-		return
-	
-	if listing_container.get_child_count() > 0:
-		# cycle through listings
-		if event.is_action_pressed("LeftKat"):
-			change_selected_listing(-1)
-		elif event.is_action_pressed("RightKat"):
-			change_selected_listing(1)
-		
-		# select
-		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
-			transition_to_gameplay()
+	if exact:
+		selected_listing_idx = idx % listing_container.get_child_count()
+	else:
+		selected_listing_idx = wrap((selected_listing_idx + idx) % listing_container.get_child_count(), 0, listing_container.get_child_count())
+	apply_listing_data(listing_container.get_child(selected_listing_idx))
+	update_visual()
 
 # changes position of listings and listingcontainer
 # hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
@@ -163,27 +175,19 @@ func update_visual(hard_update := false) -> void:
 	
 	listing_container_tween.tween_property(listing_container, "position:y", listing_container_y_pos, LISTING_MOVEMENT_TIME)
 
-func change_selected_listing(idx: int, exact := false) -> void:
-	last_selected_listing_idx = selected_listing_idx
-	
-	if exact:
-		selected_listing_idx = idx % listing_container.get_child_count()
-	else:
-		selected_listing_idx = wrap((selected_listing_idx + idx) % listing_container.get_child_count(), 0, listing_container.get_child_count())
-	apply_listing_data(listing_container.get_child(selected_listing_idx))
-	update_visual()
-
 # applies bg/audio
 func apply_listing_data(listing: ChartListing) -> void:
 	Global.get_root().update_current_chart(listing.chart)
 
-func transition_to_gameplay() -> void:
-	var selected_mods := mod_panel.get_selected_mods()
-	var auto_enabled = selected_mods.has(0)
-	Global.get_root().change_to_gameplay(auto_enabled)
+# -------- other -------
 
 func handle_listing_input(index: int) -> void:
 	if index == selected_listing_idx:
 		transition_to_gameplay()
 		return
 	change_selected_listing(index, true)
+
+func transition_to_gameplay() -> void:
+	var selected_mods := mod_panel.get_selected_mods()
+	var auto_enabled = selected_mods.has(0)
+	Global.get_root().change_to_gameplay(auto_enabled)
