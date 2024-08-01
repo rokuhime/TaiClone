@@ -1,10 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://y47vbpgb7qas"]
+[gd_scene load_steps=3 format=3 uid="uid://y47vbpgb7qas"]
 
 [ext_resource type="Script" path="res://entites/gameplay/ui/hit_error_bar.gd" id="1_iel1e"]
+[ext_resource type="Texture2D" uid="uid://bx6irb1wbwt14" path="res://assets/textures/triangle.png" id="2_wfges"]
 
-[node name="HitErrorBar" type="Control"]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 3
+[node name="HitErrorBar" type="ColorRect"]
+custom_minimum_size = Vector2(50, 25)
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -15,15 +15,10 @@ offset_top = -25.0
 offset_right = 350.0
 grow_horizontal = 2
 grow_vertical = 0
+color = Color(0.6, 1, 0.368627, 1)
 script = ExtResource("1_iel1e")
 
-[node name="Inaccurate" type="ColorRect" parent="."]
-layout_mode = 2
-offset_right = 700.0
-offset_bottom = 25.0
-color = Color(0.6, 1, 0.368627, 1)
-
-[node name="Accurate" type="ColorRect" parent="Inaccurate"]
+[node name="Accurate" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
@@ -36,19 +31,41 @@ grow_vertical = 2
 size_flags_horizontal = 4
 color = Color(0.329412, 0.819608, 1, 1)
 
-[node name="Middle" type="ColorRect" parent="Inaccurate/Accurate"]
+[node name="Middle" type="ColorRect" parent="Accurate"]
 custom_minimum_size = Vector2(2, 0)
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -2.0
+offset_right = 2.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 0.490196)
+color = Color(0, 0, 0, 0.607843)
 
 [node name="PointContainer" type="Control" parent="."]
-layout_mode = 2
-anchors_preset = 0
-offset_right = 700.0
-offset_bottom = 25.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AverageMarker" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -13.0
+offset_top = -22.5
+offset_right = 13.0
+offset_bottom = -2.5
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 3.14159
+pivot_offset = Vector2(13, 0)
+texture = ExtResource("2_wfges")
+expand_mode = 1

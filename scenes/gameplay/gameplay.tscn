@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://duw1w1bhgtct6"]
+[gd_scene load_steps=20 format=3 uid="uid://duw1w1bhgtct6"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_3gk3b"]
 [ext_resource type="Texture2D" uid="uid://coxghef0nw6j6" path="res://assets/textures/screenshot387.jpg" id="1_hg67d"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://ex1rl72k684" path="res://assets/default_skin/scorebar-bg@2x.png" id="14_npcy7"]
 [ext_resource type="Texture2D" uid="uid://d15gp2oikqff3" path="res://assets/default_skin/scorebar-colour@2x.png" id="15_o6ggk"]
 [ext_resource type="Texture2D" uid="uid://c1p1gflvaar81" path="res://assets/default_skin/taiko-hit100.png" id="17_pqxbr"]
+[ext_resource type="PackedScene" uid="uid://y47vbpgb7qas" path="res://entites/gameplay/ui/hit_error_bar.tscn" id="17_sqh1n"]
 [ext_resource type="PackedScene" uid="uid://cx25nj2j45ujs" path="res://entites/global/mascot/mascot.tscn" id="17_w7oq0"]
 [ext_resource type="Texture2D" uid="uid://drwpakhqk5tm" path="res://assets/default_skin/taiko-hit0@2x.png" id="18_t1emc"]
 
@@ -317,6 +318,9 @@ grow_vertical = 2
 texture = ExtResource("18_t1emc")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="HitErrorBar" parent="ScoreManager" instance=ExtResource("17_sqh1n")]
+layout_mode = 1
 
 [node name="Mascot" parent="." instance=ExtResource("17_w7oq0")]
 layout_mode = 1

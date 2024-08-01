@@ -27,7 +27,7 @@ var current_combo := 0
 @onready var judgement_indicators : Node = $Judgements
 var judgement_indicator_tweens : Array = [null, null, null]
 
-#@onready var hit_error_bar: HitErrorBar = $HitErrorBar
+@onready var hit_error_bar: HitErrorBar = $HitErrorBar
 
 signal toast()
 var toast_values := [50,100,150,200,250,500,1000]
@@ -111,7 +111,7 @@ func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> 
 			else:
 				early_hits += 1
 	
-	#hit_error_bar.add_point(hit_time_difference)
+	hit_error_bar.add_point(hit_time_difference)
 	update_judgement(score_type)
 	update_visuals()
 
