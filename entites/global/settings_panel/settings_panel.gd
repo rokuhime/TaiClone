@@ -26,6 +26,15 @@ func _process(_delta):
 	elif position != Vector2(get_viewport_rect().size.x, 0) and visible == false:
 		visible = true
 
+# i hate this and you should too. temporary fix to make the settings not so intrusive with inputs
+func _input(event):
+	if not (event is InputEventKey) or event.is_echo() or !event.is_pressed():
+		return
+	
+	if event.keycode == KEY_ENTER and Global.focus_lock:
+		await get_tree().process_frame
+		Global.change_focus_state(false)
+
 func _unhandled_input(event):
 	if event is InputEventMouse or event.is_echo() or !event.is_pressed():
 		return
@@ -38,6 +47,7 @@ func _unhandled_input(event):
 	if not keychange_target.is_empty():
 		change_input_action(keychange_target, event)
 
+# toggle visibility of the panel with a lil sliding animation
 func toggle_visible():
 	is_visible = not is_visible
 	
@@ -53,6 +63,7 @@ func toggle_visible():
 
 func change_key(target := keychange_target):
 	if keychange_target.is_empty():
+		Global.change_focus_state(true)
 		keychange_target = target
 		keybind_list.get_node(target + "/Button").text = "..."
 		
@@ -72,6 +83,8 @@ func change_key(target := keychange_target):
 		keychange_target = ""
 		if keychange_timeout:
 			keychange_timeout.queue_free()
+		await get_tree().process_frame
+		Global.change_focus_state(false)
 
 func change_input_action(input_name: String, new_binding: InputEvent, called_by_user := true):
 	# ensure the keychange target is correct
@@ -94,3 +107,6 @@ func load_keybinds(keybinds) -> void:
 func change_player_name(new_name: String) -> void:
 	Global.player_name = new_name
 	Global.save_settings()
+
+func update_focus(is_focused := true) -> void:
+	Global.change_focus_state(is_focused)

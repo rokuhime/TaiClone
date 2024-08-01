@@ -92,6 +92,9 @@ func _process(_delta) -> void:
 						mascot.start_animation(mascot.SPRITETYPES.FAIL, current_bps, hit_object.timing)
 
 func _unhandled_input(event) -> void:
+	if Global.focus_lock:
+		return
+	
 	# back to song select
 	if event is InputEventKey and event.keycode == KEY_ESCAPE:
 		Global.get_root().change_to_results(score_manager.get_packaged_score())

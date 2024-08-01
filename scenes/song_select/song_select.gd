@@ -102,6 +102,10 @@ func _unhandled_input(event):
 	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
 		mod_panel.toggle_visual()
 	
+	# if were focused on a ui element, ignore any inputs
+	if Global.focus_lock:
+		return
+	
 	if listing_container.get_child_count() > 0:
 		# cycle through listings
 		if event.is_action_pressed("LeftKat"):

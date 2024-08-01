@@ -10,6 +10,7 @@ var root: Root
 var music: AudioStreamPlayer
 var volume_control: VolumeControl
 var settings_panel: SettingsPanel
+var focus_lock := false
 
 # consider; judgement timing array. you could have as many judgements as you want,
 # going from most accurate to inaccurate
@@ -161,3 +162,14 @@ func push_console(origin: String, message: String, urgency := -1) -> void:
 # shortcut to make smooth tweens consistent
 func create_smooth_tween() -> Tween:
 	return create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+
+# focus
+# kill focus
+# Viewport.gui_release_focus() 
+func change_focus_state(is_focused: bool) -> void:
+	print("focus changed to ", is_focused)
+	focus_lock = is_focused
+	
+	# if were disabling the focus, make sure to stop the current focus
+	if not focus_lock:
+		get_viewport().gui_release_focus()

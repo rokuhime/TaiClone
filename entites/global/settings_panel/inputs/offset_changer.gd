@@ -10,6 +10,7 @@ func _ready():
 func set_global_offset(new_offset: float, updated_from_spinbox := false):
 	Global.change_global_offset(new_offset / 1000.0)
 	update_visual(updated_from_spinbox)
+	Global.change_focus_state(false)
 
 func update_visual(updated_from_spinbox) -> void:
 	if updated_from_spinbox:

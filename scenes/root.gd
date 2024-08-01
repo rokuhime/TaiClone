@@ -231,4 +231,3 @@ func file_dropped(files: PackedStringArray) -> void:
 		change_state(GAMESTATE.SONG_SELECT)
 	current_state_node.create_new_listing(chart)
 	current_state_node.update_visual()
-
