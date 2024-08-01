@@ -16,7 +16,6 @@ var max_points := 20
 var current_point_index := 0
 var point_tweens := []
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	point_tweens.resize(max_points)
 	update_bar_size()
@@ -27,7 +26,7 @@ func update_bar_size():
 	size = inaccurate_size
 	accurate_rect.size = accurate_size
 	
-	# this will force it to be at the bottom unfortunately
+	# this will force it to be at the bottom
 	position.y = Global.get_root().size.y - size.y
 	# center accurate_rect
 	accurate_rect.set_position(Vector2((inaccurate_size.x - accurate_size.x) / 2.0, 0))

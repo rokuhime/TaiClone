@@ -45,6 +45,8 @@ var kat_audio := preload("res://assets/default_skin/h_kat.wav") as AudioStream
 var donfinisher_audio := preload("res://assets/default_skin/hf_don.wav") as AudioStream
 var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as AudioStream
 
+# -------- system -------
+
 func _ready() -> void:
 	music = Global.music
 	music.stream
@@ -92,7 +94,7 @@ func _process(_delta) -> void:
 						mascot.start_animation(mascot.SPRITETYPES.FAIL, current_bps, hit_object.timing)
 
 func _unhandled_input(event) -> void:
-	if Global.focus_lock:
+	if Global.focus_target:
 		return
 	
 	# back to song select
@@ -149,23 +151,86 @@ func _unhandled_input(event) -> void:
 			
 			play_audio(current_side_input, is_input_kat)
 
-# plays note audio
-func play_audio(input_side: SIDE, is_input_kat: bool):
-	var volume := 1.0
-	var stream_audio = kat_audio if is_input_kat else don_audio
-	match current_hitsound_state:
-		HITSOUND_STATES.NONE:
-			return
-		HITSOUND_STATES.FINISHER:
-			volume += 0.5
-			stream_audio = katfinisher_audio if is_input_kat else donfinisher_audio
+# -------- chart handling --------
+
+func load_chart(requested_chart: Chart) -> void:
+	# empty out existing hit objects and reset stats just incasies
+	for hobj in hit_object_container.get_children():
+		hobj.queue_free()
+	active_finisher_note = null 
+	score_manager.reset()
 	
-	# audio
-	var stream_pos_offset = 250 if input_side == SIDE.RIGHT else -250
-	var stream_position := Vector2(0, ProjectSettings.get_setting("display/window/size/viewport_height") / 2)
-	stream_position.x = ProjectSettings.get_setting("display/window/size/viewport_width") / 2 + stream_pos_offset
+	current_chart = requested_chart.load_hit_objects()
 	
-	audio_queuer.play_audio(stream_audio, stream_position, volume)
+	# add all hit objects to container
+	for hobj in requested_chart.hit_objects:
+		hit_object_container.add_child(hobj)
+	music.stream = requested_chart.audio
+	
+	# set skip time to the first hit object's timing
+	first_hobj_timing = get_first_hitobject().timing
+	
+	last_hobj_timing = current_chart.hit_objects[0].timing
+	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
+		last_hobj_timing += current_chart.hit_objects[0].length
+	
+	# ensure next note is correct and play
+	next_note_idx = current_chart.hit_objects.size() - 1
+	play_chart()
+
+func play_chart() -> void:
+	# error checks before starting to make sure chart is valid
+	if current_chart == null:
+		printerr("Gameplay: tried to play without a valid chart! abandoning...")
+		return
+	
+	if hit_object_container.get_child_count() <= 0:
+		printerr("Gameplay: tried to play a chart without notes! abandoning...")
+		return
+	
+	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	
+	# delay the chart if first note is less than 2 seconds into the song
+	var first_note_delay := 0.0
+	var first_hit_object = get_first_hitobject()
+	
+	if first_hit_object.timing < 2.0:
+		first_note_delay = 2.0 - first_hit_object.timing
+		current_play_offset += first_note_delay
+	
+	start_time = Time.get_ticks_msec() / 1000.0 + current_play_offset
+	playing = true
+	
+	# get first timing point and apply
+	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+		var hit_object = hit_object_container.get_child(i)
+		if hit_object is TimingPoint:
+			apply_timing_point(hit_object, start_time)
+			break
+	
+	# delay audio playing if theres a positive (late) offset
+	if first_note_delay:
+		await get_tree().create_timer(first_note_delay).timeout
+	music.play()
+
+func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
+	current_bps = 60.0 / timing_point.bpm
+	if timing_point.is_finisher != in_kiai:
+		in_kiai = timing_point.is_finisher
+	mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
+							current_bps, 
+							timing_point.timing - current_time)
+
+func skip_intro() -> void:
+	if current_time >= first_hobj_timing - 2.0:
+		return
+	var first_hit_object = get_first_hitobject()
+	
+	start_time -= first_hit_object.timing - 2.0 - current_time
+	music.seek(current_play_offset + first_hit_object.timing - 2.0)
+	mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
+
+# -------- hit object checks --------
 
 # give hitobject hit info, gets result, and applies score
 # returns true if hit was used on a note, otherwise returns false
@@ -237,65 +302,25 @@ func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) ->
 	target_hit_obj.visible = false
 	score_manager.add_score(target_hit_obj.timing - current_time, hit_result)
 
-func load_chart(requested_chart: Chart) -> void:
-	# empty out existing hit objects and reset stats just incasies
-	for hobj in hit_object_container.get_children():
-		hobj.queue_free()
-	active_finisher_note = null 
-	score_manager.reset()
-	
-	current_chart = requested_chart.load_hit_objects()
-	
-	# add all hit objects to container
-	for hobj in requested_chart.hit_objects:
-		hit_object_container.add_child(hobj)
-	music.stream = requested_chart.audio
-	
-	# set skip time to the first hit object's timing
-	first_hobj_timing = get_first_hitobject().timing
-	
-	last_hobj_timing = current_chart.hit_objects[0].timing
-	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
-		last_hobj_timing += current_chart.hit_objects[0].length
-	
-	# ensure next note is correct and play
-	next_note_idx = current_chart.hit_objects.size() - 1
-	play_chart()
+# -------- feedback -------
 
-func play_chart() -> void:
-	# error checks before starting to make sure chart is valid
-	if current_chart == null:
-		printerr("Gameplay: tried to play without a valid chart! abandoning...")
-		return
+# plays note audio
+func play_audio(input_side: SIDE, is_input_kat: bool):
+	var volume := 1.0
+	var stream_audio = kat_audio if is_input_kat else don_audio
+	match current_hitsound_state:
+		HITSOUND_STATES.NONE:
+			return
+		HITSOUND_STATES.FINISHER:
+			volume += 0.5
+			stream_audio = katfinisher_audio if is_input_kat else donfinisher_audio
 	
-	if hit_object_container.get_child_count() <= 0:
-		printerr("Gameplay: tried to play a chart without notes! abandoning...")
-		return
+	# audio
+	var stream_pos_offset = 250 if input_side == SIDE.RIGHT else -250
+	var stream_position := Vector2(0, ProjectSettings.get_setting("display/window/size/viewport_height") / 2)
+	stream_position.x = ProjectSettings.get_setting("display/window/size/viewport_width") / 2 + stream_pos_offset
 	
-	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-	
-	# delay the chart if first note is less than 2 seconds into the song
-	var first_note_delay := 0.0
-	var first_hit_object = get_first_hitobject()
-	
-	if first_hit_object.timing < 2.0:
-		first_note_delay = 2.0 - first_hit_object.timing
-		current_play_offset += first_note_delay
-	
-	start_time = Time.get_ticks_msec() / 1000.0 + current_play_offset
-	playing = true
-	
-	# get first timing point and apply
-	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
-		var hit_object = hit_object_container.get_child(i)
-		if hit_object is TimingPoint:
-			apply_timing_point(hit_object, start_time)
-			break
-	
-	# delay audio playing if theres a positive (late) offset
-	if first_note_delay:
-		await get_tree().create_timer(first_note_delay).timeout
-	music.play()
+	audio_queuer.play_audio(stream_audio, stream_position, volume)
 
 func update_input_indicator(part_index: int) -> void:
 	var indicator_target: Control = drum_indicator.get_children()[part_index]
@@ -306,22 +331,7 @@ func update_input_indicator(part_index: int) -> void:
 	drum_indicator_tweens[part_index] = create_tween()
 	drum_indicator_tweens[part_index].tween_property(indicator_target, "modulate:a", 0.0, 0.2).from(1.0)
 
-func skip_intro() -> void:
-	if current_time >= first_hobj_timing - 2.0:
-		return
-	var first_hit_object = get_first_hitobject()
-	
-	start_time -= first_hit_object.timing - 2.0 - current_time
-	music.seek(current_play_offset + first_hit_object.timing - 2.0)
-	mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
-
-func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
-	current_bps = 60.0 / timing_point.bpm
-	if timing_point.is_finisher != in_kiai:
-		in_kiai = timing_point.is_finisher
-	mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
-							current_bps, 
-							timing_point.timing - current_time)
+# -------- etc -------
 
 func get_first_hitobject() -> HitObject:
 	# get first hit object thats not a timing point

@@ -34,6 +34,8 @@ var navigation_bars_enabled := false
 	$NavigationBars/Top/HBoxContainer/RightInfo/TopLabel, $NavigationBars/Top/HBoxContainer/RightInfo/BottomLabel
 ]
 
+# -------- system -------
+
 func _ready():
 	get_window().size = Vector2i(1280, 720)
 	get_window().move_to_center()

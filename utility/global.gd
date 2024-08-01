@@ -1,7 +1,7 @@
 extends Node
 
 const CONVERTED_CHART_FOLDER := "user://ConvertedCharts"
-const SUPPORTED_CHART_FILETYPES := ["tc", "osu", "tja"]
+const SUPPORTED_CHART_FILETYPES := ["tc", "osu"]
 var chart_paths := []
 const GAMEPLAY_KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 var player_name := "Player"
@@ -10,7 +10,7 @@ var root: Root
 var music: AudioStreamPlayer
 var volume_control: VolumeControl
 var settings_panel: SettingsPanel
-var focus_lock := false
+var focus_target: Node
 
 # consider; judgement timing array. you could have as many judgements as you want,
 # going from most accurate to inaccurate
@@ -24,6 +24,8 @@ var global_offset := 0.0
 # lowest level of priority that will appear to console
 var console_filter := -2
 
+# -------- system -------
+
 func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + ProjectSettings.get_setting("application/config/version"), 0)
 
@@ -34,6 +36,8 @@ func _ready() -> void:
 	settings_panel = get_tree().get_first_node_in_group("SettingsPanel")
 	
 	load_settings()
+
+# -------- game management --------
 
 func get_chart_folders() -> Array:
 	return chart_paths + [CONVERTED_CHART_FOLDER]
@@ -87,45 +91,19 @@ func load_settings() -> void:
 	settings_panel.load_keybinds(keybinds)
 	push_console("Global", "Config loaded!")
 
-static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: int) -> float:
-	var acc_hit_count : float = (accurate_hits + float(inaccurate_hits / 2.0))
-	if acc_hit_count == 0:
-		return 0.0
-	return (acc_hit_count / float(accurate_hits + inaccurate_hits + miss_count)) * 100.0
-
-# shorthand to provide easy access to root
-func get_root() -> Root:
-	return root
+# -------- system --------
 
 func change_global_offset(new_offset: float) -> void:
 	global_offset = new_offset
 	save_settings()
 
-func get_hash(file_path: String) -> PackedByteArray:
-	# Start a SHA-256 context.
-	var ctx = HashingContext.new()
-	ctx.start(HashingContext.HASH_SHA256)
-	# Open the file to hash.
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	
-	# this is a little stupid thing for .tc files to ignore version and source
-	file.get_line()
-	file.get_line()
-	
-	# Update the context after reading each chunk.
-	while not file.eof_reached():
-		ctx.update(file.get_buffer(1028))
-	# Get the computed hash.
-	var res = ctx.finish()
-	file.close()
-	return res
-
-# roku note 2024-07-22
-# consider notification priority being the same as console priority, makes it easier to push notifs & have the console echo the same
-
 # simple function to color and timestamp console messages
 # -2 = step, -1 = generic, 0 = success, 1 = warning, 2 = error
 func push_console(origin: String, message: String, urgency := -1) -> void:
+	# roku note 2024-07-22
+	# consider notification priority being the same as console priority, 
+	# makes it easier to push notifs & have the console echo the same
+	
 	if console_filter > urgency:
 		return
 	
@@ -159,17 +137,45 @@ func push_console(origin: String, message: String, urgency := -1) -> void:
 	
 	print_rich(formatted_message)
 
+# mandatory for ui objects that take gameplay/menu input away from the user
+func change_focus(new_focus_target: Node = null) -> void:
+	focus_target = new_focus_target
+	
+	# if were disabling the focus, make sure to stop the current focus
+	if not focus_target:
+		get_viewport().gui_release_focus()
+
+# -------- etc --------
+
+# shortcut to provide easy access to root
+func get_root() -> Root:
+	return root
+
 # shortcut to make smooth tweens consistent
 func create_smooth_tween() -> Tween:
 	return create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
-# focus
-# kill focus
-# Viewport.gui_release_focus() 
-func change_focus_state(is_focused: bool) -> void:
-	print("focus changed to ", is_focused)
-	focus_lock = is_focused
+static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: int) -> float:
+	var acc_hit_count : float = (accurate_hits + float(inaccurate_hits / 2.0))
+	if acc_hit_count == 0:
+		return 0.0
+	return (acc_hit_count / float(accurate_hits + inaccurate_hits + miss_count)) * 100.0
+
+static func get_hash(file_path: String) -> PackedByteArray:
+	# Start a SHA-256 context.
+	var ctx = HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	# Open the file to hash.
+	var file = FileAccess.open(file_path, FileAccess.READ)
 	
-	# if were disabling the focus, make sure to stop the current focus
-	if not focus_lock:
-		get_viewport().gui_release_focus()
+	# this is a little stupid thing for .tc files to ignore version and source
+	file.get_line()
+	file.get_line()
+	
+	# Update the context after reading each chunk.
+	while not file.eof_reached():
+		ctx.update(file.get_buffer(1028))
+	# Get the computed hash.
+	var res = ctx.finish()
+	file.close()
+	return res

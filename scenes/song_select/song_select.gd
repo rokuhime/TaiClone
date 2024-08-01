@@ -103,7 +103,7 @@ func _unhandled_input(event):
 		mod_panel.toggle_visual()
 	
 	# if were focused on a ui element, ignore any inputs
-	if Global.focus_lock:
+	if Global.focus_target:
 		return
 	
 	if listing_container.get_child_count() > 0:

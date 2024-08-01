@@ -34,10 +34,6 @@ func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
 		get_parent().back_button_pressed()
 
-func get_accuracy() -> float:
-	var total = score_data["AccurateHits"] + score_data["InaccurateHits"] + score_data["MissCount"]
-	return total / (score_data["AccurateHits"] + (score_data["InaccurateHits"] / 2)) * 100
-
 func set_score(score: Dictionary) -> void:
 	score_data = score
 	

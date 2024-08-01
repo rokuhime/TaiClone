@@ -1,4 +1,3 @@
-# TODO: roku u GOTTA refactor this, its a web of strange starts and ends and needs cleaning up desperately
 class_name ChartPathChanger
 extends VBoxContainer
 
