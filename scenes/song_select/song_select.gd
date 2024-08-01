@@ -176,7 +176,7 @@ func apply_listing_data(listing: ChartListing) -> void:
 func transition_to_gameplay() -> void:
 	var selected_mods := mod_panel.get_selected_mods()
 	var auto_enabled = selected_mods.has(0)
-	Global.get_root().change_to_gameplay(listing_container.get_child(selected_listing_idx).chart, auto_enabled)
+	Global.get_root().change_to_gameplay(auto_enabled)
 
 func handle_listing_input(index: int) -> void:
 	if index == selected_listing_idx:
