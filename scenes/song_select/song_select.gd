@@ -1,7 +1,6 @@
 class_name SongSelect
 extends Control
 
-var music: AudioStreamPlayer
 var chart_listing_scene := preload("res://entites/songselect/chart_listing.tscn")
 @onready var mod_panel := $ModPanel as ModPanel
 
@@ -15,8 +14,6 @@ const TUCK_AMOUNT := 150.0
 const LISTING_MOVEMENT_TIME := 0.5
 
 func _ready():
-	music = get_tree().get_first_node_in_group("RootMusic")
-	
 	refresh_from_chart_folders()
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
@@ -174,34 +171,12 @@ func change_selected_listing(idx: int, exact := false) -> void:
 
 # applies bg/audio
 func apply_listing_data(listing: ChartListing) -> void:
-	Global.set_background(listing.chart.background)
-	
-	# play preview
-	if not listing.chart.audio:
-		return
-	
-	# if there is a currently playing song...
-	if music.stream:
-		# check if new song is .ogg, if the current song is .ogg aswell check it
-		if listing.chart.audio is AudioStreamOggVorbis and music.stream is AudioStreamOggVorbis:
-			if listing.chart.audio.packet_sequence.packet_data == music.stream.packet_sequence.packet_data:
-				return
-		
-		# if theyre both not .ogg
-		elif not music.stream is AudioStreamOggVorbis and not listing.chart.audio is AudioStreamOggVorbis:
-			# if the songs are the same, dont change
-			if music.stream.data == listing.chart.audio.data:
-				return
-	
-	# set song, get preview timing, and play
-	music.stream = listing.chart.audio
-	var prev_point: float = listing.chart.chart_info["PreviewPoint"] if listing.chart.chart_info["PreviewPoint"] else 0
-	music.play(clamp(prev_point, 0, music.stream.get_length()))
+	Global.get_root().update_current_chart(listing.chart)
 
 func transition_to_gameplay() -> void:
 	var selected_mods := mod_panel.get_selected_mods()
 	var auto_enabled = selected_mods.has(0)
-	get_tree().get_first_node_in_group("Root").change_to_gameplay(listing_container.get_child(selected_listing_idx).chart, auto_enabled)
+	Global.get_root().change_to_gameplay(listing_container.get_child(selected_listing_idx).chart, auto_enabled)
 
 func handle_listing_input(index: int) -> void:
 	if index == selected_listing_idx:

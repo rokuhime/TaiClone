@@ -1,6 +1,5 @@
 extends Control
 
-var current_chart: Chart
 var score_data: Dictionary
 
 @onready var score_label: Label = $MainPanel/VBoxContainer/Score/Value
@@ -20,15 +19,18 @@ var score_data: Dictionary
 func _ready() -> void:
 	# set navbar info
 	get_parent().set_navbar_buttons([])
+	# wait a frame to ensure it will update properly
 	await get_tree().process_frame
+	
+	var chart := Global.get_root().current_chart
 	get_parent().set_navbar_text([
-					current_chart.chart_info["Song_Title"] + " - " + current_chart.chart_info["Song_Artist"],
-					current_chart.chart_info["Chart_Title"] + " - " + current_chart.chart_info["Chart_Artist"],
+					chart.chart_info["Song_Title"] + " - " + chart.chart_info["Song_Artist"],
+					chart.chart_info["Chart_Title"] + " - " + chart.chart_info["Chart_Artist"],
 					"Played by %s" % Global.player_name,
 					Time.get_datetime_string_from_system(false, true)
 					])
 
-func _unhandled_input(event):
+func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
 		get_parent().back_button_pressed()
 

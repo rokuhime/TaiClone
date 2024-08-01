@@ -1,8 +1,6 @@
+# root of the scene; used for scene switching and things that persist between scenes
+class_name Root
 extends Control
-
-# roku note 2024-07-31
-# consider having the currently selected chart here; 
-# would make it much easier to pass chart data from menu to menu
 
 enum GAMESTATE { MAIN_MENU, SONG_SELECT, GAMEPLAY, RESULTS }
 const NAV_BAR_ENABLED_STATES := [GAMESTATE.SONG_SELECT, GAMESTATE.RESULTS]
@@ -15,6 +13,12 @@ var gamestate_scenes := [
 	load("res://scenes/results/results.tscn")
 ]
 
+# roku note 2024-08-01
+# how will you load different difficulties for local multiplayer? i dont know!
+# thats a problem for future roku
+var current_chart: Chart
+
+@onready var music: AudioStreamPlayer = $Music
 var default_background = load("res://assets/textures/dev_art/background.png")
 @onready var background := $Background
 @onready var default_sfx_audio_queuer: AudioQueuer = $AudioQueuer
@@ -157,17 +161,16 @@ func back_button_pressed() -> void:
 		_:
 			change_state(GAMESTATE.SONG_SELECT)
 
-func change_to_gameplay(requested_chart: Chart, auto_enabled: bool):
+func change_to_gameplay(auto_enabled: bool):
 	toggle_navigation_bars(false)
-	change_state(GAMESTATE.GAMEPLAY).load_chart(requested_chart)
+	change_state(GAMESTATE.GAMEPLAY).load_chart(current_chart)
 	current_state_node.auto_enabled = auto_enabled
 
-func change_to_results(requested_chart: Chart, score: Dictionary):
+func change_to_results(score: Dictionary):
 	if current_state != GAMESTATE.RESULTS:
 		# will automatically be done as its loaded atm
 		change_state(GAMESTATE.RESULTS)
 	current_state_node.set_score(score)
-	current_state_node.current_chart = requested_chart
 
 func refresh_song_select() -> void:
 	if current_state != GAMESTATE.SONG_SELECT:
@@ -176,6 +179,45 @@ func refresh_song_select() -> void:
 		return
 	toggle_navigation_bars(true)
 	current_state_node.refresh_listings_from_song_folders()
+
+# -------- chart ----------
+
+func update_current_chart(new_chart: Chart) -> void:
+	current_chart = new_chart
+	# if not in multiplayer or main menu or smthn,
+	set_background(current_chart.background)
+	update_music(current_chart.audio)
+
+# updates music
+func update_music(new_audio: AudioStream, use_curchart_preview_point := true) -> void:
+	if not new_audio:
+		return
+	
+	# if there is a currently playing song...
+	if music.stream:
+		# check if new song is .ogg, if the current song is .ogg aswell check it
+		if new_audio is AudioStreamOggVorbis and music.stream is AudioStreamOggVorbis:
+			if new_audio.packet_sequence.packet_data == music.stream.packet_sequence.packet_data:
+				return
+		
+		# if theyre both not .ogg
+		elif not music.stream is AudioStreamOggVorbis and not new_audio is AudioStreamOggVorbis:
+			# if the songs are the same, dont change
+			if music.stream.data == new_audio.data:
+				return
+	
+	# has to be different, set audio
+	music.stream = new_audio
+	
+	# get preview timing, and play
+	var prev_point := 0.0
+	if use_curchart_preview_point:
+		prev_point = current_chart.chart_info["PreviewPoint"] if current_chart.chart_info["PreviewPoint"] else 0
+	music.play(clamp(prev_point, 0, music.stream.get_length()))
+
+func on_music_end() -> void:
+	if current_state == GAMESTATE.SONG_SELECT:
+		music.play(current_chart.chart_info["PreviewPoint"])
 
 # -------- other ----------
 
@@ -190,7 +232,3 @@ func file_dropped(files: PackedStringArray) -> void:
 	current_state_node.create_new_listing(chart)
 	current_state_node.update_visual()
 
-# TODO: ...yeah i should really rework the current chart to go to root
-func on_music_end() -> void:
-	if current_state == GAMESTATE.SONG_SELECT:
-		$Music.play()

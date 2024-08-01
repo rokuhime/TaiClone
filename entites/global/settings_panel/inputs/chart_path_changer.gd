@@ -29,7 +29,6 @@ func add_path(chart_path: String, added_manually := false) -> void:
 		Global.chart_paths.append(chart_path)
 	if added_manually:
 		Global.save_settings()
-	#get_tree().get_first_node_in_group("Root").refresh_song_select()
 
 # called by path panels
 func select_path(target_path_panel: PathPanel) -> void:

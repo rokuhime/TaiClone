@@ -6,7 +6,7 @@ var chart_paths := []
 const GAMEPLAY_KEYS := ["LeftKat", "LeftDon", "RightDon", "RightKat"]
 var player_name := "Player"
 
-var root: Control
+var root: Root
 var music: AudioStreamPlayer
 var volume_control: VolumeControl
 var settings_panel: SettingsPanel
@@ -92,9 +92,9 @@ static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: i
 		return 0.0
 	return (acc_hit_count / float(accurate_hits + inaccurate_hits + miss_count)) * 100.0
 
-# shorthand to make setting bgs easier
-func set_background(new_background: Texture2D) -> void:
-	root.set_background(new_background)
+# shorthand to provide easy access to root
+func get_root() -> Root:
+	return root
 
 func change_global_offset(new_offset: float) -> void:
 	global_offset = new_offset
