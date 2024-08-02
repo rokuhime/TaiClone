@@ -13,6 +13,9 @@ var gamestate_scenes := [
 	load("res://scenes/results/results.tscn")
 ]
 
+@onready var blackout_overlay := $BlackoutOverlay
+var blackout_lock := false
+
 # roku note 2024-08-01
 # how will you load different difficulties for local multiplayer? i dont know!
 # thats a problem for future roku
@@ -44,7 +47,7 @@ func _ready():
 	
 	await get_tree().process_frame
 	toggle_navigation_bars(false, false)
-	change_state(GAMESTATE.MAIN_MENU)
+	change_state(GAMESTATE.MAIN_MENU, true)
 
 func _process(delta):
 	corner_info.text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
@@ -135,14 +138,17 @@ func get_navigation_bar_signals() -> Array:
 
 # -------- changing states ----------
 
-func change_state(requested_scene) -> Node:
+func change_state(requested_scene, hard_transition := false) -> Node:
+	if not hard_transition:
+		await blackout_transition(true)
+	
 	current_state = requested_scene
 	if current_state_node:
 		current_state_node.queue_free()
 	
 	var new_state_scene: Node
 	if requested_scene >= GAMESTATE.size():
-		printerr("Root: invalid index called to change_state(), voided current_state_node and bailed!")
+		Global.push_console("Root", "invalid index called to change_state(), voided current_state_node and bailed!", 2)
 		return
 	new_state_scene = gamestate_scenes[requested_scene].instantiate()
 	current_state_node = new_state_scene
@@ -154,7 +160,29 @@ func change_state(requested_scene) -> Node:
 	else:
 		toggle_navigation_bars(false, false)
 	
+	if not hard_transition:
+		blackout_transition(false)
 	return new_state_scene
+
+# courotine; await this whenever transitioning from state to state
+func blackout_transition(fade_in: bool) -> void:
+	# if currently transitioning, do not interupt it
+	if blackout_lock:
+		return
+	blackout_lock = true
+	# ensure its visible
+	blackout_overlay.visible = true
+	
+	var tween = create_tween()
+	tween.tween_property(blackout_overlay, "modulate:a", 1.0 if fade_in else 0.0, 0.25).from(0.0 if fade_in else 1.0)
+	await tween.finished
+	
+	# if its faded out, hide it to save processing power
+	if not fade_in:
+		blackout_overlay.visible = false
+	
+	# unlock and emit that its ready
+	blackout_lock = false
 
 func back_button_pressed() -> void:
 	match current_state:
@@ -165,13 +193,14 @@ func back_button_pressed() -> void:
 
 func change_to_gameplay(auto_enabled: bool):
 	toggle_navigation_bars(false)
-	change_state(GAMESTATE.GAMEPLAY).load_chart(current_chart)
+	await change_state(GAMESTATE.GAMEPLAY)
+	current_state_node.load_chart(current_chart)
 	current_state_node.auto_enabled = auto_enabled
 
 func change_to_results(score: Dictionary):
 	if current_state != GAMESTATE.RESULTS:
 		# will automatically be done as its loaded atm
-		change_state(GAMESTATE.RESULTS)
+		await change_state(GAMESTATE.RESULTS)
 	current_state_node.set_score(score)
 
 func refresh_song_select() -> void:
