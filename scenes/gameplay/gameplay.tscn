@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://duw1w1bhgtct6"]
+[gd_scene load_steps=21 format=3 uid="uid://duw1w1bhgtct6"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_3gk3b"]
 [ext_resource type="Texture2D" uid="uid://coxghef0nw6j6" path="res://assets/textures/screenshot387.jpg" id="1_hg67d"]
@@ -23,6 +23,11 @@
 font_size = 64
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_n4iru"]
+font_size = 48
+outline_size = 8
+outline_color = Color(0, 0, 0, 0.784314)
 
 [node name="Gameplay" type="Control" groups=["Gameplay"]]
 layout_mode = 3
@@ -321,6 +326,22 @@ stretch_mode = 5
 
 [node name="HitErrorBar" parent="ScoreManager" instance=ExtResource("17_sqh1n")]
 layout_mode = 1
+
+[node name="InaccurateIndicator" type="Label" parent="ScoreManager"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 294.0
+offset_top = -307.0
+offset_right = 429.0
+offset_bottom = -237.0
+grow_vertical = 2
+text = "EARLY"
+label_settings = SubResource("LabelSettings_n4iru")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Mascot" parent="." instance=ExtResource("17_w7oq0")]
 layout_mode = 1

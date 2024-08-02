@@ -1,3 +1,4 @@
+#TODO: separate this up, this is getting pretty bloated
 class_name ScoreManager
 extends Control
 
@@ -16,16 +17,18 @@ var current_combo := 0
 
 @onready var raw_info : Label = $RawInfo
 
-@onready var score_label : Label = $Score
-@onready var accuracy_label : Label = $Accuracy
-@onready var combo_label : Label = $Combo
+@onready var score_label: Label = $Score
+@onready var accuracy_label: Label = $Accuracy
+@onready var combo_label: Label = $Combo
 
-@onready var song_progress_bar : TextureProgressBar = $SongProgressMeter
-@onready var health_bar : TextureProgressBar = $Health
-@onready var combo_break_player : AudioStreamPlayer = $ComboBreak
+@onready var song_progress_bar: TextureProgressBar = $SongProgressMeter
+@onready var health_bar: TextureProgressBar = $Health
+@onready var combo_break_player: AudioStreamPlayer = $ComboBreak
 
-@onready var judgement_indicators : Node = $Judgements
-var judgement_indicator_tweens : Array = [null, null, null]
+@onready var judgement_indicators: Node = $Judgements
+var judgement_indicator_tweens: Array = [null, null, null]
+@onready var inaccurate_indicator: Label = $InaccurateIndicator
+var inaccurate_indicator_tween: Tween
 
 @onready var hit_error_bar: HitErrorBar = $HitErrorBar
 
@@ -112,6 +115,8 @@ func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> 
 				early_hits += 1
 	
 	hit_error_bar.add_point(hit_time_difference)
+	if score_type == 1:
+		update_inacc_indicator(hit_time_difference)
 	update_judgement(score_type)
 	update_visuals()
 
@@ -194,3 +199,12 @@ func get_packaged_score() -> Dictionary:
 	score_dict["LateHits"] = late_hits
 	
 	return score_dict
+
+func update_inacc_indicator(hit_time_difference: float) -> void:
+	inaccurate_indicator.text = "EARLY" if hit_time_difference > 0 else "LATE"
+	inaccurate_indicator.modulate = Color("8aa7ff") if hit_time_difference > 0 else Color("ff8a8a")
+	
+	if inaccurate_indicator_tween:
+		inaccurate_indicator_tween.kill()
+	inaccurate_indicator_tween = Global.create_smooth_tween()
+	inaccurate_indicator_tween.tween_property(inaccurate_indicator, "modulate:a", 0.0, 0.5).from(1.0)
