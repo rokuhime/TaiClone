@@ -199,15 +199,12 @@ func change_to_gameplay(auto_enabled: bool):
 
 func change_to_results(score: Dictionary):
 	if current_state != GAMESTATE.RESULTS:
-		# will automatically be done as its loaded atm
 		await change_state(GAMESTATE.RESULTS)
 	current_state_node.set_score(score)
 
 func refresh_song_select() -> void:
 	if current_state != GAMESTATE.SONG_SELECT:
-		# will automatically be done as its loaded atm
 		change_state(GAMESTATE.SONG_SELECT)
-		return
 	toggle_navigation_bars(true)
 	current_state_node.refresh_listings_from_song_folders()
 

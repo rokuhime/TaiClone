@@ -81,12 +81,36 @@ func refresh_from_chart_folders(hard_update := false) -> void:
 				populate_from_chart_folder(folder.path_join(chart_folder))
 				
 	Global.push_console("SongSelect", "done refreshing charts!", 0)
-	update_visual(true)
+	sort_listings(ListingSort.SORT_TYPES.SONG_NAME)
 	
 	if listing_container.get_child_count():
 		no_charts_warning.visible = false
 		return
 	no_charts_warning.visible = true
+
+func sort_listings(sort_type: ListingSort.SORT_TYPES) -> void:
+	Global.push_console("SongSelect", "sorting listings by %s!" % str(sort_type))
+	
+	# use godot's built in array sort
+	var sorted_listings := listing_container.get_children()
+	sorted_listings.sort_custom(ListingSort.get_sort_callable(sort_type))
+	
+	# adjust listings in listing_container to match sorted_listings order
+	var i := 1
+	var sorted := false
+	
+	while not sorted:
+		# assume sorted until proven wrong
+		sorted = true
+		for listing in listing_container.get_children():
+			if listing.get_index() != sorted_listings.find(listing):
+				# had to change index of listing, change bool back to false
+				sorted = false
+				listing_container.move_child(listing, sorted_listings.find(listing))
+		i += 1
+	
+	Global.push_console("SongSelect", "sorted after %s attempts!" % i)
+	update_visual(true)
 
 # creates listings from a folder containing chart files
 func populate_from_chart_folder(folder_path: String) -> void:
