@@ -27,14 +27,23 @@ func _ready():
 	button_signals[0].connect(mod_panel.toggle_visual)
 	button_signals[2].connect(transition_to_gameplay)
 	
+	# if listings exist, apply listing data
 	if listing_container.get_child_count():
-		apply_listing_data(listing_container.get_child(0))
+		# if theres a current chart loaded, try to jump to it
+		if Global.get_root().current_chart:
+			var current_chart_listing_idx := find_listing_by_chart(Global.get_root().current_chart)
+			change_selected_listing(current_chart_listing_idx, true)
+		
+		# if theres no current chart, just load the first listing
+		else:
+			apply_listing_data(listing_container.get_child(0))
 	update_visual(true)
 
 func _unhandled_input(event) -> void:
 	# refresh listings
 	if event is InputEventKey and event.keycode == KEY_F5 and event.is_pressed():
 		refresh_from_chart_folders(true)
+		change_selected_listing(0, true)
 	
 	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
 		mod_panel.toggle_visual()
@@ -123,7 +132,8 @@ func populate_from_chart_folder(folder_path: String) -> void:
 			var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
 			if chart:
 				# ensure were not making a duplicate listing before adding
-				if not listing_exists(chart):
+				# since not found == -1, add 1 to treat it as a boolean
+				if not bool(find_listing_by_chart(chart) + 1):
 					Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
 						chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]],
 						-2)
@@ -143,13 +153,13 @@ func create_listing(chart: Chart) -> ChartListing:
 	
 	return listing
 
-# goes through existing chart listings, returns true if a chart's hash is the same as the given chart
-func listing_exists(chart: Chart) -> bool:
+# goes through existing chart listings, returns the index if a chart's hash is the same as the given chart
+func find_listing_by_chart(chart: Chart) -> int:
 	for listing in listing_container.get_children():
 		if listing is ChartListing:
 			if chart.hash == listing.chart.hash:
-				return true
-	return false
+				return listing.get_index()
+	return -1
 
 # -------- changing listing position/selection -------
 
