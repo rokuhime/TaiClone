@@ -26,6 +26,29 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_wtfc7")
 
+[node name="no_charts_warning" type="RichTextLabel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -386.0
+offset_top = -167.0
+offset_right = 386.0
+offset_bottom = 167.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[center][font_size=48]...It's quite empty in here, innit?[/font_size]
+
+[font_size=32]Press [b]Ctrl + O[/b] to open options at any time.
+Add a chart path (folder with 5-10 osu! beatmaps),
+and hit F5 to load them.
+If you ever need to delete charts, delete them from the [i]ConvertedCharts[/i] folder."
+fit_content = true
+
 [node name="ListingContainer" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 6

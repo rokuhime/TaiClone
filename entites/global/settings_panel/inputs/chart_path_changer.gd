@@ -38,6 +38,9 @@ func select_path(target_path_panel: PathPanel) -> void:
 	selected_path_panel.self_modulate.v = 1
 
 func delete_selected_path() -> void:
+	if not selected_path_panel:
+		return
+	
 	Global.chart_paths.erase(selected_path_panel.get_child(0).text)
 	selected_path_panel.queue_free()
 	Global.save_settings()

@@ -13,6 +13,8 @@ const LISTING_SEPARATION := 10.0
 const TUCK_AMOUNT := 150.0
 const LISTING_MOVEMENT_TIME := 0.5
 
+@onready var no_charts_warning := $no_charts_warning
+
 # -------- system -------
 
 func _ready():
@@ -77,6 +79,11 @@ func refresh_from_chart_folders(hard_update := false) -> void:
 				
 	Global.push_console("SongSelect", "done refreshing charts!", 0)
 	update_visual(true)
+	
+	if listing_container.get_child_count():
+		no_charts_warning.visible = false
+		return
+	no_charts_warning.visible = true
 
 # creates listings from a folder containing chart files
 func populate_from_chart_folder(folder_path: String) -> void:
