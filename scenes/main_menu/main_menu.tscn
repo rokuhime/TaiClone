@@ -1,0 +1,66 @@
+[gd_scene load_steps=4 format=3 uid="uid://bpaia1xjeqcwl"]
+
+[ext_resource type="Script" path="res://scenes/main_menu/main_menu.gd" id="1_e8slx"]
+[ext_resource type="Texture2D" uid="uid://doee3tjs67sb0" path="res://assets/textures/dev_art/logo-long.png" id="1_ybipj"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_8sodk"]
+font_size = 48
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_e8slx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -210.0
+offset_right = 250.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Logo" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(750, 200)
+layout_mode = 2
+texture = ExtResource("1_ybipj")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Splash" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "asdasdasda"
+label_settings = SubResource("LabelSettings_8sodk")
+horizontal_alignment = 1
+
+[node name="Buffer" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="Buttons" type="VBoxContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 15
+
+[node name="PlayButton" type="Button" parent="VBoxContainer/Buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Play"
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer/Buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Options"
+
+[connection signal="pressed" from="VBoxContainer/Buttons/PlayButton" to="." method="menu_button_pressed" binds= [0]]
+[connection signal="pressed" from="VBoxContainer/Buttons/OptionsButton" to="." method="menu_button_pressed" binds= [1]]

@@ -4,10 +4,10 @@ extends Control
 
 enum GAMESTATE { MAIN_MENU, SONG_SELECT, GAMEPLAY, RESULTS }
 const NAV_BAR_ENABLED_STATES := [GAMESTATE.SONG_SELECT, GAMESTATE.RESULTS]
-var current_state := GAMESTATE.MAIN_MENU
+var current_state: GAMESTATE
 var current_state_node: Node
 var gamestate_scenes := [
-	null,
+	load("res://scenes/main_menu/main_menu.tscn"),
 	load("res://scenes/song_select/song_select.tscn"),
 	load("res://scenes/gameplay/gameplay.tscn"),
 	load("res://scenes/results/results.tscn")
@@ -44,7 +44,7 @@ func _ready():
 	
 	await get_tree().process_frame
 	toggle_navigation_bars(false, false)
-	change_state(GAMESTATE.SONG_SELECT)
+	change_state(GAMESTATE.MAIN_MENU)
 
 func _process(delta):
 	corner_info.text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
@@ -159,7 +159,7 @@ func change_state(requested_scene) -> Node:
 func back_button_pressed() -> void:
 	match current_state:
 		GAMESTATE.SONG_SELECT:
-			pass
+			change_state(GAMESTATE.MAIN_MENU)
 		_:
 			change_state(GAMESTATE.SONG_SELECT)
 

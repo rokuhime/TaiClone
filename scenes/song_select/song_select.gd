@@ -38,6 +38,9 @@ func _unhandled_input(event) -> void:
 	
 	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
 		mod_panel.toggle_visual()
+		
+	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
+		Global.get_root().back_button_pressed()
 	
 	# if were focused on a ui element, ignore any inputs
 	if Global.focus_target:
