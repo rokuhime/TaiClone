@@ -50,6 +50,7 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 15
 alignment = 1
 
 [node name="Login" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
@@ -216,6 +217,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Remove"
 
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/ChartPathChanger"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open ConvertedCharts Directory"
+
 [node name="Offset" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("1_2j0hn")
@@ -256,6 +263,7 @@ alignment = 1
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton" to="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" method="show"]
 [connection signal="dir_selected" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="add_path" binds= [true]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/RemoveButton" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="delete_selected_path"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/Button" to="." method="open_converted_charts_folder"]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/HSlider" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [false]]
 [connection signal="focus_entered" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="." method="update_focus" binds= [NodePath(".")]]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [true]]

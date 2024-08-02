@@ -110,3 +110,7 @@ func change_player_name(new_name: String) -> void:
 # bridge to connect signals from objects on the SettingsPanel to Global
 func update_focus(new_target: Node) -> void:
 	Global.change_focus_state(new_target)
+
+func open_converted_charts_folder() -> void:
+	OS.shell_open(ProjectSettings.globalize_path("user://ConvertedCharts"))
+	Global.push_console("SettingsPanel", "Using Linux? Your file manager probably didnt open! ConvertedCharts is located here: \n%s" % ProjectSettings.globalize_path("user://ConvertedCharts"), )
