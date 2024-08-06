@@ -175,6 +175,7 @@ func load_chart(requested_chart: Chart) -> void:
 	
 	# ensure next note is correct and play
 	next_note_idx = current_chart.hit_objects.size() - 1
+	apply_skin(Global.get_root().current_skin)
 	play_chart()
 
 func play_chart() -> void:
@@ -338,3 +339,7 @@ func get_first_hitobject() -> HitObject:
 			continue
 		return hit_object
 	return null
+
+func apply_skin(skin_manager: SkinManager) -> void:
+	for hitobject in hit_object_container.get_children():
+		hitobject.apply_skin(skin_manager)

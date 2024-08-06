@@ -12,10 +12,15 @@ var tick_duration: float
 @onready var tick_container: Control = $Ticks
 var tick_scene := load("res://entites/gameplay/hitobjects/roll_tick.tscn")
 
+var colour := Color("FCB806")
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	self_modulate = Color("FCB806")
-	middle_node.modulate = Color("FCB806") # will make end node coloured too
+	update_visual()
+
+func update_visual() -> void:
+	self_modulate = colour
+	middle_node.modulate = colour # will make end node coloured too
 	
 	var body_length : float = length * speed * Global.resolution_multiplier
 	
@@ -24,6 +29,11 @@ func _ready() -> void:
 		body_length /= FINISHER_SCALE
 	
 	middle_node.size.x = body_length
+
+func apply_skin(skin: SkinManager) -> void:
+	colour = skin.roll_colour
+	# textures go here!
+	update_visual()
 
 func create_ticks() -> void:
 	var tick_count = int(ceil(length / tick_duration)) + 1

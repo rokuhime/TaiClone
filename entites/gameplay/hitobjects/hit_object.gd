@@ -33,3 +33,6 @@ func finish(type := -1, marker := true) -> void:
 		queue_free()
 		if type + 1:
 			emit_signal("score_added", type, marker)
+
+func apply_skin(skin_manager: SkinManager) -> void:
+	pass

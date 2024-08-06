@@ -4,11 +4,16 @@ extends HitObject
 var is_kat := false
 var last_side_hit := Gameplay.SIDE.NONE
 
+var don_colour := Color("EB452B")
+var kat_colour := Color("438EAD")
+
 func _ready() -> void:
-	self_modulate = Color("438EAD") if is_kat else Color("EB452B")
-	
-	if is_finisher:
-		scale = Vector2.ONE * FINISHER_SCALE
+	update_visual()
+
+# applies any skin stuff
+func update_visual() -> void:
+	self_modulate = kat_colour if is_kat else don_colour
+	scale = Vector2.ONE * FINISHER_SCALE if is_finisher else Vector2.ONE
 
 func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
 	var result := HIT_RESULT.INVALID
@@ -35,3 +40,9 @@ func miss_check(current_time: float) -> bool:
 		active = false
 		return true
 	return false
+	
+func apply_skin(skin: SkinManager) -> void:
+	don_colour = skin.don_colour
+	kat_colour = skin.kat_colour
+	# textures go here!
+	update_visual()
