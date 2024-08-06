@@ -282,7 +282,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Early" type="Label" parent="RightSide/JudgementPanel/GridContainer/LateEarlyCount"]
-self_modulate = Color(0.541176, 0.654902, 1, 1)
+modulate = Color(0.541176, 0.654902, 1, 1)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -292,7 +292,7 @@ horizontal_alignment = 1
 vertical_alignment = 2
 
 [node name="Late" type="Label" parent="RightSide/JudgementPanel/GridContainer/LateEarlyCount"]
-self_modulate = Color(1, 0.541176, 0.541176, 1)
+modulate = Color(1, 0.541176, 0.541176, 1)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -301,6 +301,7 @@ label_settings = SubResource("LabelSettings_brp07")
 horizontal_alignment = 1
 
 [node name="JudgeTimeline" type="Panel" parent="RightSide"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5

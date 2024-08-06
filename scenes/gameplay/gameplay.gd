@@ -44,9 +44,15 @@ var kat_audio := preload("res://assets/default_skin/h_kat.wav") as AudioStream
 var donfinisher_audio := preload("res://assets/default_skin/hf_don.wav") as AudioStream
 var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as AudioStream
 
+var temp_skin_var: SkinManager
+
 # -------- system -------
 
 func _ready() -> void:
+	# replace this with it being provided from root, wait for player class implementation first
+	temp_skin_var = Global.get_root().current_skin
+	score_manager.apply_skin(temp_skin_var)
+	
 	music = Global.music
 	music.stream
 	score_manager.connect("toast", Callable(mascot, "toast"))
@@ -175,7 +181,7 @@ func load_chart(requested_chart: Chart) -> void:
 	
 	# ensure next note is correct and play
 	next_note_idx = current_chart.hit_objects.size() - 1
-	apply_skin(Global.get_root().current_skin)
+	apply_skin(temp_skin_var)
 	play_chart()
 
 func play_chart() -> void:

@@ -29,6 +29,10 @@ func _ready() -> void:
 					"Played by %s" % Global.player_name,
 					Time.get_datetime_string_from_system(false, true)
 					])
+	
+	var skin := Global.get_root().current_skin
+	early_label.modulate = skin.early_colour
+	late_label.modulate = skin.late_colour
 
 func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
