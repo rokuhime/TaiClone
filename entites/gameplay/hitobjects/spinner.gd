@@ -21,6 +21,8 @@ var current_hits := 0
 
 @export var inside_rotation_speed := 0.0
 
+signal on_finished
+
 func _ready() -> void:
 	current_hits = needed_hits
 	hit_count_label.text = str(current_hits)
@@ -77,15 +79,15 @@ func finished() -> void:
 	hit_status = hit_type.FINISHED
 	#print("spinner finished, ", needed_hits - current_hits, " / ", needed_hits, " = ", float(needed_hits - current_hits) / float(needed_hits))
 	if current_hits:
-		if float(needed_hits - current_hits) / float(needed_hits) >= 0.5:
+		if float(needed_hits - current_hits) / float(needed_hits) >= 0.5: # half finished
 			# roku note 2024-07-02
 			# calling from tree here means multiplayer wouldnt work
 			# TODO: change this into a signal to connect to ScoreManager via Gameplay
-			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(1)
-		else:
-			get_tree().get_first_node_in_group("ScoreManager").add_manual_score(0)
-	else:
-		get_tree().get_first_node_in_group("ScoreManager").add_manual_score(2)
+			on_finished.emit(1)
+		else:# less than half finished (miss)
+			on_finished.emit(0)
+	else: # finished
+		on_finished.emit(2)
 	
 	# kill self
 	var alpha_tween = create_tween()

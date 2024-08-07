@@ -11,6 +11,7 @@ class_name SkinManager
 var skin_info := ["Name", "Author", "Version"]
 var filepath: String
 
+# TODO: make this like zachman's implementation? like a get_colour("name") function
 var don_colour := Color("EB452B")
 var kat_colour := Color("438EAD")
 var roll_colour := Color("FCB806")

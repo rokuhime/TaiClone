@@ -23,6 +23,9 @@ var toast_lock := false
 
 # restart the current animation cycle and update sprite to match the given state
 func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0):
+	if state == current_state and new_bps == bps:
+		return
+	
 	# update the anim_start_time to ensure it syncs properly
 	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency() - delay
 	# update and reset sprite

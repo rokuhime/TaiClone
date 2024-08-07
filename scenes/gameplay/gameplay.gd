@@ -2,16 +2,15 @@ class_name Gameplay
 extends Control
 
 # UI
+@onready var game_overlay := $GameOverlay as GameOverlay
 @onready var hit_object_container := $Track/HitPoint/HitObjectContainer
 @onready var audio_queuer := $AudioQueuer as AudioQueuer
-@onready var score_manager := $ScoreManager as ScoreManager
 var music: AudioStreamPlayer
 
 @onready var drum_indicator: Node = $Track/DrumIndicator
 var drum_indicator_tweens : Array = [null, null, null, null]
 
 # Mascot
-@onready var mascot := $Mascot as TextureRect
 var current_bps := 0.0	# beats per second
 
 var auto_enabled := false
@@ -26,6 +25,7 @@ var current_chart : Chart
 var current_play_offset := 0.0
 var playing := false
 var in_kiai := false
+var score_instance := ScoreInstance.new()
 
 var next_note_idx := 0
 
@@ -51,22 +51,21 @@ var temp_skin_var: SkinManager
 func _ready() -> void:
 	# replace this with it being provided from root, wait for player class implementation first
 	temp_skin_var = Global.get_root().current_skin
-	score_manager.apply_skin(temp_skin_var)
-	
+	game_overlay.apply_skin(temp_skin_var)
+	score_instance.combo_break.connect(game_overlay.on_combo_break)
 	music = Global.music
 	music.stream
-	score_manager.connect("toast", Callable(mascot, "toast"))
 
 func _process(_delta) -> void:
 	# update progress bar
-	score_manager.update_progress(current_time, first_hobj_timing, last_hobj_timing)
+	game_overlay.update_progress(current_time, first_hobj_timing, last_hobj_timing)
 	
 	if playing:
 		current_time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - start_time
 		
 		# chart end check
 		if current_time >= last_hobj_timing + 1:
-			Global.get_root().change_to_results(score_manager.get_packaged_score())
+			Global.get_root().change_to_results(score_instance)
 		
 		# move all hitobjects
 		for hobj in hit_object_container.get_children():
@@ -95,8 +94,6 @@ func _process(_delta) -> void:
 						return
 					
 					apply_score(hit_object, HitObject.HIT_RESULT.MISS)
-					if mascot.current_state != mascot.SPRITETYPES.FAIL:
-						mascot.start_animation(mascot.SPRITETYPES.FAIL, current_bps, hit_object.timing)
 
 func _unhandled_input(event) -> void:
 	if Global.focus_target:
@@ -104,7 +101,7 @@ func _unhandled_input(event) -> void:
 	
 	# back to song select
 	if event is InputEventKey and event.keycode == KEY_ESCAPE:
-		Global.get_root().change_to_results(score_manager.get_packaged_score())
+		Global.get_root().change_to_results(score_instance)
 	
 	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
 		if Input.is_action_just_pressed("SkipIntro") and playing:
@@ -141,18 +138,33 @@ func _unhandled_input(event) -> void:
 					if abs(hit_object_container.get_child(finisher_note_idx - 1).timing - current_time) > Global.ACC_TIMING:
 						return
 			
+			# roku note 2024-08-06
+			# something went horribly wrong and will need to be undone in regards to this function
+			# starts randomly missing all the time during hitchecks
 			for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 				var hit_object := hit_object_container.get_child(i) as HitObject
-				if hit_object != null:
-					# if its past being valid
-					if hit_object.timing - current_time > Global.INACC_TIMING:
-						break
-					elif hit_check(current_side_input, is_input_kat, hit_object):
-						if mascot.current_state != mascot.SPRITETYPES.IDLE and mascot.current_state != mascot.SPRITETYPES.KIAI:
-							mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
-								current_bps, 
-								hit_object.timing)
-						break
+				
+				# ensure hobj can be hit
+				if hit_object != null and !(hit_object is TimingPoint):
+					if hit_object.active:
+						var start_time := hit_object.timing - Global.INACC_TIMING
+						
+						# if its a hobj with length, check the end time
+						if hit_object is Roll or hit_object is Spinner:
+							var end_time: float = hit_object.timing + hit_object.length + Global.INACC_TIMING
+							
+							# if the end times hasnt passed, do a hitcheck
+							if end_time >= current_time:
+								hit_check(current_side_input, is_input_kat, hit_object)
+								continue # dont swallow input, continue
+						
+						# if the start is later than the current time...
+						if start_time > current_time:
+							break # stop checking hobj's
+						
+						# within bounds, do a hitcheck
+						if hit_check(current_side_input, is_input_kat, hit_object):
+							break
 			
 			play_audio(current_side_input, is_input_kat)
 
@@ -163,16 +175,18 @@ func load_chart(requested_chart: Chart) -> void:
 	for hobj in hit_object_container.get_children():
 		hobj.queue_free()
 	active_finisher_note = null 
-	score_manager.reset()
+	score_instance.reset()
 	
 	current_chart = requested_chart.load_hit_objects()
 	
 	# add all hit objects to container
 	for hobj in requested_chart.hit_objects:
 		hit_object_container.add_child(hobj)
+		if hobj is Spinner:
+			hobj.on_finished.connect(score_instance.add_manual_score)
 	music.stream = requested_chart.audio
 	
-	# set skip time to the first hit object's timing
+	# set skip time to the first hit object's tix.aming
 	first_hobj_timing = get_first_hitobject().timing
 	
 	last_hobj_timing = current_chart.hit_objects[0].timing
@@ -187,11 +201,13 @@ func load_chart(requested_chart: Chart) -> void:
 func play_chart() -> void:
 	# error checks before starting to make sure chart is valid
 	if current_chart == null:
-		printerr("Gameplay: tried to play without a valid chart! abandoning...")
+		Global.push_console("Gameplay", "tried to play without a valid chart! abandoning...", 2)
+		Global.get_root().change_to_results(score_instance)
 		return
 	
 	if hit_object_container.get_child_count() <= 0:
-		printerr("Gameplay: tried to play a chart without notes! abandoning...")
+		Global.push_console("Gameplay", "tried to play a chart without notes! abandoning...", 2)
+		Global.get_root().change_to_results(score_instance)
 		return
 	
 	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
@@ -223,9 +239,11 @@ func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 	current_bps = 60.0 / timing_point.bpm
 	if timing_point.is_finisher != in_kiai:
 		in_kiai = timing_point.is_finisher
-	mascot.start_animation(mascot.SPRITETYPES.KIAI if in_kiai else mascot.SPRITETYPES.IDLE, 
-							current_bps, 
-							timing_point.timing - current_time)
+	# roku note 2024-08-06
+	# this can be implemented as a miss check
+	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if in_kiai else Mascot.SPRITETYPES.IDLE, 
+								current_bps, 
+								timing_point.timing - current_time)
 
 func skip_intro() -> void:
 	if current_time >= first_hobj_timing - 2.0:
@@ -234,7 +252,7 @@ func skip_intro() -> void:
 	
 	start_time -= first_hit_object.timing - 2.0 - current_time
 	music.seek(current_play_offset + first_hit_object.timing - 2.0)
-	mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
+	game_overlay.mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
 
 # -------- hit object checks --------
 
@@ -242,7 +260,6 @@ func skip_intro() -> void:
 # returns true if hit was used on a note, otherwise returns false
 func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> bool:
 	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
-	
 	match hit_result:
 		HitObject.HIT_RESULT.HIT:
 			if target_hobj is Note:
@@ -280,10 +297,10 @@ func miss_check(next_note: HitObject) -> void:
 					get_tree().create_timer(1).timeout.connect(func(): miss_check(next_note))
 				# more than half hit
 				HitObject.HIT_RESULT.HIT:
-					score_manager.add_score(Global.INACC_TIMING, HitObject.HIT_RESULT.HIT)
+					score_instance.add_score(Global.INACC_TIMING, HitObject.HIT_RESULT.HIT)
 				# less than half hit
 				HitObject.HIT_RESULT.MISS:
-					score_manager.add_score(Global.INACC_TIMING + 5, HitObject.HIT_RESULT.MISS)
+					score_instance.add_score(Global.INACC_TIMING + 5, HitObject.HIT_RESULT.MISS)
 
 # finisher second hit check, returns if it was successful or not
 func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
@@ -292,7 +309,7 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 			# in time
 			if active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
 				# add score, reset finisher variables
-				score_manager.add_finisher_score(active_finisher_note.timing - current_time)
+				score_instance.add_finisher_score(active_finisher_note.timing - current_time)
 				active_finisher_note = null
 				current_hitsound_state = HITSOUND_STATES.NONE
 				return true
@@ -303,7 +320,8 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) -> void:
 	next_note_idx -= 1
 	target_hit_obj.visible = false
-	score_manager.add_score(target_hit_obj.timing - current_time, hit_result)
+	score_instance.add_score(target_hit_obj.timing - current_time, hit_result)
+	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, current_time)
 
 # -------- feedback -------
 

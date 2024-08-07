@@ -9,8 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://b46qmmhrha5hh" path="res://assets/default_skin/taikohitcircle.png" id="6_j2wxl"]
 [ext_resource type="Texture2D" uid="uid://cx3y7mnvf74yt" path="res://assets/default_skin/approachcircle.png" id="7_13i7v"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="9_tgle1"]
+[ext_resource type="Script" path="res://entites/gameplay/gameplay_ui.gd" id="10_4dpwm"]
 [ext_resource type="Texture2D" uid="uid://b0mb0jk6hdolv" path="res://assets/default_skin/taiko-hit300.png" id="12_cbuc6"]
-[ext_resource type="Script" path="res://entites/gameplay/score_manager.gd" id="13_evyiw"]
 [ext_resource type="AudioStream" uid="uid://hfq4u36ekcwg" path="res://assets/default_skin/combobreak.wav" id="13_kii7l"]
 [ext_resource type="Texture2D" uid="uid://ex1rl72k684" path="res://assets/default_skin/scorebar-bg@2x.png" id="14_npcy7"]
 [ext_resource type="Texture2D" uid="uid://d15gp2oikqff3" path="res://assets/default_skin/scorebar-colour@2x.png" id="15_o6ggk"]
@@ -166,17 +166,17 @@ script = ExtResource("9_tgle1")
 [node name="Music" type="AudioStreamPlayer" parent="." groups=["Music"]]
 bus = &"Music"
 
-[node name="ScoreManager" type="Control" parent="." groups=["ScoreManager"]]
+[node name="GameOverlay" type="Control" parent="." groups=["ScoreManager"]]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("13_evyiw")
+script = ExtResource("10_4dpwm")
 metadata/_edit_lock_ = true
 
-[node name="Score" type="Label" parent="ScoreManager"]
+[node name="Score" type="Label" parent="GameOverlay"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -190,7 +190,7 @@ text = "0000000"
 label_settings = SubResource("LabelSettings_u26yd")
 horizontal_alignment = 2
 
-[node name="Accuracy" type="Label" parent="ScoreManager"]
+[node name="Accuracy" type="Label" parent="GameOverlay"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -204,7 +204,7 @@ text = "00.00%"
 label_settings = SubResource("LabelSettings_u26yd")
 horizontal_alignment = 2
 
-[node name="SongProgressMeter" type="TextureProgressBar" parent="ScoreManager"]
+[node name="SongProgressMeter" type="TextureProgressBar" parent="GameOverlay"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -222,7 +222,7 @@ texture_under = ExtResource("6_j2wxl")
 texture_progress = ExtResource("6_j2wxl")
 tint_under = Color(0.2, 0.2, 0.2, 1)
 
-[node name="Combo" type="Label" parent="ScoreManager"]
+[node name="Combo" type="Label" parent="GameOverlay"]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -236,7 +236,7 @@ label_settings = SubResource("LabelSettings_u26yd")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Health" type="TextureProgressBar" parent="ScoreManager"]
+[node name="Health" type="TextureProgressBar" parent="GameOverlay"]
 layout_mode = 0
 offset_right = 1298.0
 offset_bottom = 40.0
@@ -245,11 +245,11 @@ value = 100.0
 texture_under = ExtResource("14_npcy7")
 texture_progress = ExtResource("15_o6ggk")
 
-[node name="ComboBreak" type="AudioStreamPlayer" parent="ScoreManager"]
+[node name="ComboBreak" type="AudioStreamPlayer" parent="GameOverlay"]
 stream = ExtResource("13_kii7l")
 bus = &"SFX"
 
-[node name="RawInfo" type="Label" parent="ScoreManager"]
+[node name="RawInfo" type="Label" parent="GameOverlay"]
 layout_mode = 1
 offset_left = 969.0
 offset_top = 2.0
@@ -259,7 +259,7 @@ text = "accurate: 0
 inaccurate: 0
 miss: 0"
 
-[node name="Judgements" type="Control" parent="ScoreManager"]
+[node name="Judgements" type="Control" parent="GameOverlay"]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -270,7 +270,7 @@ offset_right = 360.0
 offset_bottom = -97.0
 grow_vertical = 2
 
-[node name="Accurate" type="TextureRect" parent="ScoreManager/Judgements"]
+[node name="Accurate" type="TextureRect" parent="GameOverlay/Judgements"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -288,7 +288,7 @@ texture = ExtResource("12_cbuc6")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Inaccurate" type="TextureRect" parent="ScoreManager/Judgements"]
+[node name="Inaccurate" type="TextureRect" parent="GameOverlay/Judgements"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -306,7 +306,7 @@ texture = ExtResource("17_pqxbr")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Miss" type="TextureRect" parent="ScoreManager/Judgements"]
+[node name="Miss" type="TextureRect" parent="GameOverlay/Judgements"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -324,10 +324,10 @@ texture = ExtResource("18_t1emc")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HitErrorBar" parent="ScoreManager" instance=ExtResource("17_sqh1n")]
+[node name="HitErrorBar" parent="GameOverlay" instance=ExtResource("17_sqh1n")]
 layout_mode = 1
 
-[node name="InaccurateIndicator" type="Label" parent="ScoreManager"]
+[node name="InaccurateIndicator" type="Label" parent="GameOverlay"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 4
@@ -343,7 +343,7 @@ label_settings = SubResource("LabelSettings_n4iru")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Mascot" parent="." instance=ExtResource("17_w7oq0")]
+[node name="Mascot" parent="GameOverlay" instance=ExtResource("17_w7oq0")]
 layout_mode = 1
 anchors_preset = 4
 anchor_left = 0.0

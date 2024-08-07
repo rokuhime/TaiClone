@@ -1,6 +1,5 @@
 #TODO: separate this up, this is getting pretty bloated
-class_name ScoreManager
-extends Control
+class_name ScoreInstance
 
 var score := 0
 var accurate_hits := 0
@@ -15,32 +14,11 @@ var late_hits := 0
 var top_combo := 0
 var current_combo := 0
 
-@onready var raw_info : Label = $RawInfo
+signal combo_break
+signal score_updated
 
-@onready var score_label: Label = $Score
-@onready var accuracy_label: Label = $Accuracy
-@onready var combo_label: Label = $Combo
-
-@onready var song_progress_bar: TextureProgressBar = $SongProgressMeter
-@onready var health_bar: TextureProgressBar = $Health
-@onready var combo_break_player: AudioStreamPlayer = $ComboBreak
-
-@onready var judgement_indicators: Node = $Judgements
-var judgement_indicator_tweens: Array = [null, null, null]
-@onready var inaccurate_indicator: Label = $InaccurateIndicator
-var inaccurate_indicator_tween: Tween
-
-@onready var hit_error_bar: HitErrorBar = $HitErrorBar
-
-signal toast()
-var toast_values := [50,100,150,200,250,500,1000]
-
-# temp, move to skin manager
-var song_progress_back := Color("333333")
-var song_progress_front := Color("ffffff")
-var song_progress_skippable := Color("8bff85")
-var late_colour := Color("ff8a8a")
-var early_colour := Color("8aa7ff")
+func _init() -> void:
+	pass
 
 # -------- score management --------
 
@@ -55,7 +33,7 @@ func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> 
 	match score_type:
 		0:  # miss
 			if current_combo > 10:
-				combo_break_player.play()
+				combo_break.emit()
 			
 			current_combo = 0
 			miss_count += 1
@@ -73,8 +51,6 @@ func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> 
 		current_combo += 1
 		if current_combo > top_combo:
 			top_combo = current_combo
-		if toast_values.has(current_combo):
-			toast.emit()
 		
 		# if inaccurate, count late/early
 		if score_type == 1:
@@ -82,12 +58,6 @@ func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> 
 				late_hits += 1
 			else:
 				early_hits += 1
-	
-	hit_error_bar.add_point(hit_time_difference)
-	if score_type == 1:
-		update_inacc_indicator(hit_time_difference)
-	update_judgement(score_type)
-	update_visuals()
 
 # add second hit to a finisher's score
 func add_finisher_score(hit_time_difference: float) -> void:
@@ -99,15 +69,12 @@ func add_finisher_score(hit_time_difference: float) -> void:
 		f_inaccurate_hits += 1
 
 	score += 300 if accurate else 150
-	update_visuals()
+	score_updated.emit()
 
 # TODO: turn from int into enum, too lazy rn
 func add_manual_score(score_type: int):
 	match score_type:
 		0:  # miss
-			if current_combo > 10:
-				combo_break_player.play()
-			
 			current_combo = 0
 			miss_count += 1
 		
@@ -125,8 +92,9 @@ func add_manual_score(score_type: int):
 		if current_combo > top_combo:
 			top_combo = current_combo
 	
-	update_judgement(score_type)
-	update_visuals()
+	score_updated.emit()
+	#update_judgement(score_type)
+	#update_visuals()
 
 # reset score variables
 func reset() -> void:
@@ -140,86 +108,3 @@ func reset() -> void:
 	late_hits = 0
 	top_combo = 0
 	current_combo = 0
-
-# condences current score for result screen
-func get_packaged_score() -> Dictionary:
-	var score_dict := {}
-	score_dict["Score"] = score
-	score_dict["TopCombo"] = top_combo
-	
-	score_dict["AccurateHits"] = accurate_hits
-	score_dict["FAccurateHits"] = f_accurate_hits
-	score_dict["InaccurateHits"] = inaccurate_hits
-	score_dict["FInaccurateHits"] = f_inaccurate_hits
-	score_dict["MissCount"] = miss_count
-	
-	score_dict["EarlyHits"] = early_hits
-	score_dict["LateHits"] = late_hits
-	
-	return score_dict
-
-# -------- visual updates --------
-
-# TODO: move this out and make a ui manager
-func update_progress(cur_time: float, first_hobj_time: float, last_hobj_time: float):
-	# before 1st note
-	if cur_time < first_hobj_time:
-		# tint to show remaining time before starting
-		if song_progress_bar.tint_under != song_progress_skippable:
-			song_progress_bar.tint_under = song_progress_skippable
-			song_progress_bar.tint_progress = song_progress_back
-		
-		song_progress_bar.value = cur_time / first_hobj_time
-		return
-	
-	# change color incase not changed
-	if song_progress_bar.tint_under != song_progress_back:
-		song_progress_bar.tint_under = song_progress_back
-		song_progress_bar.tint_progress = song_progress_front
-	
-	song_progress_bar.value = (cur_time - first_hobj_time) / (last_hobj_time - first_hobj_time)
-
-func update_visuals() -> void:
-	score_label.text = "%07d" % score
-	combo_label.text = str(current_combo)
-	
-	var accuracy := Global.get_accuracy(accurate_hits, inaccurate_hits, miss_count)
-	
-	# tint accuracy golden for ss
-	if accuracy != 100 and accuracy_label.self_modulate != Color.WHITE:
-		accuracy_label.self_modulate = Color.WHITE
-	elif accuracy == 100 and accuracy_label.self_modulate == Color.WHITE:
-		accuracy_label.self_modulate = Color("fff096")
-	
-	accuracy_label.text = "%2.2f%%" % accuracy
-	
-	raw_info.text = "accurate: " + str(accurate_hits) + "\ninaccurate: " + str(inaccurate_hits) + "\nmiss: " + str(miss_count) + "\ntop combo: " + str(top_combo)
-
-# updates visual for hits (acc, inacc, miss)
-func update_judgement(type: int):
-	var target_judgement = judgement_indicators.get_child(2 - type)
-	
-	if judgement_indicator_tweens[type]:
-		judgement_indicator_tweens[type].kill()
-	
-	judgement_indicator_tweens[type] = create_tween()
-	judgement_indicator_tweens[type].tween_property(target_judgement, "modulate:a", 0.0, 0.4).from(1.0)
-
-func update_inacc_indicator(hit_time_difference: float) -> void:
-	# roku note 2024-08-06
-	# this is ugly and is dumb for memory. fix it!!!
-	var skin := Global.get_root().current_skin
-	inaccurate_indicator.text = "EARLY" if hit_time_difference > 0 else "LATE"
-	inaccurate_indicator.modulate = skin.early_colour if hit_time_difference > 0 else skin.late_colour
-	
-	if inaccurate_indicator_tween:
-		inaccurate_indicator_tween.kill()
-	inaccurate_indicator_tween = Global.create_smooth_tween()
-	inaccurate_indicator_tween.tween_property(inaccurate_indicator, "modulate:a", 0.0, 0.5).from(1.0)
-
-func apply_skin(skin: SkinManager) -> void:
-	song_progress_back = skin.song_progress_back
-	song_progress_front = skin.song_progress_front
-	song_progress_skippable = skin.song_progress_skippable
-	late_colour = skin.late_colour
-	early_colour = skin.early_colour

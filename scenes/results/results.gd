@@ -1,6 +1,6 @@
 extends Control
 
-var score_data: Dictionary
+var score: ScoreInstance
 
 @onready var score_label: Label = $MainPanel/VBoxContainer/Score/Value
 @onready var accuracy_label: Label = $MainPanel/VBoxContainer/HBoxContainer/Accuracy/Value
@@ -38,24 +38,24 @@ func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
 		Global.get_root().back_button_pressed()
 
-func set_score(score: Dictionary) -> void:
-	score_data = score
+func set_score(new_score: ScoreInstance) -> void:
+	score = new_score
 	
-	var accuracy := Global.get_accuracy(score_data["AccurateHits"], score_data["InaccurateHits"], score_data["MissCount"])
+	var accuracy := Global.get_accuracy(score.accurate_hits, score.inaccurate_hits, score.miss_count)
 	accuracy_label.text = "%0.2f%%" % accuracy
 	# tint accuracy golden for ss
 	if accuracy == 100:
 		accuracy_label.self_modulate = Color("fff096")
 	
-	score_label.text = "%07d" % score_data["Score"]
-	combo_label.text = str(score_data["TopCombo"])
-	max_combo_label.text = "/" + str(score_data["AccurateHits"] + score_data["InaccurateHits"] + score_data["MissCount"])
+	score_label.text = "%07d" % score.score
+	combo_label.text = str(score.top_combo)
+	max_combo_label.text = "/" + str(score.accurate_hits + score.inaccurate_hits + score.miss_count)
 	
-	accurate_label.text = str(score_data["AccurateHits"])
-	f_accurate_label.text = str(score_data["FAccurateHits"])
-	inaccurate_label.text = str(score_data["InaccurateHits"])
-	f_inaccurate_label.text = str(score_data["FInaccurateHits"])
-	miss_label.text = str(score_data["MissCount"])
+	accurate_label.text = str(score.accurate_hits)
+	f_accurate_label.text = str(score.f_accurate_hits)
+	inaccurate_label.text = str(score.inaccurate_hits)
+	f_inaccurate_label.text = str(score.f_inaccurate_hits)
+	miss_label.text = str(score.miss_count)
 	
-	early_label.text = str(score_data["EarlyHits"]) + " Early"
-	late_label.text = str(score_data["LateHits"]) + " Late"
+	early_label.text = str(score.early_hits) + " Early"
+	late_label.text = str(score.late_hits) + " Late"
