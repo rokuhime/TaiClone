@@ -12,26 +12,24 @@ extends TextureRect
 	load("res://assets/default_skin/pippidonclear6.png")]
 	
 enum SPRITETYPES {IDLE, KIAI, FAIL}
-var current_state := SPRITETYPES.IDLE
+var current_state: SPRITETYPES
 
 var anim_start_time := 0.0
 var current_frame := 0
-var bps := 3.0 # beats per second
+var bps := 2.0 # beats per second
 
 var toast_framerate := 0.2
 var toast_lock := false
 
 # restart the current animation cycle and update sprite to match the given state
 func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0):
-	if state == current_state and new_bps == bps:
-		return
-	
 	# update the anim_start_time to ensure it syncs properly
 	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency() - delay
 	# update and reset sprite
 	current_state = state
 	current_frame = 0
 	bps = new_bps
+	print("bps = ", bps)
 	
 	update_frame()
 

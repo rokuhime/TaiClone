@@ -46,34 +46,35 @@ func on_score_update(score: ScoreInstance, target_hit_obj: HitObject, hit_result
 	
 	match score_type:
 		0: # miss
-			update_mascot(Mascot.SPRITETYPES.FAIL, get_parent().current_bps)
+			if mascot.current_state != mascot.SPRITETYPES.FAIL:
+				update_mascot(Mascot.SPRITETYPES.FAIL, get_parent().current_bps)
 			return
 		1:
 			update_inacc_indicator(hit_time_difference)
 	if get_parent().in_kiai:
-		update_mascot(Mascot.SPRITETYPES.KIAI, get_parent().current_bps, target_hit_obj.timing)
+		if mascot.current_state != mascot.SPRITETYPES.KIAI:
+			update_mascot(Mascot.SPRITETYPES.KIAI, get_parent().current_bps, target_hit_obj.timing)
 	else:
-		update_mascot(Mascot.SPRITETYPES.IDLE, get_parent().current_bps, target_hit_obj.timing)
+		if mascot.current_state != mascot.SPRITETYPES.IDLE:
+			update_mascot(Mascot.SPRITETYPES.IDLE, get_parent().current_bps, target_hit_obj.timing)
 	
 	if toast_values.has(score.current_combo):
 		mascot.toast()
 
-func update_mascot(animation: Mascot.SPRITETYPES, new_bps: float, update_time := 0.0) -> void:
+func update_mascot(animation: Mascot.SPRITETYPES, new_bps: float, update_time := 0.0, forced := false) -> void:
 	match animation:
 		Mascot.SPRITETYPES.FAIL:
-			if mascot.current_state != mascot.SPRITETYPES.FAIL:
-				mascot.start_animation(mascot.SPRITETYPES.FAIL, new_bps)
+			mascot.start_animation(mascot.SPRITETYPES.FAIL, new_bps)
 		
 		Mascot.SPRITETYPES.IDLE:
-			if mascot.current_state != mascot.SPRITETYPES.IDLE:
-				mascot.start_animation(mascot.SPRITETYPES.IDLE, 
-					new_bps, 
-					update_time)
+			mascot.start_animation(mascot.SPRITETYPES.IDLE, 
+				new_bps, 
+				update_time)
+		
 		Mascot.SPRITETYPES.KIAI:
-			if mascot.current_state != mascot.SPRITETYPES.KIAI:
-				mascot.start_animation(mascot.SPRITETYPES.KIAI, 
-					new_bps, 
-					update_time)
+			mascot.start_animation(mascot.SPRITETYPES.KIAI, 
+				new_bps, 
+				update_time)
 
 # updates progress bar, done every _process() call under gameplay
 func update_progress(cur_time: float, first_hobj_time: float, last_hobj_time: float):
