@@ -17,7 +17,7 @@ const LISTING_MOVEMENT_TIME := 0.5
 
 # -------- system -------
 
-func _ready():
+func _ready() -> void:
 	refresh_from_chart_folders()
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
@@ -97,6 +97,15 @@ func refresh_from_chart_folders(hard_update := false) -> void:
 		return
 	no_charts_warning.visible = true
 
+# removes existing selected_via_mouse signals from listings and updates them for their new idx
+func update_listing_click_signal() -> void:
+	for listing in listing_container.get_children():
+		for sig in listing.get_signal_connection_list("selected_via_mouse"):
+			listing.disconnect("selected_via_mouse", sig["callable"])
+		listing.selected_via_mouse.connect(
+			handle_listing_input.bind( listing_container.get_children().find(listing) )
+		)
+
 func sort_listings(sort_type: ListingSort.SORT_TYPES) -> void:
 	Global.push_console("SongSelect", "sorting listings by %s!" % str(sort_type))
 	
@@ -118,6 +127,7 @@ func sort_listings(sort_type: ListingSort.SORT_TYPES) -> void:
 				listing_container.move_child(listing, sorted_listings.find(listing))
 		i += 1
 	
+	update_listing_click_signal()
 	Global.push_console("SongSelect", "sorted after %s attempts!" % i)
 	update_visual(true)
 

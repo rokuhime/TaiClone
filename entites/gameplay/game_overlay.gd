@@ -20,7 +20,6 @@ var inaccurate_indicator_tween: Tween
 
 @onready var mascot := $Mascot as TextureRect
 
-# temp, move to skin manager
 var song_progress_back := Color("333333")
 var song_progress_front := Color("ffffff")
 var song_progress_skippable := Color("8bff85")
