@@ -21,29 +21,10 @@ var bps := 2.0 # beats per second
 var toast_framerate := 0.2
 var toast_lock := false
 
-# restart the current animation cycle and update sprite to match the given state
-func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0):
-	# update the anim_start_time to ensure it syncs properly
-	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency() - delay
-	# update and reset sprite
-	current_state = state
-	current_frame = 0
-	bps = new_bps
-	print("bps = ", bps)
-	
-	update_frame()
+# -------- system --------
 
-func toast():
-	toast_lock = true
-	# await toast to end, then go back to appropriate sprite
-	for i in toast_sprites.size():
-		texture = toast_sprites[i]
-		await get_tree().create_timer(toast_framerate).timeout
-	
-	toast_lock = false
-	update_frame()
-
-func _process(delta):
+func _process(delta) -> void:
+	# if we are mid toast, ignore texture updates
 	if toast_lock:
 		return
 	
@@ -57,5 +38,29 @@ func _process(delta):
 		current_frame = new_frame
 		update_frame()
 
-func update_frame():
+# -------- animation --------
+
+# restart the current animation cycle and update sprite to match the given state
+func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0) -> void:
+	# update the anim_start_time to ensure it syncs properly
+	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency() - delay
+	# update and reset sprite
+	current_state = state
+	current_frame = 0
+	bps = new_bps
+	
+	update_frame()
+
+func toast() -> void:
+	toast_lock = true
+	# await toast to end, then go back to appropriate sprite
+	for i in toast_sprites.size():
+		texture = toast_sprites[i]
+		await get_tree().create_timer(toast_framerate).timeout
+	
+	toast_lock = false
+	update_frame()
+
+# updates texture of TextureRect
+func update_frame() -> void:
 	texture = sprites[int(current_state)][current_frame]
