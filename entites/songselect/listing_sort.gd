@@ -8,6 +8,6 @@ static func get_sort_callable(sort_type: SORT_TYPES) -> Callable:
 	return by_title
 
 static func by_title(listing_a: ChartListing, listing_b: ChartListing):
-	if listing_a.chart.chart_info["Song_Title"].nocasecmp_to(listing_b.chart.chart_info["Song_Title"]) < 0:
+	if listing_a.chart.chart_info["song_title"].nocasecmp_to(listing_b.chart.chart_info["song_title"]) < 0:
 		return true
 	return false

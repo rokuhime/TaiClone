@@ -4,7 +4,7 @@ class_name ChartLoader
 # sv types could be named "default", "slide", "scale"
 # respectively taiko, mania, piu
 
-const TC_VERSION := "v0.0.2"
+const TC_VERSION := "v0.0.3"
 enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 const SUPPORTED_FILETYPES := ["tc", "osu"]
 
@@ -55,10 +55,15 @@ static func convert_chart(file_path: String):
 			Global.push_console("ChartLoader", "parsing file as .osu...", -2)
 			origin = "osu"
 			
-			# variables that can be assigned while going through sections
-			# avoids pointless vars that could break stuff
-			var valid_variables := ["AudioFilename", "PreviewTime", "Title", "Artist", "Version", "Creator"]
-			var translated_variables := ["Audio_Path", "Preview_Point", "Song_Title", "Song_Artist", "Chart_Title", "Chart_Artist"]
+			# translates variables from .osu's formatting to .tc's formatting
+			var valid_variables := {
+				"Title": "song_title", 
+				"Artist": "song_artist", 
+				"Creator": "chart_title",
+				"Version": "chart_artist",
+				"AudioFilename": "audio_path", 
+				"PreviewTime": "preview_point", 
+				}
 			
 			while file.get_position() < file.get_length():
 				line = file.get_line().strip_edges()
@@ -81,15 +86,14 @@ static func convert_chart(file_path: String):
 						data_name = line.substr(0, line.find(':'))
 						data_value = line.substr(line.find(':') + 1, line.length()).strip_edges()
 
-						
 						if valid_variables.has(data_name):
-							chart_info[ translated_variables[valid_variables.find(data_name)] ] = data_value
+							chart_info[ valid_variables[data_name] ] = data_value
 						
 						elif data_name == "Mode":
-							if data_value == "1":
-								chart_info["Origin_Type"] = "Osu"
-							else:
-								chart_info["Origin_Type"] = "Convert"
+							if data_value == "1": # taiko chart
+								chart_info["origin"] = "Osu"
+							else: # other gamemodes
+								chart_info["origin"] = "Convert"
 						
 						elif data_name == "SliderMultiplier":
 							data_value = line.substr(line.find(':') + 1, line.length())
@@ -103,7 +107,7 @@ static func convert_chart(file_path: String):
 						if line_data[2].begins_with('"'):
 							var bg_filepath = line_data[2].trim_prefix('"').trim_suffix('"')
 							if bg_filepath.ends_with(".png") or bg_filepath.ends_with(".jpg"):
-								chart_info["Background"] = line_data[2].trim_prefix('"').trim_suffix('"')
+								chart_info["background_path"] = line_data[2].trim_prefix('"').trim_suffix('"')
 								
 						continue
 
@@ -245,7 +249,7 @@ static func convert_chart(file_path: String):
 	# top info
 	new_file.store_line("TaiClone Chart " + TC_VERSION)
 	if origin != null:
-		new_file.store_line("Origin: " + file_path)
+		new_file.store_line("origin_path: " + file_path)
 	
 	# chart info section
 	for ci in chart_info:
@@ -310,20 +314,23 @@ static func get_tc_metadata(file_path: String) -> Chart:
 		var data_value := line.substr(line.find(':') + 1, line.length()).strip_edges()
 		
 		match data_name:
-			"Origin":
+			"origin_path":
 				origin_file_path = data_value
-			
-			"Origin_Type":
-				chart_info["Origin_Type"] = data_value
+				chart_info["origin_path"] = data_value
 
-			"Audio_Path":
+			"origin":
+				chart_info["origin"] = data_value
+
+			"audio_path":
 				audio = AudioLoader.load_file(origin_file_path.get_base_dir().path_join(data_value))
+				chart_info["audio_path"] = origin_file_path.get_base_dir().path_join(data_value)
 
-			"Background":
+			"background_path":
 				background = ImageLoader.load_image(origin_file_path.get_base_dir().path_join(data_value))
+				chart_info["background_path"] = origin_file_path.get_base_dir().path_join(data_value)
 
-			"Preview_Point":
-				chart_info["PreviewPoint"] = int(data_value) / 1000.0
+			"preview_point":
+				chart_info["preview_point"] = int(data_value) / 1000.0
 
 			_:
 				chart_info[data_name] = data_value

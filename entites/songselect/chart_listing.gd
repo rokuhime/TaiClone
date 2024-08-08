@@ -22,8 +22,8 @@ func init(wanted_chart: Chart):
 
 func _ready():
 	if chart:
-		song_info_label.text = chart.chart_info["Song_Title"] + " - " + chart.chart_info["Song_Artist"]
-		chart_info_label.text = chart.chart_info["Chart_Title"] + " - " + chart.chart_info["Chart_Artist"]
+		song_info_label.text = chart.chart_info["song_title"] + " - " + chart.chart_info["song_artist"]
+		chart_info_label.text = chart.chart_info["chart_title"] + " - " + chart.chart_info["chart_artist"]
 		generate_chart_labels()
 	
 func _on_gui_input(event):
@@ -38,7 +38,7 @@ func generate_chart_labels():
 	# spesifically looking at .osu converts, checvk if its even made for taiko to be able to add warning
 	# OSU, CONVERT
 	
-	match chart.chart_info.get("Origin_Type", "").to_lower():
+	match chart.chart_info.get("origin", "").to_lower():
 		"osu":
 			add_chart_label(ChartLabelInfo.ORIGIN_OSU)
 		"convert":

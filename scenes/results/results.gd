@@ -24,8 +24,8 @@ func _ready() -> void:
 	
 	var chart := Global.get_root().current_chart
 	get_parent().set_navbar_text([
-					chart.chart_info["Song_Title"] + " - " + chart.chart_info["Song_Artist"],
-					chart.chart_info["Chart_Title"] + " - " + chart.chart_info["Chart_Artist"],
+					chart.chart_info["song_title"] + " - " + chart.chart_info["song_artist"],
+					chart.chart_info["chart_title"] + " - " + chart.chart_info["chart_artist"],
 					"Played by %s" % Global.player_name,
 					Time.get_datetime_string_from_system(false, true)
 					])

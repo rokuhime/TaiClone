@@ -243,12 +243,13 @@ func update_music(new_audio: AudioStream, use_curchart_preview_point := true) ->
 	# get preview timing, and play
 	var prev_point := 0.0
 	if use_curchart_preview_point:
-		prev_point = current_chart.chart_info["PreviewPoint"] if current_chart.chart_info["PreviewPoint"] else 0
+		prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
 	music.play(clamp(prev_point, 0, music.stream.get_length()))
 
 func on_music_end() -> void:
 	if current_state == GAMESTATE.SONG_SELECT:
-		music.play(current_chart.chart_info["PreviewPoint"])
+		var prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
+		music.play(clamp(prev_point, 0, music.stream.get_length()))
 
 # -------- other ----------
 

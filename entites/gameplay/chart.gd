@@ -1,12 +1,23 @@
 ## dummy class to hold a chart's data
 class_name Chart
 
-var file_path: String
+var file_path: String # for .tc file
 var audio
 var background
 var hash: PackedByteArray
 
-var chart_info := {}
+var chart_info := {
+	"song_title": "",
+	"song_artist": "",
+	"chart_title": "",
+	"chart_artist": "",
+	
+	"origin": "",
+	# "origin_path": "", (optional, for origins outside of taiclone)
+	"audio_path": "",
+	"background_path": "",
+	"preview_point": 0.0,
+}
 
 var timing_points := []
 var hit_objects := []

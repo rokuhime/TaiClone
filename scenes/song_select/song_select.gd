@@ -145,7 +145,7 @@ func populate_from_chart_folder(folder_path: String) -> void:
 				# since not found == -1, add 1 to treat it as a boolean
 				if not bool(find_listing_by_chart(chart) + 1):
 					Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
-						chart.chart_info["Song_Title"], chart.chart_info["Song_Artist"], chart.chart_info["Chart_Title"]],
+						chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
 						-2)
 					create_listing(chart)
 					continue
@@ -160,7 +160,6 @@ func create_listing(chart: Chart) -> ChartListing:
 	listing.init(chart)
 	listing.selected_via_mouse.connect(handle_listing_input.bind(listing_container.get_child_count()))
 	listing_container.add_child(listing)
-	
 	return listing
 
 # goes through existing chart listings, returns the index if a chart's hash is the same as the given chart
@@ -174,6 +173,9 @@ func find_listing_by_chart(chart: Chart) -> int:
 # -------- changing listing position/selection -------
 
 func change_selected_listing(idx: int, exact := false) -> void:
+	if not listing_container.get_child_count():
+		return
+	
 	last_selected_listing_idx = selected_listing_idx
 	
 	if exact:
@@ -202,8 +204,8 @@ func update_visual(hard_update := false) -> void:
 			# update navbar text if we're looking at the selected listing
 			if i == selected_listing_idx and listing.chart.chart_info:
 				get_parent().set_navbar_text([
-					listing.chart.chart_info["Song_Title"] + " - " + listing.chart.chart_info["Song_Artist"],
-					listing.chart.chart_info["Chart_Title"] + " - " + listing.chart.chart_info["Chart_Artist"]
+					listing.chart.chart_info["song_title"] + " - " + listing.chart.chart_info["song_artist"],
+					listing.chart.chart_info["chart_title"] + " - " + listing.chart.chart_info["chart_artist"]
 					])
 			
 			# set y position of listing
