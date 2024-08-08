@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b1x0cuqexagsr"]
+[gd_scene load_steps=15 format=3 uid="uid://b1x0cuqexagsr"]
 
 [ext_resource type="Script" path="res://scenes/root.gd" id="1_djqkq"]
 [ext_resource type="Texture2D" uid="uid://qyk77pakrphh" path="res://assets/textures/dev_art/background.png" id="2_ii7io"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dh836ppj76rb6" path="res://assets/textures/dev_art/brehd.png" id="5_krro0"]
 [ext_resource type="PackedScene" uid="uid://cd5gwotq82dtk" path="res://entites/global/volume_control/volume_control.tscn" id="5_ljgve"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="6_6gusu"]
+[ext_resource type="Script" path="res://entites/database_manager.gd" id="8_s0wf3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_w4s3d"]
 font_size = 32
@@ -259,6 +260,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+
+[node name="DatabaseManager" type="Node" parent="." groups=["DatabaseManager"]]
+script = ExtResource("8_s0wf3")
 
 [connection signal="finished" from="Music" to="." method="on_music_end"]
 [connection signal="pressed" from="NavigationBars/Bottom/Buttons/BackButton" to="." method="back_button_pressed"]

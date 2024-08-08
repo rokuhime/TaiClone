@@ -10,6 +10,7 @@ var root: Root
 var music: AudioStreamPlayer
 var volume_control: VolumeControl
 var settings_panel: SettingsPanel
+var database_manager: DatabaseManager
 var focus_target: Node
 
 # consider; judgement timing array. you could have as many judgements as you want,
@@ -34,6 +35,7 @@ func _ready() -> void:
 	music = get_tree().get_first_node_in_group("RootMusic")
 	volume_control = get_tree().get_first_node_in_group("VolumeControl")
 	settings_panel = get_tree().get_first_node_in_group("SettingsPanel")
+	database_manager = get_tree().get_first_node_in_group("DatabaseManager")
 	
 	load_settings()
 

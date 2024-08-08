@@ -59,8 +59,8 @@ static func convert_chart(file_path: String):
 			var valid_variables := {
 				"Title": "song_title", 
 				"Artist": "song_artist", 
-				"Creator": "chart_title",
-				"Version": "chart_artist",
+				"Creator": "chart_artist",
+				"Version": "chart_title",
 				"AudioFilename": "audio_path", 
 				"PreviewTime": "preview_point", 
 				}

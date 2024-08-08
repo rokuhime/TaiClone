@@ -160,6 +160,8 @@ func create_listing(chart: Chart) -> ChartListing:
 	listing.init(chart)
 	listing.selected_via_mouse.connect(handle_listing_input.bind(listing_container.get_child_count()))
 	listing_container.add_child(listing)
+	
+	Global.database_manager.add_chart(chart)
 	return listing
 
 # goes through existing chart listings, returns the index if a chart's hash is the same as the given chart
@@ -184,6 +186,7 @@ func change_selected_listing(idx: int, exact := false) -> void:
 		selected_listing_idx = wrap((selected_listing_idx + idx) % listing_container.get_child_count(), 0, listing_container.get_child_count())
 	apply_listing_data(listing_container.get_child(selected_listing_idx))
 	update_visual()
+	Global.database_manager.query_test(listing_container.get_child(selected_listing_idx).chart)
 
 # changes position of listings and listingcontainer
 # hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
