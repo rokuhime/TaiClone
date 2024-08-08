@@ -18,7 +18,7 @@ const LISTING_MOVEMENT_TIME := 0.5
 # -------- system -------
 
 func _ready() -> void:
-	refresh_from_chart_folders()
+	refresh_from_database()
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
 	# set navbar info
@@ -71,6 +71,36 @@ func _unhandled_input(event) -> void:
 # roku note 2024-07-22
 # u gotta come up with better names to distinguish btwn refresh_from_chart_folders() and populate_from_chart_folder()
 # just generally having a name for the chart's folder and a folder that holds charts would be REALLY USEFUL and LESS CONFUSING
+
+func refresh_from_database() -> void:
+	Global.push_console("SongSelect", "refreshing databased charts!")
+	var db_charts := Global.database_manager.get_all_charts()
+	for db_entry in db_charts:
+		var chart = Global.database_manager.get_chart(db_entry)
+	
+		if chart:
+			# ensure were not making a duplicate listing before adding
+			# since not found == -1, add 1 to treat it as a boolean
+			if not bool(find_listing_by_chart(chart) + 1):
+				Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+					-2)
+				create_listing(chart)
+				continue
+				
+			Global.push_console("SongSelect", "ignoring duplicate chart: %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 1)
+			continue
+		Global.push_console("SongSelect", "corrupted/null chart: %s - %s [%s]" % [chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 2)
+		continue
+	
+	Global.push_console("SongSelect", "done refreshing charts!", 0)
+	sort_listings(ListingSort.SORT_TYPES.SONG_NAME)
+	
+	if listing_container.get_child_count():
+		no_charts_warning.visible = false
+		return
+	no_charts_warning.visible = true
 
 # hard updates do every folder, otherwise only scan converted chart folder (temporary)
 func refresh_from_chart_folders(hard_update := false) -> void:
@@ -147,6 +177,9 @@ func populate_from_chart_folder(folder_path: String) -> void:
 					Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
 						chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
 						-2)
+					
+					if not Global.database_manager.exists_in_db(chart):
+						Global.database_manager.add_chart(chart)
 					create_listing(chart)
 					continue
 					
@@ -161,7 +194,6 @@ func create_listing(chart: Chart) -> ChartListing:
 	listing.selected_via_mouse.connect(handle_listing_input.bind(listing_container.get_child_count()))
 	listing_container.add_child(listing)
 	
-	Global.database_manager.add_chart(chart)
 	return listing
 
 # goes through existing chart listings, returns the index if a chart's hash is the same as the given chart
@@ -186,7 +218,8 @@ func change_selected_listing(idx: int, exact := false) -> void:
 		selected_listing_idx = wrap((selected_listing_idx + idx) % listing_container.get_child_count(), 0, listing_container.get_child_count())
 	apply_listing_data(listing_container.get_child(selected_listing_idx))
 	update_visual()
-	Global.database_manager.query_test(listing_container.get_child(selected_listing_idx).chart)
+	
+	print("\n", Global.database_manager.get_db_entry(listing_container.get_child(selected_listing_idx).chart), "\n")
 
 # changes position of listings and listingcontainer
 # hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected

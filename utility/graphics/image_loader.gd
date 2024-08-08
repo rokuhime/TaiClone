@@ -1,7 +1,7 @@
 class_name ImageLoader
 extends Node
 
-static func load_image(file_path: String, crop_transparent := true):
+static func load_image(file_path: String, crop_transparent := true) -> ImageTexture:
 	var image = Image.load_from_file(file_path)
 	if image == null:
 		Global.push_console("ImageLoader", "Failed to get file: %s" % file_path, 2)
