@@ -10,24 +10,23 @@ var music: AudioStreamPlayer
 @onready var drum_indicator: Node = $Track/DrumIndicator
 var drum_indicator_tweens : Array = [null, null, null, null]
 
-# Mascot
-var current_bps := 0.0	# beats per second
 
 var auto_enabled := false
 
 # Data
+var current_chart : Chart
+var current_play_offset := 0.0
+var score_instance := ScoreInstance.new()
+
 var current_time := 0.0
 var start_time := 0.0
 var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
 
-var current_chart : Chart
-var current_play_offset := 0.0
+var next_note_idx := 0
+var current_bps := 0.0 # beats per second
 var playing := false
 var in_kiai := false
-var score_instance := ScoreInstance.new()
-
-var next_note_idx := 0
 
 # Input
 enum SIDE { NONE, LEFT, RIGHT }
@@ -210,7 +209,7 @@ func play_chart() -> void:
 		Global.get_root().change_to_results(score_instance)
 		return
 	
-	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	current_play_offset = (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) / 1000.0
 	
 	# delay the chart if first note is less than 2 seconds into the song
 	var first_note_delay := 0.0
@@ -218,9 +217,9 @@ func play_chart() -> void:
 	
 	if first_hit_object.timing < 2.0:
 		first_note_delay = 2.0 - first_hit_object.timing
-		current_play_offset += first_note_delay
+		current_play_offset -= first_note_delay
 	
-	start_time = Time.get_ticks_msec() / 1000.0 + current_play_offset
+	start_time = Time.get_ticks_msec() / 1000.0 - current_play_offset
 	playing = true
 	
 	# get first timing point and apply
