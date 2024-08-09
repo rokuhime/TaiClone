@@ -116,11 +116,13 @@ func push_console(origin: String, message: String, urgency := -1) -> void:
 		"Global":
 			formatted_message = formatted_message % "green"
 		"Root":
-			formatted_message = formatted_message % "red"
+			formatted_message = formatted_message % "orange"
 		"ChartLoader":
 			formatted_message = formatted_message % "magenta"
 		"SongSelect":
 			formatted_message = formatted_message % "cyan"
+		"DatabaseManager":
+			formatted_message = formatted_message % "red"
 		_:
 			formatted_message = formatted_message % "gray"
 	

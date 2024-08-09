@@ -42,7 +42,7 @@ offset_left = -2.0
 offset_right = 2.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.607843)
+color = Color(1, 1, 0.533333, 1)
 
 [node name="PointContainer" type="Control" parent="."]
 layout_mode = 1

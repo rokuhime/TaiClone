@@ -7,15 +7,11 @@ const DB_PATH := "user://taiclone.db"
 # -------- system -------
 
 func _ready():
-	var db_exists := FileAccess.file_exists(DB_PATH)
-	db.path = DB_PATH
-	db.open_db()
-	if not db_exists:
-		initialize()
+	restart_db()
 
 # -------- setting up database -------
 
-func initialize() -> void:
+func initialize_tables() -> void:
 	var chart_table := {
 		"id": 				{"data_type": "int", "primary_key": true, "not_null": true, "auto_increment": true},
 		"song_title": 		{"data_type": "text"},
@@ -33,6 +29,16 @@ func initialize() -> void:
 	}
 	
 	db.create_table("charts", chart_table)
+
+# close and reopen db to check if its been edited outside of the program
+func restart_db() -> void:
+	db.close_db()
+	var db_exists := FileAccess.file_exists(DB_PATH)
+	db.path = DB_PATH
+	db.open_db()
+	if not db_exists:
+		initialize_tables()
+	Global.push_console("DatabaseManager", "Database restarted!")
 
 # -------- database interaction -------
 
@@ -52,10 +58,14 @@ func add_chart(chart: Chart) -> void:
 					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
 
 func update_chart(chart: Chart) -> void:
-	db.update_rows("charts", "id = %s" % get_db_entry(chart)["id"], chart_to_db_entry(chart))
-	Global.push_console("DatabaseManager", "Updated entry for %s - %s [%s]" % [
-					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-					-2)
+	var db_entry := get_db_entry(chart)
+	if not db_entry.is_empty():
+		db.update_rows("charts", "id = %s" % get_db_entry(chart)["id"], chart_to_db_entry(chart))
+		Global.push_console("DatabaseManager", "Updated entry for %s - %s [%s]" % [
+						chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+						-2)
+	else:
+		add_chart(chart)
 
 func exists_in_db(chart: Chart) -> bool:
 	db.query("select * from charts where chart_title like '%" + chart.chart_info["chart_title"] + "%'")
@@ -89,22 +99,35 @@ func get_all_charts() -> Array:
 func clear_invalid_entries() -> void: 
 	var db_charts := Global.database_manager.get_all_charts()
 	var existing_hashes := []
+	
 	for db_entry in db_charts:
-		# roku note 2024-08-08
-		# this is a future issue for when you can make taiclone files. how do we want to handle files from taiclone?
-		# we could just remove the origin variables, making it simpler
-		# thats what ive assumed here
-		var path: String = db_entry["origin_path"] if db_entry["origin"] else db_entry["file_path"]
-		if not FileAccess.file_exists(path):
+		# if the origin file is gone, delete the convert and the db entry
+		if not FileAccess.file_exists(db_entry["origin_path"]): 
+			Global.push_console("DatabaseManager", "Origin not found, removing: %s - %s [%s]" % [
+				db_entry["song_title"], db_entry["song_artist"], db_entry["chart_title"]],
+				 1)
+			DirAccess.remove_absolute(db_entry["file_path"])
 			Global.database_manager.delete_db_entry(db_entry)
 			continue
-		if existing_hashes.has(Global.get_hash(path)):
+		
+		# if an origin exists but the converts gone, remake the convert and update
+		elif not FileAccess.file_exists(db_entry["file_path"]):
+			Global.push_console("DatabaseManager", "Convert not found, recreating and updating: %s - %s [%s]" % [
+				db_entry["song_title"], db_entry["song_artist"], db_entry["chart_title"]],
+				 1)
+			var new_convert := ChartLoader.get_chart_path(db_entry["origin_path"])
+			update_chart(ChartLoader.get_tc_metadata(new_convert))
+			continue
+		
+		# if the chart already exists
+		if existing_hashes.has(Global.get_hash(db_entry["file_path"])):
 			Global.push_console("DatabaseManager", "Duplicate entry found, being removed: %s - %s [%s]" % [
 				db_entry["song_title"], db_entry["song_artist"], db_entry["chart_title"]],
 				 1)
 			Global.database_manager.delete_db_entry(db_entry)
 			continue
-		existing_hashes.append(Global.get_hash(path))
+		
+		existing_hashes.append(Global.get_hash(db_entry["file_path"]))
 
 # -------- parsing database info -------
 

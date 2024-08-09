@@ -19,6 +19,7 @@ enum UPDATE_DEPTH { CONVERTED_CHARTS, NEW_CHARTS, UPDATE_CHARTS }
 # -------- system -------
 
 func _ready() -> void:
+	Global.database_manager.restart_db()
 	refresh_from_database()
 	# this is laggy, dont leave on by default
 	#refresh_from_chart_folders(true) # check for updates
@@ -88,7 +89,6 @@ func refresh_from_database() -> void:
 					-2)
 				create_listing(chart)
 				continue
-				
 			Global.push_console("SongSelect", "ignoring duplicate chart: %s - %s [%s]" % [
 				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 1)
 			continue
@@ -110,6 +110,15 @@ func refresh_from_chart_folders(skip_existing_listings := false) -> void:
 		for listing in listing_container.get_children():
 			listing.queue_free()
 	
+	# check convertedcharts for charts that dont exist anymore
+	for converted_chart in DirAccess.get_files_at(Global.CONVERTED_CHART_FOLDER):
+		var chart := ChartLoader.get_tc_metadata(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
+		if chart.chart_info["origin_path"]:
+			if not FileAccess.file_exists(chart.chart_info["origin_path"]):
+				DirAccess.remove_absolute(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
+				Global.push_console("SongSelect", "deleted converted chart with invalid origin: %s - %s [%s]" % [
+							chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
+	
 	# cycle through chart folders to convert
 	Global.push_console("SongSelect", "scanning through global chart folders...")
 	for folder in Global.get_chart_folders():
@@ -120,15 +129,7 @@ func refresh_from_chart_folders(skip_existing_listings := false) -> void:
 		Global.push_console("SongSelect", "finding chart folders in: %s" % folder)
 		for chart_folder in DirAccess.get_directories_at(folder):
 			populate_from_chart_folder(folder.path_join(chart_folder), skip_existing_listings)
-				
-	# check convertedcharts for charts that dont exist anymore
-	for converted_chart in DirAccess.get_files_at(Global.CONVERTED_CHART_FOLDER):
-		var chart := ChartLoader.get_tc_metadata(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
-		if chart.chart_info["origin_path"]:
-			if not FileAccess.file_exists(chart.chart_info["origin_path"]):
-				DirAccess.remove_absolute(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
-				Global.push_console("SongSelect", "deleted converted chart with invalid origin: %s - %s [%s]" % [
-							chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
+	
 	
 	Global.database_manager.clear_invalid_entries()
 	Global.push_console("SongSelect", "done refreshing charts!", 0)
