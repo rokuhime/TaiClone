@@ -248,8 +248,9 @@ func update_music(new_audio: AudioStream, use_curchart_preview_point := true) ->
 
 func on_music_end() -> void:
 	if current_state == GAMESTATE.SONG_SELECT:
-		var prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
-		music.play(clamp(prev_point, 0, music.stream.get_length()))
+		if current_chart:
+			var prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
+			music.play(clamp(prev_point, 0, music.stream.get_length()))
 
 # -------- other ----------
 

@@ -74,8 +74,10 @@ func _unhandled_input(event) -> void:
 # just generally having a name for the chart's folder and a folder that holds charts would be REALLY USEFUL and LESS CONFUSING
 
 func refresh_from_database() -> void:
+	Global.push_console("SongSelect", "wiping existing listings...", -2)
 	for listing in listing_container.get_children():
 		listing.queue_free()
+	await get_tree().process_frame
 	
 	Global.database_manager.clear_invalid_entries()
 	Global.push_console("SongSelect", "refreshing databased charts!")
@@ -88,18 +90,20 @@ func refresh_from_database() -> void:
 			# ensure were not making a duplicate listing before adding
 			# since not found == -1, add 1 to treat it as a boolean
 			if not bool(find_listing_by_chart(chart) + 1):
-				Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
+				Global.push_console("SongSelect", "creating listing for %s - %s [%s]" % [
 					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
 					-2)
 				create_listing(chart)
 				continue
+			# if a duplicate listing is found...
 			Global.push_console("SongSelect", "ignoring duplicate chart: %s - %s [%s]" % [
 				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 1)
 			continue
 		Global.push_console("SongSelect", "corrupted/null chart: %s - %s [%s]" % [chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 2)
 		continue
 	
-	Global.push_console("SongSelect", "done refreshing charts!", 0)
+	Global.push_console("SongSelect", "done creating listings!", 0)
+	await get_tree().process_frame
 	sort_listings(ListingSort.SORT_TYPES.SONG_NAME)
 	
 	if listing_container.get_child_count():
@@ -112,15 +116,14 @@ func refresh_from_database() -> void:
 # memory leak might be originating from refresh_from_chart_folders(), not the conversion itsself
 # keep in mind its converting and storing everything as a listing here
 # what we could do is make it scan all the folders, add it to the db, then refresh the db for the actual listings
-## hard updates do every folder, otherwise only scan converted chart folder (temporary)
-func refresh_from_chart_folders(skip_existing_listings := false) -> void:
-	if not skip_existing_listings:
-		for listing in listing_container.get_children():
-			listing.queue_free()
-	
+## scan each chart folder for charts, adds/updates charts and removes invalid conversions
+func refresh_from_chart_folders() -> void:
+	Global.push_console("SongSelect", "cleaning converted charts folder...")
 	# check convertedcharts for charts that dont exist anymore
 	for converted_chart in DirAccess.get_files_at(Global.CONVERTED_CHART_FOLDER):
 		var chart := ChartLoader.get_tc_metadata(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
+		
+		# if origin listed, but doesn't exist...
 		if chart.chart_info["origin_path"]:
 			if not FileAccess.file_exists(chart.chart_info["origin_path"]):
 				DirAccess.remove_absolute(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
@@ -128,7 +131,7 @@ func refresh_from_chart_folders(skip_existing_listings := false) -> void:
 							chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
 	
 	# cycle through chart folders to convert
-	Global.push_console("SongSelect", "scanning through global chart folders...")
+	Global.push_console("SongSelect", "scanning through global chart folder for changes...")
 	for folder in Global.get_chart_folders():
 		if !DirAccess.dir_exists_absolute(folder) or folder.is_empty():
 			Global.push_console("SongSelect", "bad folder in global chart folder array: %s" % folder, 2)
@@ -136,21 +139,17 @@ func refresh_from_chart_folders(skip_existing_listings := false) -> void:
 		
 		Global.push_console("SongSelect", "finding chart folders in: %s" % folder)
 		for chart_folder in DirAccess.get_directories_at(folder):
-			populate_from_chart_folder(folder.path_join(chart_folder), skip_existing_listings)
+			populate_from_chart_folder(folder.path_join(chart_folder))
 	
+	Global.push_console("SongSelect", "done scanning chart folders!", 0)
 	
+	# load the newly fixed listings
+	await get_tree().process_frame
 	Global.database_manager.clear_invalid_entries()
-	Global.push_console("SongSelect", "done refreshing charts!", 0)
-	sort_listings(ListingSort.SORT_TYPES.SONG_NAME)
-	
-	if listing_container.get_child_count():
-		no_charts_warning.visible = false
-		try_selecting_current_chart()
-		return
-	no_charts_warning.visible = true
+	refresh_from_database()
 
-## creates listings from a folder containing chart files
-func populate_from_chart_folder(folder_path: String, skip_existing_listings := false) -> void:
+## creates db entries from a folder containing chart files
+func populate_from_chart_folder(folder_path: String) -> void:
 	if not DirAccess.dir_exists_absolute(folder_path) and folder_path != Global.CONVERTED_CHART_FOLDER:
 		Global.push_console("SongSelect", "attempted to populate from bad folder: %s" % folder_path, 2)
 	Global.push_console("SongSelect", "populating from: %s" % folder_path)
@@ -160,23 +159,19 @@ func populate_from_chart_folder(folder_path: String, skip_existing_listings := f
 		if not ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
 			continue
 		
-		# ensure it doesnt exist before attempting to add
-		if skip_existing_listings and bool(find_listing_by_filepath(folder_path.path_join(file)) + 1):
-			continue
-		
 		var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
 		if chart:
-			# update database
+			# if it doesnt exist in the db, make a new entry
 			if not Global.database_manager.exists_in_db(chart):
 				Global.database_manager.add_chart(chart)
-			else:
-				Global.database_manager.update_chart(chart)
-			create_listing(chart)
 			
-			Global.push_console("SongSelect", "added chart: %s - %s [%s]" % [
-				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-				-2)
+			# if the hash is different, assume it needs to be updated. otherwise assume its identical
+			else:
+				var db_entry := Global.database_manager.get_db_entry(chart)
+				if db_entry["hash"] != chart.hash:
+					Global.database_manager.update_chart(chart)
 			continue
+		
 		Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
 		continue
 

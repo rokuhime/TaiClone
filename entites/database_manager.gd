@@ -43,15 +43,7 @@ func restart_db() -> void:
 # -------- database interaction -------
 
 func add_chart(chart: Chart) -> void:
-	# fill in db dictionary
-	var db_entry := chart.chart_info
-	db_entry["file_path"] = chart.file_path
-	db_entry["hash"] = chart.hash
-	
-	# if theres no origin path (origin == .tc), set it to null
-	if not db_entry.has("origin_path"):
-		db_entry["origin_path"] = null
-	
+	var db_entry := chart_to_db_entry(chart)
 	# add the entry
 	db.insert_row("charts", db_entry)
 	Global.push_console("DatabaseManager", "Adding entry for %s - %s [%s]" % [
@@ -68,7 +60,7 @@ func update_chart(chart: Chart) -> void:
 		add_chart(chart)
 
 func exists_in_db(chart: Chart) -> bool:
-	db.query("select * from charts where chart_title like '%" + chart.chart_info["chart_title"] + "%'")
+	db.query_with_bindings("select * from charts where hash = ?", [chart.hash])
 	var possible_entries := db.query_result
 	for entry in possible_entries:
 		if entry["hash"] == chart.hash:
@@ -79,7 +71,7 @@ func exists_in_db(chart: Chart) -> bool:
 func get_db_entry(chart: Chart) -> Dictionary:
 	# check if theres an existing entry
 	# this is stupid. i wish i could search for the hash but thisll do for now
-	db.query("select * from charts where chart_title like '%" + chart.chart_info["chart_title"] + "%'")
+	db.query_with_bindings("select * from charts where hash = ?", [chart.hash])
 	var possible_entries := db.query_result
 	for entry in possible_entries:
 		if entry["hash"] == chart.hash:
@@ -97,6 +89,7 @@ func get_all_charts() -> Array:
 	return db.query_result
 
 func clear_invalid_entries() -> void: 
+	Global.push_console("DatabaseManager", "Clearing invalid entries...")
 	var db_charts := Global.database_manager.get_all_charts()
 	var existing_hashes := []
 	
@@ -129,12 +122,17 @@ func clear_invalid_entries() -> void:
 		
 		existing_hashes.append(Global.get_hash(db_entry["file_path"]))
 
-# -------- parsing database info -------
+# -------- converting db entries -------
 
 func chart_to_db_entry(chart: Chart) -> Dictionary:
 	var db_entry := chart.chart_info
 	db_entry["file_path"] = chart.file_path
 	db_entry["hash"] = chart.hash
+	
+	# if theres no origin path (origin == .tc), set it to null
+	if not db_entry.has("origin_path"):
+		db_entry["origin_path"] = null
+	
 	return db_entry
 
 # generates a chart variable from a database row
