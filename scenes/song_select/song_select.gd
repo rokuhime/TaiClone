@@ -20,7 +20,9 @@ enum UPDATE_DEPTH { CONVERTED_CHARTS, NEW_CHARTS, UPDATE_CHARTS }
 
 func _ready() -> void:
 	refresh_from_database()
-	refresh_from_chart_folders(true) # check for updates
+	# this is laggy, dont leave on by default
+	#refresh_from_chart_folders(true) # check for updates
+	
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
 	# set navbar info
@@ -66,9 +68,6 @@ func _unhandled_input(event) -> void:
 # u gotta come up with better names to distinguish btwn refresh_from_chart_folders() and populate_from_chart_folder()
 # just generally having a name for the chart's folder and a folder that holds charts would be REALLY USEFUL and LESS CONFUSING
 
-func remove_invalid_database_listings() -> void:
-	pass
-
 func refresh_from_database() -> void:
 	for listing in listing_container.get_children():
 		listing.queue_free()
@@ -107,8 +106,9 @@ func refresh_from_database() -> void:
 
 # hard updates do every folder, otherwise only scan converted chart folder (temporary)
 func refresh_from_chart_folders(skip_existing_listings := false) -> void:
-	for listing in listing_container.get_children():
-		listing.queue_free()
+	if not skip_existing_listings:
+		for listing in listing_container.get_children():
+			listing.queue_free()
 	
 	# cycle through chart folders to convert
 	Global.push_console("SongSelect", "scanning through global chart folders...")
@@ -181,32 +181,30 @@ func populate_from_chart_folder(folder_path: String, skip_existing_listings := f
 		Global.push_console("SongSelect", "attempted to populate from bad folder: %s" % folder_path, 2)
 	Global.push_console("SongSelect", "populating from: %s" % folder_path)
 	
+		
 	for file in DirAccess.get_files_at(folder_path):
-		if ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
-			# ensure an existing chart listing doesnt exist
-			var existing_listing_idx := find_listing_by_hash(Global.get_hash(folder_path + "/" + file))
-			if bool(existing_listing_idx + 1):
-				var chart: Chart = listing_container.get_child(existing_listing_idx).chart
-				Global.push_console("SongSelect", "skipping existing chart: %s - %s [%s]" % [
-					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-					-2)
-			
-			# if its a unique chart...
-			var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
-			if chart:
-				# update database
-				if not Global.database_manager.exists_in_db(chart):
-					Global.database_manager.add_chart(chart)
-				else:
-					Global.database_manager.update_chart(chart)
-				create_listing(chart)
-				
-				Global.push_console("SongSelect", "added chart: %s - %s [%s]" % [
-					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-					-2)
-				continue
-			Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
+		if not ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
 			continue
+		
+		# ensure it doesnt exist before attempting to add
+		if skip_existing_listings and bool(find_listing_by_filepath(folder_path.path_join(file)) + 1):
+			continue
+		
+		var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
+		if chart:
+			# update database
+			if not Global.database_manager.exists_in_db(chart):
+				Global.database_manager.add_chart(chart)
+			else:
+				Global.database_manager.update_chart(chart)
+			create_listing(chart)
+			
+			Global.push_console("SongSelect", "added chart: %s - %s [%s]" % [
+				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+				-2)
+			continue
+		Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
+		continue
 
 func create_listing(chart: Chart) -> ChartListing:
 	var listing := chart_listing_scene.instantiate() as ChartListing
@@ -225,10 +223,11 @@ func find_listing_by_chart(chart: Chart) -> int:
 				return listing.get_index()
 	return -1
 
-func find_listing_by_hash(hash: PackedByteArray) -> int:
+func find_listing_by_filepath(file_path: String) -> int:
 	for listing in listing_container.get_children():
 		if listing is ChartListing:
-			if hash == listing.chart.hash:
+			var listing_path: String = listing.chart.chart_info["origin_path"] if listing.chart.chart_info["origin"] else listing.chart.file_path
+			if file_path == listing_path:
 				return listing.get_index()
 	return -1
 

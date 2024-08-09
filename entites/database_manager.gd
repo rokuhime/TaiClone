@@ -88,6 +88,7 @@ func get_all_charts() -> Array:
 
 func clear_invalid_entries() -> void: 
 	var db_charts := Global.database_manager.get_all_charts()
+	var existing_hashes := []
 	for db_entry in db_charts:
 		# roku note 2024-08-08
 		# this is a future issue for when you can make taiclone files. how do we want to handle files from taiclone?
@@ -97,6 +98,13 @@ func clear_invalid_entries() -> void:
 		if not FileAccess.file_exists(path):
 			Global.database_manager.delete_db_entry(db_entry)
 			continue
+		if existing_hashes.has(Global.get_hash(path)):
+			Global.push_console("DatabaseManager", "Duplicate entry found, being removed: %s - %s [%s]" % [
+				db_entry["song_title"], db_entry["song_artist"], db_entry["chart_title"]],
+				 1)
+			Global.database_manager.delete_db_entry(db_entry)
+			continue
+		existing_hashes.append(Global.get_hash(path))
 
 # -------- parsing database info -------
 
