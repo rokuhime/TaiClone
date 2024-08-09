@@ -191,7 +191,6 @@ static func convert_chart(file_path: String):
 						var ex := []
 						
 						# find note type, and add nessacary values
-						
 						if bool(1 << 3 & int(line_data[3])): # spinner
 							ex.append(float(line_data[5]) / 1000 - time)
 							tc_type = NOTETYPE.SPINNER
@@ -204,7 +203,6 @@ static func convert_chart(file_path: String):
 							var length = float(line_data[7])
 							var repeats = int(line_data[6])
 							ex.append(length / (slider_multiplier * 100000.0 * current_timing["Velocity"]) * (60000.0 / current_timing["BPM"]) * repeats)
-							
 						
 						else:
 							# everything else is parsed as a note, don/kat based on hitsounding as expected
@@ -227,8 +225,6 @@ static func convert_chart(file_path: String):
 
 					_:
 						continue
-			# end of file
-			file.close()
 
 		"tc":
 			# tried to convert tc, ignore and bail
@@ -241,31 +237,31 @@ static func convert_chart(file_path: String):
 			Global.push_console("ChartLoader", "Tried to convert invalid file type: %s" % file_path, 1)
 			return -3
 	
+	# ensure file gets closed after use
+	if file.is_open():
+		file.close()
+	
 	# save newly made taiclone file
 	if not DirAccess.dir_exists_absolute("user://ConvertedCharts"):
 		DirAccess.make_dir_absolute("user://ConvertedCharts")
-	var new_file = FileAccess.open("user://ConvertedCharts" + file_path.trim_prefix(file_path.get_base_dir()) + ".tc", FileAccess.WRITE)
+	var tc_path := "user://ConvertedCharts" + file_path.trim_prefix(file_path.get_base_dir()) + ".tc"
+	var tc_file = FileAccess.open(tc_path, FileAccess.WRITE)
 	
 	# top info
-	new_file.store_line("TaiClone Chart " + TC_VERSION)
+	tc_file.store_line("TaiClone Chart " + TC_VERSION)
 	if origin != null:
-		new_file.store_line("origin_path: " + file_path)
+		tc_file.store_line("origin_path: " + file_path)
 	
 	# chart info section
 	for ci in chart_info:
-		new_file.store_line(str(ci) + ": " + chart_info[ci])
+		tc_file.store_line(str(ci) + ": " + chart_info[ci])
 	
-	# store timing points, then hit objects
-	new_file.store_line(get_object_string(hit_objects))
-	
-	# save path and close 
-	var new_path = new_file.get_path()
-	
-	new_file.close()
-	file.close()
+	# store objects in .tc file and close
+	tc_file.store_line(get_object_string(hit_objects))
+	tc_file.close()
 	
 	Global.push_console("ChartLoader", "Chart successfully converted!", -1)
-	return new_path
+	return tc_path
 
 ## gets metadata from a .tc file
 static func get_tc_metadata(file_path: String) -> Chart:

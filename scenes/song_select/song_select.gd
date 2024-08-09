@@ -35,6 +35,10 @@ func _ready() -> void:
 	# if listings exist, apply listing data
 	if listing_container.get_child_count():
 		try_selecting_current_chart()
+	
+	# if the music hasnt started playing (after results screen), start it back up
+	if not Global.get_root().music.get_playback_position():
+		Global.get_root().on_music_end()
 
 func _unhandled_input(event) -> void:
 	# refresh listings
@@ -63,7 +67,7 @@ func _unhandled_input(event) -> void:
 		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
 			transition_to_gameplay()
 
-# -------- loading listings -------
+# -------- scanning for charts -------
 
 # roku note 2024-07-22
 # u gotta come up with better names to distinguish btwn refresh_from_chart_folders() and populate_from_chart_folder()
@@ -104,7 +108,11 @@ func refresh_from_database() -> void:
 		return
 	no_charts_warning.visible = true
 
-# hard updates do every folder, otherwise only scan converted chart folder (temporary)
+# roku note 2024-08-09
+# memory leak might be originating from refresh_from_chart_folders(), not the conversion itsself
+# keep in mind its converting and storing everything as a listing here
+# what we could do is make it scan all the folders, add it to the db, then refresh the db for the actual listings
+## hard updates do every folder, otherwise only scan converted chart folder (temporary)
 func refresh_from_chart_folders(skip_existing_listings := false) -> void:
 	if not skip_existing_listings:
 		for listing in listing_container.get_children():
@@ -141,7 +149,40 @@ func refresh_from_chart_folders(skip_existing_listings := false) -> void:
 		return
 	no_charts_warning.visible = true
 
-# removes existing selected_via_mouse signals from listings and updates them for their new idx
+## creates listings from a folder containing chart files
+func populate_from_chart_folder(folder_path: String, skip_existing_listings := false) -> void:
+	if not DirAccess.dir_exists_absolute(folder_path) and folder_path != Global.CONVERTED_CHART_FOLDER:
+		Global.push_console("SongSelect", "attempted to populate from bad folder: %s" % folder_path, 2)
+	Global.push_console("SongSelect", "populating from: %s" % folder_path)
+	
+		
+	for file in DirAccess.get_files_at(folder_path):
+		if not ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
+			continue
+		
+		# ensure it doesnt exist before attempting to add
+		if skip_existing_listings and bool(find_listing_by_filepath(folder_path.path_join(file)) + 1):
+			continue
+		
+		var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
+		if chart:
+			# update database
+			if not Global.database_manager.exists_in_db(chart):
+				Global.database_manager.add_chart(chart)
+			else:
+				Global.database_manager.update_chart(chart)
+			create_listing(chart)
+			
+			Global.push_console("SongSelect", "added chart: %s - %s [%s]" % [
+				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+				-2)
+			continue
+		Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
+		continue
+
+# -------- loading listings -------
+
+## removes existing selected_via_mouse signals from listings and updates them for their new idx
 func update_listing_click_signal() -> void:
 	for listing in listing_container.get_children():
 		for sig in listing.get_signal_connection_list("selected_via_mouse"):
@@ -176,37 +217,6 @@ func sort_listings(sort_type: ListingSort.SORT_TYPES) -> void:
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	update_visual(true)
 
-# creates listings from a folder containing chart files
-func populate_from_chart_folder(folder_path: String, skip_existing_listings := false) -> void:
-	if not DirAccess.dir_exists_absolute(folder_path) and folder_path != Global.CONVERTED_CHART_FOLDER:
-		Global.push_console("SongSelect", "attempted to populate from bad folder: %s" % folder_path, 2)
-	Global.push_console("SongSelect", "populating from: %s" % folder_path)
-	
-		
-	for file in DirAccess.get_files_at(folder_path):
-		if not ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
-			continue
-		
-		# ensure it doesnt exist before attempting to add
-		if skip_existing_listings and bool(find_listing_by_filepath(folder_path.path_join(file)) + 1):
-			continue
-		
-		var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
-		if chart:
-			# update database
-			if not Global.database_manager.exists_in_db(chart):
-				Global.database_manager.add_chart(chart)
-			else:
-				Global.database_manager.update_chart(chart)
-			create_listing(chart)
-			
-			Global.push_console("SongSelect", "added chart: %s - %s [%s]" % [
-				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-				-2)
-			continue
-		Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
-		continue
-
 func create_listing(chart: Chart) -> ChartListing:
 	var listing := chart_listing_scene.instantiate() as ChartListing
 	listing.init(chart)
@@ -214,23 +224,6 @@ func create_listing(chart: Chart) -> ChartListing:
 	listing_container.add_child(listing)
 	
 	return listing
-
-# TODO: rename to something about idx this isnt clear at first glance
-# goes through existing chart listings, returns the index if a chart's hash is the same as the given chart
-func find_listing_by_chart(chart: Chart) -> int:
-	for listing in listing_container.get_children():
-		if listing is ChartListing:
-			if chart.hash == listing.chart.hash:
-				return listing.get_index()
-	return -1
-
-func find_listing_by_filepath(file_path: String) -> int:
-	for listing in listing_container.get_children():
-		if listing is ChartListing:
-			var listing_path: String = listing.chart.chart_info["origin_path"] if listing.chart.chart_info["origin"] else listing.chart.file_path
-			if file_path == listing_path:
-				return listing.get_index()
-	return -1
 
 # -------- changing listing position/selection -------
 
@@ -248,8 +241,8 @@ func change_selected_listing(idx: int, exact := false) -> void:
 	apply_listing_data(listing_container.get_child(selected_listing_idx))
 	update_visual()
 
-# changes position of listings and listingcontainer
-# hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
+## changes position of listings and listingcontainer
+## hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
 func update_visual(hard_update := false) -> void:
 	var i := 0
 	var listing_size: Vector2
@@ -311,6 +304,23 @@ func try_selecting_current_chart() -> void:
 		apply_listing_data(listing_container.get_child(0))
 
 # -------- other -------
+
+# TODO: rename to something about idx this isnt clear at first glance
+## goes through existing chart listings, returns the index if a chart's hash is the same as the given chart
+func find_listing_by_chart(chart: Chart) -> int:
+	for listing in listing_container.get_children():
+		if listing is ChartListing:
+			if chart.hash == listing.chart.hash:
+				return listing.get_index()
+	return -1
+
+func find_listing_by_filepath(file_path: String) -> int:
+	for listing in listing_container.get_children():
+		if listing is ChartListing:
+			var listing_path: String = listing.chart.chart_info["origin_path"] if listing.chart.chart_info["origin"] else listing.chart.file_path
+			if file_path == listing_path:
+				return listing.get_index()
+	return -1
 
 func handle_listing_input(index: int) -> void:
 	if index == selected_listing_idx:
