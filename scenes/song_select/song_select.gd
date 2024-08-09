@@ -14,11 +14,13 @@ const TUCK_AMOUNT := 150.0
 const LISTING_MOVEMENT_TIME := 0.5
 
 @onready var no_charts_warning := $no_charts_warning
+enum UPDATE_DEPTH { CONVERTED_CHARTS, NEW_CHARTS, UPDATE_CHARTS }
 
 # -------- system -------
 
 func _ready() -> void:
 	refresh_from_database()
+	refresh_from_chart_folders(true) # check for updates
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
 	# set navbar info
@@ -29,20 +31,12 @@ func _ready() -> void:
 	
 	# if listings exist, apply listing data
 	if listing_container.get_child_count():
-		# if theres a current chart loaded, try to jump to it
-		if Global.get_root().current_chart:
-			var current_chart_listing_idx := find_listing_by_chart(Global.get_root().current_chart)
-			change_selected_listing(current_chart_listing_idx, true)
-		
-		# if theres no current chart, just load the first listing
-		else:
-			apply_listing_data(listing_container.get_child(0))
-	update_visual(true)
+		try_selecting_current_chart()
 
 func _unhandled_input(event) -> void:
 	# refresh listings
 	if event is InputEventKey and event.keycode == KEY_F5 and event.is_pressed():
-		refresh_from_chart_folders(true)
+		refresh_from_chart_folders()
 		change_selected_listing(0, true)
 	
 	if event is InputEventKey and event.keycode == KEY_F1 and event.is_pressed():
@@ -72,12 +66,20 @@ func _unhandled_input(event) -> void:
 # u gotta come up with better names to distinguish btwn refresh_from_chart_folders() and populate_from_chart_folder()
 # just generally having a name for the chart's folder and a folder that holds charts would be REALLY USEFUL and LESS CONFUSING
 
+func remove_invalid_database_listings() -> void:
+	pass
+
 func refresh_from_database() -> void:
+	for listing in listing_container.get_children():
+		listing.queue_free()
+	
+	Global.database_manager.clear_invalid_entries()
 	Global.push_console("SongSelect", "refreshing databased charts!")
+	
 	var db_charts := Global.database_manager.get_all_charts()
 	for db_entry in db_charts:
-		var chart = Global.database_manager.get_chart(db_entry)
-	
+		var chart = Global.database_manager.db_entry_to_chart(db_entry)
+		
 		if chart:
 			# ensure were not making a duplicate listing before adding
 			# since not found == -1, add 1 to treat it as a boolean
@@ -89,7 +91,7 @@ func refresh_from_database() -> void:
 				continue
 				
 			Global.push_console("SongSelect", "ignoring duplicate chart: %s - %s [%s]" % [
-					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 1)
+				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 1)
 			continue
 		Global.push_console("SongSelect", "corrupted/null chart: %s - %s [%s]" % [chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 2)
 		continue
@@ -99,31 +101,42 @@ func refresh_from_database() -> void:
 	
 	if listing_container.get_child_count():
 		no_charts_warning.visible = false
+		try_selecting_current_chart()
 		return
 	no_charts_warning.visible = true
 
 # hard updates do every folder, otherwise only scan converted chart folder (temporary)
-func refresh_from_chart_folders(hard_update := false) -> void:
-	Global.push_console("SongSelect", "refreshing converted charts!")
-	populate_from_chart_folder(Global.CONVERTED_CHART_FOLDER)
+func refresh_from_chart_folders(skip_existing_listings := false) -> void:
+	for listing in listing_container.get_children():
+		listing.queue_free()
 	
 	# cycle through chart folders to convert
-	if hard_update:
-		Global.push_console("SongSelect", "scanning through global chart folders...")
-		for folder in Global.get_chart_folders():
-			if !DirAccess.dir_exists_absolute(folder) or folder.is_empty():
-				Global.push_console("SongSelect", "bad folder in global chart folder array: %s" % folder, 2)
-				continue
-			
-			Global.push_console("SongSelect", "finding chart folders in: %s" % folder)
-			for chart_folder in DirAccess.get_directories_at(folder):
-				populate_from_chart_folder(folder.path_join(chart_folder))
+	Global.push_console("SongSelect", "scanning through global chart folders...")
+	for folder in Global.get_chart_folders():
+		if !DirAccess.dir_exists_absolute(folder) or folder.is_empty():
+			Global.push_console("SongSelect", "bad folder in global chart folder array: %s" % folder, 2)
+			continue
+		
+		Global.push_console("SongSelect", "finding chart folders in: %s" % folder)
+		for chart_folder in DirAccess.get_directories_at(folder):
+			populate_from_chart_folder(folder.path_join(chart_folder), skip_existing_listings)
 				
+	# check convertedcharts for charts that dont exist anymore
+	for converted_chart in DirAccess.get_files_at(Global.CONVERTED_CHART_FOLDER):
+		var chart := ChartLoader.get_tc_metadata(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
+		if chart.chart_info["origin_path"]:
+			if not FileAccess.file_exists(chart.chart_info["origin_path"]):
+				DirAccess.remove_absolute(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
+				Global.push_console("SongSelect", "deleted converted chart with invalid origin: %s - %s [%s]" % [
+							chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
+	
+	Global.database_manager.clear_invalid_entries()
 	Global.push_console("SongSelect", "done refreshing charts!", 0)
 	sort_listings(ListingSort.SORT_TYPES.SONG_NAME)
 	
 	if listing_container.get_child_count():
 		no_charts_warning.visible = false
+		try_selecting_current_chart()
 		return
 	no_charts_warning.visible = true
 
@@ -159,31 +172,38 @@ func sort_listings(sort_type: ListingSort.SORT_TYPES) -> void:
 	
 	update_listing_click_signal()
 	Global.push_console("SongSelect", "sorted after %s attempts!" % i)
+	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	update_visual(true)
 
 # creates listings from a folder containing chart files
-func populate_from_chart_folder(folder_path: String) -> void:
+func populate_from_chart_folder(folder_path: String, skip_existing_listings := false) -> void:
 	if not DirAccess.dir_exists_absolute(folder_path) and folder_path != Global.CONVERTED_CHART_FOLDER:
 		Global.push_console("SongSelect", "attempted to populate from bad folder: %s" % folder_path, 2)
 	Global.push_console("SongSelect", "populating from: %s" % folder_path)
 	
 	for file in DirAccess.get_files_at(folder_path):
 		if ChartLoader.SUPPORTED_FILETYPES.has(file.get_extension()):
+			# ensure an existing chart listing doesnt exist
+			var existing_listing_idx := find_listing_by_hash(Global.get_hash(folder_path + "/" + file))
+			if bool(existing_listing_idx + 1):
+				var chart: Chart = listing_container.get_child(existing_listing_idx).chart
+				Global.push_console("SongSelect", "skipping existing chart: %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+					-2)
+			
+			# if its a unique chart...
 			var chart := ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(folder_path + "/" + file)) as Chart
 			if chart:
-				# ensure were not making a duplicate listing before adding
-				# since not found == -1, add 1 to treat it as a boolean
-				if not bool(find_listing_by_chart(chart) + 1):
-					Global.push_console("SongSelect", "added chart %s - %s [%s]" % [
-						chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-						-2)
-					
-					if not Global.database_manager.exists_in_db(chart):
-						Global.database_manager.add_chart(chart)
-					create_listing(chart)
-					continue
-					
-				Global.push_console("SongSelect", "ignoring duplicate chart: %s" % file, 1)
+				# update database
+				if not Global.database_manager.exists_in_db(chart):
+					Global.database_manager.add_chart(chart)
+				else:
+					Global.database_manager.update_chart(chart)
+				create_listing(chart)
+				
+				Global.push_console("SongSelect", "added chart: %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+					-2)
 				continue
 			Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
 			continue
@@ -196,11 +216,19 @@ func create_listing(chart: Chart) -> ChartListing:
 	
 	return listing
 
+# TODO: rename to something about idx this isnt clear at first glance
 # goes through existing chart listings, returns the index if a chart's hash is the same as the given chart
 func find_listing_by_chart(chart: Chart) -> int:
 	for listing in listing_container.get_children():
 		if listing is ChartListing:
 			if chart.hash == listing.chart.hash:
+				return listing.get_index()
+	return -1
+
+func find_listing_by_hash(hash: PackedByteArray) -> int:
+	for listing in listing_container.get_children():
+		if listing is ChartListing:
+			if hash == listing.chart.hash:
 				return listing.get_index()
 	return -1
 
@@ -216,10 +244,9 @@ func change_selected_listing(idx: int, exact := false) -> void:
 		selected_listing_idx = idx % listing_container.get_child_count()
 	else:
 		selected_listing_idx = wrap((selected_listing_idx + idx) % listing_container.get_child_count(), 0, listing_container.get_child_count())
+	
 	apply_listing_data(listing_container.get_child(selected_listing_idx))
 	update_visual()
-	
-	print("\n", Global.database_manager.get_db_entry(listing_container.get_child(selected_listing_idx).chart), "\n")
 
 # changes position of listings and listingcontainer
 # hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
@@ -266,10 +293,22 @@ func update_visual(hard_update := false) -> void:
 	var listing_container_y_pos = get_parent().size.y / 2 + selected_listing_location
 	
 	listing_container_tween.tween_property(listing_container, "position:y", listing_container_y_pos, LISTING_MOVEMENT_TIME)
+	if hard_update:
+		Global.push_console("SongSelect", "Hard-updated visual!")
 
 # applies bg/audio
 func apply_listing_data(listing: ChartListing) -> void:
 	Global.get_root().update_current_chart(listing.chart)
+
+func try_selecting_current_chart() -> void:
+	# if theres a current chart loaded, try to jump to it
+	if Global.get_root().current_chart:
+		var current_chart_listing_idx := find_listing_by_chart(Global.get_root().current_chart)
+		change_selected_listing(current_chart_listing_idx, true)
+	
+	# if theres no current chart, just load the first listing
+	else:
+		apply_listing_data(listing_container.get_child(0))
 
 # -------- other -------
 

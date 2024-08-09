@@ -338,11 +338,6 @@ static func get_tc_metadata(file_path: String) -> Chart:
 	
 	file.close()
 	
-	# error check
-	if audio == null:
-		print_rich("[color=yellow]ChartLoader: chart at ", origin_file_path, " is corrupted! skipped[/color]")
-		return
-	
 	return Chart.new(file_path, audio, background, chart_info, [], [], hash)
 
 ## gets hit objects from a .tc file

@@ -48,6 +48,14 @@ func add_chart(chart: Chart) -> void:
 	
 	# add the entry
 	db.insert_row("charts", db_entry)
+	Global.push_console("DatabaseManager", "Adding entry for %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
+
+func update_chart(chart: Chart) -> void:
+	db.update_rows("charts", "id = %s" % get_db_entry(chart)["id"], chart_to_db_entry(chart))
+	Global.push_console("DatabaseManager", "Updated entry for %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+					-2)
 
 func exists_in_db(chart: Chart) -> bool:
 	db.query("select * from charts where chart_title like '%" + chart.chart_info["chart_title"] + "%'")
@@ -71,14 +79,35 @@ func get_db_entry(chart: Chart) -> Dictionary:
 	Global.push_console("DatabaseManager", "Chart not found in DB!", 1)
 	return {}
 
+func delete_db_entry(db_entry: Dictionary) -> void:
+	db.delete_rows("charts", "id = %s" % db_entry["id"])
+
 func get_all_charts() -> Array:
 	db.query("select * from charts")
 	return db.query_result
 
+func clear_invalid_entries() -> void: 
+	var db_charts := Global.database_manager.get_all_charts()
+	for db_entry in db_charts:
+		# roku note 2024-08-08
+		# this is a future issue for when you can make taiclone files. how do we want to handle files from taiclone?
+		# we could just remove the origin variables, making it simpler
+		# thats what ive assumed here
+		var path: String = db_entry["origin_path"] if db_entry["origin"] else db_entry["file_path"]
+		if not FileAccess.file_exists(path):
+			Global.database_manager.delete_db_entry(db_entry)
+			continue
+
 # -------- parsing database info -------
 
+func chart_to_db_entry(chart: Chart) -> Dictionary:
+	var db_entry := chart.chart_info
+	db_entry["file_path"] = chart.file_path
+	db_entry["hash"] = chart.hash
+	return db_entry
+
 # generates a chart variable from a database row
-func get_chart(db_entry: Dictionary) -> Chart:
+func db_entry_to_chart(db_entry: Dictionary) -> Chart:
 	var file_path: String
 	var audio: AudioStream
 	var background: ImageTexture
