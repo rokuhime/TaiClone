@@ -112,10 +112,6 @@ func refresh_from_database() -> void:
 		return
 	no_charts_warning.visible = true
 
-# roku note 2024-08-09
-# memory leak might be originating from refresh_from_chart_folders(), not the conversion itsself
-# keep in mind its converting and storing everything as a listing here
-# what we could do is make it scan all the folders, add it to the db, then refresh the db for the actual listings
 ## scan each chart folder for charts, adds/updates charts and removes invalid conversions
 func refresh_from_chart_folders() -> void:
 	Global.push_console("SongSelect", "cleaning converted charts folder...")
@@ -256,8 +252,8 @@ func update_visual(hard_update := false) -> void:
 			if i == selected_listing_idx and listing.chart.chart_info:
 				get_parent().set_navbar_text([
 					listing.chart.chart_info["song_title"] + " - " + listing.chart.chart_info["song_artist"],
-					listing.chart.chart_info["chart_title"] + " - " + listing.chart.chart_info["chart_artist"]
-					])
+					listing.chart.chart_info["chart_title"] + " - " + listing.chart.chart_info["chart_artist"],
+					"%s charts loaded" % listing_container.get_child_count()])
 			
 			# set y position of listing
 			listing.position.y = ((listing_size.y  + LISTING_SEPARATION) * i) - (listing_size.y / 2)

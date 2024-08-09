@@ -2,10 +2,11 @@
 class_name Chart
 
 var file_path: String # for .tc file
-var audio
-var background
 var hash: PackedByteArray
 
+# roku note 2024-08-09
+# its getting really annoying fetching for mandatory files like audio_path and background_path in here
+# this method is better for easier databasing, but strongly consider making these normal variables
 var chart_info := {
 	"song_title": "",
 	"song_artist": "",
@@ -22,10 +23,8 @@ var chart_info := {
 var timing_points := []
 var hit_objects := []
 
-func _init(f_path, aud, bg, c_info, t_points, h_obj, new_hash) -> void:
+func _init(f_path: String, c_info: Dictionary, t_points: Array, h_obj: Array, new_hash: PackedByteArray) -> void:
 	file_path = f_path
-	audio = aud
-	background = bg
 	chart_info = c_info
 	timing_points = t_points
 	hit_objects = h_obj

@@ -61,12 +61,6 @@ func _process(delta):
 func play_ui_sound(target_stream: AudioStream, offset := Vector2.ZERO):
 	default_sfx_audio_queuer.play_audio(target_stream, offset)
 
-func set_background(new_background: Texture2D):
-	if new_background:
-		background.texture = new_background
-		return
-	background.texture = default_background
-
 func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	navigation_bars_enabled = enabled
 	
@@ -213,16 +207,20 @@ func refresh_song_select() -> void:
 
 # -------- chart ----------
 
-func update_current_chart(new_chart: Chart) -> void:
+func update_current_chart(new_chart: Chart, for_gameplay := false) -> void:
 	current_chart = new_chart
-	# if not in multiplayer or main menu or smthn,
-	set_background(current_chart.background)
-	update_music(current_chart.audio)
+	set_background(ImageLoader.load_image(new_chart.chart_info["background_path"]))
+	set_music(AudioLoader.load_file(new_chart.chart_info["audio_path"]), for_gameplay)
 
 # updates music
-func update_music(new_audio: AudioStream, use_curchart_preview_point := true) -> void:
+func set_music(new_audio: AudioStream, for_gameplay: bool) -> void:
 	if not new_audio:
+		music.stop()
+		music.stream = null
 		return
+	
+	if for_gameplay:
+		music.stop()
 	
 	# if there is a currently playing song...
 	if music.stream:
@@ -241,10 +239,16 @@ func update_music(new_audio: AudioStream, use_curchart_preview_point := true) ->
 	music.stream = new_audio
 	
 	# get preview timing, and play
-	var prev_point := 0.0
-	if use_curchart_preview_point:
+	if not for_gameplay:
+		var prev_point := 0.0
 		prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
-	music.play(clamp(prev_point, 0, music.stream.get_length()))
+		music.play(clamp(prev_point, 0, music.stream.get_length()))
+
+func set_background(new_background) -> void:
+	if new_background is Texture2D:
+		background.texture = new_background
+		return
+	background.texture = default_background
 
 func on_music_end() -> void:
 	if current_state == GAMESTATE.SONG_SELECT:

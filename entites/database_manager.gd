@@ -1,6 +1,10 @@
 class_name DatabaseManager
 extends Node
 
+# roku note 2024-08-09
+# if we use LIKE queries with strings anywhere, we're going to need string escaping to avoid sql injection
+# see the conversation you had with barry
+
 var db := SQLite.new()
 const DB_PATH := "user://taiclone.db"
 
@@ -147,15 +151,9 @@ func db_entry_to_chart(db_entry: Dictionary) -> Chart:
 		match key:
 			"file_path":
 				file_path = db_entry[key]
-			"audio_path":
-				if db_entry[key] != null:
-					audio = AudioLoader.load_file(db_entry[key])
-			"background_path":
-				if db_entry[key] != null:
-					background = ImageLoader.load_image(db_entry[key])
 			"hash":
 				hash = db_entry["hash"] as PackedByteArray
 			_:
 				chart_info[key] = db_entry[key]
 	
-	return Chart.new(file_path, audio, background, chart_info, [], [], hash)
+	return Chart.new(file_path, chart_info, [], [], hash)

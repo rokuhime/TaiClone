@@ -318,11 +318,9 @@ static func get_tc_metadata(file_path: String) -> Chart:
 				chart_info["origin"] = data_value
 
 			"audio_path":
-				audio = AudioLoader.load_file(origin_file_path.get_base_dir().path_join(data_value))
 				chart_info["audio_path"] = origin_file_path.get_base_dir().path_join(data_value)
 
 			"background_path":
-				background = ImageLoader.load_image(origin_file_path.get_base_dir().path_join(data_value))
 				chart_info["background_path"] = origin_file_path.get_base_dir().path_join(data_value)
 
 			"preview_point":
@@ -334,7 +332,7 @@ static func get_tc_metadata(file_path: String) -> Chart:
 	
 	file.close()
 	
-	return Chart.new(file_path, audio, background, chart_info, [], [], hash)
+	return Chart.new(file_path, chart_info, [], [], hash)
 
 ## gets hit objects from a .tc file
 static func get_tc_gamedata(file_path: String) -> Chart:
@@ -402,7 +400,7 @@ static func get_tc_gamedata(file_path: String) -> Chart:
 		func(a: HitObject, b: HitObject): return a.timing > b.timing
 	)
 	
-	return Chart.new(file_path, null, null, {}, timing_points, hit_objects, hash)
+	return Chart.new(file_path, {}, timing_points, hit_objects, hash)
 
 ## formats objects into a string
 static func get_object_string(data: Array) -> String:

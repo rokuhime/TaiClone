@@ -177,13 +177,13 @@ func load_chart(requested_chart: Chart) -> void:
 	score_instance.reset()
 	
 	current_chart = requested_chart.load_hit_objects()
+	Global.get_root().update_current_chart(current_chart, true)
 	
 	# add all hit objects to container
 	for hobj in requested_chart.hit_objects:
 		hit_object_container.add_child(hobj)
 		if hobj is Spinner:
 			hobj.on_finished.connect(score_instance.add_manual_score)
-	music.stream = requested_chart.audio
 	
 	# set skip time to the first hit object's tix.aming
 	first_hobj_timing = get_first_hitobject().timing
