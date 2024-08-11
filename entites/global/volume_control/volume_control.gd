@@ -20,7 +20,6 @@ const CHANGE_AMOUNT_PRECISE := 0.01
 
 var current_bus_index := 0
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	bus_sections.append(get_node("Bars/Master"))
 	

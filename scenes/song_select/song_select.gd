@@ -19,6 +19,7 @@ enum UPDATE_DEPTH { CONVERTED_CHARTS, NEW_CHARTS, UPDATE_CHARTS }
 var dragging := false
 const dragging_limit := 0.15
 var drag_lock_timeout := 0.0
+@onready var index_display := $IndexPanel
 
 # -------- system -------
 
@@ -81,25 +82,27 @@ func _unhandled_input(event) -> void:
 			transition_to_gameplay()
 
 func gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion and dragging:
-		if drag_lock_timeout > 0:
-			return
-		
-		var mouse_y_position := remap(
-			clampf(event.global_position.y / get_size().y, 0 + dragging_limit, 1 - dragging_limit), 
-			0 + dragging_limit, 1 - dragging_limit,
-			0, 1)
-		var new_idx := roundi(mouse_y_position * (listing_container.get_child_count() - 1))
-		
-		if new_idx != selected_listing_idx:
-			print("new_idx = %s/%s" % [new_idx + 1, listing_container.get_child_count()])
-			change_selected_listing(new_idx, true)
-			drag_lock_timeout = 0.2
-		
+	if not (event is InputEventMouse):
+		return
+	
 	if event is InputEventMouseButton:
 		if (event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT:
 			if event.is_pressed():
 				dragging = true
+	
+	if not dragging or drag_lock_timeout > 0:
+		return
+	
+	var mouse_y_position := remap(
+		clampf(event.global_position.y / get_size().y, 0 + dragging_limit, 1 - dragging_limit), 
+		0 + dragging_limit, 1 - dragging_limit,
+		0, 1)
+	var new_idx := roundi(mouse_y_position * (listing_container.get_child_count() - 1))
+	
+	if new_idx != selected_listing_idx:
+		change_selected_listing(new_idx, true)
+		index_display.update_visual(new_idx, listing_container.get_child_count())
+		drag_lock_timeout = 0.2
 
 # -------- scanning for charts -------
 

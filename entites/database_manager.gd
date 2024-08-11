@@ -11,8 +11,8 @@ const DB_PATH := "user://taiclone.db"
 # -------- system -------
 
 func _ready():
-	initialize_tables()
 	restart_db()
+	initialize_tables()
 
 # -------- setting up database -------
 
@@ -42,10 +42,11 @@ func initialize_tables() -> void:
 	}
 	
 	for table_name in tables.keys():
+		print("added %s to database" % table_name)
 		db.create_table(table_name, tables[table_name])
 
 func table_exists(table_name: String) -> bool:
-	var db_entry := get_db_entry_by_id(table_name, 0)
+	var db_entry: Dictionary = get_db_entries_by_id(table_name, 0)[0]
 	if not db_entry:
 		return false
 	return true
@@ -63,8 +64,8 @@ func restart_db() -> void:
 
 # -------- database interaction -------
 
-func get_db_entry_by_id(table_name: String, id: int) -> Array:
-	return db.select_rows(table_name, "id = %s" % id, ["*"])[0]
+func get_db_entries_by_id(table_name: String, id: int) -> Array:
+	return db.select_rows(table_name, "id = %s" % id, ["*"])
 
 func add_db_entry(table_name: String, db_entry: Dictionary) -> void:
 	db.insert_row(table_name, db_entry)
@@ -73,10 +74,11 @@ func update_db_entry(table_name: String, db_entry: Dictionary) -> void:
 	if db_entry.is_empty():
 		return
 	
-	var existing_entry := get_db_entry_by_id(table_name, db_entry["id"])
-	if existing_entry:
-		db.update_rows(table_name, "id = %s" % db_entry["id"], db_entry)
-		return
+	if db_entry.keys().has("id"):
+		var existing_entries: Array = get_db_entries_by_id(table_name, db_entry["id"])
+		if existing_entries:
+			db.update_rows(table_name, "id = %s" % db_entry["id"], db_entry)
+			return
 	add_db_entry(table_name, db_entry)
 
 func delete_db_entry(db_entry: Dictionary) -> void:

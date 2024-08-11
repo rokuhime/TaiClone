@@ -107,10 +107,11 @@ func _unhandled_input(event) -> void:
 	
 	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
 		if Input.is_action_just_pressed("AddLocalOffset"):
-			local_offset += OFFSET_INCREASE
+			adjust_offset(OFFSET_INCREASE)
 			print("new local offset: %s" % local_offset)
+			
 		if Input.is_action_just_pressed("RemoveLocalOffset"):
-			local_offset -= OFFSET_INCREASE
+			adjust_offset(-OFFSET_INCREASE)
 			print("new local offset: %s" % local_offset)
 		
 		if Input.is_action_just_pressed("SkipIntro") and playing:
@@ -179,6 +180,19 @@ func _unhandled_input(event) -> void:
 
 # -------- chart handling --------
 
+func adjust_offset(value: float) -> float:
+	local_offset += value
+	save_local_offset()
+	return local_offset
+
+func save_local_offset() -> void:
+	var chart_settings_entries: Array = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])
+	if chart_settings_entries:
+		chart_settings_entries[0]["local_offset"] = local_offset
+	else:
+		chart_settings_entries.append({"local_offset": local_offset, "collections": 0})
+	Global.database_manager.update_db_entry("chart_settings", chart_settings_entries[0])
+
 func load_chart(requested_chart: Chart) -> void:
 	# empty out existing hit objects and reset stats just incasies
 	for hobj in hit_object_container.get_children():
@@ -188,6 +202,10 @@ func load_chart(requested_chart: Chart) -> void:
 	
 	current_chart = requested_chart.load_hit_objects()
 	Global.get_root().update_current_chart(current_chart, true)
+	var chart_settings: Array = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])
+	if chart_settings:
+		print("EXISTING CHART SETTINGS")
+		local_offset = chart_settings[0]["local_offset"]
 	
 	# add all hit objects to container
 	for hobj in requested_chart.hit_objects:
