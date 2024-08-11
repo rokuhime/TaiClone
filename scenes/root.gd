@@ -209,7 +209,7 @@ func refresh_song_select() -> void:
 
 func update_current_chart(new_chart: Chart, for_gameplay := false) -> void:
 	current_chart = new_chart
-	set_background(ImageLoader.load_image(new_chart.chart_info["background_path"]))
+	set_background(new_chart.chart_info["background_path"])
 	set_music(AudioLoader.load_file(new_chart.chart_info["audio_path"]), for_gameplay)
 
 # updates music
@@ -244,10 +244,13 @@ func set_music(new_audio: AudioStream, for_gameplay: bool) -> void:
 		prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
 		music.play(clamp(prev_point, 0, music.stream.get_length()))
 
-func set_background(new_background) -> void:
-	if new_background is Texture2D:
-		background.texture = new_background
-		return
+func set_background(bg_location) -> void:
+	if bg_location:
+		var new_background = ImageLoader.load_image(bg_location)
+		if new_background is Texture2D:
+			background.texture = new_background
+			return
+	
 	background.texture = default_background
 
 func on_music_end() -> void:

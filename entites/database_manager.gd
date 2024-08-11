@@ -11,12 +11,15 @@ const DB_PATH := "user://taiclone.db"
 # -------- system -------
 
 func _ready():
+	initialize_tables()
 	restart_db()
 
 # -------- setting up database -------
 
 func initialize_tables() -> void:
-	var chart_table := {
+	var tables := {}
+	
+	tables["charts"] = {
 		"id": 				{"data_type": "int", "primary_key": true, "not_null": true, "auto_increment": true},
 		"song_title": 		{"data_type": "text"},
 		"song_artist": 		{"data_type": "text"},
@@ -32,7 +35,20 @@ func initialize_tables() -> void:
 		"preview_point":	{"data_type": "real"},
 	}
 	
-	db.create_table("charts", chart_table)
+	tables["chart_settings"] = {
+		"id": 				{"data_type": "int", "primary_key": true, "not_null": true, "auto_increment": true},
+		"local_offset":		{"data_type": "real"},
+		"collections":		{"data_type": "int"}, # this is a bitwise (for now) of collection id's!
+	}
+	
+	for table_name in tables.keys():
+		db.create_table(table_name, tables[table_name])
+
+func table_exists(table_name: String) -> bool:
+	var db_entry := get_db_entry_by_id(table_name, 0)
+	if not db_entry:
+		return false
+	return true
 
 # close and reopen db to check if its been edited outside of the program
 func restart_db() -> void:
@@ -40,28 +56,47 @@ func restart_db() -> void:
 	var db_exists := FileAccess.file_exists(DB_PATH)
 	db.path = DB_PATH
 	db.open_db()
+	
 	if not db_exists:
 		initialize_tables()
 	Global.push_console("DatabaseManager", "Database restarted!")
 
 # -------- database interaction -------
 
-func add_chart(chart: Chart) -> void:
-	var db_entry := chart_to_db_entry(chart)
-	# add the entry
-	db.insert_row("charts", db_entry)
-	Global.push_console("DatabaseManager", "Adding entry for %s - %s [%s]" % [
-					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
+func get_db_entry_by_id(table_name: String, id: int) -> Array:
+	return db.select_rows(table_name, "id = %s" % id, ["*"])[0]
+
+func add_db_entry(table_name: String, db_entry: Dictionary) -> void:
+	db.insert_row(table_name, db_entry)
+
+func update_db_entry(table_name: String, db_entry: Dictionary) -> void:
+	if db_entry.is_empty():
+		return
+	
+	var existing_entry := get_db_entry_by_id(table_name, db_entry["id"])
+	if existing_entry:
+		db.update_rows(table_name, "id = %s" % db_entry["id"], db_entry)
+		return
+	add_db_entry(table_name, db_entry)
+
+func delete_db_entry(db_entry: Dictionary) -> void:
+	db.delete_rows("charts", "id = %s" % db_entry["id"])
+
+# -------- chart interaction -------
+
+func get_all_charts() -> Array:
+	db.query("select * from charts")
+	return db.query_result
 
 func update_chart(chart: Chart) -> void:
-	var db_entry := get_db_entry(chart)
-	if not db_entry.is_empty():
+	var existing_entry := get_db_entry(chart)
+	if not existing_entry.is_empty():
 		db.update_rows("charts", "id = %s" % get_db_entry(chart)["id"], chart_to_db_entry(chart))
 		Global.push_console("DatabaseManager", "Updated entry for %s - %s [%s]" % [
 						chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
 						-2)
-	else:
-		add_chart(chart)
+		return
+	add_db_entry("charts", chart_to_db_entry(chart))
 
 func exists_in_db(chart: Chart) -> bool:
 	db.query_with_bindings("select * from charts where hash = ?", [chart.hash])
@@ -84,13 +119,6 @@ func get_db_entry(chart: Chart) -> Dictionary:
 	
 	Global.push_console("DatabaseManager", "Chart not found in DB!", 1)
 	return {}
-
-func delete_db_entry(db_entry: Dictionary) -> void:
-	db.delete_rows("charts", "id = %s" % db_entry["id"])
-
-func get_all_charts() -> Array:
-	db.query("select * from charts")
-	return db.query_result
 
 func clear_invalid_entries() -> void: 
 	Global.push_console("DatabaseManager", "Clearing invalid entries...")
@@ -128,7 +156,7 @@ func clear_invalid_entries() -> void:
 
 # -------- converting db entries -------
 
-func chart_to_db_entry(chart: Chart) -> Dictionary:
+static func chart_to_db_entry(chart: Chart) -> Dictionary:
 	var db_entry := chart.chart_info
 	db_entry["file_path"] = chart.file_path
 	db_entry["hash"] = chart.hash
@@ -140,7 +168,7 @@ func chart_to_db_entry(chart: Chart) -> Dictionary:
 	return db_entry
 
 # generates a chart variable from a database row
-func db_entry_to_chart(db_entry: Dictionary) -> Chart:
+static func db_entry_to_chart(db_entry: Dictionary) -> Chart:
 	var file_path: String
 	var audio: AudioStream
 	var background: ImageTexture

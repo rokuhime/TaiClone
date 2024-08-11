@@ -45,6 +45,9 @@ var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as Audi
 
 var temp_skin_var: SkinManager
 
+const OFFSET_INCREASE := 0.05
+var local_offset := 0.0
+
 # -------- system -------
 
 func _ready() -> void:
@@ -60,7 +63,7 @@ func _process(_delta) -> void:
 	game_overlay.update_progress(current_time, first_hobj_timing, last_hobj_timing)
 	
 	if playing:
-		current_time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - start_time
+		current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
 		
 		# chart end check
 		if current_time >= last_hobj_timing + 1:
@@ -103,6 +106,13 @@ func _unhandled_input(event) -> void:
 		Global.get_root().change_to_results(score_instance)
 	
 	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
+		if Input.is_action_just_pressed("AddLocalOffset"):
+			local_offset += OFFSET_INCREASE
+			print("new local offset: %s" % local_offset)
+		if Input.is_action_just_pressed("RemoveLocalOffset"):
+			local_offset -= OFFSET_INCREASE
+			print("new local offset: %s" % local_offset)
+		
 		if Input.is_action_just_pressed("SkipIntro") and playing:
 			skip_intro()
 		

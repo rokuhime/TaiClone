@@ -16,6 +16,10 @@ const LISTING_MOVEMENT_TIME := 0.5
 @onready var no_charts_warning := $no_charts_warning
 enum UPDATE_DEPTH { CONVERTED_CHARTS, NEW_CHARTS, UPDATE_CHARTS }
 
+var dragging := false
+const dragging_limit := 0.15
+var drag_lock_timeout := 0.0
+
 # -------- system -------
 
 func _ready() -> void:
@@ -39,6 +43,15 @@ func _ready() -> void:
 	# if the music hasnt started playing (after results screen), start it back up
 	if not Global.get_root().music.get_playback_position():
 		Global.get_root().on_music_end()
+
+func _process(delta):
+	if dragging:
+		if not Input.get_mouse_button_mask() & MOUSE_BUTTON_MASK_RIGHT:
+			dragging = false
+	
+	if drag_lock_timeout > 0:
+		drag_lock_timeout -= delta
+		return
 
 func _unhandled_input(event) -> void:
 	# refresh listings
@@ -66,6 +79,27 @@ func _unhandled_input(event) -> void:
 		# select
 		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
 			transition_to_gameplay()
+
+func gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and dragging:
+		if drag_lock_timeout > 0:
+			return
+		
+		var mouse_y_position := remap(
+			clampf(event.global_position.y / get_size().y, 0 + dragging_limit, 1 - dragging_limit), 
+			0 + dragging_limit, 1 - dragging_limit,
+			0, 1)
+		var new_idx := roundi(mouse_y_position * (listing_container.get_child_count() - 1))
+		
+		if new_idx != selected_listing_idx:
+			print("new_idx = %s/%s" % [new_idx + 1, listing_container.get_child_count()])
+			change_selected_listing(new_idx, true)
+			drag_lock_timeout = 0.2
+		
+	if event is InputEventMouseButton:
+		if (event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT:
+			if event.is_pressed():
+				dragging = true
 
 # -------- scanning for charts -------
 
@@ -159,7 +193,10 @@ func populate_from_chart_folder(folder_path: String) -> void:
 		if chart:
 			# if it doesnt exist in the db, make a new entry
 			if not Global.database_manager.exists_in_db(chart):
-				Global.database_manager.add_chart(chart)
+				Global.push_console("SongSelect", "Adding database entry for %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],)
+				Global.database_manager.add_db_entry("charts", DatabaseManager.chart_to_db_entry(chart))
+
 			
 			# if the hash is different, assume it needs to be updated. otherwise assume its identical
 			else:

@@ -39,6 +39,7 @@ offset_right = 386.0
 offset_bottom = 167.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 bbcode_enabled = true
 text = "[center][font_size=48]...It's quite empty in here, innit?[/font_size]
 
@@ -94,3 +95,5 @@ vertical_alignment = 1
 [node name="ModContainer" type="GridContainer" parent="ModPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[connection signal="gui_input" from="." to="." method="gui_input"]
