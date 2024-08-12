@@ -123,6 +123,14 @@ RemoveLocalOffset={
 ]
 }
 
+[layer_names]
+
+2d_render/layer_2="GameplayUI-Bottom"
+2d_render/layer_3="Barlines"
+2d_render/layer_4="GameNotes"
+2d_render/layer_5="GameplayUI-Top"
+2d_render/layer_6="GameOverlay"
+
 [rendering]
 
 renderer/rendering_method="mobile"

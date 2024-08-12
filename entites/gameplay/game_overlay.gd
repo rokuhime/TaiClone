@@ -18,7 +18,7 @@ var inaccurate_indicator_tween: Tween
 
 @onready var hit_error_bar: HitErrorBar = $HitErrorBar
 
-@onready var mascot := $Mascot as TextureRect
+@onready var mascot: TextureRect = $Mascot
 
 var song_progress_back := Color("333333")
 var song_progress_front := Color("ffffff")
@@ -66,7 +66,7 @@ func update_progress(cur_time: float, first_hobj_time: float, last_hobj_time: fl
 	song_progress_bar.value = (cur_time - first_hobj_time) / (last_hobj_time - first_hobj_time)
 
 # updates labels for counts of things
-func update_visuals(score: ScoreInstance) -> void:
+func update_visuals(score: ScoreData) -> void:
 	score_label.text = "%07d" % score.score
 	combo_label.text = str(score.current_combo)
 	
@@ -107,7 +107,7 @@ func update_inacc_indicator(hit_time_difference: float) -> void:
 func on_combo_break() -> void:
 	combo_break_player.play()
 
-func on_score_update(score: ScoreInstance, target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT, current_time: float) -> void:
+func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT, current_time: float) -> void:
 	var score_type := 0
 	var hit_time_difference = target_hit_obj.timing - current_time
 	if abs(hit_time_difference) <= Global.INACC_TIMING and hit_result != HitObject.HIT_RESULT.MISS:

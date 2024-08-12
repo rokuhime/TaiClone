@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://entites/gameplay/hitobjects/timing_point.gd" id="1_dyf0x"]
 
 [node name="TimingPoint" type="ColorRect"]
+visibility_layer = 4
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -17,6 +18,7 @@ grow_vertical = 2
 script = ExtResource("1_dyf0x")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+visibility_layer = 4
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -28,6 +30,7 @@ rotation = 0.785398
 color = Color(1, 0.397702, 0.329256, 1)
 
 [node name="ColorRect2" type="ColorRect" parent="."]
+visibility_layer = 4
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5

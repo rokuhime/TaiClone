@@ -1,5 +1,4 @@
-#TODO: separate this up, this is getting pretty bloated
-class_name ScoreInstance
+class_name ScoreData
 
 var score := 0
 var accurate_hits := 0
@@ -16,9 +15,6 @@ var current_combo := 0
 
 signal combo_break
 signal score_updated
-
-func _init() -> void:
-	pass
 
 # -------- score management --------
 
@@ -72,7 +68,7 @@ func add_finisher_score(hit_time_difference: float) -> void:
 	score_updated.emit()
 
 # TODO: turn from int into enum, too lazy rn
-func add_manual_score(score_type: int):
+func add_manual_score(score_type: int) -> void:
 	match score_type:
 		0:  # miss
 			current_combo = 0
@@ -93,8 +89,6 @@ func add_manual_score(score_type: int):
 			top_combo = current_combo
 	
 	score_updated.emit()
-	#update_judgement(score_type)
-	#update_visuals()
 
 # reset score variables
 func reset() -> void:

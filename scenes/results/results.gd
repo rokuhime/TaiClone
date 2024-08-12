@@ -1,6 +1,6 @@
 extends Control
 
-var score: ScoreInstance
+var score: ScoreData
 
 @onready var score_label: Label = $MainPanel/VBoxContainer/Score/Value
 @onready var accuracy_label: Label = $MainPanel/VBoxContainer/HBoxContainer/Accuracy/Value
@@ -38,7 +38,7 @@ func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
 		Global.get_root().back_button_pressed()
 
-func set_score(new_score: ScoreInstance) -> void:
+func set_score(new_score: ScoreData) -> void:
 	score = new_score
 	
 	var accuracy := Global.get_accuracy(score.accurate_hits, score.inaccurate_hits, score.miss_count)

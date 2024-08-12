@@ -194,7 +194,7 @@ func change_to_gameplay(auto_enabled: bool):
 	current_state_node.load_chart(current_chart)
 	current_state_node.auto_enabled = auto_enabled
 
-func change_to_results(score: ScoreInstance):
+func change_to_results(score: ScoreData):
 	if current_state != GAMESTATE.RESULTS:
 		await change_state(GAMESTATE.RESULTS)
 	current_state_node.set_score(score)

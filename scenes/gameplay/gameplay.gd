@@ -16,7 +16,7 @@ var auto_enabled := false
 # Data
 var current_chart : Chart
 var current_play_offset := 0.0
-var score_instance := ScoreInstance.new()
+var score_instance := ScoreData.new()
 
 var current_time := 0.0
 var start_time := 0.0
@@ -353,7 +353,7 @@ func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) ->
 # -------- feedback -------
 
 # plays note audio
-func play_audio(input_side: SIDE, is_input_kat: bool):
+func play_audio(input_side: SIDE, is_input_kat: bool) -> void:
 	var volume := 1.0
 	var stream_audio = kat_audio if is_input_kat else don_audio
 	match current_hitsound_state:

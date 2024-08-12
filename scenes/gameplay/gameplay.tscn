@@ -50,6 +50,7 @@ texture = ExtResource("1_hg67d")
 expand_mode = 1
 
 [node name="Track" type="TextureRect" parent="."]
+visibility_layer = 2
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -64,6 +65,7 @@ expand_mode = 1
 
 [node name="HitPoint" type="TextureRect" parent="Track"]
 self_modulate = Color(1, 1, 1, 0.33)
+visibility_layer = 2
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -78,6 +80,7 @@ expand_mode = 1
 
 [node name="Outline" type="TextureRect" parent="Track/HitPoint"]
 self_modulate = Color(1, 1, 1, 0.5)
+visibility_layer = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -92,6 +95,7 @@ texture = ExtResource("7_13i7v")
 expand_mode = 1
 
 [node name="HitObjectContainer" type="Control" parent="Track/HitPoint"]
+visibility_layer = 2
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -104,6 +108,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="DrumIndicator" type="TextureRect" parent="Track"]
+visibility_layer = 16
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -114,6 +119,7 @@ expand_mode = 4
 
 [node name="LeftKat" type="TextureRect" parent="Track/DrumIndicator"]
 modulate = Color(1, 1, 1, 0)
+visibility_layer = 16
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -125,6 +131,7 @@ flip_h = true
 
 [node name="LeftDon" type="TextureRect" parent="Track/DrumIndicator"]
 modulate = Color(1, 1, 1, 0)
+visibility_layer = 16
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -135,6 +142,7 @@ expand_mode = 4
 
 [node name="RightDon" type="TextureRect" parent="Track/DrumIndicator"]
 modulate = Color(1, 1, 1, 0)
+visibility_layer = 16
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -149,6 +157,7 @@ flip_h = true
 
 [node name="RightKat" type="TextureRect" parent="Track/DrumIndicator"]
 modulate = Color(1, 1, 1, 0)
+visibility_layer = 16
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -167,6 +176,7 @@ script = ExtResource("9_tgle1")
 bus = &"Music"
 
 [node name="GameOverlay" type="Control" parent="." groups=["ScoreManager"]]
+visibility_layer = 32
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

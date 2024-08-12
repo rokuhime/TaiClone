@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://b205j5inokbyq" path="res://assets/default_skin/taikohitcircleoverlay.png" id="2_rqbsx"]
 
 [node name="Note" type="TextureRect"]
+visibility_layer = 8
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -22,6 +23,7 @@ expand_mode = 1
 script = ExtResource("2_qegwt")
 
 [node name="Overlay" type="TextureRect" parent="."]
+visibility_layer = 8
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
