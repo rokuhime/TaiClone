@@ -21,7 +21,7 @@ const dragging_limit := 0.15
 var drag_lock_timeout := 0.0
 @onready var listing_scrollbar := $ListingScrollbar
 
-@onready var scroll_echo_timer := $Timer
+@onready var scroll_echo_timer := $ScrollEchoTimer
 const INITIAL_SROLL_ECHO_DELAY := 0.6
 const SCROLL_ECHO_DELAY := 0.1
 

@@ -2,8 +2,8 @@ class_name VolumeControl
 extends ColorRect
 
 var bus_sections := []
-var bus_bar_size_tweens := [null, null, null]
-var bus_bar_alpha_tweens := [null, null, null]
+var bus_bar_size_tweens := [null]
+var bus_bar_alpha_tweens := [null]
 
 @onready var change_sound_player: AudioStreamPlayer = $Audio
 @onready var timeout_timer: Timer = $Timeout
@@ -20,10 +20,16 @@ const CHANGE_AMOUNT_PRECISE := 0.01
 
 var current_bus_index := 0
 
-func _ready():
+# -------- system -------
+
+func _ready() -> void:
 	bus_sections.append(get_node("Bars/Master"))
-	
 	for bar_idx in get_node("Bars/Specifics").get_child_count():
+		# ensure theres the same amount of tweens for the sections
+		bus_bar_size_tweens.append(null)
+		bus_bar_alpha_tweens.append(null)
+		
+		# add bar to bus_sections and update their visual
 		var target_bus: Control = get_node("Bars/Specifics").get_child(bar_idx)
 		bus_sections.append(target_bus)
 		update_bar(bar_idx + 1)
@@ -31,8 +37,7 @@ func _ready():
 	# ensure it starts invisible
 	modulate = Color(1,1,1,0)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
+func _process(_delta) -> void:
 	# ensure control's visual is correct so no weird mouse inputs happen
 	if modulate.a == 0 and visible:
 		visible = false
@@ -45,7 +50,7 @@ func _process(_delta):
 	elif is_mouse_inside and timeout_bar.value != 1:
 		timeout_bar.value = 1
 
-func _unhandled_input(_event):
+func _unhandled_input(_event) -> void:
 	# parse for wanted inputs
 	var pressed_input := ""
 	
@@ -80,7 +85,9 @@ func _unhandled_input(_event):
 			var intended_index = bus_sections.size() - 1 if current_bus_index - 1 < 0 else current_bus_index - 1
 			change_current_bus(intended_index % bus_sections.size())
 
-func mouse_volume_input(event: InputEventMouse, bus_index: int):
+# -------- input -------
+
+func mouse_volume_input(event: InputEventMouse, bus_index: int) -> void:
 	if event is InputEventMouseButton:
 		# ignore any other inputs but left/right clicks
 		if event.button_index != MOUSE_BUTTON_LEFT and event.button_index != MOUSE_BUTTON_RIGHT:
@@ -91,7 +98,18 @@ func mouse_volume_input(event: InputEventMouse, bus_index: int):
 		var bus_size = bus_sections[bus_index].get_child(0).size.y
 		change_volume(clampf((bus_size - event.position.y) / bus_size, 0, 1), true)
 
-func change_volume(change_amount: float, change_exact := false):
+# toggles is_mouse_inside for pausing the timeout timer
+func change_mouse_inside(new_mouse_inside: bool) -> void:
+	is_mouse_inside = new_mouse_inside
+	if is_mouse_inside and is_active:
+		change_active(true)
+	
+	timeout_timer.start()
+	timeout_timer.paused = new_mouse_inside
+
+# -------- changing values -------
+
+func change_volume(change_amount: float, change_exact := false) -> void:
 	var new_volume := change_amount if change_exact else clampf(db_to_linear(AudioServer.get_bus_volume_db(current_bus_index)) + change_amount, 0, 1)
 	
 	# set value and change display
@@ -102,27 +120,7 @@ func change_volume(change_amount: float, change_exact := false):
 	change_sound_player.pitch_scale = new_volume + 0.5
 	change_sound_player.play()
 
-func update_bar(bus_index: int = -1):
-	# if no bus index specified, update all
-	if bus_index == -1:
-		for i in bus_bar_size_tweens.size():
-			update_bar(i)
-		return
-	
-	var volume_slider: TextureProgressBar = bus_sections[bus_index].get_node("TextureProgressBar")
-	
-	# stop any current tweens happening to bar visual
-	if bus_bar_size_tweens[bus_index]:
-		bus_bar_size_tweens[bus_index].kill()
-	
-	# update bar visual
-	bus_bar_size_tweens[bus_index] = Global.create_smooth_tween()
-	bus_bar_size_tweens[bus_index].tween_property(volume_slider, "value", db_to_linear(AudioServer.get_bus_volume_db(bus_index)), 0.2)
-	
-	# set percentage text
-	bus_sections[bus_index].get_node("Percentage").text = str( roundi( db_to_linear(AudioServer.get_bus_volume_db(bus_index)) * 100 ))
-
-func change_current_bus(wanted_bus_index: int):
+func change_current_bus(wanted_bus_index: int) -> void:
 	if is_mouse_pressed:
 		return
 	
@@ -143,8 +141,30 @@ func change_current_bus(wanted_bus_index: int):
 			0.2
 		)
 
+# -------- visual -------
+
+func update_bar(bus_index: int = -1) -> void:
+	# if no bus index specified, update all
+	if bus_index == -1:
+		for i in bus_bar_size_tweens.size():
+			update_bar(i)
+		return
+	
+	var volume_slider: TextureProgressBar = bus_sections[bus_index].get_node("TextureProgressBar")
+	
+	# stop any current tweens happening to bar visual
+	if bus_bar_size_tweens[bus_index]:
+		bus_bar_size_tweens[bus_index].kill()
+	
+	# update bar visual
+	bus_bar_size_tweens[bus_index] = Global.create_smooth_tween()
+	bus_bar_size_tweens[bus_index].tween_property(volume_slider, "value", db_to_linear(AudioServer.get_bus_volume_db(bus_index)), 0.2)
+	
+	# set percentage text
+	bus_sections[bus_index].get_node("Percentage").text = str( roundi( db_to_linear(AudioServer.get_bus_volume_db(bus_index)) * 100 ))
+
 # handles visibility, making it invisible and saving volume settings if timed out
-func change_active(new_active: bool):
+func change_active(new_active: bool) -> void:
 	is_active = new_active
 	
 	# stop tween if happening to visibility
@@ -164,12 +184,3 @@ func change_active(new_active: bool):
 		# save and go back to selecting master
 		Global.save_settings()
 		change_current_bus(0)
-
-# toggles is_mouse_inside for pausing the timeout timer
-func change_mouse_inside(new_mouse_inside: bool):
-	is_mouse_inside = new_mouse_inside
-	if is_mouse_inside and is_active:
-		change_active(true)
-	
-	timeout_timer.start()
-	timeout_timer.paused = new_mouse_inside
