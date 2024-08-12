@@ -21,6 +21,10 @@ const dragging_limit := 0.15
 var drag_lock_timeout := 0.0
 @onready var listing_scrollbar := $ListingScrollbar
 
+@onready var scroll_echo_timer := $Timer
+const INITIAL_SROLL_ECHO_DELAY := 0.6
+const SCROLL_ECHO_DELAY := 0.1
+
 # -------- system -------
 
 func _ready() -> void:
@@ -44,6 +48,8 @@ func _ready() -> void:
 	# if the music hasnt started playing (after results screen), start it back up
 	if not Global.get_root().music.get_playback_position():
 		Global.get_root().on_music_end()
+	
+	scroll_echo_timer.timeout.connect(on_scroll_timeout)
 
 func _process(delta):
 	if dragging:
@@ -53,6 +59,16 @@ func _process(delta):
 	if drag_lock_timeout > 0:
 		drag_lock_timeout -= delta
 		return
+
+func on_scroll_timeout() -> void:
+		Global.push_console("SongSelect", "pulse!")
+		if Input.is_action_pressed("LeftKat"):
+			change_selected_listing(-1)
+		elif Input.is_action_pressed("RightKat"):
+			change_selected_listing(1)
+		
+		# restart timer to echo
+		scroll_echo_timer.start(SCROLL_ECHO_DELAY)
 
 func _unhandled_input(event) -> void:
 	# refresh listings
@@ -70,12 +86,15 @@ func _unhandled_input(event) -> void:
 	if Global.focus_target:
 		return
 	
-	if listing_container.get_child_count() > 0:
+	if listing_container.get_child_count() > 0 and event.is_pressed():
 		# cycle through listings
 		if event.is_action_pressed("LeftKat"):
 			change_selected_listing(-1)
+			scroll_echo_timer.start(INITIAL_SROLL_ECHO_DELAY)
+		
 		elif event.is_action_pressed("RightKat"):
 			change_selected_listing(1)
+			scroll_echo_timer.start(INITIAL_SROLL_ECHO_DELAY)
 		
 		# select
 		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
