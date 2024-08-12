@@ -1,15 +1,28 @@
-[gd_scene load_steps=7 format=3 uid="uid://bwqvkai2nr2gi"]
+[gd_scene load_steps=8 format=3 uid="uid://bwqvkai2nr2gi"]
 
 [ext_resource type="Script" path="res://scenes/song_select/song_select.gd" id="1_lm221"]
 [ext_resource type="Script" path="res://entites/songselect/mods/mod_panel.gd" id="2_iclas"]
 [ext_resource type="Texture2D" uid="uid://dvspeqnrmdj5h" path="res://assets/textures/taiclone song select concept 2 43.png" id="2_wtfc7"]
-[ext_resource type="Script" path="res://scenes/song_select/index_panel.gd" id="4_l3t8c"]
+[ext_resource type="Script" path="res://entites/songselect/listing_scrollbar.gd" id="4_l3t8c"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6lx67"]
 font_size = 32
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_isemi"]
+content_margin_left = 5.0
+content_margin_right = 5.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [sub_resource type="LabelSettings" id="LabelSettings_pl652"]
-font_size = 48
+font_size = 32
 
 [node name="SongSelect" type="Control"]
 layout_mode = 3
@@ -101,43 +114,67 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="IndexPanel" type="Panel" parent="."]
-visible = false
+[node name="ListingScrollbar" type="ColorRect" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -134.0
-offset_top = -57.0
-offset_right = 134.0
-offset_bottom = 46.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("4_l3t8c")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="IndexPanel"]
-layout_mode = 1
-anchors_preset = 15
+anchors_preset = 11
+anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = 207.0
+offset_bottom = -207.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("4_l3t8c")
+
+[node name="Top" type="ColorRect" parent="ListingScrollbar"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -31.0
+offset_right = -15.0
+offset_bottom = 6.0
+grow_horizontal = 0
+
+[node name="Bottom" type="ColorRect" parent="ListingScrollbar"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -31.0
+offset_top = -6.0
+offset_right = -15.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Pointer" type="ColorRect" parent="ListingScrollbar"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -60.0
+offset_top = 11.0
+offset_right = -15.0
+offset_bottom = 17.0
+grow_horizontal = 0
+
+[node name="Index" type="Label" parent="ListingScrollbar/Pointer"]
+layout_mode = 2
+offset_left = -64.0
+offset_top = -23.0
+offset_right = -5.0
+offset_bottom = 29.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Index" type="Label" parent="IndexPanel/VBoxContainer"]
-layout_mode = 2
 size_flags_vertical = 3
-text = "69/420"
+theme_override_styles/normal = SubResource("StyleBoxFlat_isemi")
+text = "1/1"
 label_settings = SubResource("LabelSettings_pl652")
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Subtitle" type="Label" parent="IndexPanel/VBoxContainer"]
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-text = "Alphabetical"
-horizontal_alignment = 1
 
 [connection signal="gui_input" from="." to="." method="gui_input"]

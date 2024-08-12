@@ -19,7 +19,7 @@ enum UPDATE_DEPTH { CONVERTED_CHARTS, NEW_CHARTS, UPDATE_CHARTS }
 var dragging := false
 const dragging_limit := 0.15
 var drag_lock_timeout := 0.0
-@onready var index_display := $IndexPanel
+@onready var listing_scrollbar := $ListingScrollbar
 
 # -------- system -------
 
@@ -89,9 +89,11 @@ func gui_input(event: InputEvent) -> void:
 		if (event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT:
 			if event.is_pressed():
 				dragging = true
+				print("dragging = true")
 	
 	if not dragging or drag_lock_timeout > 0:
 		return
+	print("moving index")
 	
 	var mouse_y_position := remap(
 		clampf(event.global_position.y / get_size().y, 0 + dragging_limit, 1 - dragging_limit), 
@@ -101,7 +103,6 @@ func gui_input(event: InputEvent) -> void:
 	
 	if new_idx != selected_listing_idx:
 		change_selected_listing(new_idx, true)
-		index_display.update_visual(new_idx, listing_container.get_child_count())
 		drag_lock_timeout = 0.2
 
 # -------- scanning for charts -------
@@ -271,6 +272,7 @@ func change_selected_listing(idx: int, exact := false) -> void:
 	
 	apply_listing_data(listing_container.get_child(selected_listing_idx))
 	update_visual()
+	listing_scrollbar.update_visual(selected_listing_idx, listing_container.get_child_count())
 
 ## changes position of listings and listingcontainer
 ## hard updates ensure all listing positions are correct, otherwise only changes last selected and currently selected
