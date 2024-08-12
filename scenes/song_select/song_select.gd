@@ -49,7 +49,7 @@ func _ready() -> void:
 	if not Global.get_root().music.get_playback_position():
 		Global.get_root().on_music_end()
 	
-	scroll_echo_timer.timeout.connect(on_scroll_timeout)
+	scroll_echo_timer.timeout.connect(on_scroll_echo)
 
 func _process(delta):
 	if dragging:
@@ -59,16 +59,6 @@ func _process(delta):
 	if drag_lock_timeout > 0:
 		drag_lock_timeout -= delta
 		return
-
-func on_scroll_timeout() -> void:
-		Global.push_console("SongSelect", "pulse!")
-		if Input.is_action_pressed("LeftKat"):
-			change_selected_listing(-1)
-		elif Input.is_action_pressed("RightKat"):
-			change_selected_listing(1)
-		
-		# restart timer to echo
-		scroll_echo_timer.start(SCROLL_ECHO_DELAY)
 
 func _unhandled_input(event) -> void:
 	# refresh listings
@@ -384,3 +374,12 @@ func transition_to_gameplay() -> void:
 	var selected_mods := mod_panel.get_selected_mods()
 	var auto_enabled = selected_mods.has(0)
 	Global.get_root().change_to_gameplay(auto_enabled)
+
+# for echoing left/right kat inputs to change listing
+func on_scroll_echo() -> void:
+	if Input.is_action_pressed("LeftKat"):
+		change_selected_listing(-1)
+		scroll_echo_timer.start(SCROLL_ECHO_DELAY)
+	elif Input.is_action_pressed("RightKat"):
+		change_selected_listing(1)
+		scroll_echo_timer.start(SCROLL_ECHO_DELAY)
