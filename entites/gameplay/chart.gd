@@ -36,36 +36,34 @@ func load_hit_objects() -> Chart:
 	hit_objects = hitobj_chart.hit_objects
 	return self
 
-# Malice.
-func populate_barlines() -> Array:
+# goes through the chart's timing points and adds all valid barlines
+func populate_barlines():
 	var timing_points := get_timing_points()
-	var last_timing_point: TimingPoint
 	var barlines := []
 	
+	# start at first timing point, back up a bar length until we cant back up anymore
 	for i in range(timing_points.size() - 1, -1, -1):
 		var target_timing_point: TimingPoint = timing_points[i]
-		if not last_timing_point:
-			last_timing_point = target_timing_point
-			continue
+		var barline_time := target_timing_point.timing
+		var bar_length := 60 * target_timing_point.meter / target_timing_point.bpm
 		
-		barlines.append_array(get_barlines(last_timing_point, target_timing_point.timing))
-		last_timing_point = target_timing_point
-	barlines.append_array(get_barlines(last_timing_point, get_last_hitobject().timing))
+		# if its the first timing point, back up until we're about to go to negatives
+		if i == timing_points.size() - 1:
+			barline_time = target_timing_point.timing
+			while barline_time - bar_length >= 0.0:
+				barline_time -= bar_length
+		
+		var end_time := get_last_hitobject().timing # default to last hobj timing
+		if i > 0: # if theres a later timing point that exists...
+			end_time = timing_points[i - 1].timing
+		
+		# if the barline_time hasnt passed the end_time...
+		while barline_time < end_time:
+			var new_barline := ChartLoader.generate_hit_object(ChartLoader.NOTETYPE.BARLINE, [barline_time, 150], [])
+			barlines.append(new_barline)
+			barline_time += bar_length
 	
 	hit_objects.append_array(barlines)
-	return barlines
-
-func get_barlines(timing_point: TimingPoint, end_time: float) -> Array:
-	var barlines := []
-	var length_btwn_points: float = end_time - timing_point.timing
-	var bps: float = 60.0 * timing_point.meter / timing_point.bpm
-	var barline_count: int = ceil(length_btwn_points / bps)
-	
-	for barline_idx in barline_count:
-		var barline_timing := timing_point.timing + (length_btwn_points / (barline_count + 1)) * barline_idx
-		var new_barline := ChartLoader.generate_hit_object(ChartLoader.NOTETYPE.BARLINE, [barline_timing, 150], [])
-		barlines.append(new_barline)
-	return barlines
 
 func get_timing_points() -> Array:
 	var timing_points := []
