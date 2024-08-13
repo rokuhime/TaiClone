@@ -98,11 +98,9 @@ func gui_input(event: InputEvent) -> void:
 		if (event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT:
 			if event.is_pressed():
 				dragging = true
-				print("dragging = true")
 	
 	if not dragging or drag_lock_timeout > 0:
 		return
-	print("moving index")
 	
 	var mouse_y_position := remap(
 		clampf(event.global_position.y / get_size().y, 0 + dragging_limit, 1 - dragging_limit), 

@@ -10,7 +10,7 @@ font_size = 50
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
-[node name="Spinner" type="Control"]
+[node name="Spinner" type="Control" groups=["Hittable"]]
 visibility_layer = 8
 layout_mode = 3
 anchors_preset = 4

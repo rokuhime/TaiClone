@@ -11,6 +11,7 @@ const SUPPORTED_FILETYPES := ["tc", "osu"]
 static var note_scene = preload("res://entites/gameplay/hitobjects/note.tscn")
 static var roll_scene = preload("res://entites/gameplay/hitobjects/roll.tscn")
 static var spinner_scene = preload("res://entites/gameplay/hitobjects/spinner.tscn")
+static var barline_scene = preload("res://entites/gameplay/hitobjects/barline.tscn")
 static var timing_point_scene = preload("res://entites/gameplay/hitobjects/timing_point.tscn")
 
 ## sees if chart needs to be converted, and then gives the .tc file path
@@ -431,6 +432,20 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			ex_vars.append(ex)
 	
 	match type:
+		NOTETYPE.DON, NOTETYPE.KAT:
+			var new_hit_object := note_scene.instantiate() as Note
+			
+			new_hit_object.timing = float(line_data[0])
+			new_hit_object.speed = float(line_data[1]) # velocity
+			new_hit_object.is_finisher = line_data[3] == "true"
+			
+			#if ex_vars.keys().has("New_Combo"):
+				#new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
+			
+			(new_hit_object as Note).is_kat = type == NOTETYPE.KAT
+			
+			return new_hit_object 
+		
 		NOTETYPE.TIMING_POINT:
 			var new_hit_object = timing_point_scene.instantiate() as TimingPoint
 			
@@ -438,6 +453,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			new_hit_object.bpm = line_data[1]
 			new_hit_object.speed = float(line_data[1]) # velocity
 			new_hit_object.is_finisher = line_data[3] == "true"
+			new_hit_object.meter = line_data[4]
 			
 			return new_hit_object
 		
@@ -475,17 +491,11 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			(new_hit_object as Spinner).needed_hits = ceil(float(ex_vars[0]) / (beat_in_seconds / beat_divisor) )
 			return new_hit_object 
 		
-		_:  # note
-			var new_hit_object := note_scene.instantiate() as Note
+		_:  # barline
+			var new_hit_object := barline_scene.instantiate() as HitObject
 			
 			new_hit_object.timing = float(line_data[0])
 			new_hit_object.speed = float(line_data[1]) # velocity
-			new_hit_object.is_finisher = line_data[3] == "true"
-			
-			#if ex_vars.keys().has("New_Combo"):
-				#new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
-			
-			(new_hit_object as Note).is_kat = type == NOTETYPE.KAT
 			
 			return new_hit_object 
 

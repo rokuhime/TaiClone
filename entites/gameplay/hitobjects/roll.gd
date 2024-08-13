@@ -60,3 +60,6 @@ func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: b
 		tick.visible = false
 		return HIT_RESULT.HIT
 	return HIT_RESULT.INVALID
+
+func miss_check(hit_time: float) -> bool:
+	return false

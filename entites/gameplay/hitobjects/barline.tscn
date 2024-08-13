@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://bj6qccthda840"]
+[gd_scene load_steps=2 format=3 uid="uid://bj6qccthda840"]
+
+[ext_resource type="Script" path="res://entites/gameplay/hitobjects/hit_object.gd" id="1_qqht2"]
 
 [node name="Barline" type="ColorRect"]
 visibility_layer = 4
@@ -13,3 +15,4 @@ offset_right = 2.0
 offset_bottom = 112.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_qqht2")

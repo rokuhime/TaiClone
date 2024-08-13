@@ -20,7 +20,11 @@ enum STATE {READY = 1, ACTIVE, FINISHED}
 
 func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: bool) -> HIT_RESULT:
 	return HIT_RESULT.INVALID
+
 func miss_check(hit_time: float) -> bool:
+	if active:
+		active = false
+		return true
 	return false
 
 # TC3 CODE

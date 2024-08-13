@@ -91,8 +91,12 @@ func _process(_delta) -> void:
 				var miss_result := hit_object.miss_check(current_time)
 				if miss_result:
 					# if passing a timing point, apply it
-					if hit_object is TimingPoint:
-						apply_timing_point(hit_object, current_time)
+					if not hit_object.is_in_group("Hittable"):
+						if hit_object is TimingPoint:
+							apply_timing_point(hit_object, current_time)
+							return
+						# assume barline
+						$AudioStreamPlayer.play()
 						return
 					
 					apply_score(hit_object, HitObject.HIT_RESULT.MISS)
@@ -155,7 +159,7 @@ func _unhandled_input(event) -> void:
 				var hit_object := hit_object_container.get_child(i) as HitObject
 				
 				# ensure hobj can be hit
-				if hit_object != null and !(hit_object is TimingPoint):
+				if hit_object != null and hit_object.is_in_group("Hittable"):
 					if hit_object.active:
 						var start_time := hit_object.timing - Global.INACC_TIMING
 						
@@ -201,6 +205,8 @@ func load_chart(requested_chart: Chart) -> void:
 	score_instance.reset()
 	
 	current_chart = requested_chart.load_hit_objects()
+	current_chart.populate_barlines()
+	
 	Global.get_root().update_current_chart(current_chart, true)
 	var chart_settings: Array = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])
 	if chart_settings:
@@ -214,7 +220,7 @@ func load_chart(requested_chart: Chart) -> void:
 			hobj.on_finished.connect(score_instance.add_manual_score)
 	
 	# set skip time to the first hit object's tix.aming
-	first_hobj_timing = get_first_hitobject().timing
+	first_hobj_timing = current_chart.get_first_hitobject().timing
 	
 	last_hobj_timing = current_chart.hit_objects[0].timing
 	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
@@ -241,7 +247,7 @@ func play_chart() -> void:
 	
 	# delay the chart if first note is less than 2 seconds into the song
 	var first_note_delay := 0.0
-	var first_hit_object = get_first_hitobject()
+	var first_hit_object = current_chart.get_first_hitobject()
 	
 	if first_hit_object.timing < 2.0:
 		first_note_delay = 2.0 - first_hit_object.timing
@@ -275,7 +281,7 @@ func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 func skip_intro() -> void:
 	if current_time >= first_hobj_timing - 2.0:
 		return
-	var first_hit_object = get_first_hitobject()
+	var first_hit_object = current_chart.get_first_hitobject()
 	
 	start_time -= first_hit_object.timing - 2.0 - current_time
 	music.seek(current_play_offset + first_hit_object.timing - 2.0)
@@ -380,16 +386,6 @@ func update_input_indicator(part_index: int) -> void:
 	drum_indicator_tweens[part_index].tween_property(indicator_target, "modulate:a", 0.0, 0.2).from(1.0)
 
 # -------- etc -------
-
-func get_first_hitobject() -> HitObject:
-	# get first hit object thats not a timing point
-	var first_hit_object: HitObject
-	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
-		var hit_object := hit_object_container.get_child(i) as HitObject
-		if hit_object is TimingPoint:
-			continue
-		return hit_object
-	return null
 
 func apply_skin(skin_manager: SkinManager) -> void:
 	for hitobject in hit_object_container.get_children():
