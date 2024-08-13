@@ -37,6 +37,7 @@ func load_hit_objects() -> Chart:
 	return self
 
 # goes through the chart's timing points and adds all valid barlines
+# TODO: move this inside of chart_loader
 func populate_barlines():
 	var timing_points := get_timing_points()
 	var barlines := []
@@ -59,7 +60,12 @@ func populate_barlines():
 		
 		# if the barline_time hasnt passed the end_time...
 		while barline_time < end_time:
-			var new_barline := ChartLoader.generate_hit_object(ChartLoader.NOTETYPE.BARLINE, [barline_time, 150], [])
+			var last_hobj_before_timing := get_last_hitobject(barline_time)
+			if not last_hobj_before_timing:
+				last_hobj_before_timing = get_first_hitobject()
+			
+			var velocity := last_hobj_before_timing.speed
+			var new_barline := ChartLoader.generate_hit_object(ChartLoader.NOTETYPE.BARLINE, [barline_time, velocity], [])
 			barlines.append(new_barline)
 			barline_time += bar_length
 	
@@ -72,19 +78,22 @@ func get_timing_points() -> Array:
 			timing_points.append(hobj)
 	return timing_points
 
+# get first hit object thats hittable
 func get_first_hitobject() -> HitObject:
-	# get first hit object thats hittable
 	var first_hit_object: HitObject
 	for i in range(hit_objects.size() - 1, -1, -1):
 		var hit_object := hit_objects[i] as HitObject
 		if hit_object.is_in_group("Hittable"):
 			return hit_object
 	return null
-	
-func get_last_hitobject() -> HitObject:
-	# get last hit object thats hittable
+
+# get last hit object thats hittable, not passing end_time
+func get_last_hitobject(end_time := 0.0) -> HitObject:
 	var first_hit_object: HitObject
 	for hit_object in hit_objects:
+		if end_time > 0:
+			if end_time < hit_object.timing:
+				continue
 		if hit_object.is_in_group("Hittable"):
 			return hit_object
 	return null
