@@ -71,7 +71,7 @@ func _process(_delta) -> void:
 		
 		# move all hitobjects
 		for hobj in hit_object_container.get_children():
-			hobj.position.x = (hobj.speed * Global.resolution_multiplier) * (hobj.timing - current_time)
+			hobj.position.x = (hobj.speed * Global.resolution_multiplier) * (hobj.timing - current_time) - (hobj.size.x / 2)
 		
 		# bail out on finding the next note if chart is over
 		if next_note_idx < 0:
@@ -95,7 +95,7 @@ func _process(_delta) -> void:
 						if hit_object is TimingPoint:
 							apply_timing_point(hit_object, current_time)
 							return
-						# assume barline
+						# assume barline (TODO: FOR TESTING, REMOVE ASAP)
 						$AudioStreamPlayer.play()
 						return
 					

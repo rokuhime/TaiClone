@@ -12,6 +12,7 @@ outline_color = Color(0, 0, 0, 1)
 
 [node name="Spinner" type="Control" groups=["Hittable"]]
 visibility_layer = 8
+z_index = 2
 layout_mode = 3
 anchors_preset = 4
 anchor_top = 0.5

@@ -108,6 +108,7 @@ grow_vertical = 2
 
 [node name="DrumIndicator" type="TextureRect" parent="Track"]
 visibility_layer = 16
+z_index = 2
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -176,6 +177,7 @@ bus = &"Music"
 
 [node name="GameOverlay" type="Control" parent="." groups=["ScoreManager"]]
 visibility_layer = 32
+z_index = 3
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
