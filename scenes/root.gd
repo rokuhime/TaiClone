@@ -30,15 +30,7 @@ var default_background = load("res://assets/textures/dev_art/background.png")
 @onready var default_sfx_audio_queuer: AudioQueuer = $AudioQueuer
 @onready var corner_info: Label = $NavigationBars/Bottom/CornerInfo/Label
 
-var navigation_bar_tweens := []
-var navigation_bars_enabled := false
-@onready var navigation_bar_buttons := [
-	$NavigationBars/Bottom/Buttons/Button1, $NavigationBars/Bottom/Buttons/Button2, $NavigationBars/Bottom/Buttons/Button3
-]
-@onready var navigation_bar_labels := [
-	$NavigationBars/Top/HBoxContainer/LeftInfo/TopLabel, $NavigationBars/Top/HBoxContainer/LeftInfo/BottomLabel,
-	$NavigationBars/Top/HBoxContainer/RightInfo/TopLabel, $NavigationBars/Top/HBoxContainer/RightInfo/BottomLabel
-]
+@onready var navigation_bars: NavigationBars = $NavigationBars
 
 # -------- system -------
 
@@ -49,7 +41,7 @@ func _ready():
 	get_tree().root.files_dropped.connect(file_dropped)
 	
 	await get_tree().process_frame
-	toggle_navigation_bars(false, false)
+	navigation_bars.toggle_navigation_bars(false, false)
 	change_state(GAMESTATE.MAIN_MENU, true)
 
 func _process(delta):
@@ -60,78 +52,6 @@ func _process(delta):
 # used to bundle ui sounds into one AudioQueuer, saves memory
 func play_ui_sound(target_stream: AudioStream, offset := Vector2.ZERO):
 	default_sfx_audio_queuer.play_audio(target_stream, offset)
-
-func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
-	navigation_bars_enabled = enabled
-	
-	# end any ongoing navbar tweens
-	if not navigation_bar_tweens.is_empty():
-		for tween in navigation_bar_tweens:
-			tween.kill()
-	
-	var top_bar := $NavigationBars/Top as ColorRect
-	var bottom_bar := $NavigationBars/Bottom as ColorRect
-	var screen_size = size.y
-	
-	if enabled:
-		var top_tween := Global.create_smooth_tween()
-		var bottom_tween := Global.create_smooth_tween()
-		# slide into view
-		top_tween.tween_property(top_bar, "position:y", 0, 0.5 if smooth_transition else 0)
-		bottom_tween.tween_property(bottom_bar, "position:y", screen_size - bottom_bar.size.y, 0.5 if smooth_transition else 0)
-		
-		navigation_bar_tweens = [top_tween, bottom_tween]
-		return
-	
-	var top_tween := Global.create_smooth_tween()
-	var bottom_tween := Global.create_smooth_tween()
-	# slide out of view
-	top_tween.tween_property(top_bar, "position:y", -top_bar.size.y, 0.5 if smooth_transition else 0)
-	bottom_tween.tween_property(bottom_bar, "position:y", screen_size, 0.5 if smooth_transition else 0)
-	
-	# set vars to allow killing them early if needed
-	navigation_bar_tweens = [top_tween, bottom_tween]
-
-# sets navbar button text
-func set_navbar_buttons(button_info: Array) -> void:
-	var idx := 0
-	for button in navigation_bar_buttons:
-		# if the idx exists...
-		if button_info.size() - 1 >= idx:
-			# if theres valid info...
-			if button_info[idx] != null:
-				button.visible = true
-				button.text = button_info[idx]
-				idx += 1
-				continue
-		# no info given, make invisible
-		button.visible = false
-		idx += 1
-
-# sets test part of navbar
-# 0, 1 = left, 2, 3 = right
-func set_navbar_text(text_info: Array) -> void:
-	var idx := 0
-	for label in navigation_bar_labels:
-		# if the idx exists...
-		if text_info.size() - 1 >= idx:
-			# if theres valid info...
-			if text_info[idx] != null:
-				label.visible = true
-				label.text = text_info[idx]
-				idx += 1
-				continue
-		# no info given, make invisible
-		label.visible = false
-		idx += 1
-
-# wipes previous connections, and returns the pressed signals from navbar buttons
-func get_navigation_bar_signals() -> Array:
-	var button_signals := []
-	for button in navigation_bar_buttons:
-		# add connect callable to array
-		button_signals.append(button.pressed)
-	return button_signals
 
 # -------- changing states ----------
 
@@ -153,9 +73,9 @@ func change_state(requested_scene, hard_transition := false) -> Node:
 	move_child(current_state_node, 1)  # 1 to ensure the background stays at the bottom
 	
 	if NAV_BAR_ENABLED_STATES.has(requested_scene):
-		toggle_navigation_bars(true)
+		navigation_bars.toggle_navigation_bars(true)
 	else:
-		toggle_navigation_bars(false, false)
+		navigation_bars.toggle_navigation_bars(false, false)
 	
 	if not hard_transition:
 		blackout_transition(false)
@@ -189,7 +109,7 @@ func back_button_pressed() -> void:
 			change_state(GAMESTATE.SONG_SELECT)
 
 func change_to_gameplay(auto_enabled: bool):
-	toggle_navigation_bars(false)
+	navigation_bars.toggle_navigation_bars(false)
 	await change_state(GAMESTATE.GAMEPLAY)
 	current_state_node.load_chart(current_chart)
 	current_state_node.auto_enabled = auto_enabled
@@ -202,7 +122,7 @@ func change_to_results(score: ScoreData):
 func refresh_song_select() -> void:
 	if current_state != GAMESTATE.SONG_SELECT:
 		change_state(GAMESTATE.SONG_SELECT)
-	toggle_navigation_bars(true)
+	navigation_bars.toggle_navigation_bars(true)
 	current_state_node.refresh_listings_from_song_folders()
 
 # -------- chart ----------

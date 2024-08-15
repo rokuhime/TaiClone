@@ -36,8 +36,8 @@ func _ready() -> void:
 	await get_tree().process_frame # delay 1 frame to ensure everything is loaded for update_visual
 	
 	# set navbar info
-	get_parent().set_navbar_buttons(["Mods", null, "Play"])
-	var button_signals = get_parent().get_navigation_bar_signals()
+	Global.get_root().navigation_bars.set_navbar_buttons(["Mods", null, "Play"])
+	var button_signals = Global.get_root().navigation_bars.get_navigation_bar_signals()
 	button_signals[0].connect(mod_panel.toggle_visual)
 	button_signals[2].connect(transition_to_gameplay)
 	
@@ -299,7 +299,7 @@ func update_visual(hard_update := false) -> void:
 		if [last_selected_listing_idx, selected_listing_idx].has(i) or hard_update:
 			# update navbar text if we're looking at the selected listing
 			if i == selected_listing_idx and listing.chart.chart_info:
-				get_parent().set_navbar_text([
+				Global.get_root().navigation_bars.set_navbar_text([
 					listing.chart.chart_info["song_title"] + " - " + listing.chart.chart_info["song_artist"],
 					listing.chart.chart_info["chart_title"] + " - " + listing.chart.chart_info["chart_artist"],
 					"%s charts loaded" % listing_container.get_child_count()])

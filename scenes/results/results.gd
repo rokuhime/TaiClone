@@ -18,12 +18,12 @@ var score: ScoreData
 
 func _ready() -> void:
 	# set navbar info
-	get_parent().set_navbar_buttons([])
+	Global.get_root().navigation_bars.set_navbar_buttons([])
 	# wait a frame to ensure it will update properly
 	await get_tree().process_frame
 	
 	var chart := Global.get_root().current_chart
-	get_parent().set_navbar_text([
+	Global.get_root().navigation_bars.set_navbar_text([
 					chart.chart_info["song_title"] + " - " + chart.chart_info["song_artist"],
 					chart.chart_info["chart_title"] + " - " + chart.chart_info["chart_artist"],
 					"Played by %s" % Global.player_name,

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://b1x0cuqexagsr"]
+[gd_scene load_steps=16 format=3 uid="uid://b1x0cuqexagsr"]
 
 [ext_resource type="Script" path="res://scenes/root.gd" id="1_djqkq"]
 [ext_resource type="Texture2D" uid="uid://qyk77pakrphh" path="res://assets/textures/dev_art/background.png" id="2_ii7io"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://doli71bfmeej7" path="res://entites/global/settings_panel/settings_panel.tscn" id="5_jiurb"]
 [ext_resource type="Texture2D" uid="uid://dh836ppj76rb6" path="res://assets/textures/dev_art/brehd.png" id="5_krro0"]
 [ext_resource type="PackedScene" uid="uid://cd5gwotq82dtk" path="res://entites/global/volume_control/volume_control.tscn" id="5_ljgve"]
+[ext_resource type="Script" path="res://entites/global/navigation_bars/navigation_bars.gd" id="5_s8kaa"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="6_6gusu"]
 [ext_resource type="Script" path="res://entites/database_manager.gd" id="8_s0wf3"]
 
@@ -68,6 +69,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("4_0s8dv")
+script = ExtResource("5_s8kaa")
 
 [node name="Top" type="ColorRect" parent="NavigationBars"]
 layout_mode = 1
