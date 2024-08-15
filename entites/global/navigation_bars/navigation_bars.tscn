@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://xpu07bjkfiy8"]
+[gd_scene load_steps=8 format=3 uid="uid://xpu07bjkfiy8"]
 
 [ext_resource type="Theme" uid="uid://5uta1xlclcoh" path="res://values/navigation_theme.tres" id="1_8m4up"]
 [ext_resource type="Script" path="res://entites/global/navigation_bars/navigation_bars.gd" id="2_agq4q"]
@@ -19,12 +19,6 @@ font_size = 25
 
 [sub_resource type="LabelSettings" id="LabelSettings_0046q"]
 font_size = 18
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7uk4f"]
-bg_color = Color(0, 0, 0, 0.607843)
-
-[sub_resource type="LabelSettings" id="LabelSettings_qj1u2"]
-font_size = 24
 
 [node name="NavigationBars" type="Control"]
 layout_mode = 3
@@ -180,26 +174,3 @@ layout_mode = 2
 layout_mode = 2
 text = "swag gaming"
 label_settings = SubResource("LabelSettings_0046q")
-
-[node name="CornerInfo" type="PanelContainer" parent="Bottom"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -157.0
-offset_top = -181.0
-offset_right = -8.0
-offset_bottom = -108.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_7uk4f")
-
-[node name="Label" type="Label" parent="Bottom/CornerInfo"]
-layout_mode = 2
-text = "TaiClone v1.0
-FPS: 100"
-label_settings = SubResource("LabelSettings_qj1u2")
-horizontal_alignment = 2
-vertical_alignment = 2

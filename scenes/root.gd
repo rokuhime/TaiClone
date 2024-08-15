@@ -28,8 +28,7 @@ var current_chart: Chart
 var default_background = load("res://assets/textures/dev_art/background.png")
 @onready var background := $Background
 @onready var default_sfx_audio_queuer: AudioQueuer = $AudioQueuer
-@onready var corner_info: Label = $NavigationBars/Bottom/CornerInfo/Label
-
+@onready var corner_info: Label = $CornerInfo/Label
 @onready var navigation_bars: NavigationBars = $NavigationBars
 
 # -------- system -------
@@ -43,6 +42,7 @@ func _ready():
 	await get_tree().process_frame
 	navigation_bars.toggle_navigation_bars(false, false)
 	change_state(GAMESTATE.MAIN_MENU, true)
+	navigation_bars.back_button.pressed.connect(back_button_pressed)
 
 func _process(delta):
 	corner_info.text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
@@ -70,10 +70,11 @@ func change_state(requested_scene, hard_transition := false) -> Node:
 	new_state_scene = gamestate_scenes[requested_scene].instantiate()
 	current_state_node = new_state_scene
 	add_child(current_state_node)
-	move_child(current_state_node, 1)  # 1 to ensure the background stays at the bottom
+	move_child(current_state_node, 3)  # 1 to ensure the background stays at the bottom
 	
 	if NAV_BAR_ENABLED_STATES.has(requested_scene):
 		navigation_bars.toggle_navigation_bars(true)
+		
 	else:
 		navigation_bars.toggle_navigation_bars(false, false)
 	
@@ -102,6 +103,7 @@ func blackout_transition(fade_in: bool) -> void:
 	blackout_lock = false
 
 func back_button_pressed() -> void:
+	Global.push_console("Root", "back button pressed!")
 	match current_state:
 		GAMESTATE.SONG_SELECT:
 			change_state(GAMESTATE.MAIN_MENU)

@@ -87,7 +87,7 @@ func _unhandled_input(event) -> void:
 			scroll_echo_timer.start(INITIAL_SROLL_ECHO_DELAY)
 		
 		# select
-		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon") or event.is_action_pressed("ui_accept"):
+		elif event.is_action_pressed("LeftDon") or event.is_action_pressed("LeftDon"):
 			transition_to_gameplay()
 
 func gui_input(event: InputEvent) -> void:

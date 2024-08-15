@@ -1,35 +1,17 @@
-[gd_scene load_steps=16 format=3 uid="uid://b1x0cuqexagsr"]
+[gd_scene load_steps=10 format=3 uid="uid://b1x0cuqexagsr"]
 
 [ext_resource type="Script" path="res://scenes/root.gd" id="1_djqkq"]
 [ext_resource type="Texture2D" uid="uid://qyk77pakrphh" path="res://assets/textures/dev_art/background.png" id="2_ii7io"]
-[ext_resource type="Theme" uid="uid://5uta1xlclcoh" path="res://values/navigation_theme.tres" id="4_0s8dv"]
 [ext_resource type="PackedScene" uid="uid://doli71bfmeej7" path="res://entites/global/settings_panel/settings_panel.tscn" id="5_jiurb"]
-[ext_resource type="Texture2D" uid="uid://dh836ppj76rb6" path="res://assets/textures/dev_art/brehd.png" id="5_krro0"]
 [ext_resource type="PackedScene" uid="uid://cd5gwotq82dtk" path="res://entites/global/volume_control/volume_control.tscn" id="5_ljgve"]
-[ext_resource type="Script" path="res://entites/global/navigation_bars/navigation_bars.gd" id="5_s8kaa"]
+[ext_resource type="PackedScene" uid="uid://xpu07bjkfiy8" path="res://entites/global/navigation_bars/navigation_bars.tscn" id="5_wb84j"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="6_6gusu"]
 [ext_resource type="Script" path="res://entites/database_manager.gd" id="8_s0wf3"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_w4s3d"]
-font_size = 32
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o6gtb"]
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-
-[sub_resource type="LabelSettings" id="LabelSettings_3ve0a"]
-font_size = 25
-
-[sub_resource type="LabelSettings" id="LabelSettings_0046q"]
-font_size = 18
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7uk4f"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0kmvs"]
 bg_color = Color(0, 0, 0, 0.607843)
 
-[sub_resource type="LabelSettings" id="LabelSettings_qj1u2"]
+[sub_resource type="LabelSettings" id="LabelSettings_1nf4q"]
 font_size = 24
 
 [node name="root" type="Control" groups=["Root"]]
@@ -40,6 +22,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_djqkq")
+
+[node name="DatabaseManager" type="Node" parent="." groups=["DatabaseManager"]]
+script = ExtResource("8_s0wf3")
 
 [node name="Background" type="TextureRect" parent="."]
 self_modulate = Color(0.501961, 0.501961, 0.501961, 1)
@@ -60,183 +45,8 @@ audio_players = 10
 [node name="Music" type="AudioStreamPlayer" parent="." groups=["RootMusic"]]
 bus = &"Music"
 
-[node name="NavigationBars" type="Control" parent="."]
+[node name="NavigationBars" parent="." instance=ExtResource("5_wb84j")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme = ExtResource("4_0s8dv")
-script = ExtResource("5_s8kaa")
-
-[node name="Top" type="ColorRect" parent="NavigationBars"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 107.0
-grow_horizontal = 2
-color = Color(0, 0, 0, 0.784314)
-
-[node name="HBoxContainer" type="HBoxContainer" parent="NavigationBars/Top"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 14.0
-offset_right = -14.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="LeftInfo" type="VBoxContainer" parent="NavigationBars/Top/HBoxContainer"]
-layout_mode = 2
-
-[node name="TopLabel" type="Label" parent="NavigationBars/Top/HBoxContainer/LeftInfo"]
-layout_mode = 2
-text = "SongTitle - Artist"
-label_settings = SubResource("LabelSettings_w4s3d")
-
-[node name="BottomLabel" type="Label" parent="NavigationBars/Top/HBoxContainer/LeftInfo"]
-layout_mode = 2
-text = "ChartTitle - ChartArtist"
-label_settings = SubResource("LabelSettings_w4s3d")
-
-[node name="Buffer" type="Control" parent="NavigationBars/Top/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="RightInfo" type="VBoxContainer" parent="NavigationBars/Top/HBoxContainer"]
-layout_mode = 2
-
-[node name="TopLabel" type="Label" parent="NavigationBars/Top/HBoxContainer/RightInfo"]
-layout_mode = 2
-text = "Played by rokuhime"
-label_settings = SubResource("LabelSettings_w4s3d")
-horizontal_alignment = 2
-
-[node name="BottomLabel" type="Label" parent="NavigationBars/Top/HBoxContainer/RightInfo"]
-layout_mode = 2
-text = "2024-07-30 12:00 PM "
-label_settings = SubResource("LabelSettings_w4s3d")
-horizontal_alignment = 2
-
-[node name="Bottom" type="ColorRect" parent="NavigationBars"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -100.0
-grow_horizontal = 2
-grow_vertical = 0
-color = Color(0, 0, 0, 0.784314)
-
-[node name="Buttons" type="HBoxContainer" parent="NavigationBars/Bottom"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="BackButton" type="Button" parent="NavigationBars/Bottom/Buttons"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-text = "Back"
-
-[node name="Button1" type="Button" parent="NavigationBars/Bottom/Buttons"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-text = "Button1"
-
-[node name="Control" type="Control" parent="NavigationBars/Bottom/Buttons"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Button2" type="Button" parent="NavigationBars/Bottom/Buttons"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-text = "Button2"
-
-[node name="Button3" type="Button" parent="NavigationBars/Bottom/Buttons"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-text = "Button3"
-
-[node name="Profile" type="Panel" parent="NavigationBars/Bottom"]
-visible = false
-layout_mode = 1
-anchors_preset = 13
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -179.0
-offset_right = 179.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_o6gtb")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="NavigationBars/Bottom/Profile"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = -2.0
-offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ProfilePicture" type="TextureRect" parent="NavigationBars/Bottom/Profile/HBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-texture = ExtResource("5_krro0")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Info" type="VBoxContainer" parent="NavigationBars/Bottom/Profile/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 0
-
-[node name="Name" type="Label" parent="NavigationBars/Bottom/Profile/HBoxContainer/Info"]
-layout_mode = 2
-text = "rokuhime"
-label_settings = SubResource("LabelSettings_3ve0a")
-
-[node name="HSeparator" type="HSeparator" parent="NavigationBars/Bottom/Profile/HBoxContainer/Info"]
-layout_mode = 2
-
-[node name="Info1" type="Label" parent="NavigationBars/Bottom/Profile/HBoxContainer/Info"]
-layout_mode = 2
-text = "swag gaming"
-label_settings = SubResource("LabelSettings_0046q")
-
-[node name="CornerInfo" type="PanelContainer" parent="NavigationBars/Bottom"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -157.0
-offset_top = -181.0
-offset_right = -8.0
-offset_bottom = -108.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_7uk4f")
-
-[node name="Label" type="Label" parent="NavigationBars/Bottom/CornerInfo"]
-layout_mode = 2
-text = "TaiClone v1.0
-FPS: 100"
-label_settings = SubResource("LabelSettings_qj1u2")
-horizontal_alignment = 2
-vertical_alignment = 2
 
 [node name="SettingsPanel" parent="." instance=ExtResource("5_jiurb")]
 visible = false
@@ -262,8 +72,28 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="DatabaseManager" type="Node" parent="." groups=["DatabaseManager"]]
-script = ExtResource("8_s0wf3")
+[node name="CornerInfo" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -157.0
+offset_top = -181.0
+offset_right = -8.0
+offset_bottom = -108.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_0kmvs")
+
+[node name="Label" type="Label" parent="CornerInfo"]
+layout_mode = 2
+text = "TaiClone v1.0
+FPS: 100"
+label_settings = SubResource("LabelSettings_1nf4q")
+horizontal_alignment = 2
+vertical_alignment = 2
 
 [connection signal="finished" from="Music" to="." method="on_music_end"]
-[connection signal="pressed" from="NavigationBars/Bottom/Buttons/BackButton" to="." method="back_button_pressed"]
