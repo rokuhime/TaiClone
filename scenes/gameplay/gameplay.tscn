@@ -175,6 +175,10 @@ script = ExtResource("9_tgle1")
 [node name="Music" type="AudioStreamPlayer" parent="." groups=["Music"]]
 bus = &"Music"
 
+[node name="BarlineTick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("19_5pjr3")
+pitch_scale = 2.0
+
 [node name="GameOverlay" type="Control" parent="." groups=["ScoreManager"]]
 visibility_layer = 32
 z_index = 3
@@ -365,7 +369,3 @@ offset_right = 380.0
 offset_bottom = -121.0
 grow_horizontal = 1
 metadata/_edit_lock_ = true
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("19_5pjr3")
-pitch_scale = 2.0

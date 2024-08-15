@@ -36,13 +36,13 @@ func initialize_tables() -> void:
 	}
 	
 	tables["chart_settings"] = {
-		"id": 				{"data_type": "int", "primary_key": true, "not_null": true, "auto_increment": true},
+		"id": 				{"data_type": "int", "primary_key": true, "not_null": true, "auto_increment": false},
+		"hash":				{"data_type": "blob"}, # include hash to double check the id hasn't changed
 		"local_offset":		{"data_type": "real"},
 		"collections":		{"data_type": "int"}, # this is a bitwise (for now) of collection id's!
 	}
 	
 	for table_name in tables.keys():
-		print("added %s to database" % table_name)
 		db.create_table(table_name, tables[table_name])
 
 func table_exists(table_name: String) -> bool:
@@ -110,13 +110,10 @@ func exists_in_db(chart: Chart) -> bool:
 
 # returns the database entry of a chart
 func get_db_entry(chart: Chart) -> Dictionary:
-	# check if theres an existing entry
-	# this is stupid. i wish i could search for the hash but thisll do for now
 	db.query_with_bindings("select * from charts where hash = ?", [chart.hash])
 	var possible_entries := db.query_result
 	for entry in possible_entries:
 		if entry["hash"] == chart.hash:
-			#print("\n", entry, "\n")
 			return entry
 	
 	Global.push_console("DatabaseManager", "Chart not found in DB!", 1)

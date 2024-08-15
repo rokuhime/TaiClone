@@ -258,6 +258,7 @@ func on_music_end() -> void:
 		if current_chart:
 			var prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
 			music.play(clamp(prev_point, 0, music.stream.get_length()))
+	# TODO: if on main menu get random chart
 
 # -------- other ----------
 

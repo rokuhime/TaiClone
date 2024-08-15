@@ -42,10 +42,11 @@ var don_audio := preload("res://assets/default_skin/h_don.wav") as AudioStream
 var kat_audio := preload("res://assets/default_skin/h_kat.wav") as AudioStream
 var donfinisher_audio := preload("res://assets/default_skin/hf_don.wav") as AudioStream
 var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as AudioStream
+@onready var barline_tick_player := $BarlineTick as AudioStreamPlayer
 
 var temp_skin_var: SkinManager
 
-const OFFSET_INCREASE := 0.05
+const OFFSET_INCREASE := 0.005
 var local_offset := 0.0
 
 # -------- system -------
@@ -95,8 +96,8 @@ func _process(_delta) -> void:
 						if hit_object is TimingPoint:
 							apply_timing_point(hit_object, current_time)
 							return
-						# assume barline (TODO: FOR TESTING, REMOVE ASAP)
-						$AudioStreamPlayer.play()
+						# assume barline
+						barline_tick_player.play()
 						return
 					
 					apply_score(hit_object, HitObject.HIT_RESULT.MISS)
@@ -194,7 +195,7 @@ func save_local_offset() -> void:
 	if chart_settings_entries:
 		chart_settings_entries[0]["local_offset"] = local_offset
 	else:
-		chart_settings_entries.append({"local_offset": local_offset, "collections": 0})
+		chart_settings_entries.append({"hash": current_chart.hash, "local_offset": local_offset, "collections": 0})
 	Global.database_manager.update_db_entry("chart_settings", chart_settings_entries[0])
 
 func load_chart(requested_chart: Chart) -> void:
@@ -207,10 +208,11 @@ func load_chart(requested_chart: Chart) -> void:
 	current_chart = requested_chart.load_hit_objects()
 	
 	Global.get_root().update_current_chart(current_chart, true)
-	var chart_settings: Array = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])
+	var chart_settings = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])
 	if chart_settings:
-		print("EXISTING CHART SETTINGS")
-		local_offset = chart_settings[0]["local_offset"]
+		if chart_settings[0]["hash"] == current_chart.hash:
+			Global.push_console("Gameplay", "Found chart settings! Offset: %s" % chart_settings[0]["local_offset"])
+			local_offset = chart_settings[0]["local_offset"]
 	
 	# add all hit objects to container
 	for hobj in requested_chart.hit_objects:
