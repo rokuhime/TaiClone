@@ -142,8 +142,7 @@ static func convert_chart(file_path: String):
 						var beat_length := float(line_data[1])
 						var timing_value := snappedf(((60000.0 if meter else -100.0) / beat_length if beat_length else INF), 0.001)
 						var is_kiai_enabled := bool(1 << 0 & int(line_data[7]))
-						#if bool(1 << 3 & int(line_data[7])):
-							#ex["Omit_Barline"] = true
+						var omit_first_barline := bool(1 << 3 & int(line_data[7]))
 						
 						# make timing point array
 						var timing_point := [time, timing_value, is_kiai_enabled, meter]
@@ -159,6 +158,8 @@ static func convert_chart(file_path: String):
 							
 							# below doesnt find first timing point, so implement it here
 							var timing_object := [time, current_timing["BPM"], NOTETYPE.TIMING_POINT, current_timing["Kiai"], current_timing["Meter"]]
+							if omit_first_barline:
+								timing_point.append(true)
 							hit_objects.append(timing_object)
 						
 						# already parsed it, may aswell use it
@@ -502,7 +503,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 
 # return all relevant timing related info from a timestamp
 static func get_intended_timing(current_time: float, timing_points) -> Dictionary:
-	var intended_timing := { "BPM": 0.0, "Velocity": 1, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null}
+	var intended_timing := { "BPM": 0.0, "Velocity": 1, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null, "OmitFirstBarline": false}
 	
 	for tp in timing_points:
 		# if timing point takes place after current_time, return results
@@ -519,6 +520,8 @@ static func get_intended_timing(current_time: float, timing_points) -> Dictionar
 		
 		# inherited, only change velocity
 		intended_timing["Velocity"] = tp[1]
+		if tp.size() >= 5:
+			intended_timing["OmitFirstBarline"] = tp[4]
 	
 	return intended_timing
 
@@ -548,8 +551,15 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 			end_time = timing_points[idx - 1][0]
 		
 		# if the barline_time hasnt passed the end_time...
+		var first_barline_placed := false
 		while barline_time < end_time:
 			var last_timing_point = get_intended_timing(barline_time, timing_points)
+			if not first_barline_placed:
+				first_barline_placed = true
+				if last_timing_point["OmitFirstBarline"]:
+					barline_time += bar_length
+					continue # skip first barline
+			
 			# roku note 2024-08-15
 			# .....this is so ugly and should probably be inferred by get_intended_timing
 			var velocity: float = last_timing_point["Velocity"] * last_timing_point["BPM"] * slider_multiplier

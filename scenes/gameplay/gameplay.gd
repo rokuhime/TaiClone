@@ -200,7 +200,7 @@ func save_local_offset(_active := false) -> void:
 	if chart_settings_entries:
 		chart_settings_entries[0]["local_offset"] = local_offset
 	else:
-		chart_settings_entries.append({"hash": current_chart.hash, "local_offset": local_offset, "collections": 0})
+		chart_settings_entries.append({"id": current_chart.chart_info["id"], "hash": current_chart.hash, "local_offset": local_offset, "collections": 0})
 	Global.database_manager.update_db_entry("chart_settings", chart_settings_entries[0])
 	Global.push_console("Gameplay", "Saved local offset: %s" % local_offset)
 

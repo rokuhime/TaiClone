@@ -372,6 +372,7 @@ grow_horizontal = 1
 metadata/_edit_lock_ = true
 
 [node name="OffsetPanel" parent="." instance=ExtResource("20_4mhgx")]
+visible = false
 layout_mode = 1
 offset_left = -85.0
 offset_top = -172.0
