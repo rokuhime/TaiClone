@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://duw1w1bhgtct6"]
+[gd_scene load_steps=23 format=3 uid="uid://duw1w1bhgtct6"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_3gk3b"]
 [ext_resource type="Texture2D" uid="uid://coxghef0nw6j6" path="res://assets/textures/screenshot387.jpg" id="1_hg67d"]
@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://cx25nj2j45ujs" path="res://entites/global/mascot/mascot.tscn" id="17_w7oq0"]
 [ext_resource type="Texture2D" uid="uid://drwpakhqk5tm" path="res://assets/default_skin/taiko-hit0@2x.png" id="18_t1emc"]
 [ext_resource type="AudioStream" uid="uid://bklysspgs8y11" path="res://assets/sfx/volchange.wav" id="19_5pjr3"]
+[ext_resource type="PackedScene" uid="uid://cbwxsw5rlkahd" path="res://entites/gameplay/ui/offset_panel.tscn" id="20_4mhgx"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_u26yd"]
 font_size = 64
@@ -369,3 +370,12 @@ offset_right = 380.0
 offset_bottom = -121.0
 grow_horizontal = 1
 metadata/_edit_lock_ = true
+
+[node name="OffsetPanel" parent="." instance=ExtResource("20_4mhgx")]
+layout_mode = 1
+offset_left = -85.0
+offset_top = -172.0
+offset_right = 85.0
+offset_bottom = -72.0
+
+[connection signal="on_active_changed" from="OffsetPanel" to="." method="save_local_offset"]

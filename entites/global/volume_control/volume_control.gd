@@ -17,6 +17,7 @@ var is_mouse_pressed := false
 # -------- system -------
 
 func _ready() -> void:
+	super()
 	bus_sections.append(get_node("Bars/Master"))
 	for bar_idx in get_node("Bars/Specifics").get_child_count():
 		# ensure theres the same amount of tweens for the sections

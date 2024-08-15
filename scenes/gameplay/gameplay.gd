@@ -45,6 +45,7 @@ var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as Audi
 @onready var barline_tick_player := $BarlineTick as AudioStreamPlayer
 
 var temp_skin_var: SkinManager
+@onready var offset_panel := $OffsetPanel
 
 const OFFSET_INCREASE := 0.005
 var local_offset := 0.0
@@ -55,7 +56,9 @@ func _ready() -> void:
 	# replace this with it being provided from root, wait for player class implementation first
 	temp_skin_var = Global.get_root().current_skin
 	game_overlay.apply_skin(temp_skin_var)
+	
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
+	
 	music = Global.music
 	music.stream
 
@@ -113,11 +116,9 @@ func _unhandled_input(event) -> void:
 	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
 		if Input.is_action_just_pressed("AddLocalOffset"):
 			adjust_offset(OFFSET_INCREASE)
-			print("new local offset: %s" % local_offset)
 			
 		if Input.is_action_just_pressed("RemoveLocalOffset"):
 			adjust_offset(-OFFSET_INCREASE)
-			print("new local offset: %s" % local_offset)
 		
 		if Input.is_action_just_pressed("SkipIntro") and playing:
 			skip_intro()
@@ -187,16 +188,21 @@ func _unhandled_input(event) -> void:
 
 func adjust_offset(value: float) -> float:
 	local_offset += value
-	save_local_offset()
+	offset_panel.change_offset_text(local_offset)
 	return local_offset
 
-func save_local_offset() -> void:
+func save_local_offset(_active := false) -> void:
+	# _active only here so on_active_changed can work properly
+	if _active:
+		return
+	
 	var chart_settings_entries: Array = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])
 	if chart_settings_entries:
 		chart_settings_entries[0]["local_offset"] = local_offset
 	else:
 		chart_settings_entries.append({"hash": current_chart.hash, "local_offset": local_offset, "collections": 0})
 	Global.database_manager.update_db_entry("chart_settings", chart_settings_entries[0])
+	Global.push_console("Gameplay", "Saved local offset: %s" % local_offset)
 
 func load_chart(requested_chart: Chart) -> void:
 	# empty out existing hit objects and reset stats just incasies

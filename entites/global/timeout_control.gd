@@ -9,7 +9,7 @@ var visibility_tween: Tween
 var is_active := false
 var is_mouse_inside := false
 
-var fade_out_delay := 1.5
+@export var fade_out_delay := 1.5
 const FADE_IN_TIME := 0.2
 const FADE_OUT_TIME := 1
 
@@ -62,4 +62,4 @@ func change_active(new_active: bool) -> void:
 		FADE_IN_TIME if new_active else FADE_OUT_TIME
 	)
 	
-	on_active_changed.emit(new_active)
+	on_active_changed.emit(is_active)

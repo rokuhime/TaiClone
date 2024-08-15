@@ -3,15 +3,15 @@
 [ext_resource type="Script" path="res://entites/global/volume_control/volume_control.gd" id="1_db2nh"]
 [ext_resource type="AudioStream" uid="uid://bklysspgs8y11" path="res://assets/sfx/volchange.wav" id="2_v5r4f"]
 
-[sub_resource type="Gradient" id="Gradient_1dshh"]
+[sub_resource type="Gradient" id="Gradient_nhkpq"]
 offsets = PackedFloat32Array(0)
 colors = PackedColorArray(1, 1, 1, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_8lnya"]
-gradient = SubResource("Gradient_1dshh")
+gradient = SubResource("Gradient_nhkpq")
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_2u8gf"]
-gradient = SubResource("Gradient_1dshh")
+gradient = SubResource("Gradient_nhkpq")
 
 [sub_resource type="LabelSettings" id="LabelSettings_f66a7"]
 line_spacing = 4.0
@@ -156,7 +156,7 @@ label_settings = SubResource("LabelSettings_oved7")
 horizontal_alignment = 1
 
 [node name="TimeoutBar" type="TextureProgressBar" parent="."]
-custom_minimum_size = Vector2(35, 0)
+custom_minimum_size = Vector2(35, 4)
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -183,14 +183,3 @@ bus = &"SFX"
 [node name="Timeout" type="Timer" parent="."]
 wait_time = 1.5
 one_shot = true
-autostart = true
-
-[connection signal="mouse_entered" from="." to="." method="change_mouse_inside" binds= [true]]
-[connection signal="mouse_exited" from="." to="." method="change_mouse_inside" binds= [false]]
-[connection signal="mouse_entered" from="Bars/Specifics/Music" to="." method="change_current_bus" binds= [1]]
-[connection signal="gui_input" from="Bars/Specifics/Music/TextureProgressBar" to="." method="mouse_volume_input" binds= [1]]
-[connection signal="mouse_entered" from="Bars/Specifics/SFX" to="." method="change_current_bus" binds= [2]]
-[connection signal="gui_input" from="Bars/Specifics/SFX/TextureProgressBar" to="." method="mouse_volume_input" binds= [2]]
-[connection signal="mouse_entered" from="Bars/Master" to="." method="change_current_bus" binds= [0]]
-[connection signal="gui_input" from="Bars/Master/TextureProgressBar" to="." method="mouse_volume_input" binds= [0]]
-[connection signal="timeout" from="Timeout" to="." method="change_active" binds= [false]]
