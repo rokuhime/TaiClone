@@ -36,41 +36,6 @@ func load_hit_objects() -> Chart:
 	hit_objects = hitobj_chart.hit_objects
 	return self
 
-# goes through the chart's timing points and adds all valid barlines
-# TODO: move this inside of chart_loader
-func populate_barlines():
-	var timing_points := get_timing_points()
-	var barlines := []
-	
-	# start at first timing point, back up a bar length until we cant back up anymore
-	for i in range(timing_points.size() - 1, -1, -1):
-		var target_timing_point: TimingPoint = timing_points[i]
-		var barline_time := target_timing_point.timing
-		var bar_length := 60 * target_timing_point.meter / target_timing_point.bpm
-		
-		# if its the first timing point, back up until we're about to go to negatives
-		if i == timing_points.size() - 1:
-			barline_time = target_timing_point.timing
-			while barline_time - bar_length >= 0.0:
-				barline_time -= bar_length
-		
-		var end_time := get_last_hitobject().timing # default to last hobj timing
-		if i > 0: # if theres a later timing point that exists...
-			end_time = timing_points[i - 1].timing
-		
-		# if the barline_time hasnt passed the end_time...
-		while barline_time < end_time:
-			var last_hobj_before_timing := get_last_hitobject(barline_time)
-			if not last_hobj_before_timing:
-				last_hobj_before_timing = get_first_hitobject()
-			
-			var velocity := last_hobj_before_timing.speed
-			var new_barline := ChartLoader.generate_hit_object(ChartLoader.NOTETYPE.BARLINE, [barline_time, velocity], [])
-			barlines.append(new_barline)
-			barline_time += bar_length
-	
-	hit_objects.append_array(barlines)
-
 func get_timing_points() -> Array:
 	var timing_points := []
 	for hobj in hit_objects:

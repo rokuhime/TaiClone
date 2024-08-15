@@ -205,7 +205,6 @@ func load_chart(requested_chart: Chart) -> void:
 	score_instance.reset()
 	
 	current_chart = requested_chart.load_hit_objects()
-	current_chart.populate_barlines()
 	
 	Global.get_root().update_current_chart(current_chart, true)
 	var chart_settings: Array = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])

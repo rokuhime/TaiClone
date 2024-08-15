@@ -165,7 +165,7 @@ func refresh_from_chart_folders() -> void:
 		var chart := ChartLoader.get_tc_metadata(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
 		
 		# if origin listed, but doesn't exist...
-		if chart.chart_info["origin_path"]:
+		if chart.chart_info.keys().has("origin_path"):
 			if not FileAccess.file_exists(chart.chart_info["origin_path"]):
 				DirAccess.remove_absolute(Global.CONVERTED_CHART_FOLDER.path_join(converted_chart))
 				Global.push_console("SongSelect", "deleted converted chart with invalid origin: %s - %s [%s]" % [

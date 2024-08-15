@@ -226,7 +226,8 @@ static func convert_chart(file_path: String):
 
 					_:
 						continue
-
+			hit_objects.append_array(osu_get_barlines(timing_points, hit_objects, slider_multiplier))
+		
 		"tc":
 			# tried to convert tc, ignore and bail
 			file.close()
@@ -520,3 +521,52 @@ static func get_intended_timing(current_time: float, timing_points) -> Dictionar
 		intended_timing["Velocity"] = tp[1]
 	
 	return intended_timing
+
+# goes through the chart's timing points and adds all valid barlines
+static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_multiplier := 1.4) -> Array:
+	var barlines := []
+	var uninherited_points := []
+	for i in range(timing_points.size() - 1, -1, -1):
+		var target_timing_point: Array = timing_points[i]
+		if target_timing_point[3]:
+			uninherited_points.append(timing_points[i])
+	
+	# start at first timing point, back up a bar length until we cant back up anymore
+	for target_timing_point in uninherited_points:
+		var barline_time: float = target_timing_point[0]
+		var bar_length: float = 60 * target_timing_point[3] / target_timing_point[1]
+		
+		# if its the first timing point, back up until we're about to go to negatives
+		if uninherited_points.find(target_timing_point) == 0:
+			barline_time = target_timing_point[0]
+			while barline_time - bar_length >= 0.0:
+				barline_time -= bar_length
+		
+		var end_time: float = get_last_hit_object_array(hit_objects)[0] # default to last hobj timing
+		var idx := uninherited_points.find(target_timing_point)
+		if idx > 0: # if theres a later timing point that exists...
+			end_time = timing_points[idx - 1][0]
+		
+		# if the barline_time hasnt passed the end_time...
+		while barline_time < end_time:
+			var last_timing_point = get_intended_timing(barline_time, timing_points)
+			# roku note 2024-08-15
+			# .....this is so ugly and should probably be inferred by get_intended_timing
+			var velocity: float = last_timing_point["Velocity"] * last_timing_point["BPM"] * slider_multiplier
+			var new_barline := [barline_time, velocity, ChartLoader.NOTETYPE.BARLINE, false]
+			barlines.append(new_barline)
+			barline_time += bar_length
+	
+	return barlines
+
+# get last hit object thats hittable, not passing end_time
+static func get_last_hit_object_array(hit_objects: Array, end_time := 0.0):
+	var first_hit_object: Array
+	for i in range(hit_objects.size() - 1, -1, -1):
+		var hit_object: Array = hit_objects[i]
+		if end_time > 0:
+			if end_time < hit_object[0]: # timing
+				continue
+		if [NOTETYPE.DON, NOTETYPE.KAT, NOTETYPE.ROLL, NOTETYPE.SPINNER].has(hit_object[2]): # if hittable
+			return hit_object 
+	return null
