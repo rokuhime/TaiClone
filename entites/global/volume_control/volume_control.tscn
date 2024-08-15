@@ -3,15 +3,15 @@
 [ext_resource type="Script" path="res://entites/global/volume_control/volume_control.gd" id="1_db2nh"]
 [ext_resource type="AudioStream" uid="uid://bklysspgs8y11" path="res://assets/sfx/volchange.wav" id="2_v5r4f"]
 
-[sub_resource type="Gradient" id="Gradient_o4urd"]
+[sub_resource type="Gradient" id="Gradient_1dshh"]
 offsets = PackedFloat32Array(0)
 colors = PackedColorArray(1, 1, 1, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_8lnya"]
-gradient = SubResource("Gradient_o4urd")
+gradient = SubResource("Gradient_1dshh")
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_2u8gf"]
-gradient = SubResource("Gradient_o4urd")
+gradient = SubResource("Gradient_1dshh")
 
 [sub_resource type="LabelSettings" id="LabelSettings_f66a7"]
 line_spacing = 4.0
@@ -20,7 +20,7 @@ line_spacing = 4.0
 font_size = 18
 outline_size = 1
 
-[node name="VolumeControl" type="ColorRect" groups=["VolumeControl"]]
+[node name="VolumeControl" type="ColorRect" node_paths=PackedStringArray("timeout_timer", "timeout_bar") groups=["VolumeControl"]]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -35,6 +35,8 @@ grow_vertical = 2
 mouse_default_cursor_shape = 2
 color = Color(0.145098, 0.145098, 0.164706, 0.882353)
 script = ExtResource("1_db2nh")
+timeout_timer = NodePath("Timeout")
+timeout_bar = NodePath("TimeoutBar")
 
 [node name="Bars" type="VBoxContainer" parent="."]
 layout_mode = 1
