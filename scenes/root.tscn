@@ -62,16 +62,6 @@ offset_top = -380.0
 offset_bottom = -120.0
 grow_vertical = 0
 
-[node name="BlackoutOverlay" type="ColorRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
-
 [node name="CornerInfo" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 3
@@ -94,5 +84,15 @@ FPS: 100"
 label_settings = SubResource("LabelSettings_1nf4q")
 horizontal_alignment = 2
 vertical_alignment = 2
+
+[node name="BlackoutOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [connection signal="finished" from="Music" to="." method="on_music_end"]

@@ -158,9 +158,10 @@ static func convert_chart(file_path: String):
 							
 							# below doesnt find first timing point, so implement it here
 							var timing_object := [time, current_timing["BPM"], NOTETYPE.TIMING_POINT, current_timing["Kiai"], current_timing["Meter"]]
-							if omit_first_barline:
-								timing_point.append(true)
 							hit_objects.append(timing_object)
+						
+						if omit_first_barline:
+							timing_point.append(true)
 						
 						# already parsed it, may aswell use it
 						timing_points.append(timing_point)
@@ -551,16 +552,15 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 			end_time = timing_points[idx - 1][0]
 		
 		# if the barline_time hasnt passed the end_time...
-		var first_barline_placed := false
 		while barline_time < end_time:
 			if barlines.size() >= 2000:
 				break
+			
 			var last_timing_point = get_intended_timing(barline_time, timing_points)
-			if not first_barline_placed:
-				first_barline_placed = true
-				if last_timing_point["OmitFirstBarline"]:
-					barline_time += bar_length
-					continue # skip first barline
+			# skipping barline at timing point's timing if needed
+			if last_timing_point.keys().has("OmitFirstBarline") and barline_time == target_timing_point[0]:
+				barline_time += bar_length
+				continue 
 			
 			# roku note 2024-08-15
 			# .....this is so ugly and should probably be inferred by get_intended_timing
