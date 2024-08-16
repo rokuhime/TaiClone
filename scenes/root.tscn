@@ -50,10 +50,12 @@ layout_mode = 1
 
 [node name="SettingsPanel" parent="." instance=ExtResource("5_jiurb")]
 visible = false
+z_index = 4
 layout_mode = 1
 offset_left = -450.0
 
 [node name="VolumeControl" parent="." instance=ExtResource("5_ljgve")]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_top = 1.0
@@ -63,6 +65,7 @@ offset_bottom = -120.0
 grow_vertical = 0
 
 [node name="CornerInfo" type="PanelContainer" parent="."]
+z_index = 5
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -87,6 +90,7 @@ vertical_alignment = 2
 
 [node name="BlackoutOverlay" type="ColorRect" parent="."]
 visible = false
+z_index = 999
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
