@@ -530,10 +530,10 @@ static func get_intended_timing(current_time: float, timing_points) -> Dictionar
 static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_multiplier := 1.4) -> Array:
 	var barlines := []
 	var uninherited_points := []
-	for i in range(timing_points.size() - 1, -1, -1):
-		var target_timing_point: Array = timing_points[i]
+	for tp in timing_points:
+		var target_timing_point: Array = tp
 		if target_timing_point[3]:
-			uninherited_points.append(timing_points[i])
+			uninherited_points.append(tp)
 	
 	# start at first timing point, back up a bar length until we cant back up anymore
 	for target_timing_point in uninherited_points:
@@ -542,14 +542,13 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 		
 		# if its the first timing point, back up until we're about to go to negatives
 		if uninherited_points.find(target_timing_point) == 0:
-			barline_time = target_timing_point[0]
 			while barline_time - bar_length >= 0.0:
 				barline_time -= bar_length
 		
 		var end_time: float = get_last_hit_object_array(hit_objects)[0] # default to last hobj timing
 		var idx := uninherited_points.find(target_timing_point)
-		if idx > 0: # if theres a later timing point that exists...
-			end_time = timing_points[idx - 1][0]
+		if idx < uninherited_points.size() - 1: # if theres a later timing point that exists...
+			end_time = uninherited_points[idx + 1][0]
 		
 		# if the barline_time hasnt passed the end_time...
 		while barline_time < end_time:
@@ -558,9 +557,10 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 			
 			var last_timing_point = get_intended_timing(barline_time, timing_points)
 			# skipping barline at timing point's timing if needed
-			if last_timing_point.keys().has("OmitFirstBarline") and barline_time == target_timing_point[0]:
-				barline_time += bar_length
-				continue 
+			if target_timing_point.size() >= 5 and barline_time == target_timing_point[0]:
+				if target_timing_point[4]: # OmitFirstBarline
+					barline_time += bar_length
+					continue 
 			
 			# roku note 2024-08-15
 			# .....this is so ugly and should probably be inferred by get_intended_timing
@@ -575,6 +575,7 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 static func get_last_hit_object_array(hit_objects: Array, end_time := 0.0):
 	var first_hit_object: Array
 	for i in range(hit_objects.size() - 1, -1, -1):
+		print("idx: ", i)
 		var hit_object: Array = hit_objects[i]
 		if end_time > 0:
 			if end_time < hit_object[0]: # timing
