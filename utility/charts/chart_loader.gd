@@ -521,6 +521,7 @@ static func get_intended_timing(current_time: float, timing_points) -> Dictionar
 		if tp[3]:
 			intended_timing["BPM"] = tp[1]
 			intended_timing["Meter"] = tp[3]
+			intended_timing["Velocity"] = 1
 			first_timing_point_applied = true
 			continue
 		
