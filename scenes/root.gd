@@ -28,8 +28,10 @@ var current_chart: Chart
 var default_background = load("res://assets/textures/dev_art/background.png")
 @onready var background := $Background
 @onready var default_sfx_audio_queuer: AudioQueuer = $AudioQueuer
-@onready var corner_info: Label = $CornerInfo/Label
 @onready var navigation_bars: NavigationBars = $NavigationBars
+
+@onready var corner_info: Control = $CornerInfo
+var corner_info_tween: Tween
 
 # -------- system -------
 
@@ -45,7 +47,9 @@ func _ready():
 	navigation_bars.back_button.pressed.connect(back_button_pressed)
 
 func _process(delta):
-	corner_info.text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
+	corner_info.get_child(0).text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
+	var buffer := size.x - (corner_info.position.x + corner_info.size.x) # distance between corner_info and the very right side of the screen
+	corner_info.position.y = navigation_bars.get_node("Bottom").position.y - corner_info.size.y - buffer
 
 # -------- ui ----------
 
@@ -194,3 +198,4 @@ func file_dropped(files: PackedStringArray) -> void:
 		change_state(GAMESTATE.SONG_SELECT)
 	current_state_node.create_new_listing(chart)
 	current_state_node.update_visual()
+

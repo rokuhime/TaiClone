@@ -553,6 +553,8 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 		# if the barline_time hasnt passed the end_time...
 		var first_barline_placed := false
 		while barline_time < end_time:
+			if barlines.size() >= 2000:
+				break
 			var last_timing_point = get_intended_timing(barline_time, timing_points)
 			if not first_barline_placed:
 				first_barline_placed = true
