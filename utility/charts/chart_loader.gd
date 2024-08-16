@@ -506,17 +506,22 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 static func get_intended_timing(current_time: float, timing_points) -> Dictionary:
 	var intended_timing := { "BPM": 0.0, "Velocity": 1, "Meter": 4, "Kiai": false, "LastChangeInherited": false, "NextChangeTime": null, "OmitFirstBarline": false}
 	
+	var first_timing_point_applied := false
 	for tp in timing_points:
+		if intended_timing["NextChangeTime"] and first_timing_point_applied:
+			break
+		
 		# if timing point takes place after current_time, return results
-		if tp[0] > current_time:
+		if tp[0] > current_time and intended_timing["NextChangeTime"] == null:
 			intended_timing["NextChangeTime"] = tp[0]
-			break 
+			continue
 		intended_timing["Kiai"] = tp[2]
 		
 		# if its uninherited (has meter)...
 		if tp[3]:
 			intended_timing["BPM"] = tp[1]
 			intended_timing["Meter"] = tp[3]
+			first_timing_point_applied = true
 			continue
 		
 		# inherited, only change velocity
@@ -575,7 +580,6 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 static func get_last_hit_object_array(hit_objects: Array, end_time := 0.0):
 	var first_hit_object: Array
 	for i in range(hit_objects.size() - 1, -1, -1):
-		print("idx: ", i)
 		var hit_object: Array = hit_objects[i]
 		if end_time > 0:
 			if end_time < hit_object[0]: # timing
