@@ -18,7 +18,12 @@ var is_mouse_pressed := false
 
 func _ready() -> void:
 	super()
-	bus_sections.append(get_node("Bars/Master"))
+	var master_bar = get_node("Bars/Master")
+	
+	master_bar.mouse_entered.connect(change_current_bus.bind(0))
+	master_bar.gui_input.connect(mouse_volume_input.bind(0))
+	bus_sections.append(master_bar)
+	
 	for bar_idx in get_node("Bars/Specifics").get_child_count():
 		# ensure theres the same amount of tweens for the sections
 		bus_bar_size_tweens.append(null)
@@ -27,6 +32,8 @@ func _ready() -> void:
 		# add bar to bus_sections and update their visual
 		var target_bus: Control = get_node("Bars/Specifics").get_child(bar_idx)
 		bus_sections.append(target_bus)
+		target_bus.mouse_entered.connect(change_current_bus.bind(bar_idx + 1))
+		target_bus.gui_input.connect(mouse_volume_input.bind(bar_idx + 1))
 		update_bar(bar_idx + 1)
 	
 	on_active_changed.connect(active_changed)
