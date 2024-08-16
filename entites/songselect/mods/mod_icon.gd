@@ -9,7 +9,16 @@ func _ready():
 	update_visual()
 
 func update_visual() -> void:
-	# get texture from SkinManager using mod_id	
+	# get graphic info from SkinManager using mod_id
+	match mod_id:
+		ModPanel.MOD_TYPES.AUTO:
+			$ColorRect.color = Color("7aa0ff")
+			$ColorRect/Label.text = "Auto"
+		
+		ModPanel.MOD_TYPES.BARLINE_AUDIO:
+			$ColorRect.color = Color("db9758")
+			$ColorRect/Label.text = "Barline Audio"
+	
 	if color_tween:
 		color_tween.kill()
 	color_tween = Global.create_smooth_tween()

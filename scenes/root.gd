@@ -110,11 +110,11 @@ func back_button_pressed() -> void:
 		_:
 			change_state(GAMESTATE.SONG_SELECT)
 
-func change_to_gameplay(auto_enabled: bool):
+func change_to_gameplay(enabled_mods: Array):
 	navigation_bars.toggle_navigation_bars(false)
 	await change_state(GAMESTATE.GAMEPLAY)
 	current_state_node.load_chart(current_chart)
-	current_state_node.auto_enabled = auto_enabled
+	current_state_node.enabled_mods = enabled_mods
 
 func change_to_results(score: ScoreData):
 	if current_state != GAMESTATE.RESULTS:

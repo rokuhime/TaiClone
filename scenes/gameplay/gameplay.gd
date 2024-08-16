@@ -10,13 +10,11 @@ var music: AudioStreamPlayer
 @onready var drum_indicator: Node = $Track/DrumIndicator
 var drum_indicator_tweens : Array = [null, null, null, null]
 
-
-var auto_enabled := false
-
 # Data
 var current_chart : Chart
 var current_play_offset := 0.0
 var score_instance := ScoreData.new()
+var enabled_mods := []
 
 var current_time := 0.0
 var start_time := 0.0
@@ -86,7 +84,7 @@ func _process(_delta) -> void:
 			var hit_object := hit_object_container.get_child(i) as HitObject
 			if hit_object.timing <= current_time:
 				# auto
-				if hit_object.active and hit_object is Note and auto_enabled:
+				if hit_object.active and hit_object is Note and enabled_mods.has(ModPanel.MOD_TYPES.AUTO):
 					hit_check(SIDE.LEFT, hit_object.is_kat, hit_object)
 					play_audio(SIDE.LEFT, hit_object.is_kat)
 					current_hitsound_state = HITSOUND_STATES.NORMAL
@@ -100,7 +98,8 @@ func _process(_delta) -> void:
 							apply_timing_point(hit_object, current_time)
 							return
 						# assume barline
-						barline_tick_player.play()
+						if enabled_mods.has(ModPanel.MOD_TYPES.BARLINE_AUDIO):
+							barline_tick_player.play()
 						return
 					
 					apply_score(hit_object, HitObject.HIT_RESULT.MISS)
@@ -123,7 +122,7 @@ func _unhandled_input(event) -> void:
 		if Input.is_action_just_pressed("SkipIntro") and playing:
 			skip_intro()
 		
-		if auto_enabled:
+		if enabled_mods.has(ModPanel.MOD_TYPES.AUTO):
 			return
 		
 		# get rhythm gameplay input

@@ -16,7 +16,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-color = Color(0.48, 0.627333, 1, 1)
+color = Color(0.86, 0.5934, 0.344, 1)
 
 [node name="Label" type="Label" parent="ColorRect"]
 layout_mode = 1
@@ -28,5 +28,6 @@ grow_vertical = 2
 text = "auto"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 2
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]

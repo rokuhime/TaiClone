@@ -1,7 +1,7 @@
 class_name ModPanel
 extends Panel
 
-enum MOD_TYPES { AUTO }
+enum MOD_TYPES { AUTO, BARLINE_AUDIO}
 @onready var mod_container := $VBoxContainer/ModContainer as GridContainer
 static var mod_icon_scene = preload("res://entites/songselect/mods/mod_icon.tscn")
 
@@ -21,11 +21,14 @@ func _process(delta) -> void:
 
 # goes through the MOD_TYPES enum to instance mod icons
 func create_mod_icons() -> void:
+	# for some reason mod in MOD_TYPES is not giving the actual values, hence mod_idx
+	var mod_idx := 0
 	for mod in MOD_TYPES:
 		var new_mod_icon := mod_icon_scene.instantiate() as ModIcon
 		mod_container.add_child(new_mod_icon)
-		new_mod_icon.mod_id = mod
+		new_mod_icon.mod_id = mod_idx
 		new_mod_icon.update_visual()
+		mod_idx += 1
 
 # returns the ids of any selected mods
 func get_selected_mods() -> Array:

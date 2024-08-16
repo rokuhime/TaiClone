@@ -370,8 +370,7 @@ func handle_listing_input(index: int) -> void:
 
 func transition_to_gameplay() -> void:
 	var selected_mods := mod_panel.get_selected_mods()
-	var auto_enabled = selected_mods.has(0)
-	Global.get_root().change_to_gameplay(auto_enabled)
+	Global.get_root().change_to_gameplay(selected_mods)
 
 # for echoing left/right kat inputs to change listing
 func on_scroll_echo() -> void:
