@@ -9,6 +9,7 @@ var music: AudioStreamPlayer
 
 @onready var drum_indicator: Node = $Track/DrumIndicator
 var drum_indicator_tweens : Array = [null, null, null, null]
+var spinner_gameplay_location := Vector2(69, 425)
 
 # Data
 var current_chart : Chart
@@ -90,12 +91,15 @@ func _process(_delta) -> void:
 					current_hitsound_state = HITSOUND_STATES.NORMAL
 					return
 				
+				# activating spinners
 				if hit_object is Spinner and hit_object.hit_status == Spinner.hit_type.INACTIVE:
+					# move interactive element out of hit object to make it still
 					hit_object.remove_child(hit_object.spinner_gameplay)
-					$Track/HitPoint.add_child(hit_object.spinner_gameplay)
+					hit_object_container.get_parent().add_child(hit_object.spinner_gameplay)
 					# set position
-					hit_object.spinner_gameplay.position = Vector2(69, 425)
+					hit_object.spinner_gameplay.position = spinner_gameplay_location
 					hit_object.transition_to_playable()
+					return
 				
 				var miss_result := hit_object.miss_check(current_time)
 				if miss_result:
@@ -330,25 +334,6 @@ func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) ->
 		return true
 	# if it was given to a spinner/roll, allow the input still be valid for another hit object
 	return false
-
-func miss_check(next_note: HitObject) -> void:
-	var miss_result = next_note.miss_check(current_time)
-		
-	match next_note.get_class():
-		"Note":
-			apply_score(next_note, HitObject.HIT_RESULT.MISS)
-		
-		"Spinner":
-			match miss_result:
-				HitObject.HIT_RESULT.INVALID:
-					Global.push_console("Gameplay", "miss_check invalid spinner result, retrying in 1s", -1)
-					get_tree().create_timer(1).timeout.connect(func(): miss_check(next_note))
-				# more than half hit
-				HitObject.HIT_RESULT.HIT:
-					score_instance.add_score(Global.INACC_TIMING, HitObject.HIT_RESULT.HIT)
-				# less than half hit
-				HitObject.HIT_RESULT.MISS:
-					score_instance.add_score(Global.INACC_TIMING + 5, HitObject.HIT_RESULT.MISS)
 
 # finisher second hit check, returns if it was successful or not
 func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
