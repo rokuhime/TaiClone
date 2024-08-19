@@ -532,6 +532,7 @@ static func get_intended_timing(current_time: float, timing_points) -> Dictionar
 
 # goes through the chart's timing points and adds all valid barlines
 static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_multiplier := 1.4) -> Array:
+	Global.push_console("ChartLoader", "Generating barlines for .osu file!")
 	var barlines := []
 	var uninherited_points := []
 	for tp in timing_points:
@@ -543,6 +544,8 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 	for target_timing_point in uninherited_points:
 		var barline_time: float = target_timing_point[0]
 		var bar_length: float = 60 * target_timing_point[3] / target_timing_point[1]
+		if bar_length <= 0.0001: # stupid safeguard to eliminate infinite barline issues
+			continue
 		
 		# if its the first timing point, back up until we're about to go to negatives
 		if uninherited_points.find(target_timing_point) == 0:
