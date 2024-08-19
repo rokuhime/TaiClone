@@ -471,7 +471,7 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 				#new_hit_object.new_combo = ex_vars["New_Combo"] == "true"
 			
 			(new_hit_object as Roll).length = ex_vars[0]
-			(new_hit_object as Roll).tick_duration = (60.0 / intended_timing_point["BPM"]) / 4.0
+			(new_hit_object as Roll).tick_duration = (60.0 / intended_timing_point["BPM"]) / intended_timing_point["Meter"]
 			(new_hit_object as Roll).create_ticks()
 			
 			return new_hit_object
@@ -488,10 +488,8 @@ static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitOb
 			
 			(new_hit_object as Spinner).length = ex_vars[0]
 			
-			var beat_measure : int = intended_timing_point["Meter"]
-			var beat_divisor := 4
-			var beat_in_seconds : float = (60.0 * beat_measure) / intended_timing_point["BPM"]
-			(new_hit_object as Spinner).needed_hits = ceil(float(ex_vars[0]) / (beat_in_seconds / beat_divisor) )
+			var bps : float = (60.0 / intended_timing_point["BPM"]) / (intended_timing_point["Meter"] / 2.0)
+			(new_hit_object as Spinner).needed_hits = ceil(float(ex_vars[0]) / bps )
 			return new_hit_object 
 		
 		_:  # barline

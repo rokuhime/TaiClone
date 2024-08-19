@@ -36,16 +36,16 @@ func apply_skin(skin: SkinManager) -> void:
 	update_visual()
 
 func create_ticks() -> void:
-	var tick_count = int(ceil(length / tick_duration)) + 1
-	# tick distance = body length / tick count - 1 to ensure the first tick is on 0, and the last tick is on the body's end
-	var tick_distance = length * speed * Global.resolution_multiplier / (tick_count - 1)
+	var tick_velocity = length * speed * Global.resolution_multiplier
+	var tick_timing := 0.0
 	
 	await ready
-	for tick_idx in tick_count:
+	while tick_timing <= length:
 		var new_tick: Control = tick_scene.instantiate()
 		tick_container.add_child(new_tick)
 		
-		new_tick.position.x = tick_idx * tick_distance
+		new_tick.position.x = (tick_timing / length) * middle_node.size.x
+		tick_timing += tick_duration
 
 func get_tick_idx(cur_time: float) -> int:
 	return int(round( (cur_time - timing) / tick_duration ))
@@ -55,6 +55,15 @@ func get_tick_idx(cur_time: float) -> int:
 # work on get_tick_idx to make it basically hone in on the closest NOT HIT tick maybe?
 func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: bool) -> HIT_RESULT:
 	var tick_idx = clampi(get_tick_idx(current_time), 0, tick_container.get_child_count() - 1)
+	
+	# if were on the first tick and not within inacc timing, ignore
+	if tick_idx == 0 and abs(timing - current_time) > Global.INACC_TIMING:
+		return HIT_RESULT.INVALID
+	# if were on the last tick and not within inacc timing, ignore
+	elif tick_idx == tick_container.get_child_count() - 1 and abs((timing + length) - current_time) > Global.INACC_TIMING:
+		return HIT_RESULT.INVALID
+	
+	# within bounds
 	var tick = tick_container.get_child(tick_idx)
 	if tick.visible:
 		tick.visible = false
