@@ -90,6 +90,13 @@ func _process(_delta) -> void:
 					current_hitsound_state = HITSOUND_STATES.NORMAL
 					return
 				
+				if hit_object is Spinner and hit_object.hit_status == Spinner.hit_type.INACTIVE:
+					hit_object.remove_child(hit_object.spinner_gameplay)
+					$Track/HitPoint.add_child(hit_object.spinner_gameplay)
+					# set position
+					hit_object.spinner_gameplay.position = Vector2(69, 425)
+					hit_object.transition_to_playable()
+				
 				var miss_result := hit_object.miss_check(current_time)
 				if miss_result:
 					# if passing a timing point, apply it
@@ -224,6 +231,8 @@ func load_chart(requested_chart: Chart) -> void:
 		hit_object_container.add_child(hobj)
 		if hobj is Spinner:
 			hobj.on_finished.connect(score_instance.add_manual_score)
+		if not hobj.is_in_group("Hittable") and hobj.speed == 0:
+			print("THERE YOU ARE YOU SLIMY LITTLE BNTIHCH %s" % hobj.timing)
 	
 	# set skip time to the first hit object's tix.aming
 	first_hobj_timing = current_chart.get_first_hitobject().timing

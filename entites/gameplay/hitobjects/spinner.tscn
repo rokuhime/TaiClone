@@ -20,21 +20,24 @@ anchor_bottom = 0.5
 grow_vertical = 2
 script = ExtResource("1_nk4qg")
 
-[node name="SpinnerWarn" type="TextureRect" parent="."]
+[node name="Warn" type="TextureRect" parent="."]
 visibility_layer = 8
 layout_mode = 1
-anchors_preset = 4
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
+offset_left = -67.0
 offset_top = -67.0
-offset_right = 134.0
+offset_right = 67.0
 offset_bottom = 67.0
+grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(64, 64)
 texture = ExtResource("1_s0d8t")
 
 [node name="SpinnerGameplay" type="Control" parent="."]
-modulate = Color(1, 1, 1, 0)
 visibility_layer = 8
 layout_mode = 1
 anchors_preset = 7
@@ -42,10 +45,8 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 67.0
-offset_top = 375.0
-offset_right = 67.0
-offset_bottom = 375.0
+offset_top = 288.0
+offset_bottom = 288.0
 grow_horizontal = 2
 grow_vertical = 0
 
