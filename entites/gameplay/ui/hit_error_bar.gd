@@ -66,5 +66,9 @@ func adjust_average_marker() -> void:
 	
 	if average_marker_tween:
 		average_marker_tween.kill()
-	average_marker_tween = Global.create_smooth_tween()
-	average_marker_tween.tween_property(average_marker, "position:x", point_posx_total / point_container.get_child_count() - average_marker.size.x / 2, 0.5)
+	average_marker_tween = Global.create_smooth_tween(
+		average_marker, 
+		"position:x", 
+		point_posx_total / point_container.get_child_count() - average_marker.size.x / 2, 
+		0.5
+	)

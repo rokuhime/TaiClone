@@ -115,8 +115,7 @@ func change_current_bus(wanted_bus_index: int) -> void:
 			bus_bar_alpha_tweens[bus_index].kill()
 		
 		# update bus section alpha
-		bus_bar_alpha_tweens[bus_index] = Global.create_smooth_tween()
-		bus_bar_alpha_tweens[bus_index].tween_property(
+		bus_bar_alpha_tweens[bus_index] = Global.create_smooth_tween(
 			bus_sections[bus_index], 
 			"modulate:a", 
 			1.0 if bus_index == wanted_bus_index else 0.5,
@@ -139,8 +138,12 @@ func update_bar(bus_index: int = -1) -> void:
 		bus_bar_size_tweens[bus_index].kill()
 	
 	# update bar visual
-	bus_bar_size_tweens[bus_index] = Global.create_smooth_tween()
-	bus_bar_size_tweens[bus_index].tween_property(volume_slider, "value", db_to_linear(AudioServer.get_bus_volume_db(bus_index)), 0.2)
+	bus_bar_size_tweens[bus_index] = Global.create_smooth_tween(
+		volume_slider, 
+		"value", 
+		db_to_linear(AudioServer.get_bus_volume_db(bus_index)), 
+		0.2
+	)
 	
 	# set percentage text
 	bus_sections[bus_index].get_node("Percentage").text = str( roundi( db_to_linear(AudioServer.get_bus_volume_db(bus_index)) * 100 ))

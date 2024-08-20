@@ -54,8 +54,7 @@ func change_active(new_active: bool) -> void:
 	if visibility_tween:
 		visibility_tween.kill()
 	
-	visibility_tween = Global.create_smooth_tween()
-	visibility_tween.tween_property(
+	visibility_tween = Global.create_smooth_tween(
 		self, 
 		"modulate:a", 
 		1.0 if new_active else 0.0, 

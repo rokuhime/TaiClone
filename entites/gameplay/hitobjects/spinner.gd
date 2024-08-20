@@ -96,8 +96,7 @@ func finished() -> void:
 	# change visual for the spinner_gameplay
 	if spinner_gameplay_tween:
 		spinner_gameplay_tween.kill()
-	spinner_gameplay_tween = Global.create_smooth_tween()
-	spinner_gameplay_tween.tween_property(spinner_gameplay, "modulate:a", 0.0, 0.2)
+	spinner_gameplay_tween = Global.create_smooth_tween(spinner_gameplay, "modulate:a", 0.0, 0.2)
 	
 	await spinner_gameplay_tween.finished
 	visible = false

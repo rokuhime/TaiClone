@@ -99,8 +99,8 @@ func update_inacc_indicator(hit_time_difference: float) -> void:
 	
 	if inaccurate_indicator_tween:
 		inaccurate_indicator_tween.kill()
-	inaccurate_indicator_tween = Global.create_smooth_tween()
-	inaccurate_indicator_tween.tween_property(inaccurate_indicator, "modulate:a", 0.0, 0.5).from(1.0)
+	
+	inaccurate_indicator_tween = Global.create_smooth_tween(inaccurate_indicator, "modulate:a", 0.0, 0.5, 1.0)
 
 # -------- on event --------
 

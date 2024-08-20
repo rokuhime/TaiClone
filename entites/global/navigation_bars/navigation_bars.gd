@@ -25,21 +25,17 @@ func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	var screen_size = size.y
 	
 	if enabled:
-		var top_tween := Global.create_smooth_tween()
-		var bottom_tween := Global.create_smooth_tween()
 		# slide into view
-		top_tween.tween_property(top_bar, "position:y", 0, 0.5 if smooth_transition else 0)
-		bottom_tween.tween_property(bottom_bar, "position:y", screen_size - bottom_bar.size.y, 0.5 if smooth_transition else 0)
+		var top_tween := Global.create_smooth_tween(top_bar, "position:y", 0, 0.5 if smooth_transition else 0)
+		var bottom_tween := Global.create_smooth_tween(bottom_bar, "position:y", screen_size - bottom_bar.size.y, 0.5 if smooth_transition else 0)
 		
 		navigation_bar_tweens = [top_tween, bottom_tween]
 		back_button.visible = true
 		return
 	
-	var top_tween := Global.create_smooth_tween()
-	var bottom_tween := Global.create_smooth_tween()
 	# slide out of view
-	top_tween.tween_property(top_bar, "position:y", -top_bar.size.y, 0.5 if smooth_transition else 0)
-	bottom_tween.tween_property(bottom_bar, "position:y", screen_size, 0.5 if smooth_transition else 0)
+	var top_tween := Global.create_smooth_tween(top_bar, "position:y", -top_bar.size.y, 0.5 if smooth_transition else 0)
+	var bottom_tween := Global.create_smooth_tween(bottom_bar, "position:y", screen_size, 0.5 if smooth_transition else 0)
 	
 	# set vars to allow killing them early if needed
 	navigation_bar_tweens = [top_tween, bottom_tween]

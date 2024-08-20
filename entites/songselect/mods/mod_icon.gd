@@ -21,10 +21,12 @@ func update_visual() -> void:
 	
 	if color_tween:
 		color_tween.kill()
-	color_tween = Global.create_smooth_tween()
-	
-	# update color
-	color_tween.tween_property(self, "modulate", Color.WHITE if enabled else Color(0.5,0.5,0.5), 0.3)
+	color_tween = Global.create_smooth_tween(
+		self, 
+		"modulate", 
+		Color.WHITE if enabled else Color(0.5,0.5,0.5), 
+		0.3
+	)
 
 func toggle_enabled(new_enabled: bool) -> void:
 	enabled = new_enabled

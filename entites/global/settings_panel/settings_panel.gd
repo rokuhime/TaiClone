@@ -95,12 +95,12 @@ func toggle_visible() -> void:
 	if movement_tween:
 		movement_tween.kill()
 	
-	movement_tween = Global.create_smooth_tween()
-	movement_tween.tween_property(
+	movement_tween = Global.create_smooth_tween(
 		self, 
 		"position:x", 
 		get_viewport_rect().size.x - size.x if is_visible else get_viewport_rect().size.x, 
-		0.5 )
+		0.5 
+	)
 
 func change_player_name(new_name: String) -> void:
 	Global.player_name = new_name

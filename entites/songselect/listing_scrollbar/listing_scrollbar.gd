@@ -29,9 +29,11 @@ func update_visual(current_index: int, total_count: int) -> void:
 	
 	if index_movement_tween:
 		index_movement_tween.kill()
-	index_movement_tween = Global.create_smooth_tween()
-	index_movement_tween.tween_property(pointer, "position:y", 
-		remap(current_index, 0, total_count - 1, pointer_bounds.x, pointer_bounds.y), 0.5
+	index_movement_tween = Global.create_smooth_tween(
+		pointer, 
+		"position:y", 
+		remap(current_index, 0, total_count - 1, pointer_bounds.x, pointer_bounds.y),
+		0.5
 	)
 	
 	# visibility

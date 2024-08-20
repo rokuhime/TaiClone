@@ -156,8 +156,13 @@ func get_root() -> Root:
 	return root
 
 # shortcut to make smooth tweens consistent
-func create_smooth_tween() -> Tween:
-	return create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+static func create_smooth_tween(target: Node, property: NodePath, final_val, duration: float, from = null) -> Tween:
+	var new_tween = target.create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	if from:
+		new_tween.tween_property(target, property, final_val, duration).from(from)
+	else:
+		new_tween.tween_property(target, property, final_val, duration)
+	return new_tween
 
 static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: int) -> float:
 	var acc_hit_count : float = (accurate_hits + float(inaccurate_hits / 2.0))

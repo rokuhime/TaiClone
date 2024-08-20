@@ -561,7 +561,7 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 		while barline_time < end_time:
 			if barlines.size() >= 2000:
 				Global.push_console("ChartLoader", "Chart exceeds 2000 barlines, any barlines after %s will not be added." % barline_time, 1)
-				break
+				return barlines
 			
 			var last_timing_point = get_intended_timing(barline_time, timing_points)
 			# skipping barline at timing point's timing if needed

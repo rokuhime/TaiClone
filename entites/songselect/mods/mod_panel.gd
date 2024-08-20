@@ -48,5 +48,9 @@ func toggle_visual(new_enabled = null) -> void:
 	
 	if visual_tween:
 		visual_tween.kill()
-	visual_tween = Global.create_smooth_tween()
-	visual_tween.tween_property(self, "modulate:a", 1.0 if enabled else 0.0, 0.5)
+	visual_tween = Global.create_smooth_tween(
+		self,
+		"modulate:a", 
+		1.0 if enabled else 0.0, 
+		0.5
+	)
