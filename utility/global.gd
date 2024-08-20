@@ -21,6 +21,7 @@ const INACC_TIMING := 0.07
 
 var resolution_multiplier = 4.0
 var global_offset := 0.0
+var limit_barlines := true
 
 # lowest level of priority that will appear to console
 var console_filter := -2
@@ -51,6 +52,7 @@ func save_settings() -> void:
 	
 	config_file.set_value("General", "ChartPaths", chart_paths)
 	config_file.set_value("General", "GlobalOffset", global_offset)
+	config_file.set_value("General", "LimitBarlines", limit_barlines)
 	
 	for bus_index in AudioServer.bus_count:
 		config_file.set_value("Audio", AudioServer.get_bus_name(bus_index), db_to_linear(AudioServer.get_bus_volume_db(bus_index)))
@@ -73,6 +75,7 @@ func load_settings() -> void:
 		return
 	
 	player_name = config_file.get_value("General", "OfflinePlayerName", "Player")
+	limit_barlines = config_file.get_value("General", "LimitBarlines", true)
 	
 	if config_file.get_value("General", "ChartPaths", null):
 		chart_paths = config_file.get_value("General", "ChartPaths", null)

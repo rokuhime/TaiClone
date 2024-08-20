@@ -1,19 +1,23 @@
 class_name SettingsPanel
 extends Panel
 
-var keychange_timeout: Timer
-var movement_tween: Tween
-var keychange_target := ""
-var is_visible := false
 @onready var player_name_edit := $ScrollContainer/VBoxContainer/Login/LineEdit
 @onready var chart_path_changer: ChartPathChanger = $ScrollContainer/VBoxContainer/ChartPathChanger
 @onready var keybind_list := $ScrollContainer/VBoxContainer/KeybindList
+@onready var barline_limit_checkbox := $ScrollContainer/VBoxContainer/Etc/BarlineLimitCheckbox
+
+var is_visible := false
+var movement_tween: Tween
+
+var keychange_timeout: Timer
+var keychange_target := ""
 
 # -------- system -------
 
 func _ready() -> void:
 	chart_path_changer.refresh_paths()
 	player_name_edit.text = Global.player_name
+	barline_limit_checkbox.button_pressed = Global.limit_barlines
 	
 	if not is_visible:
 		position.x = get_viewport_rect().size.x
@@ -114,3 +118,6 @@ func update_focus(new_target: Node) -> void:
 func open_converted_charts_folder() -> void:
 	OS.shell_open(ProjectSettings.globalize_path("user://ConvertedCharts"))
 	Global.push_console("SettingsPanel", "Using Linux? Your file manager probably didnt open! ConvertedCharts is located here: \n%s" % ProjectSettings.globalize_path("user://ConvertedCharts"), )
+
+func toggle_barline_limit(new_value: bool) -> void:
+	Global.limit_barlines = new_value

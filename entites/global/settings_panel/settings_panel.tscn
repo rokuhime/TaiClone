@@ -43,7 +43,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 50.0
 offset_top = 80.0
+offset_right = -50.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -255,6 +257,30 @@ allow_greater = true
 allow_lesser = true
 alignment = 1
 
+[node name="Etc" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_2j0hn")
+script = ExtResource("5_kfb0v")
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Etc"]
+layout_mode = 2
+text = "Etc."
+label_settings = SubResource("LabelSettings_xg8nn")
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="ScrollContainer/VBoxContainer/Etc"]
+layout_mode = 2
+text = "WARNING: Disabling the barline limit may cause gimmick charts to take a long time to convert, and can heavily increase file sizes!"
+label_settings = SubResource("LabelSettings_q3ioc")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BarlineLimitCheckbox" type="CheckBox" parent="ScrollContainer/VBoxContainer/Etc"]
+layout_mode = 2
+size_flags_horizontal = 4
+button_pressed = true
+text = "Barline Limit"
+
 [connection signal="text_submitted" from="ScrollContainer/VBoxContainer/Login/LineEdit" to="." method="change_player_name"]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftKat/Button" to="." method="change_key" binds= ["LeftKat"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftDon/Button" to="." method="change_key" binds= ["LeftDon"]]
@@ -267,3 +293,4 @@ alignment = 1
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/HSlider" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [false]]
 [connection signal="focus_entered" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="." method="update_focus" binds= [NodePath(".")]]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [true]]
+[connection signal="toggled" from="ScrollContainer/VBoxContainer/Etc/BarlineLimitCheckbox" to="." method="toggle_barline_limit"]
