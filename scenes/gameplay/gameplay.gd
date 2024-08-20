@@ -80,40 +80,48 @@ func _process(_delta) -> void:
 		if next_note_idx < 0:
 			return
 		
-		# miss check
+		# check for misses/timing activations
 		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 			var hit_object := hit_object_container.get_child(i) as HitObject
-			if hit_object.timing <= current_time:
-				# auto
-				if hit_object.active and hit_object is Note and enabled_mods.has(ModPanel.MOD_TYPES.AUTO):
-					hit_check(SIDE.LEFT, hit_object.is_kat, hit_object)
-					play_audio(SIDE.LEFT, hit_object.is_kat)
-					current_hitsound_state = HITSOUND_STATES.NORMAL
-					return
-				
-				# activating spinners
-				if hit_object is Spinner and hit_object.hit_status == Spinner.hit_type.INACTIVE:
-					# move interactive element out of hit object to make it still
-					hit_object.remove_child(hit_object.spinner_gameplay)
-					hit_object_container.get_parent().add_child(hit_object.spinner_gameplay)
-					# set position
-					hit_object.spinner_gameplay.position = spinner_gameplay_location
-					hit_object.transition_to_playable()
-					return
-				
-				var miss_result := hit_object.miss_check(current_time)
-				if miss_result:
-					# if passing a timing point, apply it
-					if not hit_object.is_in_group("Hittable"):
-						if hit_object is TimingPoint:
-							apply_timing_point(hit_object, current_time)
-							return
-						# assume barline
-						if enabled_mods.has(ModPanel.MOD_TYPES.BARLINE_AUDIO):
-							barline_tick_player.play()
+			if not hit_object.active:
+				continue
+			if hit_object.timing > current_time:
+				return
+			
+			# activating spinners
+			if hit_object is Spinner and hit_object.hit_status == Spinner.hit_type.INACTIVE:
+				# move interactive element out of hit object to make it still
+				hit_object.remove_child(hit_object.spinner_gameplay)
+				hit_object_container.get_parent().add_child(hit_object.spinner_gameplay)
+				# set position
+				hit_object.spinner_gameplay.position = spinner_gameplay_location
+				hit_object.transition_to_playable()
+				return
+			
+			# auto
+			if enabled_mods.has(ModPanel.MOD_TYPES.AUTO):
+				if hit_object is Note:
+					if hit_check(SIDE.LEFT, hit_object.is_kat, hit_object):
+						play_audio(SIDE.LEFT, hit_object.is_kat)
+						current_hitsound_state = HITSOUND_STATES.NORMAL
 						return
-					
-					apply_score(hit_object, HitObject.HIT_RESULT.MISS)
+			
+			# actual miss check!!
+			var miss_result := hit_object.miss_check(current_time)
+			if miss_result:
+				if hit_object.is_in_group("Hittable"):
+					if hit_object is Note:
+						apply_score(hit_object, HitObject.HIT_RESULT.MISS)
+					continue # could be more objects to miss (eg notes during a spinner)
+				
+				# if passing a timing point, apply it
+				if hit_object is TimingPoint:
+					apply_timing_point(hit_object, current_time)
+					return
+				# assume barline
+				if enabled_mods.has(ModPanel.MOD_TYPES.BARLINE_AUDIO):
+					barline_tick_player.play()
+					return
 
 func _unhandled_input(event) -> void:
 	if Global.focus_target:
