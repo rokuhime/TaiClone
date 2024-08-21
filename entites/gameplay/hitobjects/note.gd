@@ -19,6 +19,9 @@ func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: boo
 	var result := HIT_RESULT.INVALID
 	
 	# if hittable
+	if active and current_time >= timing - Global.MISS_TIMING and current_time <= timing - Global.INACC_TIMING:
+		result = HIT_RESULT.MISS
+	
 	if active and abs(timing - current_time) <= Global.INACC_TIMING:
 		# default to being hit, 
 		result = HIT_RESULT.HIT

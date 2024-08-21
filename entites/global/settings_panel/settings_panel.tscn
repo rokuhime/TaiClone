@@ -260,7 +260,6 @@ alignment = 1
 [node name="Etc" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("1_2j0hn")
-script = ExtResource("5_kfb0v")
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Etc"]
 layout_mode = 2

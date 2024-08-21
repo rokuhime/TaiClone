@@ -141,18 +141,17 @@ func _unhandled_input(event) -> void:
 		if Input.is_action_just_pressed("SkipIntro") and playing:
 			skip_intro()
 		
-		if enabled_mods.has(ModPanel.MOD_TYPES.AUTO):
+		if enabled_mods.has(ModPanel.MOD_TYPES.AUTO) or !playing:
 			return
 		
 		# get rhythm gameplay input
 		var pressed_inputs := []
-		
 		for gameplay_input in Global.GAMEPLAY_KEYS:
 			if Input.is_action_just_pressed(gameplay_input):
 				pressed_inputs.append(gameplay_input)
 				break
 		
-		if pressed_inputs.is_empty() or !playing: 
+		if pressed_inputs.is_empty(): 
 			return
 		
 		for input in pressed_inputs:
@@ -166,11 +165,8 @@ func _unhandled_input(event) -> void:
 			if active_finisher_note:
 				var finisher_note_idx = active_finisher_note.get_index()
 				if finisher_hit_check(current_side_input, is_input_kat):
-					play_audio(current_side_input, is_input_kat)
-					
-					# if the next hit object is outside of accurate timing, swallow the input to stop it from checking more notes
-					if abs(hit_object_container.get_child(finisher_note_idx - 1).timing - current_time) > Global.ACC_TIMING:
-						return
+					play_audio(current_side_input, is_input_kat) # play finisher sound
+					continue
 			
 			# roku note 2024-08-06
 			# something went horribly wrong and will need to be undone in regards to this function
@@ -181,7 +177,7 @@ func _unhandled_input(event) -> void:
 				# ensure hobj can be hit
 				if hit_object != null and hit_object.is_in_group("Hittable"):
 					if hit_object.active:
-						var start_time := hit_object.timing - Global.INACC_TIMING
+						var start_time := hit_object.timing - Global.MISS_TIMING
 						
 						# if its a hobj with length, check the end time
 						if hit_object is Roll or hit_object is Spinner:
@@ -199,8 +195,7 @@ func _unhandled_input(event) -> void:
 						# within bounds, do a hitcheck
 						if hit_check(current_side_input, is_input_kat, hit_object):
 							break
-			
-			play_audio(current_side_input, is_input_kat)
+			play_audio(current_side_input, is_input_kat) # play normal sound
 
 # -------- chart handling --------
 
@@ -243,8 +238,6 @@ func load_chart(requested_chart: Chart) -> void:
 		hit_object_container.add_child(hobj)
 		if hobj is Spinner:
 			hobj.on_finished.connect(score_instance.add_manual_score)
-		if not hobj.is_in_group("Hittable") and hobj.speed == 0:
-			print("THERE YOU ARE YOU SLIMY LITTLE BNTIHCH %s" % hobj.timing)
 	
 	# set skip time to the first hit object's tix.aming
 	first_hobj_timing = current_chart.get_first_hitobject().timing
@@ -346,7 +339,7 @@ func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) ->
 # finisher second hit check, returns if it was successful or not
 func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 	if active_finisher_note:
-		if (active_finisher_note.timing - current_time) < Global.ACC_TIMING:
+		if abs(current_time - active_finisher_note.timing) < Global.INACC_TIMING:
 			# in time
 			if active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
 				# add score, reset finisher variables
