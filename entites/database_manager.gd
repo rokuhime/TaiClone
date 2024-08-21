@@ -125,6 +125,20 @@ func clear_invalid_entries() -> void:
 	var existing_hashes := []
 	
 	for db_entry in db_charts:
+		
+		# if the chart folder isnt in the chart paths, remove and move on
+		if db_entry.has("origin_path"):
+			if not Global.get_chart_folders().has(db_entry["origin_path"].get_base_dir().get_base_dir()):
+				Global.push_console("DatabaseManager", "Chart not inside of a given chart folder, removing: %s - %s [%s]" % [
+				db_entry["song_title"], db_entry["song_artist"], db_entry["chart_title"]],
+				 1)
+				Global.database_manager.delete_db_entry(db_entry)
+				
+				# remove converted chart
+				if db_entry["file_path"].get_base_dir() == "user://ConvertedCharts":
+					DirAccess.remove_absolute(db_entry["file_path"])
+				continue
+		
 		# if the origin file is gone, delete the convert and the db entry
 		if not FileAccess.file_exists(db_entry["origin_path"]): 
 			Global.push_console("DatabaseManager", "Origin not found, removing: %s - %s [%s]" % [
