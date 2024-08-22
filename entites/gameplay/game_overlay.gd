@@ -83,14 +83,23 @@ func update_visuals(score: ScoreData) -> void:
 	raw_info.text = "accurate: " + str(score.accurate_hits) + "\ninaccurate: " + str(score.inaccurate_hits) + "\nmiss: " + str(score.miss_count) + "\ntop combo: " + str(score.top_combo)
 
 # updates hit point judgement visual (acc, inacc, miss)
-func update_judgement(type: int) -> void:
-	var target_judgement = judgement_indicators.get_child(2 - type)
+func update_judgement(hit_result: HitObject.HIT_RESULT) -> void:
+	if hit_result >= HitObject.HIT_RESULT.TICK_HIT:
+		return
 	
-	if judgement_indicator_tweens[type]:
-		judgement_indicator_tweens[type].kill()
+	var score_type := 0
+	if hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC:
+		score_type = 1
+	if hit_result == HitObject.HIT_RESULT.ACC or hit_result == HitObject.HIT_RESULT.F_ACC:
+		score_type = 2
+
+	var target_judgement = judgement_indicators.get_child(2 - score_type)
 	
-	judgement_indicator_tweens[type] = create_tween()
-	judgement_indicator_tweens[type].tween_property(target_judgement, "modulate:a", 0.0, 0.4).from(1.0)
+	if judgement_indicator_tweens[score_type]:
+		judgement_indicator_tweens[score_type].kill()
+	
+	judgement_indicator_tweens[score_type] = create_tween()
+	judgement_indicator_tweens[score_type].tween_property(target_judgement, "modulate:a", 0.0, 0.4).from(1.0)
 
 # shows little late/early visual for inaccurate hits
 func update_inacc_indicator(hit_time_difference: float) -> void:
@@ -107,27 +116,20 @@ func update_inacc_indicator(hit_time_difference: float) -> void:
 func on_combo_break() -> void:
 	combo_break_player.play()
 
-func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT, current_time: float) -> void:
-	var score_type := 0
-	var hit_time_difference = target_hit_obj.timing - current_time
-	if abs(hit_time_difference) <= Global.INACC_TIMING and hit_result != HitObject.HIT_RESULT.MISS:
-		if abs(hit_time_difference) <= Global.ACC_TIMING:
-			score_type += 1
-		score_type += 1
-	
-	hit_error_bar.add_point(hit_time_difference)
-	update_judgement(score_type)
+func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT, hit_time_difference = null) -> void:
+	if typeof(hit_time_difference) == TYPE_FLOAT:
+		hit_error_bar.add_point(hit_time_difference)
+	update_judgement(hit_result)
 	update_visuals(score)
 	
 	# mascot handling
-	match score_type:
-		0: # miss
-			if mascot.current_state != mascot.SPRITETYPES.FAIL:
-				update_mascot(Mascot.SPRITETYPES.FAIL, get_parent().current_bps)
-			return
-		
-		1: # inacc
-			update_inacc_indicator(hit_time_difference)
+	if hit_result == HitObject.HIT_RESULT.MISS:
+		if mascot.current_state != mascot.SPRITETYPES.FAIL:
+			update_mascot(Mascot.SPRITETYPES.FAIL, get_parent().current_bps)
+		return
+	
+	elif typeof(hit_time_difference) == TYPE_FLOAT and (hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC):
+		update_inacc_indicator(hit_time_difference)
 	
 	if get_parent().in_kiai:
 		if mascot.current_state != mascot.SPRITETYPES.KIAI:

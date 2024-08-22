@@ -14,46 +14,39 @@ var top_combo := 0
 var current_combo := 0
 
 signal combo_break
-signal score_updated
 
 # -------- score management --------
 
 # add score data (hits, misses)
-func add_score(hit_time_difference: float, hit_result: HitObject.HIT_RESULT) -> void:
-	var score_type := 0
-	if abs(hit_time_difference) <= Global.INACC_TIMING and hit_result != HitObject.HIT_RESULT.MISS:
-		if abs(hit_time_difference) <= Global.ACC_TIMING:
-			score_type += 1
-		score_type += 1
-	
-	match score_type:
-		0:  # miss
+func add_score(hit_result: HitObject.HIT_RESULT, hit_time_difference = null) -> void:
+	match hit_result:
+		HitObject.HIT_RESULT.MISS:
 			if current_combo > 10:
 				combo_break.emit()
 			
 			current_combo = 0
 			miss_count += 1
 		
-		1:  # inaccurate
+		HitObject.HIT_RESULT.INACC, HitObject.HIT_RESULT.F_INACC:  # inaccurate
 			inaccurate_hits += 1
 			score += 150
 		
-		2:  # accurate
+		HitObject.HIT_RESULT.ACC, HitObject.HIT_RESULT.F_ACC:  # accurate
 			accurate_hits += 1
 			score += 300
 	
-	if score_type > 0:
+	if hit_result >= HitObject.HIT_RESULT.INACC and hit_result < HitObject.HIT_RESULT.TICK_HIT:
 		# combo handling
 		current_combo += 1
 		if current_combo > top_combo:
 			top_combo = current_combo
 		
-		# if inaccurate, count late/early
-		if score_type == 1:
-			if hit_time_difference > 0:
-				late_hits += 1
-			else:
+		# if inaccurate and hit time diff included, count late/early
+		if typeof(hit_time_difference) == TYPE_FLOAT and (hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC):
+			if hit_time_difference < 0: # early
 				early_hits += 1
+				return
+			late_hits += 1
 
 # add second hit to a finisher's score
 func add_finisher_score(hit_time_difference: float) -> void:
@@ -65,30 +58,6 @@ func add_finisher_score(hit_time_difference: float) -> void:
 		f_inaccurate_hits += 1
 
 	score += 300 if accurate else 150
-	score_updated.emit()
-
-# TODO: turn from int into enum, too lazy rn
-func add_manual_score(score_type: int) -> void:
-	match score_type:
-		0:  # miss
-			current_combo = 0
-			miss_count += 1
-		
-		1:  # inaccurate
-			inaccurate_hits += 1
-			score += 150
-		
-		2:  # accurate
-			accurate_hits += 1
-			score += 300
-	
-	if score_type > 0:
-		# combo handling
-		current_combo += 1
-		if current_combo > top_combo:
-			top_combo = current_combo
-	
-	score_updated.emit()
 
 # reset score variables
 func reset() -> void:

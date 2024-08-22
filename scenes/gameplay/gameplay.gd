@@ -22,7 +22,6 @@ var start_time := 0.0
 var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
 
-var next_note_idx := 0
 var current_bps := 0.0 # beats per second
 var playing := false
 var in_kiai := false
@@ -75,10 +74,6 @@ func _process(_delta) -> void:
 		# move all hitobjects
 		for hobj in hit_object_container.get_children():
 			hobj.position.x = (hobj.speed * Global.resolution_multiplier) * (hobj.timing - current_time) - (hobj.size.x / 2)
-		
-		# bail out on finding the next note if chart is over
-		if next_note_idx < 0:
-			return
 		
 		# check for misses/timing activations
 		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
@@ -237,7 +232,7 @@ func load_chart(requested_chart: Chart) -> void:
 	for hobj in requested_chart.hit_objects:
 		hit_object_container.add_child(hobj)
 		if hobj is Spinner:
-			hobj.on_finished.connect(score_instance.add_manual_score)
+			hobj.on_finished.connect(apply_score)
 	
 	# set skip time to the first hit object's tix.aming
 	first_hobj_timing = current_chart.get_first_hitobject().timing
@@ -246,8 +241,6 @@ func load_chart(requested_chart: Chart) -> void:
 	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
 		last_hobj_timing += current_chart.hit_objects[0].length
 	
-	# ensure next note is correct and play
-	next_note_idx = current_chart.hit_objects.size() - 1
 	apply_skin(temp_skin_var)
 	play_chart()
 
@@ -314,11 +307,11 @@ func skip_intro() -> void:
 func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> bool:
 	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
 	match hit_result:
-		HitObject.HIT_RESULT.HIT:
+		HitObject.HIT_RESULT.INACC, HitObject.HIT_RESULT.ACC:
 			if target_hobj is Note:
 				apply_score(target_hobj, hit_result)
 		
-		HitObject.HIT_RESULT.HIT_FINISHER:
+		HitObject.HIT_RESULT.F_INACC, HitObject.HIT_RESULT.F_ACC:
 			active_finisher_note = target_hobj
 			current_hitsound_state = HITSOUND_STATES.FINISHER
 			
@@ -352,10 +345,11 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 	return false
 
 func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) -> void:
-	next_note_idx -= 1
-	target_hit_obj.visible = false
-	score_instance.add_score(target_hit_obj.timing - current_time, hit_result)
-	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, current_time)
+	if target_hit_obj is Note:
+		score_instance.add_score(hit_result, target_hit_obj.timing - current_time)
+	else:
+		score_instance.add_score(hit_result)
+	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, target_hit_obj.timing - current_time)
 
 # -------- feedback -------
 

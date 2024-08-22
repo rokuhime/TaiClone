@@ -67,7 +67,7 @@ func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: b
 	var tick = tick_container.get_child(tick_idx)
 	if tick.visible:
 		tick.visible = false
-		return HIT_RESULT.HIT
+		return HIT_RESULT.TICK_HIT
 	return HIT_RESULT.INVALID
 
 func miss_check(hit_time: float) -> bool:

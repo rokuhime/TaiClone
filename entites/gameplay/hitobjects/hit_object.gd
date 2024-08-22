@@ -6,7 +6,7 @@ var is_finisher := false
 @export var timing: float
 @export var speed: float
 var new_combo := false
-enum HIT_RESULT {INVALID = -1, MISS, HIT, HIT_FINISHER, SPINNER_FINISH}
+enum HIT_RESULT {INVALID = -1, MISS, INACC, ACC, F_INACC, F_ACC, TICK_HIT, SPINNER_FINISH}
 var active := true
 var state: STATE
 

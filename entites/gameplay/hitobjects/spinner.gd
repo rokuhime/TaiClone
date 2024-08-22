@@ -51,7 +51,7 @@ func hit_check(current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bo
 		else:
 			# alternate requested hit type, and report back that it was hit
 			hit_status = int(not is_input_kat)
-			return HIT_RESULT.HIT
+			return HIT_RESULT.TICK_HIT
 	return HIT_RESULT.INVALID
 
 func miss_check(hit_time: float) -> bool:
@@ -87,11 +87,11 @@ func finished() -> void:
 	# emit on_finished with judgement
 	if current_hits:
 		if float(needed_hits - current_hits) / float(needed_hits) >= 0.5: # half finished
-			on_finished.emit(1)
+			on_finished.emit(self, HIT_RESULT.INACC)
 		else:# less than half finished (miss)
-			on_finished.emit(0)
+			on_finished.emit(self, HIT_RESULT.MISS)
 	else: # finished
-		on_finished.emit(2)
+		on_finished.emit(self, HIT_RESULT.ACC) # this is showing a miss but doing it correctly?
 	
 	# change visual for the spinner_gameplay
 	if spinner_gameplay_tween:

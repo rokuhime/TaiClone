@@ -22,10 +22,9 @@ func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: boo
 	if active and current_time >= timing - Global.MISS_TIMING and current_time <= timing - Global.INACC_TIMING:
 		result = HIT_RESULT.MISS
 	
-	if active and abs(timing - current_time) <= Global.INACC_TIMING:
+	elif active and abs(timing - current_time) <= Global.INACC_TIMING:
 		# default to being hit, 
-		result = HIT_RESULT.HIT
-		active = false
+		result = HIT_RESULT.ACC if abs(timing - current_time) <= Global.ACC_TIMING else HIT_RESULT.INACC
 		
 		# wrong input type miss
 		if is_kat != is_input_kat:
@@ -34,7 +33,11 @@ func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: boo
 		# new finisher hit
 		elif is_finisher:
 			last_side_hit = input_side as Gameplay.SIDE
-			result = HIT_RESULT.HIT_FINISHER
+			result += 2 # change to finisher hit
+	
+	if result != HIT_RESULT.INVALID:
+		visible = false
+		active = false
 	
 	return result
 
