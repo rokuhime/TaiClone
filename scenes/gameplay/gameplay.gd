@@ -306,22 +306,11 @@ func skip_intro() -> void:
 # returns true if hit was used on a note, otherwise returns false
 func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> bool:
 	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
-	match hit_result:
-		HitObject.HIT_RESULT.INACC, HitObject.HIT_RESULT.ACC:
-			if target_hobj is Note:
-				apply_score(target_hobj, hit_result)
-		
-		HitObject.HIT_RESULT.F_INACC, HitObject.HIT_RESULT.F_ACC:
+	if hit_result != HitObject.HIT_RESULT.INVALID:
+		if hit_result == HitObject.HIT_RESULT.F_INACC or hit_result == HitObject.HIT_RESULT.F_ACC:
 			active_finisher_note = target_hobj
 			current_hitsound_state = HITSOUND_STATES.FINISHER
-			
-			apply_score(target_hobj, hit_result)
-		
-		HitObject.HIT_RESULT.MISS:
-			apply_score(target_hobj, hit_result)
-		
-		_:
-			return false
+		apply_score(target_hobj, hit_result)
 	
 	# if the hit object was a note, the hit was used. return true
 	if target_hobj is Note:

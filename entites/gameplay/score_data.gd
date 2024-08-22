@@ -34,7 +34,10 @@ func add_score(hit_result: HitObject.HIT_RESULT, hit_time_difference = null) -> 
 		HitObject.HIT_RESULT.ACC, HitObject.HIT_RESULT.F_ACC:  # accurate
 			accurate_hits += 1
 			score += 300
-	
+		
+		HitObject.HIT_RESULT.TICK_HIT:
+			score += 10
+		
 	if hit_result >= HitObject.HIT_RESULT.INACC and hit_result < HitObject.HIT_RESULT.TICK_HIT:
 		# combo handling
 		current_combo += 1
