@@ -35,7 +35,7 @@ func _ready() -> void:
 	late_label.modulate = skin.late_colour
 
 func _unhandled_input(event) -> void:
-	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.is_pressed():
+	if Input.is_action_just_pressed("Back"):
 		Global.get_root().back_button_pressed()
 
 func set_score(new_score: ScoreData) -> void:

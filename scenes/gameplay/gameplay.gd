@@ -2,6 +2,7 @@ class_name Gameplay
 extends Control
 
 # UI
+@onready var pause_overlay := $PauseOverlay
 @onready var game_overlay := $GameOverlay as GameOverlay
 @onready var hit_object_container := $Track/HitPoint/HitObjectContainer
 @onready var audio_queuer := $AudioQueuer as AudioQueuer
@@ -17,6 +18,7 @@ var current_play_offset := 0.0
 var score_instance := ScoreData.new()
 var enabled_mods := []
 
+var pause_time := 0.0
 var current_time := 0.0
 var start_time := 0.0
 var first_hobj_timing := 0.0
@@ -58,7 +60,9 @@ func _ready() -> void:
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
 	
 	music = Global.music
-	music.stream
+	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
+		Global.get_root().change_to_results.bind(score_instance)
+	)
 
 func _process(_delta) -> void:
 	# update progress bar
@@ -123,10 +127,10 @@ func _unhandled_input(event) -> void:
 		return
 	
 	# back to song select
-	if event is InputEventKey and event.keycode == KEY_ESCAPE:
-		Global.get_root().change_to_results(score_instance)
+	if Input.is_action_just_pressed("Back"):
+		change_pause_state(playing)
 	
-	if event is InputEventKey or InputEventJoypadMotion and event.is_pressed():
+	if event is InputEventKey or InputEventJoypadButton and event.is_pressed():
 		if Input.is_action_just_pressed("AddLocalOffset"):
 			adjust_offset(OFFSET_INCREASE)
 			
@@ -299,6 +303,18 @@ func skip_intro() -> void:
 	start_time -= first_hit_object.timing - 2.0 - current_time
 	music.seek(current_play_offset + first_hit_object.timing - 2.0)
 	game_overlay.mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
+
+func change_pause_state(is_paused: bool) -> void:
+	playing = not is_paused
+	pause_overlay.visible = is_paused
+	music.stream_paused = is_paused
+	if is_paused:
+		pause_time = Time.get_ticks_msec() / 1000.0
+	else:
+		var sync_offset := (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) / 1000.0
+		start_time += (Time.get_ticks_msec() / 1000.0) - pause_time + sync_offset
+	#if not is_paused:
+		#music.seek()
 
 # -------- hit object checks --------
 
