@@ -318,6 +318,9 @@ func change_pause_state(is_paused: bool) -> void:
 	start_time += (Time.get_ticks_msec() / 1000.0) - pause_time - AudioServer.get_time_to_next_mix()
 	# ensure the current_time is set correctly and seek the music to it
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
+	# if theres a delay before the audio starts, await it
+	if current_time < 0:
+		await get_tree().create_timer(abs(current_time)).timeout
 	music.play(current_time)
 
 # -------- hit object checks --------
