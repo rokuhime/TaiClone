@@ -306,15 +306,19 @@ func skip_intro() -> void:
 
 func change_pause_state(is_paused: bool) -> void:
 	playing = not is_paused
-	pause_overlay.visible = is_paused
 	music.stream_paused = is_paused
+	pause_overlay.visible = is_paused
+	
 	if is_paused:
 		pause_time = Time.get_ticks_msec() / 1000.0
-	else:
-		var sync_offset := (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) / 1000.0
-		start_time += (Time.get_ticks_msec() / 1000.0) - pause_time + sync_offset
-	#if not is_paused:
-		#music.seek()
+		return
+	
+	# unpausing
+	# add the time elapsed between pausing and unpausing, and compensate for audio delay
+	start_time += (Time.get_ticks_msec() / 1000.0) - pause_time - AudioServer.get_time_to_next_mix()
+	# ensure the current_time is set correctly and seek the music to it
+	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
+	music.play(current_time)
 
 # -------- hit object checks --------
 
