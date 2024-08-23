@@ -429,3 +429,5 @@ layout_mode = 2
 text = "Quit"
 
 [connection signal="on_active_changed" from="OffsetPanel" to="." method="save_local_offset"]
+[connection signal="pressed" from="PauseOverlay/VBoxContainer/Resume" to="." method="change_pause_state" binds= [false]]
+[connection signal="pressed" from="PauseOverlay/VBoxContainer/Retry" to="." method="restart_chart"]

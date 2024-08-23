@@ -220,8 +220,7 @@ func load_chart(requested_chart: Chart) -> void:
 	# empty out existing hit objects and reset stats just incasies
 	for hobj in hit_object_container.get_children():
 		hobj.queue_free()
-	active_finisher_note = null 
-	score_instance.reset()
+	active_finisher_note = null
 	
 	current_chart = requested_chart.load_hit_objects()
 	
@@ -246,6 +245,7 @@ func load_chart(requested_chart: Chart) -> void:
 		last_hobj_timing += current_chart.hit_objects[0].length
 	
 	apply_skin(temp_skin_var)
+	await get_tree().process_frame
 	play_chart()
 
 func play_chart() -> void:
@@ -259,8 +259,8 @@ func play_chart() -> void:
 		Global.push_console("Gameplay", "tried to play a chart without notes! abandoning...", 2)
 		Global.get_root().change_to_results(score_instance)
 		return
-	
-	current_play_offset = (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) / 1000.0
+
+	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
 	
 	# delay the chart if first note is less than 2 seconds into the song
 	var first_note_delay := 0.0
@@ -280,10 +280,29 @@ func play_chart() -> void:
 			apply_timing_point(hit_object, start_time)
 			break
 	
-	# delay audio playing if theres a positive (late) offset
-	if first_note_delay:
-		await get_tree().create_timer(first_note_delay).timeout
+	# ensure the current_time is set correctly and seek the music to it
+	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
+	# if theres a delay before the audio starts, await it
+	if current_time < 0:
+		await get_tree().create_timer(abs(current_time)).timeout
 	music.play()
+
+func restart_chart() -> void:
+	playing = false
+	music.stop()
+	pause_overlay.visible = false
+	
+	active_finisher_note = null
+	
+	for hobj in hit_object_container.get_children():
+		if not (hobj is TimingPoint):
+			hobj.visible = true
+			hobj.active = true
+	
+	score_instance.reset()
+	
+	await get_tree().process_frame
+	play_chart()
 
 func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 	current_bps = 60.0 / timing_point.bpm
