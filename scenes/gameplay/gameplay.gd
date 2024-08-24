@@ -19,6 +19,7 @@ var score_instance := ScoreData.new()
 var enabled_mods := []
 
 var pause_time := 0.0
+var music_starting_timer := Timer.new()
 var current_time := 0.0
 var start_time := 0.0
 var first_hobj_timing := 0.0
@@ -58,6 +59,10 @@ func _ready() -> void:
 	game_overlay.apply_skin(temp_skin_var)
 	
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
+	
+	add_child(music_starting_timer)
+	music_starting_timer.one_shot = true
+	music_starting_timer.stop()
 	
 	music = Global.music
 	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
@@ -133,12 +138,16 @@ func _unhandled_input(event) -> void:
 	if event is InputEventKey or InputEventJoypadButton and event.is_pressed():
 		if Input.is_action_just_pressed("AddLocalOffset"):
 			adjust_offset(OFFSET_INCREASE)
-			
+		
 		if Input.is_action_just_pressed("RemoveLocalOffset"):
 			adjust_offset(-OFFSET_INCREASE)
 		
+		
 		if Input.is_action_just_pressed("SkipIntro") and playing:
 			skip_intro()
+		
+		if Input.is_action_just_pressed("Retry"):
+			restart_chart()
 		
 		if enabled_mods.has(ModPanel.MOD_TYPES.AUTO) or !playing:
 			return
@@ -196,7 +205,7 @@ func _unhandled_input(event) -> void:
 							break
 			play_audio(current_side_input, is_input_kat) # play normal sound
 
-# -------- chart handling --------
+# -------- offset handling --------
 
 func adjust_offset(value: float) -> float:
 	local_offset += value
@@ -215,6 +224,8 @@ func save_local_offset(_active := false) -> void:
 		chart_settings_entries.append({"id": current_chart.chart_info["id"], "hash": current_chart.hash, "local_offset": local_offset, "collections": 0})
 	Global.database_manager.update_db_entry("chart_settings", chart_settings_entries[0])
 	Global.push_console("Gameplay", "Saved local offset: %s" % local_offset)
+
+# -------- chart playback --------
 
 func load_chart(requested_chart: Chart) -> void:
 	# empty out existing hit objects and reset stats just incasies
@@ -237,7 +248,7 @@ func load_chart(requested_chart: Chart) -> void:
 		if hobj is Spinner:
 			hobj.on_finished.connect(apply_score)
 	
-	# set skip time to the first hit object's tix.aming
+	# set skip time to the first hit object's timing
 	first_hobj_timing = current_chart.get_first_hitobject().timing
 	
 	last_hobj_timing = current_chart.hit_objects[0].timing
@@ -284,7 +295,8 @@ func play_chart() -> void:
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
 	# if theres a delay before the audio starts, await it
 	if current_time < 0:
-		await get_tree().create_timer(abs(current_time)).timeout
+		music_starting_timer.start(abs(current_time))
+		await music_starting_timer.timeout
 	music.play()
 
 func restart_chart() -> void:
@@ -304,16 +316,6 @@ func restart_chart() -> void:
 	await get_tree().process_frame
 	play_chart()
 
-func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
-	current_bps = 60.0 / timing_point.bpm
-	if timing_point.is_finisher != in_kiai:
-		in_kiai = timing_point.is_finisher
-	# roku note 2024-08-06
-	# this can be implemented as a miss check
-	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if in_kiai else Mascot.SPRITETYPES.IDLE, 
-								current_bps, 
-								timing_point.timing - current_time)
-
 func skip_intro() -> void:
 	if current_time >= first_hobj_timing - 2.0:
 		return
@@ -330,6 +332,7 @@ func change_pause_state(is_paused: bool) -> void:
 	
 	if is_paused:
 		pause_time = Time.get_ticks_msec() / 1000.0
+		music_starting_timer.stop()
 		return
 	
 	# unpausing
@@ -339,7 +342,8 @@ func change_pause_state(is_paused: bool) -> void:
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
 	# if theres a delay before the audio starts, await it
 	if current_time < 0:
-		await get_tree().create_timer(abs(current_time)).timeout
+		music_starting_timer.start(abs(current_time))
+		await music_starting_timer.timeout
 	music.play(current_time)
 
 # -------- hit object checks --------
@@ -381,6 +385,16 @@ func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) ->
 	else:
 		score_instance.add_score(hit_result)
 	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, target_hit_obj.timing - current_time)
+
+func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
+	current_bps = 60.0 / timing_point.bpm
+	if timing_point.is_finisher != in_kiai:
+		in_kiai = timing_point.is_finisher
+	# roku note 2024-08-06
+	# this can be implemented as a miss check
+	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if in_kiai else Mascot.SPRITETYPES.IDLE, 
+								current_bps, 
+								timing_point.timing - current_time)
 
 # -------- feedback -------
 
