@@ -39,7 +39,47 @@ var resources := {
 	}
 }
 
-func _init(filepath = null):
-	if filepath:
+var valid_osu_textures := {
+	"taikohitcircle": "note", 
+	"taikohitcircleoverlay": "note_overlay", 
+	"taiko-roll-middle": "roll_middle",
+	"taiko-roll-end": "roll_end",
+	"sliderscorepoint": "roll_tick",
+	"spinner-warning": "spinner_warn", 
+	"spinner-circle": "spinner_inside", 
+	"spinner-approachcircle": "spinner_outside",
+	}
+
+func _init(file_path = null):
+	if file_path:
 		# load skin
-		pass
+		var file_names := DirAccess.get_files_at(file_path)
+		for key in resources["texture"]:
+			resources["texture"][key] = find_texture_from_osu_skin(file_path, file_names, valid_osu_textures.find_key(key))
+
+# TODO: animated textures
+func find_texture_from_osu_skin(directory: String, file_names: Array, texture_name: String) -> ImageTexture:
+	var wanted_file_name 
+	
+	for file in file_names:
+		# check for files named [texture_name].png, [texture_name]@2x.png, or [texture_name]-0.png
+		var prefix_test = file.trim_prefix(texture_name).trim_suffix(".png")
+		if prefix_test.begins_with("@") or prefix_test.begins_with("-") or prefix_test.is_empty():
+			# if we havent found a file, the first one will do
+			if not wanted_file_name:
+				wanted_file_name = file
+				continue
+			
+			if wanted_file_name.contains("@2x") and not file.trim_suffix(texture_name).contains("@2x"):
+				wanted_file_name = file
+				continue
+			
+			if wanted_file_name.contains("-0"):
+				continue
+			wanted_file_name = file
+	
+	# make ImageTexture with the found texture and return it
+	var new_texture: ImageTexture
+	if wanted_file_name:
+		new_texture = ImageLoader.load_image(directory.path_join(wanted_file_name))
+	return new_texture
