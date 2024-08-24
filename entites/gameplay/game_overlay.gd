@@ -144,8 +144,8 @@ func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: Hi
 # -------- etc --------
 
 func apply_skin(skin: SkinManager) -> void:
-	song_progress_back = skin.song_progress_back
-	song_progress_front = skin.song_progress_front
-	song_progress_skippable = skin.song_progress_skippable
-	late_colour = skin.late_colour
-	early_colour = skin.early_colour
+	song_progress_back = skin.resources["colour"]["song_progress_back"]
+	song_progress_front = skin.resources["colour"]["song_progress_front"]
+	song_progress_skippable = skin.resources["colour"]["song_progress_skippable"]
+	late_colour = skin.resources["colour"]["late"]
+	early_colour = skin.resources["colour"]["early"]

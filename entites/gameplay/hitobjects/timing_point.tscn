@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://entites/gameplay/hitobjects/timing_point.gd" id="1_dyf0x"]
 
-[node name="TimingPoint" type="ColorRect"]
+[node name="TimingPoint" type="TextureRect"]
 visible = false
 self_modulate = Color(1, 1, 1, 0)
 visibility_layer = 4

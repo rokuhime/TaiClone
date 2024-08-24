@@ -31,8 +31,8 @@ func _ready() -> void:
 					])
 	
 	var skin := Global.get_root().current_skin
-	early_label.modulate = skin.early_colour
-	late_label.modulate = skin.late_colour
+	early_label.modulate = skin.resources["colour"]["early"]
+	late_label.modulate = skin.resources["colour"]["late"]
 
 func _unhandled_input(event) -> void:
 	if Input.is_action_just_pressed("Back"):

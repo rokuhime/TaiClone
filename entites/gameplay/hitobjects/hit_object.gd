@@ -1,5 +1,5 @@
 class_name HitObject
-extends Control
+extends TextureRect
 
 const FINISHER_SCALE := 1.6
 var is_finisher := false

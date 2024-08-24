@@ -31,7 +31,7 @@ func update_visual() -> void:
 	middle_node.size.x = body_length
 
 func apply_skin(skin: SkinManager) -> void:
-	colour = skin.roll_colour
+	colour = skin.resources["colour"]["roll"]
 	# textures go here!
 	update_visual()
 

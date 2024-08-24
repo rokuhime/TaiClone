@@ -12,16 +12,32 @@ var skin_info := ["Name", "Author", "Version"]
 var filepath: String
 
 # TODO: make this like zachman's implementation? like a get_colour("name") function
-var don_colour := Color("EB452B")
-var kat_colour := Color("438EAD")
-var roll_colour := Color("FCB806")
 
-var late_colour := Color("ff8a8a")
-var early_colour := Color("8aa7ff")
-
-var song_progress_back := Color("333333")
-var song_progress_front := Color("ffffff")
-var song_progress_skippable := Color("8bff85")
+var resources := {
+	"texture": {
+		"note": null,
+		"note_overlay": null,
+		"roll_middle": null,
+		"roll_end": null,
+		"roll_tick": null,
+		"spinner_warn": null,
+		"spinner_inside": null,
+		"spinner_outside": null,
+	},
+	
+	"colour": {
+		"don": Color("EB452B"),
+		"kat": Color("438EAD"),
+		"roll": Color("FCB806"),
+		
+		"late": Color("ff8a8a"),
+		"early": Color("8aa7ff"),
+		
+		"song_progress_back": Color("333333"),
+		"song_progress_front": Color("ffffff"),
+		"song_progress_skippable": Color("8bff85"),
+	}
+}
 
 func _init(filepath = null):
 	if filepath:

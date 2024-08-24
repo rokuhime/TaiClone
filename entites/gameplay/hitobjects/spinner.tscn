@@ -10,32 +10,22 @@ font_size = 50
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
-[node name="Spinner" type="Control" groups=["Hittable"]]
+[node name="Spinner" type="TextureRect" groups=["Hittable"]]
 visibility_layer = 8
 z_index = 2
-layout_mode = 3
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-grow_vertical = 2
-script = ExtResource("1_nk4qg")
-
-[node name="Warn" type="TextureRect" parent="."]
-visibility_layer = 8
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -67.0
-offset_top = -67.0
-offset_right = 67.0
-offset_bottom = 67.0
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(64, 64)
 texture = ExtResource("1_s0d8t")
+script = ExtResource("1_nk4qg")
 
 [node name="SpinnerGameplay" type="Control" parent="."]
 visibility_layer = 8

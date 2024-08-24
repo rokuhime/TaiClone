@@ -1,8 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://bj6qccthda840"]
+[gd_scene load_steps=4 format=3 uid="uid://bj6qccthda840"]
 
 [ext_resource type="Script" path="res://entites/gameplay/hitobjects/hit_object.gd" id="1_qqht2"]
 
-[node name="Barline" type="ColorRect"]
+[sub_resource type="Gradient" id="Gradient_h5b53"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_atew8"]
+gradient = SubResource("Gradient_h5b53")
+width = 1
+
+[node name="Barline" type="TextureRect"]
 visibility_layer = 4
 z_index = 1
 anchors_preset = 8
@@ -16,4 +24,5 @@ offset_right = 2.0
 offset_bottom = 112.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = SubResource("GradientTexture1D_atew8")
 script = ExtResource("1_qqht2")

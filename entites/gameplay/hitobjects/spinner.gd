@@ -4,7 +4,6 @@ class_name Spinner
 extends HitObject
 
 # visual for the track
-@onready var warn := $Warn
 var warn_tween: Tween
 
 # interactable element
@@ -62,7 +61,7 @@ func transition_to_playable() -> void:
 
 	# hide warn object
 	warn_tween = create_tween()
-	warn_tween.tween_property(warn, "self_modulate:a", 0, 0.5)
+	warn_tween.tween_property(self, "self_modulate:a", 0, 0.5)
 	
 	spinner_gameplay.visible = true
 	spinner_gameplay_tween = create_tween()
