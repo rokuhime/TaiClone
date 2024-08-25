@@ -15,6 +15,7 @@ var filepath: String
 
 var resources := {
 	"texture": {
+		# hit objects
 		"note": null,
 		"note_overlay": null,
 		"roll_middle": null,
@@ -23,6 +24,19 @@ var resources := {
 		"spinner_warn": null,
 		"spinner_inside": null,
 		"spinner_outside": null,
+		
+		# playfield
+		"track": null,
+		"drum_indicator": null,
+		"drum_indicator_don": null,
+		"drum_indicator_kat": null,
+		
+		# mascot
+		# WILL BE DEPRECATED FOR MASCOT CREATION!
+		"mascot_idle": [],
+		"mascot_kiai": [],
+		"mascot_fail": [],
+		"mascot_toast": [],
 	},
 	
 	"colour": {
@@ -39,7 +53,13 @@ var resources := {
 	}
 }
 
-var valid_osu_textures := {
+const dont_crop_list := [
+	"drum_indicator",
+	"drum_indicator_don",
+	"drum_indicator_kat"
+]
+
+const valid_osu_textures := {
 	"taikohitcircle": "note", 
 	"taikohitcircleoverlay": "note_overlay", 
 	"taiko-roll-middle": "roll_middle",
@@ -48,38 +68,94 @@ var valid_osu_textures := {
 	"spinner-warning": "spinner_warn", 
 	"spinner-circle": "spinner_inside", 
 	"spinner-approachcircle": "spinner_outside",
-	}
+	
+	"taiko-bar-right": "track",
+	"taiko-bar-left": "drum_indicator",
+	"taiko-drum-inner": "drum_indicator_don",
+	"taiko-drum-outer": "drum_indicator_kat",
+	
+	"pippidonidle": "mascot_idle",
+	"pippidonkiai": "mascot_kiai",
+	"pippidonfail": "mascot_fail",
+	"pippidonclear": "mascot_toast",
+}
 
 func _init(file_path = null):
 	if file_path:
 		# load skin
-		var file_names := DirAccess.get_files_at(file_path)
-		for key in resources["texture"]:
-			resources["texture"][key] = find_texture_from_osu_skin(file_path, file_names, valid_osu_textures.find_key(key))
+		var all_textures = get_all_textures(file_path)
+		resources["texture"] = all_textures
+		
+		var pippidon_textures = get_pippidon_textures(file_path)
+		var tc_mascot_sprite_names = ["mascot_idle", "mascot_kiai", "mascot_fail", "mascot_toast"]
+		for key in tc_mascot_sprite_names:
+			resources["texture"][key] = pippidon_textures[key]
+		
 
-# TODO: animated textures
-func find_texture_from_osu_skin(directory: String, file_names: Array, texture_name: String) -> ImageTexture:
-	var wanted_file_name 
+static func get_pippidon_textures(directory: String) -> Dictionary:
+	var osu_mascot_sprite_names = ["pippidonidle", "pippidonkiai", "pippidonfail", "pippidonclear"]
+	var mascot_textures = {
+		"mascot_idle": [],
+		"mascot_kiai": [],
+		"mascot_fail": [],
+		"mascot_toast": [],
+	}
+	
+	var file_names := DirAccess.get_files_at(directory)
 	
 	for file in file_names:
-		# check for files named [texture_name].png, [texture_name]@2x.png, or [texture_name]-0.png
-		var prefix_test = file.trim_prefix(texture_name).trim_suffix(".png")
-		if prefix_test.begins_with("@") or prefix_test.begins_with("-") or prefix_test.is_empty():
-			# if we havent found a file, the first one will do
-			if not wanted_file_name:
-				wanted_file_name = file
-				continue
-			
-			if wanted_file_name.contains("@2x") and not file.trim_suffix(texture_name).contains("@2x"):
-				wanted_file_name = file
-				continue
-			
-			if wanted_file_name.contains("-0"):
-				continue
-			wanted_file_name = file
+		if not file.begins_with("pippidon"):
+			continue
+		file = file.trim_suffix(".png")
+		
+		var frame = ""
+		for i in range(file.length() - 1, -1, -1):
+			if ["0","1","2","3","4","5","6","7","8","9"].has(file[i]):
+				frame = file[i] + frame
+		file = file.replace(frame, "")
+		frame = int(frame)
+		
+		# make ImageTexture with the found texture and return it
+		var new_texture: ImageTexture
+		new_texture = ImageLoader.load_image(directory.path_join(file + str(frame) + ".png"), false)
+		mascot_textures[valid_osu_textures[file]].append(new_texture)
 	
-	# make ImageTexture with the found texture and return it
-	var new_texture: ImageTexture
-	if wanted_file_name:
-		new_texture = ImageLoader.load_image(directory.path_join(wanted_file_name))
-	return new_texture
+	return mascot_textures
+
+# TODO: animated textures
+func get_all_textures(directory: String) -> Dictionary:
+	var file_names := DirAccess.get_files_at(directory)
+	var resource_filenames := {}
+	
+	for file in file_names:
+		if not file.ends_with(".png"):
+			continue
+		
+		# check for files named [texture_name].png, [texture_name]@2x.png, or [texture_name]-0.png
+		var basename: String = file.get_basename()
+		var suffix := ""
+			
+		if ["0","1","2","3","4","5","6","7","8","9"].has(basename[basename.length() - 1]):
+			suffix += basename.substr(basename.find("-"), basename.length() - 1)
+			basename = basename.substr(0,basename.find("-"))
+			
+		if basename.find("@2x") + 1: 
+			suffix += "@2x"
+			basename = basename.replace("@2x", "")
+		
+		if valid_osu_textures.has(basename):
+			if resource_filenames.keys().has(basename):
+				if not suffix.find("@2x") + 1 and resource_filenames[basename].find("@2x") + 1:
+					continue
+				# if we already have the first animation in the series
+				if suffix.find("-") - 1 and resource_filenames[basename].find("-0") - 1: 
+					continue
+			resource_filenames[valid_osu_textures[basename]] = file
+	
+	var texture_resources := {}
+	for resource in resource_filenames:
+		var new_texture: ImageTexture
+		new_texture = ImageLoader.load_image(directory.path_join(resource_filenames[resource]), not dont_crop_list.has(resource))
+		texture_resources[resource] = new_texture
+	
+	return texture_resources

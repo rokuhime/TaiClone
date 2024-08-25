@@ -64,3 +64,9 @@ func toast() -> void:
 # updates texture of TextureRect
 func update_frame() -> void:
 	texture = sprites[int(current_state)][current_frame]
+
+func apply_skin(skin_manager: SkinManager):
+	sprites[0] = skin_manager.resources["texture"]["mascot_idle"]
+	sprites[1] = skin_manager.resources["texture"]["mascot_kiai"]
+	sprites[2] = skin_manager.resources["texture"]["mascot_fail"]
+	toast_sprites = skin_manager.resources["texture"]["mascot_toast"]

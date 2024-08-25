@@ -149,3 +149,5 @@ func apply_skin(skin: SkinManager) -> void:
 	song_progress_skippable = skin.resources["colour"]["song_progress_skippable"]
 	late_colour = skin.resources["colour"]["late"]
 	early_colour = skin.resources["colour"]["early"]
+	
+	mascot.apply_skin(skin)

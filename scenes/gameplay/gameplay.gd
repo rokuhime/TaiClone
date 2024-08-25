@@ -45,7 +45,6 @@ var donfinisher_audio := preload("res://assets/default_skin/hf_don.wav") as Audi
 var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as AudioStream
 @onready var barline_tick_player := $BarlineTick as AudioStreamPlayer
 
-var temp_skin_var: SkinManager
 @onready var offset_panel := $OffsetPanel
 
 const OFFSET_INCREASE := 0.005
@@ -55,8 +54,7 @@ var local_offset := 0.0
 
 func _ready() -> void:
 	# replace this with it being provided from root, wait for player class implementation first
-	temp_skin_var = Global.get_root().current_skin
-	game_overlay.apply_skin(temp_skin_var)
+	apply_skin(Global.get_root().current_skin)
 	
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
 	
@@ -255,7 +253,7 @@ func load_chart(requested_chart: Chart) -> void:
 	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
 		last_hobj_timing += current_chart.hit_objects[0].length
 	
-	apply_skin(temp_skin_var)
+	apply_skin(Global.get_root().current_skin)
 	await get_tree().process_frame
 	play_chart()
 
@@ -430,3 +428,17 @@ func update_input_indicator(part_index: int) -> void:
 func apply_skin(skin_manager: SkinManager) -> void:
 	for hitobject in hit_object_container.get_children():
 		hitobject.apply_skin(skin_manager)
+
+	game_overlay.apply_skin(skin_manager)
+	
+	# set track textures
+	if skin_manager.resources["texture"].keys().has("track"):
+		$Track.texture = skin_manager.resources["texture"]["track"]
+	if skin_manager.resources["texture"].keys().has("drum_indicator"):
+		drum_indicator.texture = skin_manager.resources["texture"]["drum_indicator"]
+	if skin_manager.resources["texture"].keys().has("drum_indicator_don"):
+		drum_indicator.get_node("LeftDon").texture = skin_manager.resources["texture"]["drum_indicator_don"]
+		drum_indicator.get_node("RightDon").texture = skin_manager.resources["texture"]["drum_indicator_don"]
+	if skin_manager.resources["texture"].keys().has("drum_indicator_kat"):
+		drum_indicator.get_node("LeftKat").texture = skin_manager.resources["texture"]["drum_indicator_kat"]
+		drum_indicator.get_node("RightKat").texture = skin_manager.resources["texture"]["drum_indicator_kat"]
