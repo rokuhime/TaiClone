@@ -19,7 +19,7 @@ var score_instance := ScoreData.new()
 var enabled_mods := []
 
 var pause_time := 0.0
-var music_starting_timer := Timer.new()
+@onready var music_start_timer: Timer = $MusicStartTimer
 var current_time := 0.0
 var start_time := 0.0
 var first_hobj_timing := 0.0
@@ -57,10 +57,6 @@ func _ready() -> void:
 	apply_skin(Global.current_skin)
 	
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
-	
-	add_child(music_starting_timer)
-	music_starting_timer.one_shot = true
-	music_starting_timer.stop()
 	
 	music = Global.music
 	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
@@ -293,8 +289,8 @@ func play_chart() -> void:
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
 	# if theres a delay before the audio starts, await it
 	if current_time < 0:
-		music_starting_timer.start(abs(current_time))
-		await music_starting_timer.timeout
+		music_start_timer.start(abs(current_time))
+		await music_start_timer.timeout
 	music.play()
 
 func restart_chart() -> void:
@@ -313,6 +309,7 @@ func restart_chart() -> void:
 	
 	await get_tree().process_frame
 	play_chart()
+	skip_intro()
 
 func skip_intro() -> void:
 	if current_time >= first_hobj_timing - 2.0:
@@ -330,7 +327,8 @@ func change_pause_state(is_paused: bool) -> void:
 	
 	if is_paused:
 		pause_time = Time.get_ticks_msec() / 1000.0
-		music_starting_timer.stop()
+		if music_start_timer:
+			music_start_timer.stop()
 		return
 	
 	# unpausing
@@ -340,8 +338,8 @@ func change_pause_state(is_paused: bool) -> void:
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
 	# if theres a delay before the audio starts, await it
 	if current_time < 0:
-		music_starting_timer.start(abs(current_time))
-		await music_starting_timer.timeout
+		music_start_timer.start(abs(current_time))
+		await music_start_timer.timeout
 	music.play(current_time)
 
 # -------- hit object checks --------

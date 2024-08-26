@@ -105,4 +105,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 columns = 5
 
+[node name="MusicStartTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="finished" from="Music" to="." method="on_music_end"]

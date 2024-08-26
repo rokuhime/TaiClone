@@ -106,7 +106,6 @@ func load_keybinds(keybinds) -> void:
 # -------- etc -------
 
 func scale_for_navbars(navbar_enabled: bool, navbars: Control) -> void:
-	printerr("scale_for_navbars ", navbar_enabled)
 	# change scale to give space to navbars
 	var navbar_size = navbars.get_node("Top").size.y + navbars.get_node("Bottom").size.y
 	

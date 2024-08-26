@@ -46,7 +46,7 @@ func _ready() -> void:
 		try_selecting_current_chart()
 	
 	# if the music hasnt started playing (after results screen), start it back up
-	if not Global.get_root().music.get_playback_position():
+	if not Global.get_root().music.playing:
 		Global.get_root().on_music_end()
 	
 	scroll_echo_timer.timeout.connect(on_scroll_echo)
