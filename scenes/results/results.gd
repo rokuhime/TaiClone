@@ -19,8 +19,8 @@ var score: ScoreData
 @onready var judgement_timeline: Control = $RightSide/JudgeTimeline/JudgementContainer
 
 func _ready() -> void:
-	# TODO: replace this with it being provided from root
-	apply_skin(Global.get_root().current_skin)
+	var skin := Global.current_skin
+	apply_skin(skin)
 	
 	# set navbar info
 	Global.get_root().navigation_bars.set_navbar_buttons([])
@@ -35,7 +35,6 @@ func _ready() -> void:
 					Time.get_datetime_string_from_system(false, true)
 					])
 	
-	var skin := Global.get_root().current_skin
 	early_label.modulate = skin.resources["colour"]["early"]
 	late_label.modulate = skin.resources["colour"]["late"]
 
@@ -76,5 +75,5 @@ func apply_skin(skin: SkinManager) -> void:
 	]
 	
 	for i in judge_texture_names.size():
-		if skin.resources["texture"].keys().has(judge_texture_names[i]):
+		if skin.resource_exists("texture/" + judge_texture_names[i]):
 			judge_rects[i].texture = skin.resources["texture"][judge_texture_names[i]]

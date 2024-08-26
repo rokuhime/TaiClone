@@ -104,10 +104,10 @@ func finished() -> void:
 	add_child(spinner_gameplay)
 
 func apply_skin(skin: SkinManager) -> void:
-	if skin.resources["texture"].keys().has("spinner_warn"):
+	if skin.resource_exists("texture/spinner_warn"):
 		texture = skin.resources["texture"]["spinner_warn"]
-	if skin.resources["texture"].keys().has("spinner_inside"):
+	if skin.resource_exists("texture/spinner_inside"):
 		inside.texture = skin.resources["texture"]["spinner_inside"]
-	if skin.resources["texture"].keys().has("spinner_outside"):
+	if skin.resource_exists("texture/spinner_outside"):
 		outside.texture = skin.resources["texture"]["spinner_outside"]
 	

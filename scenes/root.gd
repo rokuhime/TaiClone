@@ -16,9 +16,6 @@ var gamestate_scenes := [
 @onready var blackout_overlay := $BlackoutOverlay
 var blackout_lock := false
 
-# this shouldnt be on root like this, should probably just make a player class or something.
-var current_skin := SkinManager.new("/home/roku/Games/osu!/osu!/Skins/- Taikodachi")
-
 # roku note 2024-08-01
 # how will you load different difficulties for local multiplayer? i dont know!
 # thats a problem for future roku

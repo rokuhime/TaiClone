@@ -220,3 +220,20 @@ func get_all_audio(directory: String) -> Dictionary:
 		audio_resources[resource] = new_audio
 	
 	return audio_resources
+
+# ensures null skin elements dont cause issues
+# resource_location : resourcetype/resourcename (eg audio/don)
+func resource_exists(resource_location: String):
+	var resource_info = resource_location.split("/")
+	
+	if resource_info.size() == 2:
+		if resources[resource_info[0]].keys().has(resource_info[1]):
+			if resources[resource_info[0]][resource_info[1]]:
+				return true
+	return false
+
+func apply_audio(audiostream: AudioStream, audio_name: String) -> AudioStream:
+	if resources["audio"].keys().has(audio_name):
+		if resources["audio"][audio_name]:
+			audiostream = resources["audio"][audio_name]
+	return audiostream

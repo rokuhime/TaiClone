@@ -65,8 +65,12 @@ func toast() -> void:
 func update_frame() -> void:
 	texture = sprites[int(current_state)][current_frame]
 
-func apply_skin(skin_manager: SkinManager):
-	sprites[0] = skin_manager.resources["texture"]["mascot_idle"]
-	sprites[1] = skin_manager.resources["texture"]["mascot_kiai"]
-	sprites[2] = skin_manager.resources["texture"]["mascot_fail"]
-	toast_sprites = skin_manager.resources["texture"]["mascot_toast"]
+func apply_skin(skin: SkinManager):
+	if skin.resource_exists("texture/mascot_idle"):
+		sprites[0] = skin.resources["texture"]["mascot_idle"]
+	if skin.resource_exists("texture/mascot_kiai"):
+		sprites[1] = skin.resources["texture"]["mascot_kiai"]
+	if skin.resource_exists("texture/mascot_fail"):
+		sprites[2] = skin.resources["texture"]["mascot_fail"]
+	if skin.resource_exists("texture/mascot_toast"):
+		toast_sprites = skin.resources["texture"]["mascot_toast"]

@@ -27,6 +27,8 @@ var limit_barlines := true
 # lowest level of priority that will appear to console
 var console_filter := -2
 
+var current_skin := SkinManager.new()
+
 # -------- system -------
 
 func _init() -> void:

@@ -54,7 +54,7 @@ var local_offset := 0.0
 
 func _ready() -> void:
 	# TODO: replace this with it being provided from root
-	apply_skin(Global.get_root().current_skin)
+	apply_skin(Global.current_skin)
 	
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
 	
@@ -253,7 +253,7 @@ func load_chart(requested_chart: Chart) -> void:
 	if current_chart.hit_objects[0] is Spinner or current_chart.hit_objects[0] is Roll:
 		last_hobj_timing += current_chart.hit_objects[0].length
 	
-	apply_skin(Global.get_root().current_skin)
+	apply_skin(Global.current_skin)
 	await get_tree().process_frame
 	play_chart()
 
@@ -432,23 +432,24 @@ func apply_skin(skin: SkinManager) -> void:
 	game_overlay.apply_skin(skin)
 	
 	# set track textures
-	if skin.resources["texture"].keys().has("track"):
+	if skin.resource_exists("texture/track"):
 		$Track.texture = skin.resources["texture"]["track"]
 		
-	if skin.resources["texture"].keys().has("drum_indicator"):
+	if skin.resource_exists("texture/drum_indicator"):
 		drum_indicator.texture = skin.resources["texture"]["drum_indicator"]
-	if skin.resources["texture"].keys().has("drum_indicator_don"):
+	if skin.resource_exists("texture/drum_indicator_don"):
 		drum_indicator.get_node("LeftDon").texture = skin.resources["texture"]["drum_indicator_don"]
 		drum_indicator.get_node("RightDon").texture = skin.resources["texture"]["drum_indicator_don"]
-	if skin.resources["texture"].keys().has("drum_indicator_kat"):
+	if skin.resource_exists("texture/drum_indicator_kat"):
 		drum_indicator.get_node("LeftKat").texture = skin.resources["texture"]["drum_indicator_kat"]
 		drum_indicator.get_node("RightKat").texture = skin.resources["texture"]["drum_indicator_kat"]
 	
-	if skin.resources["audio"].keys().has("don"):
+	# TODO: THIS IS SO UGLY
+	if skin.resource_exists("audio/don"):
 		don_audio = skin.resources["audio"]["don"]
-	if skin.resources["audio"].keys().has("don_f"):
+	if skin.resource_exists("audio/don_f"):
 		donfinisher_audio = skin.resources["audio"]["don_f"]
-	if skin.resources["audio"].keys().has("kat"):
+	if skin.resource_exists("audio/kat"):
 		kat_audio = skin.resources["audio"]["kat"]
-	if skin.resources["audio"].keys().has("kat_f"):
+	if skin.resource_exists("audio/kat_f"):
 		katfinisher_audio = skin.resources["audio"]["kat_f"]

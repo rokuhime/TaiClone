@@ -51,8 +51,8 @@ func apply_skin(skin: SkinManager) -> void:
 	don_colour = skin.resources["colour"]["don"]
 	kat_colour = skin.resources["colour"]["kat"]
 	# textures go here!
-	if skin.resources["texture"]["note"]:
+	if skin.resource_exists("texture/note"):
 		texture = skin.resources["texture"]["note"]
-	if skin.resources["texture"]["note_overlay"]:
+	if skin.resource_exists("texture/note_overlay"):
 		$Overlay.texture = skin.resources["texture"]["note_overlay"]
 	update_visual()

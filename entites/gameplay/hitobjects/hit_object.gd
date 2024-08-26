@@ -38,5 +38,5 @@ func finish(type := -1, marker := true) -> void:
 		if type + 1:
 			emit_signal("score_added", type, marker)
 
-func apply_skin(skin_manager: SkinManager) -> void:
+func apply_skin(skin: SkinManager) -> void:
 	pass

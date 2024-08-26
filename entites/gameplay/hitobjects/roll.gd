@@ -35,16 +35,16 @@ func apply_skin(skin: SkinManager) -> void:
 	colour = skin.resources["colour"]["roll"]
 	# textures go here!
 	
-	if skin.resources["texture"].keys().has("note"):
+	if skin.resource_exists("texture/note"):
 		texture = skin.resources["texture"]["note"]
-	if skin.resources["texture"].keys().has("note_overlay"):
+	if skin.resource_exists("texture/note_overlay"):
 		$Overlay.texture = skin.resources["texture"]["note_overlay"]
 	
-	if skin.resources["texture"].keys().has("roll_tick"):
+	if skin.resource_exists("texture/roll_tick"):
 		tick_texture = skin.resources["texture"]["roll_tick"]
-	if skin.resources["texture"].keys().has("roll_middle"):
+	if skin.resource_exists("texture/roll_middle"):
 		middle_node.texture = skin.resources["texture"]["roll_middle"]
-	if skin.resources["texture"].keys().has("roll_end"):
+	if skin.resource_exists("texture/roll_end"):
 		middle_node.get_node("End").texture = skin.resources["texture"]["roll_end"]
 		
 	update_visual()

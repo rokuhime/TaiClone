@@ -154,10 +154,10 @@ func apply_skin(skin: SkinManager) -> void:
 	
 	var judge_texture_names := ["judgement_accurate", "judgement_inaccurate", "judgement_miss"]
 	for i in judge_texture_names.size():
-		if skin.resources["texture"].keys().has(judge_texture_names[i]):
+		if skin.resource_exists("texture/" + judge_texture_names[i]):
 			judgements[i].texture = skin.resources["texture"][judge_texture_names[i]]
 	
 	mascot.apply_skin(skin)
 	
-	if skin.resources["audio"].keys().has("combo_break"):
+	if skin.resource_exists("audio/combo_break"):
 		combo_break_player.stream = skin.resources["audio"]["combo_break"]
