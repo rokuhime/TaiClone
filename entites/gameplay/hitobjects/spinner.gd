@@ -27,9 +27,7 @@ const ROTATE_SPEED_CAP := 0.4
 signal on_finished
 
 func _ready() -> void:
-	current_hits = needed_hits
-	hit_count_label.text = str(current_hits)
-	spinner_gameplay.visible = false
+	reset()
 
 func _process(delta) -> void:
 	if hit_status < hit_type.ANY and active:
@@ -75,7 +73,7 @@ func transition_to_playable() -> void:
 	spinner_gameplay_tween.tween_property(spinner_gameplay, "modulate:a", 1, 0.2).from(0)
 	
 	# connect the end of the spinner to the finished function
-	timer.timeout.connect(finished)
+	timer.paused = false
 	timer.start(length)
 
 func finished() -> void:
@@ -105,6 +103,20 @@ func finished() -> void:
 	# reduce clutter in tree; reclaim the spinner gameplay visual
 	spinner_gameplay.get_parent().remove_child(spinner_gameplay)
 	add_child(spinner_gameplay)
+
+func reset() -> void:
+	timer.stop()
+	if spinner_gameplay.get_parent() != self:
+		spinner_gameplay.get_parent().remove_child(spinner_gameplay)
+		add_child(spinner_gameplay)
+	spinner_gameplay.visible = false
+	
+	hit_status = hit_type.INACTIVE
+	current_hits = needed_hits
+	hit_count_label.text = str(current_hits)
+	visible = true
+	self_modulate.a = 1
+	active = true
 
 func apply_skin(skin: SkinManager) -> void:
 	if skin.resource_exists("texture/spinner_warn"):

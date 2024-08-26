@@ -98,3 +98,5 @@ expand_mode = 1
 
 [node name="Timer" type="Timer" parent="SpinnerGameplay"]
 one_shot = true
+
+[connection signal="timeout" from="SpinnerGameplay/Timer" to="." method="finished"]

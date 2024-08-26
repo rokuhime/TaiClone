@@ -305,6 +305,10 @@ func restart_chart() -> void:
 	active_finisher_note = null
 	
 	for hobj in hit_object_container.get_children():
+		if hobj is Spinner:
+			hobj.reset()
+			continue
+		
 		if not (hobj is TimingPoint):
 			hobj.visible = true
 			hobj.active = true
