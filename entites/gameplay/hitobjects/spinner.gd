@@ -9,7 +9,6 @@ var warn_tween: Tween
 # interactable element
 @onready var spinner_gameplay := $SpinnerGameplay
 var spinner_gameplay_tween: Tween
-
 @onready var inside: TextureRect = $SpinnerGameplay/Inside # rotating middle
 @onready var outside: TextureRect = $SpinnerGameplay/Outside # approach circle
 @onready var hit_count_label := $SpinnerGameplay/NeededHits
@@ -20,6 +19,7 @@ var hit_status := hit_type.INACTIVE
 var length: float
 var needed_hits := 50
 var current_hits := 0
+@onready var timer: Timer = $SpinnerGameplay/Timer
 
 @export var inside_rotation_speed := 0.4
 const ROTATE_SPEED_CAP := 0.4
@@ -32,6 +32,13 @@ func _ready() -> void:
 	spinner_gameplay.visible = false
 
 func _process(delta) -> void:
+	if hit_status < hit_type.ANY and active:
+		return
+	
+	# scale timer outside if active
+	var timer_percent := timer.time_left / timer.wait_time
+	outside.scale = Vector2.ONE.lerp(Vector2(0.2,0.2), 1.0 - timer_percent)
+	
 	if inside_rotation_speed:
 		# rotate gameplay visual
 		inside.set_rotation_degrees(inside.rotation_degrees + inside_rotation_speed)
@@ -67,13 +74,9 @@ func transition_to_playable() -> void:
 	spinner_gameplay_tween = create_tween()
 	spinner_gameplay_tween.tween_property(spinner_gameplay, "modulate:a", 1, 0.2).from(0)
 	
-	var outside_pos_tween = create_tween()
-	outside_pos_tween.tween_property(outside, "position", size / 2, length)
-	var outside_size_tween = create_tween()
-	outside_size_tween.tween_property(outside, "size", Vector2.ONE * 0.1, length)
-	
 	# connect the end of the spinner to the finished function
-	outside_size_tween.finished.connect(finished)
+	timer.timeout.connect(finished)
+	timer.start(length)
 
 func finished() -> void:
 	if hit_status == hit_type.FINISHED:

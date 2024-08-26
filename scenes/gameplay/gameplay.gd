@@ -19,7 +19,7 @@ var score_instance := ScoreData.new()
 var enabled_mods := []
 
 var pause_time := 0.0
-@onready var music_start_timer: Timer = $MusicStartTimer
+var music_starting_timer := Timer.new()
 var current_time := 0.0
 var start_time := 0.0
 var first_hobj_timing := 0.0
@@ -58,17 +58,21 @@ func _ready() -> void:
 	
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
 	
+	add_child(music_starting_timer)
+	music_starting_timer.one_shot = true
+	music_starting_timer.stop()
+	
 	music = Global.music
 	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
 		Global.get_root().change_to_results.bind(score_instance)
 	)
 
 func _process(_delta) -> void:
-	# update progress bar
-	game_overlay.update_progress(current_time, first_hobj_timing, last_hobj_timing)
-	
 	if playing:
 		current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
+		
+		# update progress bar
+		game_overlay.update_progress(current_time, first_hobj_timing, last_hobj_timing)
 		
 		# chart end check
 		if current_time >= last_hobj_timing + 1:
@@ -289,8 +293,8 @@ func play_chart() -> void:
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
 	# if theres a delay before the audio starts, await it
 	if current_time < 0:
-		music_start_timer.start(abs(current_time))
-		await music_start_timer.timeout
+		music_starting_timer.start(abs(current_time))
+		await music_starting_timer.timeout
 	music.play()
 
 func restart_chart() -> void:
@@ -309,7 +313,6 @@ func restart_chart() -> void:
 	
 	await get_tree().process_frame
 	play_chart()
-	skip_intro()
 
 func skip_intro() -> void:
 	if current_time >= first_hobj_timing - 2.0:
@@ -327,19 +330,28 @@ func change_pause_state(is_paused: bool) -> void:
 	
 	if is_paused:
 		pause_time = Time.get_ticks_msec() / 1000.0
-		if music_start_timer:
-			music_start_timer.stop()
+		music_starting_timer.stop()
+		
+		for hobj in hit_object_container.get_children():
+			if hobj is Spinner and hobj.active:
+				if not hobj.timer.paused:
+					hobj.timer.paused = true
 		return
 	
 	# unpausing
+	for hobj in hit_object_container.get_children():
+			if hobj is Spinner and hobj.active:
+				if hobj.timer.paused:
+					hobj.timer.paused = false
+	
 	# add the time elapsed between pausing and unpausing, and compensate for audio delay
 	start_time += (Time.get_ticks_msec() / 1000.0) - pause_time - AudioServer.get_time_to_next_mix()
 	# ensure the current_time is set correctly and seek the music to it
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
 	# if theres a delay before the audio starts, await it
 	if current_time < 0:
-		music_start_timer.start(abs(current_time))
-		await music_start_timer.timeout
+		music_starting_timer.start(abs(current_time))
+		await music_starting_timer.timeout
 	music.play(current_time)
 
 # -------- hit object checks --------
