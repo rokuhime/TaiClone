@@ -12,7 +12,7 @@ extends Control
 @onready var combo_break_player: AudioStreamPlayer = $ComboBreak
 
 @onready var judgement_indicators: Node = $Judgements
-var judgement_indicator_tweens: Array = [null, null, null]
+var judgement_indicator_tweens: Array = [null, null, null, null, null]
 @onready var inaccurate_indicator: Label = $InaccurateIndicator
 var inaccurate_indicator_tween: Tween
 
@@ -84,22 +84,16 @@ func update_visuals(score: ScoreData) -> void:
 
 # updates hit point judgement visual (acc, inacc, miss)
 func update_judgement(hit_result: HitObject.HIT_RESULT) -> void:
-	if hit_result >= HitObject.HIT_RESULT.TICK_HIT:
+	if hit_result >= HitObject.HIT_RESULT.TICK_HIT or hit_result == HitObject.HIT_RESULT.INVALID:
 		return
-	
-	var score_type := 0
-	if hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC:
-		score_type = 1
-	if hit_result == HitObject.HIT_RESULT.ACC or hit_result == HitObject.HIT_RESULT.F_ACC:
-		score_type = 2
 
-	var target_judgement = judgement_indicators.get_child(2 - score_type)
+	var target_judgement = judgement_indicators.get_child(hit_result)
 	
-	if judgement_indicator_tweens[score_type]:
-		judgement_indicator_tweens[score_type].kill()
+	if judgement_indicator_tweens[hit_result]:
+		judgement_indicator_tweens[hit_result].kill()
 	
-	judgement_indicator_tweens[score_type] = create_tween()
-	judgement_indicator_tweens[score_type].tween_property(target_judgement, "modulate:a", 0.0, 0.4).from(1.0)
+	judgement_indicator_tweens[hit_result] = create_tween()
+	judgement_indicator_tweens[hit_result].tween_property(target_judgement, "modulate:a", 0.0, 0.4).from(1.0)
 
 # shows little late/early visual for inaccurate hits
 func update_inacc_indicator(hit_time_difference: float) -> void:
@@ -152,10 +146,13 @@ func apply_skin(skin: SkinManager) -> void:
 	
 	var judgements := judgement_indicators.get_children()
 	
-	var judge_texture_names := ["judgement_accurate", "judgement_inaccurate", "judgement_miss"]
+	var judge_texture_names := ["judgement_miss", "judgement_inaccurate", "judgement_accurate", "judgement_inaccurate_f",  "judgement_accurate_f"]
 	for i in judge_texture_names.size():
 		if skin.resource_exists("texture/" + judge_texture_names[i]):
 			judgements[i].texture = skin.resources["texture"][judge_texture_names[i]]
+		# if the finisher judgement texture isnt found but the normal judgement is found, set it to that
+		elif i >= HitObject.HIT_RESULT.F_INACC and skin.resource_exists("texture/" + judge_texture_names[i - 2]):
+			judgements[i].texture = skin.resources["texture"][judge_texture_names[i - 2]]
 	
 	mascot.apply_skin(skin)
 	

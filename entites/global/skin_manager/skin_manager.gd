@@ -72,8 +72,8 @@ const dont_crop_list := [
 	"drum_indicator_don",
 	"drum_indicator_kat",
 	
-	"spinner-circle",
-	"spinner-approachcircle",
+	"spinner_inside",
+	"roll_middle",
 	
 	"judgement_accurate",
 	"judgement_accurate_f",
@@ -98,9 +98,9 @@ const valid_osu_textures := {
 	"taiko-drum-outer": "drum_indicator_kat",
 	
 	"taiko-hit300": "judgement_accurate",
-	"taiko-hit300k": "judgement_accurate_f",
+	"taiko-hit300g": "judgement_accurate_f",
 	"taiko-hit100": "judgement_inaccurate",
-	"taiko-hit100k": "judgement_inaccurate_f",
+	"taiko-hit100g": "judgement_inaccurate_f",
 	"taiko-hit0": "judgement_miss",
 	
 	"pippidonidle": "mascot_idle",

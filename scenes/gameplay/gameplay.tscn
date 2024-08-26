@@ -297,7 +297,7 @@ offset_right = 360.0
 offset_bottom = -97.0
 grow_vertical = 2
 
-[node name="Accurate" type="TextureRect" parent="GameOverlay/Judgements"]
+[node name="Miss" type="TextureRect" parent="GameOverlay/Judgements"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -311,7 +311,7 @@ offset_right = 184.5
 offset_bottom = 187.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("12_cbuc6")
+texture = ExtResource("18_t1emc")
 expand_mode = 1
 stretch_mode = 5
 
@@ -333,7 +333,7 @@ texture = ExtResource("17_pqxbr")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Miss" type="TextureRect" parent="GameOverlay/Judgements"]
+[node name="Accurate" type="TextureRect" parent="GameOverlay/Judgements"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -347,7 +347,43 @@ offset_right = 184.5
 offset_bottom = 187.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("18_t1emc")
+texture = ExtResource("12_cbuc6")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InaccurateFinisher" type="TextureRect" parent="GameOverlay/Judgements"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -184.5
+offset_top = -187.0
+offset_right = 184.5
+offset_bottom = 187.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("17_pqxbr")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AccurateFinisher" type="TextureRect" parent="GameOverlay/Judgements"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -184.5
+offset_top = -187.0
+offset_right = 184.5
+offset_bottom = 187.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_cbuc6")
 expand_mode = 1
 stretch_mode = 5
 
