@@ -18,9 +18,11 @@ var resources := {
 		# hit objects
 		"note": null,
 		"note_overlay": null,
+		
 		"roll_middle": null,
 		"roll_end": null,
 		"roll_tick": null,
+		
 		"spinner_warn": null,
 		"spinner_inside": null,
 		"spinner_outside": null,
@@ -30,6 +32,13 @@ var resources := {
 		"drum_indicator": null,
 		"drum_indicator_don": null,
 		"drum_indicator_kat": null,
+		
+		# judgements
+		"judgement_accurate": null,
+		"judgement_accurate_f": null,
+		"judgement_inaccurate": null,
+		"judgement_inaccurate_f": null,
+		"judgement_miss": null,
 		
 		# mascot
 		# WILL BE DEPRECATED FOR MASCOT CREATION!
@@ -56,7 +65,16 @@ var resources := {
 const dont_crop_list := [
 	"drum_indicator",
 	"drum_indicator_don",
-	"drum_indicator_kat"
+	"drum_indicator_kat",
+	
+	"spinner-circle",
+	"spinner-approachcircle",
+	
+	"judgement_accurate",
+	"judgement_accurate_f",
+	"judgement_inaccurate",
+	"judgement_inaccurate_f",
+	"judgement_miss",
 ]
 
 const valid_osu_textures := {
@@ -73,6 +91,12 @@ const valid_osu_textures := {
 	"taiko-bar-left": "drum_indicator",
 	"taiko-drum-inner": "drum_indicator_don",
 	"taiko-drum-outer": "drum_indicator_kat",
+	
+	"taiko-hit300": "judgement_accurate",
+	"taiko-hit300k": "judgement_accurate_f",
+	"taiko-hit100": "judgement_inaccurate",
+	"taiko-hit100k": "judgement_inaccurate_f",
+	"taiko-hit0": "judgement_miss",
 	
 	"pippidonidle": "mascot_idle",
 	"pippidonkiai": "mascot_kiai",

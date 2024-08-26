@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://cetwhypdquydw"]
+[gd_scene load_steps=7 format=3 uid="uid://cetwhypdquydw"]
 
 [ext_resource type="Script" path="res://entites/gameplay/hitobjects/spinner.gd" id="1_nk4qg"]
 [ext_resource type="Texture2D" uid="uid://ctsrf72bpg1wx" path="res://assets/default_skin/spinner-warning.png" id="1_s0d8t"]
 [ext_resource type="Texture2D" uid="uid://y7keb0cqkget" path="res://assets/default_skin/spinner-approachcircle@2x.png" id="2_eqisr"]
 [ext_resource type="Texture2D" uid="uid://jqmi4awxlrg7" path="res://assets/default_skin/spinner-circle.png" id="3_4l1fg"]
+[ext_resource type="Script" path="res://entites/global/skinnable_rect.gd" id="4_d3e7g"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1xbsh"]
 font_size = 50
@@ -77,6 +78,8 @@ pivot_offset = Vector2(225, 225)
 texture = ExtResource("2_eqisr")
 expand_mode = 1
 stretch_mode = 5
+script = ExtResource("4_d3e7g")
+texture_name = "spinner_outside"
 
 [node name="Inside" type="TextureRect" parent="SpinnerGameplay"]
 visibility_layer = 8
@@ -95,3 +98,5 @@ grow_vertical = 2
 pivot_offset = Vector2(225, 225)
 texture = ExtResource("3_4l1fg")
 expand_mode = 1
+script = ExtResource("4_d3e7g")
+texture_name = "spinner_inside"

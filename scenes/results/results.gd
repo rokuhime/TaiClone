@@ -6,17 +6,22 @@ var score: ScoreData
 @onready var accuracy_label: Label = $MainPanel/VBoxContainer/HBoxContainer/Accuracy/Value
 @onready var combo_label: Label = $MainPanel/VBoxContainer/HBoxContainer/Combo/HBoxContainer/Value
 @onready var max_combo_label: Label = $MainPanel/VBoxContainer/HBoxContainer/Combo/HBoxContainer/MaxValue
-@onready var accurate_label: Label = $RightSide/JudgementPanel/GridContainer/AccurateCount/Label
-@onready var f_accurate_label: Label = $RightSide/JudgementPanel/GridContainer/AccFinishCount/Label
-@onready var inaccurate_label: Label = $RightSide/JudgementPanel/GridContainer/InaccCount/Label
-@onready var f_inaccurate_label: Label = $RightSide/JudgementPanel/GridContainer/InaccFinishCount/Label
-@onready var miss_label: Label = $RightSide/JudgementPanel/GridContainer/MissCount/Label
+
+@onready var accurate_visual: Control = $RightSide/JudgementPanel/GridContainer/AccurateCount
+@onready var f_accurate_visual: Control = $RightSide/JudgementPanel/GridContainer/AccFinishCount
+@onready var inaccurate_visual: Control = $RightSide/JudgementPanel/GridContainer/InaccCount
+@onready var f_inaccurate_visual: Control = $RightSide/JudgementPanel/GridContainer/InaccFinishCount
+@onready var miss_visual: Control = $RightSide/JudgementPanel/GridContainer/MissCount
+
 @onready var early_label: Label = $RightSide/JudgementPanel/GridContainer/LateEarlyCount/Early
 @onready var late_label: Label = $RightSide/JudgementPanel/GridContainer/LateEarlyCount/Late
 
 @onready var judgement_timeline: Control = $RightSide/JudgeTimeline/JudgementContainer
 
 func _ready() -> void:
+	# TODO: replace this with it being provided from root
+	apply_skin(Global.get_root().current_skin)
+	
 	# set navbar info
 	Global.get_root().navigation_bars.set_navbar_buttons([])
 	# wait a frame to ensure it will update properly
@@ -51,11 +56,25 @@ func set_score(new_score: ScoreData) -> void:
 	combo_label.text = str(score.top_combo)
 	max_combo_label.text = "/" + str(score.accurate_hits + score.inaccurate_hits + score.miss_count)
 	
-	accurate_label.text = str(score.accurate_hits)
-	f_accurate_label.text = str(score.f_accurate_hits)
-	inaccurate_label.text = str(score.inaccurate_hits)
-	f_inaccurate_label.text = str(score.f_inaccurate_hits)
-	miss_label.text = str(score.miss_count)
+	accurate_visual.get_node("Label").text = str(score.accurate_hits)
+	f_accurate_visual.get_node("Label").text = str(score.f_accurate_hits)
+	inaccurate_visual.get_node("Label").text = str(score.inaccurate_hits)
+	f_inaccurate_visual.get_node("Label").text = str(score.f_inaccurate_hits)
+	miss_visual.get_node("Label").text = str(score.miss_count)
 	
 	early_label.text = str(score.early_hits) + " Early"
 	late_label.text = str(score.late_hits) + " Late"
+
+func apply_skin(skin: SkinManager) -> void:
+	var judge_texture_names := ["judgement_accurate", "judgement_accurate_f", "judgement_inaccurate", "judgement_inaccurate_f", "judgement_miss"]
+	var judge_rects := [
+		accurate_visual.get_node("TextureRect"), 
+		f_accurate_visual.get_node("TextureRect"), 
+		inaccurate_visual.get_node("TextureRect"), 
+		f_inaccurate_visual.get_node("TextureRect"), 
+		miss_visual.get_node("TextureRect")
+	]
+	
+	for i in judge_texture_names.size():
+		if skin.resources["texture"].keys().has(judge_texture_names[i]):
+			judge_rects[i].texture = skin.resources["texture"][judge_texture_names[i]]

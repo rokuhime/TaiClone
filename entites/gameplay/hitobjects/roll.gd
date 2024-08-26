@@ -11,6 +11,7 @@ var tick_duration: float
 
 @onready var tick_container: Control = $Ticks
 var tick_scene := load("res://entites/gameplay/hitobjects/roll_tick.tscn")
+var tick_texture: ImageTexture
 
 var colour := Color("FCB806")
 
@@ -33,6 +34,19 @@ func update_visual() -> void:
 func apply_skin(skin: SkinManager) -> void:
 	colour = skin.resources["colour"]["roll"]
 	# textures go here!
+	
+	if skin.resources["texture"].keys().has("note"):
+		texture = skin.resources["texture"]["note"]
+	if skin.resources["texture"].keys().has("note_overlay"):
+		$Overlay.texture = skin.resources["texture"]["note_overlay"]
+	
+	if skin.resources["texture"].keys().has("roll_tick"):
+		tick_texture = skin.resources["texture"]["roll_tick"]
+	if skin.resources["texture"].keys().has("roll_middle"):
+		middle_node.texture = skin.resources["texture"]["roll_middle"]
+	if skin.resources["texture"].keys().has("roll_end"):
+		middle_node.get_node("End").texture = skin.resources["texture"]["roll_end"]
+		
 	update_visual()
 
 func create_ticks() -> void:
@@ -43,6 +57,8 @@ func create_ticks() -> void:
 	while tick_timing <= length:
 		var new_tick: Control = tick_scene.instantiate()
 		tick_container.add_child(new_tick)
+		if tick_texture:
+			new_tick.texture = tick_texture
 		
 		new_tick.position.x = (tick_timing / length) * middle_node.size.x
 		tick_timing += tick_duration

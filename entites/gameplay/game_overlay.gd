@@ -150,4 +150,11 @@ func apply_skin(skin: SkinManager) -> void:
 	late_colour = skin.resources["colour"]["late"]
 	early_colour = skin.resources["colour"]["early"]
 	
+	var judgements := judgement_indicators.get_children()
+	
+	var judge_texture_names := ["judgement_accurate", "judgement_inaccurate", "judgement_miss"]
+	for i in judge_texture_names.size():
+		if skin.resources["texture"].keys().has(judge_texture_names[i]):
+			judgements[i].texture = skin.resources["texture"][judge_texture_names[i]]
+	
 	mascot.apply_skin(skin)

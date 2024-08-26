@@ -10,8 +10,8 @@ var warn_tween: Tween
 @onready var spinner_gameplay := $SpinnerGameplay
 var spinner_gameplay_tween: Tween
 
-@onready var inside := $SpinnerGameplay/Inside # rotating middle
-@onready var outside := $SpinnerGameplay/Outside # approach circle
+@onready var inside: TextureRect = $SpinnerGameplay/Inside # rotating middle
+@onready var outside: TextureRect = $SpinnerGameplay/Outside # approach circle
 @onready var hit_count_label := $SpinnerGameplay/NeededHits
 
 enum hit_type { FINISHED = -3, INACTIVE = -2, ANY = -1, DON, KAT}
@@ -102,3 +102,12 @@ func finished() -> void:
 	# reduce clutter in tree; reclaim the spinner gameplay visual
 	spinner_gameplay.get_parent().remove_child(spinner_gameplay)
 	add_child(spinner_gameplay)
+
+func apply_skin(skin: SkinManager) -> void:
+	if skin.resources["texture"].keys().has("spinner_warn"):
+		texture = skin.resources["texture"]["spinner_warn"]
+	if skin.resources["texture"].keys().has("spinner_inside"):
+		inside.texture = skin.resources["texture"]["spinner_inside"]
+	if skin.resources["texture"].keys().has("spinner_outside"):
+		outside.texture = skin.resources["texture"]["spinner_outside"]
+	

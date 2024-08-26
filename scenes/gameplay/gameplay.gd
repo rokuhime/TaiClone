@@ -53,7 +53,7 @@ var local_offset := 0.0
 # -------- system -------
 
 func _ready() -> void:
-	# replace this with it being provided from root, wait for player class implementation first
+	# TODO: replace this with it being provided from root
 	apply_skin(Global.get_root().current_skin)
 	
 	score_instance.combo_break.connect(game_overlay.on_combo_break)
@@ -434,6 +434,7 @@ func apply_skin(skin_manager: SkinManager) -> void:
 	# set track textures
 	if skin_manager.resources["texture"].keys().has("track"):
 		$Track.texture = skin_manager.resources["texture"]["track"]
+		
 	if skin_manager.resources["texture"].keys().has("drum_indicator"):
 		drum_indicator.texture = skin_manager.resources["texture"]["drum_indicator"]
 	if skin_manager.resources["texture"].keys().has("drum_indicator_don"):
