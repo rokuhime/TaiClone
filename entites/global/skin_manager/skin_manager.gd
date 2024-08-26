@@ -48,6 +48,14 @@ var resources := {
 		"mascot_toast": [],
 	},
 	
+	"audio": {
+		"don": null,
+		"don_f": null,
+		"kat": null,
+		"kat_f": null,
+		"combo_break": null,
+	},
+	
 	"colour": {
 		"don": Color("EB452B"),
 		"kat": Color("438EAD"),
@@ -104,11 +112,21 @@ const valid_osu_textures := {
 	"pippidonclear": "mascot_toast",
 }
 
+const valid_osu_audio := {
+	"taiko-normal-hitnormal": "don",
+	"taiko-normal-hitfinish": "don_f",
+	"taiko-normal-hitclap": "kat",
+	"taiko-normal-hitwhistle": "kat_f",
+	"combobreak": "combo_break",
+}
+
 func _init(file_path = null):
 	if file_path:
 		# load skin
 		var all_textures = get_all_textures(file_path)
 		resources["texture"] = all_textures
+		var all_audio = get_all_audio(file_path)
+		resources["audio"] = all_audio
 		
 		var pippidon_textures = get_pippidon_textures(file_path)
 		var tc_mascot_sprite_names = ["mascot_idle", "mascot_kiai", "mascot_fail", "mascot_toast"]
@@ -183,3 +201,22 @@ func get_all_textures(directory: String) -> Dictionary:
 		texture_resources[resource] = new_texture
 	
 	return texture_resources
+
+func get_all_audio(directory: String) -> Dictionary:
+	var file_names := DirAccess.get_files_at(directory)
+	var resource_filenames := {}
+	
+	for file in file_names:
+		if not file.ends_with(".wav") and not file.ends_with(".mp3") and not file.ends_with(".ogg"):
+			continue
+		
+		if valid_osu_audio.has(file.get_basename()):
+			resource_filenames[valid_osu_audio[file.get_basename()]] = file
+	
+	var audio_resources := {}
+	for resource in resource_filenames:
+		var new_audio: AudioStream
+		new_audio = AudioLoader.load_file(directory.path_join(resource_filenames[resource]))
+		audio_resources[resource] = new_audio
+	
+	return audio_resources

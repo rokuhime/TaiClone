@@ -425,21 +425,30 @@ func update_input_indicator(part_index: int) -> void:
 
 # -------- etc -------
 
-func apply_skin(skin_manager: SkinManager) -> void:
+func apply_skin(skin: SkinManager) -> void:
 	for hitobject in hit_object_container.get_children():
-		hitobject.apply_skin(skin_manager)
+		hitobject.apply_skin(skin)
 
-	game_overlay.apply_skin(skin_manager)
+	game_overlay.apply_skin(skin)
 	
 	# set track textures
-	if skin_manager.resources["texture"].keys().has("track"):
-		$Track.texture = skin_manager.resources["texture"]["track"]
+	if skin.resources["texture"].keys().has("track"):
+		$Track.texture = skin.resources["texture"]["track"]
 		
-	if skin_manager.resources["texture"].keys().has("drum_indicator"):
-		drum_indicator.texture = skin_manager.resources["texture"]["drum_indicator"]
-	if skin_manager.resources["texture"].keys().has("drum_indicator_don"):
-		drum_indicator.get_node("LeftDon").texture = skin_manager.resources["texture"]["drum_indicator_don"]
-		drum_indicator.get_node("RightDon").texture = skin_manager.resources["texture"]["drum_indicator_don"]
-	if skin_manager.resources["texture"].keys().has("drum_indicator_kat"):
-		drum_indicator.get_node("LeftKat").texture = skin_manager.resources["texture"]["drum_indicator_kat"]
-		drum_indicator.get_node("RightKat").texture = skin_manager.resources["texture"]["drum_indicator_kat"]
+	if skin.resources["texture"].keys().has("drum_indicator"):
+		drum_indicator.texture = skin.resources["texture"]["drum_indicator"]
+	if skin.resources["texture"].keys().has("drum_indicator_don"):
+		drum_indicator.get_node("LeftDon").texture = skin.resources["texture"]["drum_indicator_don"]
+		drum_indicator.get_node("RightDon").texture = skin.resources["texture"]["drum_indicator_don"]
+	if skin.resources["texture"].keys().has("drum_indicator_kat"):
+		drum_indicator.get_node("LeftKat").texture = skin.resources["texture"]["drum_indicator_kat"]
+		drum_indicator.get_node("RightKat").texture = skin.resources["texture"]["drum_indicator_kat"]
+	
+	if skin.resources["audio"].keys().has("don"):
+		don_audio = skin.resources["audio"]["don"]
+	if skin.resources["audio"].keys().has("don_f"):
+		donfinisher_audio = skin.resources["audio"]["don_f"]
+	if skin.resources["audio"].keys().has("kat"):
+		kat_audio = skin.resources["audio"]["kat"]
+	if skin.resources["audio"].keys().has("kat_f"):
+		katfinisher_audio = skin.resources["audio"]["kat_f"]
