@@ -52,7 +52,6 @@ layout_mode = 1
 visible = false
 z_index = 4
 layout_mode = 1
-offset_left = -450.0
 
 [node name="VolumeControl" parent="." instance=ExtResource("5_ljgve")]
 visible = false

@@ -11,9 +11,12 @@ var navigation_bars_enabled := false
 ]
 @onready var back_button: Button = $Bottom/Buttons/BackButton
 
+signal on_toggle(enabled: bool)
+
 func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	Global.change_focus()
 	navigation_bars_enabled = enabled
+	on_toggle.emit(enabled)
 	
 	# end any ongoing navbar tweens
 	if not navigation_bar_tweens.is_empty():
@@ -41,6 +44,7 @@ func toggle_navigation_bars(enabled: bool, smooth_transition := true) -> void:
 	navigation_bar_tweens = [top_tween, bottom_tween]
 	set_navbar_buttons([]) # disable nav buttons
 	back_button.visible = false
+	
 
 # sets navbar button text
 func set_navbar_buttons(button_info: Array) -> void:

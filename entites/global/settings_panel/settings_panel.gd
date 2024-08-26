@@ -9,6 +9,7 @@ extends Panel
 
 var is_visible := false
 var movement_tween: Tween
+var size_tween: Tween
 
 var keychange_timeout: Timer
 var keychange_target := ""
@@ -33,6 +34,10 @@ func _ready() -> void:
 	for key in Global.GAMEPLAY_KEYS:
 		keychange_target = key
 		change_key(key)
+
+	await Global.get_root().ready
+	var navbars = Global.get_root().get_node("NavigationBars")
+	navbars.on_toggle.connect(scale_for_navbars.bind(navbars))
 
 func _process(_delta) -> void:
 	if position == Vector2(get_viewport_rect().size.x, 0) and visible == true:
@@ -99,6 +104,34 @@ func load_keybinds(keybinds) -> void:
 		change_input_action(keybind, keybinds[keybind], false)
 
 # -------- etc -------
+
+func scale_for_navbars(navbar_enabled: bool, navbars: Control) -> void:
+	printerr("scale_for_navbars ", navbar_enabled)
+	# change scale to give space to navbars
+	var navbar_size = navbars.get_node("Top").size.y + navbars.get_node("Bottom").size.y
+	
+	if size_tween:
+		size_tween.kill()
+	size_tween = Global.create_smooth_tween(
+		self, 
+		"size:y", 
+		get_viewport_rect().size.y - navbar_size if navbar_enabled else get_viewport_rect().size.y, 
+		0.5 
+	)
+	
+	if movement_tween:
+		movement_tween.kill()
+	
+	var position := Vector2(
+		get_viewport_rect().size.x - size.x if is_visible else get_viewport_rect().size.x, 
+		navbars.get_node("Top").size.y if navbar_enabled else 0
+	)
+	movement_tween = Global.create_smooth_tween(
+		self, 
+		"position", 
+		position, 
+		0.5 
+	)
 
 func set_skin(directory: String) -> void:
 	Global.current_skin = SkinManager.new(directory)
