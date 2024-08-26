@@ -27,7 +27,7 @@ var limit_barlines := true
 # lowest level of priority that will appear to console
 var console_filter := -2
 
-var current_skin := SkinManager.new("/home/roku/Games/osu!/osu!/Skins/- Taikodachi")
+var current_skin := SkinManager.new()
 
 # -------- system -------
 
@@ -57,6 +57,9 @@ func save_settings() -> void:
 	config_file.set_value("General", "GlobalOffset", global_offset)
 	config_file.set_value("General", "LimitBarlines", limit_barlines)
 	
+	if Global.current_skin.file_path:
+		config_file.set_value("Skin", "SkinDirectory", Global.current_skin.file_path)
+	
 	for bus_index in AudioServer.bus_count:
 		config_file.set_value("Audio", AudioServer.get_bus_name(bus_index), db_to_linear(AudioServer.get_bus_volume_db(bus_index)))
 	
@@ -83,6 +86,9 @@ func load_settings() -> void:
 	if config_file.get_value("General", "ChartPaths", null):
 		chart_paths = config_file.get_value("General", "ChartPaths", null)
 	global_offset = config_file.get_value("General", "GlobalOffset", 0)
+	
+	if config_file.get_value("Skin", "SkinDirectory", false):
+		current_skin = SkinManager.new(config_file.get_value("Skin", "SkinDirectory", null))
 	
 	var audio_settings = config_file.get_section_keys("Audio")
 	for setting in audio_settings:

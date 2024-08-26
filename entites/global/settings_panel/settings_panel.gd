@@ -5,6 +5,7 @@ extends Panel
 @onready var chart_path_changer: ChartPathChanger = $ScrollContainer/VBoxContainer/ChartPathChanger
 @onready var keybind_list := $ScrollContainer/VBoxContainer/KeybindList
 @onready var barline_limit_checkbox := $ScrollContainer/VBoxContainer/Etc/BarlineLimitCheckbox
+@onready var skin_vbox := $ScrollContainer/VBoxContainer/Skin
 
 var is_visible := false
 var movement_tween: Tween
@@ -18,6 +19,13 @@ func _ready() -> void:
 	chart_path_changer.refresh_paths()
 	player_name_edit.text = Global.player_name
 	barline_limit_checkbox.button_pressed = Global.limit_barlines
+	
+	if Global.current_skin.file_path:
+		var info = Global.current_skin.info
+		info.append(Global.current_skin.file_path)
+		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777](%s)\n%s" % info
+	else:
+		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777](%s)" % SkinManager.new().info
 	
 	if not is_visible:
 		position.x = get_viewport_rect().size.x
@@ -91,6 +99,16 @@ func load_keybinds(keybinds) -> void:
 		change_input_action(keybind, keybinds[keybind], false)
 
 # -------- etc -------
+
+func set_skin(directory: String) -> void:
+	Global.current_skin = SkinManager.new(directory)
+	await get_tree().process_frame
+	
+	var skin_info = Global.current_skin.info
+	skin_info.append(Global.current_skin.file_path)
+	skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777](%s)\n%s" % skin_info
+	
+	Global.save_settings()
 
 # toggle visibility of the panel with a lil sliding animation
 func toggle_visible() -> void:

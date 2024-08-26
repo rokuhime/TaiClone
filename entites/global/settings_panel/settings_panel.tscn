@@ -257,6 +257,48 @@ allow_greater = true
 allow_lesser = true
 alignment = 1
 
+[node name="Skin" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_2j0hn")
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Skin"]
+layout_mode = 2
+text = "Skin"
+label_settings = SubResource("LabelSettings_xg8nn")
+horizontal_alignment = 1
+
+[node name="SkinInfo" type="RichTextLabel" parent="ScrollContainer/VBoxContainer/Skin"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=16][center]Name - Artist [color=777777](Version)
+FilePath"
+fit_content = true
+scroll_active = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/Skin"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 1
+
+[node name="ChangeSkinButton" type="Button" parent="ScrollContainer/VBoxContainer/Skin/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Change Skin"
+
+[node name="FileDialog" type="FileDialog" parent="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ChangeSkinButton"]
+title = "Open a Skin Directory"
+initial_position = 2
+size = Vector2i(760, 400)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+
+[node name="ResetButton" type="Button" parent="ScrollContainer/VBoxContainer/Skin/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reset To Default"
+
 [node name="Etc" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("1_2j0hn")
@@ -292,4 +334,7 @@ text = "Barline Limit"
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/HSlider" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [false]]
 [connection signal="focus_entered" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="." method="update_focus" binds= [NodePath(".")]]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/Offset/SpinBox" to="ScrollContainer/VBoxContainer/Offset" method="set_global_offset" binds= [true]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ChangeSkinButton" to="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ChangeSkinButton/FileDialog" method="show"]
+[connection signal="dir_selected" from="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ChangeSkinButton/FileDialog" to="." method="set_skin"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ResetButton" to="." method="set_skin" binds= [""]]
 [connection signal="toggled" from="ScrollContainer/VBoxContainer/Etc/BarlineLimitCheckbox" to="." method="toggle_barline_limit"]

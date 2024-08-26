@@ -7,7 +7,7 @@ class_name SkinManager
 
 # TODO: make this like zachman's implementation? like a get_colour("name") function
 
-var skin_info := ["Name", "Author", "Version"]
+var info := ["Default Skin", "rokuhime", "v1.0"]
 var file_path: String
 
 var resources := {
@@ -119,8 +119,11 @@ const valid_osu_audio := {
 
 func _init(new_file_path = null):
 	if new_file_path:
+		if new_file_path.is_empty():
+			return
+		
 		file_path = new_file_path
-		skin_info = get_skin_info(file_path)
+		info = get_info(file_path)
 		
 		var all_textures = get_all_textures(file_path)
 		resources["texture"] = all_textures
@@ -131,44 +134,40 @@ func _init(new_file_path = null):
 		var tc_mascot_sprite_names = ["mascot_idle", "mascot_kiai", "mascot_fail", "mascot_toast"]
 		for key in tc_mascot_sprite_names:
 			resources["texture"][key] = pippidon_textures[key]
-		
 
-static func get_skin_info(directory: String) -> Array:
+# checks skin.ini for name/artist/version
+static func get_info(directory: String) -> Array:
 	var file_names := DirAccess.get_files_at(directory)
 	# default the skin name to the skin folder's name
-	var new_skin_info := [directory.trim_prefix(directory.get_base_dir() + "/"), "Unknown Author", "v0.0"]
+	var skin_info := [directory.trim_prefix(directory.get_base_dir() + "/"), "Unknown Author", "v0.0"]
 	
 	if not file_names.has("skin.ini"):
-		return new_skin_info
+		return skin_info
 	
 	var file := FileAccess.open(directory.path_join("skin.ini"), FileAccess.READ)
 	if !file:
 		Global.push_console("ChartLoader", "Bad directory provided for skin: %s" % directory, 2)
-		return new_skin_info
-		
-	var line := ""
-	# 0 = metadata, 1 = hit objects
-	var section := 0
+		return skin_info
 	
+	var line := ""
 	var found_skin_info := [null, null, null]
 	while file.get_position() < file.get_length():
 		# if we find all the entries, break out
-		if not found_skin_info.find(null) - 1:
+		if not found_skin_info.find(null) + 1:
 			break
 		
 		line = file.get_line().strip_edges()
 		if line.begins_with("Name:"):
 			found_skin_info[0] = line.trim_prefix("Name:").strip_edges()
-		if line.begins_with("Author:"):
+		elif line.begins_with("Author:"):
 			found_skin_info[1] = line.trim_prefix("Author:").strip_edges()
-		if line.begins_with("Version:"):
+		elif line.begins_with("Version:"):
 			found_skin_info[2] = line.trim_prefix("Version:").strip_edges()
 	
-	for i in new_skin_info.size():
+	for i in skin_info.size():
 		if found_skin_info[i]:
-			new_skin_info[i] = found_skin_info[i]
-	print("new_skin_info\n", new_skin_info)
-	return new_skin_info
+			skin_info[i] = found_skin_info[i]
+	return skin_info
 
 static func get_pippidon_textures(directory: String) -> Dictionary:
 	var osu_mascot_sprite_names = ["pippidonidle", "pippidonkiai", "pippidonfail", "pippidonclear"]
@@ -192,6 +191,9 @@ static func get_pippidon_textures(directory: String) -> Dictionary:
 				frame = file[i] + frame
 		file = file.replace(frame, "")
 		frame = int(frame)
+		
+		if not valid_osu_textures.keys().has(file):
+			continue
 		
 		# make ImageTexture with the found texture and return it
 		var new_texture: ImageTexture
@@ -260,6 +262,10 @@ static func get_all_audio(directory: String) -> Dictionary:
 # ensures null skin elements dont cause issues
 # resource_location : resourcetype/resourcename (eg audio/don)
 func resource_exists(resource_location: String):
+	# assume no skins been loaded if theres no file path
+	if not file_path:
+		return false
+	
 	var resource_info = resource_location.split("/")
 	
 	if resource_info.size() == 2:
