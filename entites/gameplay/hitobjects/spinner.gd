@@ -72,7 +72,6 @@ func transition_to_playable() -> void:
 	spinner_gameplay_tween = create_tween()
 	spinner_gameplay_tween.tween_property(spinner_gameplay, "modulate:a", 1, 0.2).from(0)
 	
-	# connect the end of the spinner to the finished function
 	timer.paused = false
 	timer.start(length)
 

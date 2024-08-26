@@ -63,6 +63,7 @@ func _ready() -> void:
 	music_starting_timer.stop()
 	
 	music = Global.music
+	music.stop()
 	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
 		Global.get_root().change_to_results.bind(score_instance)
 	)
@@ -254,7 +255,6 @@ func load_chart(requested_chart: Chart) -> void:
 		last_hobj_timing += current_chart.hit_objects[0].length
 	
 	apply_skin(Global.current_skin)
-	await get_tree().process_frame
 	play_chart()
 
 func play_chart() -> void:
@@ -269,19 +269,6 @@ func play_chart() -> void:
 		Global.get_root().change_to_results(score_instance)
 		return
 
-	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-	
-	# delay the chart if first note is less than 2 seconds into the song
-	var first_note_delay := 0.0
-	var first_hit_object = current_chart.get_first_hitobject()
-	
-	if first_hit_object.timing < 2.0:
-		first_note_delay = 2.0 - first_hit_object.timing
-		current_play_offset -= first_note_delay
-	
-	start_time = Time.get_ticks_msec() / 1000.0 - current_play_offset
-	playing = true
-	
 	# get first timing point and apply
 	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 		var hit_object = hit_object_container.get_child(i)
@@ -289,8 +276,18 @@ func play_chart() -> void:
 			apply_timing_point(hit_object, start_time)
 			break
 	
+	# get audio offset based on mix and latency
+	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	
+	# delay the chart if first note is less than 2 seconds into the song
+	if first_hobj_timing < 2.0:
+		current_play_offset -= 2.0 - first_hobj_timing
+	
+	start_time = Time.get_ticks_msec() / 1000.0 - current_play_offset
 	# ensure the current_time is set correctly and seek the music to it
-	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
+	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
+	playing = true
+	
 	# if theres a delay before the audio starts, await it
 	if current_time < 0:
 		music_starting_timer.start(abs(current_time))
@@ -317,6 +314,8 @@ func restart_chart() -> void:
 	
 	await get_tree().process_frame
 	play_chart()
+	if skip_intro:
+		skip_intro()
 
 func skip_intro() -> void:
 	if current_time >= first_hobj_timing - 2.0:
