@@ -119,6 +119,9 @@ const valid_osu_audio := {
 
 func _init(new_file_path = null):
 	if new_file_path:
+		if not DirAccess.dir_exists_absolute(new_file_path):
+			Global.push_console("SkinManager", "Invalid skin directory: %s" % new_file_path)
+			return 
 		if new_file_path.is_empty():
 			return
 		

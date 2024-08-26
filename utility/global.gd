@@ -200,6 +200,3 @@ static func get_hash(file_path: String) -> PackedByteArray:
 	var res = ctx.finish()
 	file.close()
 	return res
-
-static func round_to_point(number: float, places: int) -> float:
-	return round(number * pow(10.0, places)) / pow(10.0, places)
