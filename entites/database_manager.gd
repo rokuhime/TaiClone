@@ -8,13 +8,13 @@ extends Node
 var db := SQLite.new()
 const DB_PATH := "user://taiclone.db"
 
-# -------- system -------
+# -------- system --------
 
 func _ready():
 	restart_db()
 	initialize_tables()
 
-# -------- setting up database -------
+# -------- setting up database --------
 
 func initialize_tables() -> void:
 	var tables := {}
@@ -62,7 +62,7 @@ func restart_db() -> void:
 		initialize_tables()
 	Global.push_console("DatabaseManager", "Database restarted!")
 
-# -------- database interaction -------
+# -------- database interaction --------
 
 func get_db_entries_by_id(table_name: String, id: int) -> Array:
 	return db.select_rows(table_name, "id = %s" % id, ["*"])
@@ -84,7 +84,7 @@ func update_db_entry(table_name: String, db_entry: Dictionary) -> void:
 func delete_db_entry(db_entry: Dictionary) -> void:
 	db.delete_rows("charts", "id = %s" % db_entry["id"])
 
-# -------- chart interaction -------
+# -------- chart interaction --------
 
 func get_all_charts() -> Array:
 	db.query("select * from charts")
@@ -167,7 +167,7 @@ func clear_invalid_entries() -> void:
 		
 		existing_hashes.append(Global.get_hash(db_entry["file_path"]))
 
-# -------- converting db entries -------
+# -------- converting db entries --------
 
 static func chart_to_db_entry(chart: Chart) -> Dictionary:
 	var db_entry := chart.chart_info

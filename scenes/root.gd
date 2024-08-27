@@ -30,7 +30,7 @@ var default_background = preload("res://assets/textures/dev_art/background.png")
 @onready var corner_info: Control = $CornerInfo
 var corner_info_tween: Tween
 
-# -------- system -------
+# -------- system --------
 
 func _ready():
 	get_window().move_to_center()
@@ -51,13 +51,13 @@ func _process(delta):
 	if corner_info.position.y != corner_info_pos_y:
 		corner_info.position.y = corner_info_pos_y
 
-# -------- ui ----------
+# -------- ui --------
 
 # for one-shot/ui sounds
 func play_oneshot_sound(target_stream: AudioStream, offset := Vector2.ZERO):
 	default_sfx_audio_queuer.play_audio(target_stream, offset)
 
-# -------- changing states ----------
+# -------- changing states --------
 
 # changes gamestate, and returns the new gamestate's node
 func change_state(requested_scene, hard_transition := false) -> Node:
@@ -119,7 +119,7 @@ func back_button_pressed() -> void:
 		_:
 			change_state(GAMESTATE.SONG_SELECT)
 
-# -------- spesific state changes ----------
+# -------- spesific state changes --------
 
 # from song select: loads current chart into gameplay with given mods
 func change_to_gameplay(enabled_mods: Array):
@@ -140,7 +140,7 @@ func refresh_song_select() -> void:
 	navigation_bars.toggle_navigation_bars(true)
 	current_state_node.refresh_listings_from_song_folders()
 
-# -------- chart ----------
+# -------- chart --------
 
 # changes current_chart to given chart, and applies music/background
 func update_current_chart(new_chart: Chart, for_gameplay := false) -> void:
@@ -198,7 +198,7 @@ func on_music_end() -> void:
 			music.play(clamp(prev_point, 0, music.stream.get_length()))
 	# TODO: if on main menu get random chart
 
-# -------- other ----------
+# -------- other --------
 
 func file_dropped(files: PackedStringArray) -> void:
 	var target_file = files[0]

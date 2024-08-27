@@ -14,27 +14,29 @@ var size_tween: Tween
 var keychange_timeout: Timer
 var keychange_target := ""
 
-# -------- system -------
+# -------- system --------
 
 func _ready() -> void:
+	# start tucked into right side
+	position.x = get_viewport_rect().size.x
+	
+	# load existing settings
 	chart_path_changer.refresh_paths()
 	player_name_edit.text = Global.player_name
 	barline_limit_checkbox.button_pressed = Global.limit_barlines
 	
+	# check skin. if its valid (file_path exists), set data. otherwise, assume its default
 	if Global.current_skin.file_path:
 		var info = Global.current_skin.info
 		info.append(Global.current_skin.file_path)
 		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777](%s)\n%s" % info
 	else:
-		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777](%s)" % SkinManager.new().info
-	
-	if not is_visible:
-		position.x = get_viewport_rect().size.x
+		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777]" % SkinManager.new().info
 	
 	for key in Global.GAMEPLAY_KEYS:
 		keychange_target = key
 		change_key(key)
-
+	
 	await Global.get_root().ready
 	var navbars = Global.get_root().get_node("NavigationBars")
 	navbars.on_toggle.connect(scale_for_navbars.bind(navbars))
@@ -49,6 +51,7 @@ func _unhandled_input(event) -> void:
 	if event is InputEventMouse or event.is_echo() or !event.is_pressed():
 		return
 	
+	# ctrl + o options hotkey
 	if event is InputEventWithModifiers:
 		if event.keycode == KEY_O and event.ctrl_pressed:
 			toggle_visible()
@@ -57,7 +60,7 @@ func _unhandled_input(event) -> void:
 	if not keychange_target.is_empty():
 		change_input_action(keychange_target, event)
 
-# -------- keybind changing -------
+# -------- keybind changing --------
 
 func change_key(target := keychange_target) -> void:
 	if keychange_target.is_empty():
@@ -103,7 +106,7 @@ func load_keybinds(keybinds) -> void:
 	for keybind in keybinds:
 		change_input_action(keybind, keybinds[keybind], false)
 
-# -------- etc -------
+# -------- etc --------
 
 func scale_for_navbars(navbar_enabled: bool, navbars: Control) -> void:
 	# change scale to give space to navbars
@@ -165,9 +168,10 @@ func change_player_name(new_name: String) -> void:
 func update_focus(new_target: Node) -> void:
 	Global.change_focus_state(new_target)
 
+# attempts to open converted charts location, and prints filepath in console
 func open_converted_charts_folder() -> void:
-	OS.shell_open(ProjectSettings.globalize_path("user://ConvertedCharts"))
-	Global.push_console("SettingsPanel", "Using Linux? Your file manager probably didnt open! ConvertedCharts is located here: \n%s" % ProjectSettings.globalize_path("user://ConvertedCharts"), )
+	OS.shell_open(ProjectSettings.globalize_path(Global.CONVERTED_CHART_FOLDER))
+	Global.push_console("SettingsPanel", "ConvertedCharts directory: \n%s" % ProjectSettings.globalize_path(Global.CONVERTED_CHART_FOLDER))
 
 func toggle_barline_limit(new_value: bool) -> void:
 	Global.limit_barlines = new_value

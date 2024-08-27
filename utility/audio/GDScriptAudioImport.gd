@@ -185,7 +185,7 @@ static func convert_to_16bit(data: PackedByteArray, from: int) -> PackedByteArra
 	return data
 
 
-# ---------- REFERENCE ---------------
+# -------- REFERENCE --------
 # note: typical values doesn't always match
 
 #Positions  Typical Value Description

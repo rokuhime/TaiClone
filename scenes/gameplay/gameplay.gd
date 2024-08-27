@@ -50,7 +50,7 @@ var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as Audi
 const OFFSET_INCREASE := 0.005
 var local_offset := 0.0
 
-# -------- system -------
+# -------- system --------
 
 func _ready() -> void:
 	# TODO: replace this with it being provided from root
@@ -407,7 +407,7 @@ func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 								current_bps, 
 								timing_point.timing - current_time)
 
-# -------- feedback -------
+# -------- feedback --------
 
 # plays note audio
 func play_audio(input_side: SIDE, is_input_kat: bool) -> void:
@@ -436,7 +436,7 @@ func update_input_indicator(part_index: int) -> void:
 	drum_indicator_tweens[part_index] = create_tween()
 	drum_indicator_tweens[part_index].tween_property(indicator_target, "modulate:a", 0.0, 0.2).from(1.0)
 
-# -------- etc -------
+# -------- etc --------
 
 func apply_skin(skin: SkinManager) -> void:
 	for hitobject in hit_object_container.get_children():

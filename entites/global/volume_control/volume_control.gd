@@ -14,7 +14,7 @@ const CHANGE_AMOUNT_PRECISE := 0.01
 var current_bus_index := 0
 var is_mouse_pressed := false
 
-# -------- system -------
+# -------- system --------
 
 func _ready() -> void:
 	super()
@@ -75,7 +75,7 @@ func _unhandled_input(_event) -> void:
 			var intended_index = bus_sections.size() - 1 if current_bus_index - 1 < 0 else current_bus_index - 1
 			change_current_bus(intended_index % bus_sections.size())
 
-# -------- input -------
+# -------- input --------
 
 func mouse_volume_input(event: InputEventMouse, bus_index: int) -> void:
 	if event is InputEventMouseButton:
@@ -88,7 +88,7 @@ func mouse_volume_input(event: InputEventMouse, bus_index: int) -> void:
 		var bus_size = bus_sections[bus_index].get_child(0).size.y
 		change_volume(clampf((bus_size - event.position.y) / bus_size, 0, 1), true)
 
-# -------- changing values -------
+# -------- changing values --------
 
 func change_volume(change_amount: float, change_exact := false) -> void:
 	change_active(true)
@@ -122,7 +122,7 @@ func change_current_bus(wanted_bus_index: int) -> void:
 			0.2
 		)
 
-# -------- visual -------
+# -------- visual --------
 
 func update_bar(bus_index: int = -1) -> void:
 	# if no bus index specified, update all

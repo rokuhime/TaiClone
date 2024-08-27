@@ -25,7 +25,7 @@ var drag_lock_timeout := 0.0
 const INITIAL_SROLL_ECHO_DELAY := 0.6
 const SCROLL_ECHO_DELAY := 0.1
 
-# -------- system -------
+# -------- system --------
 
 func _ready() -> void:
 	Global.database_manager.restart_db()
@@ -112,7 +112,7 @@ func gui_input(event: InputEvent) -> void:
 		change_selected_listing(new_idx, true)
 		drag_lock_timeout = 0.2
 
-# -------- scanning for charts -------
+# -------- scanning for charts --------
 
 # roku note 2024-07-22
 # u gotta come up with better names to distinguish btwn refresh_from_chart_folders() and populate_from_chart_folder()
@@ -219,7 +219,7 @@ func populate_from_chart_folder(folder_path: String) -> void:
 		Global.push_console("SongSelect", "corrupted/null chart: %s" % file, 2)
 		continue
 
-# -------- loading listings -------
+# -------- loading listings --------
 
 ## removes existing selected_via_mouse signals from listings and updates them for their new idx
 func update_listing_click_signal() -> void:
@@ -264,7 +264,7 @@ func create_listing(chart: Chart) -> ChartListing:
 	
 	return listing
 
-# -------- changing listing position/selection -------
+# -------- changing listing position/selection --------
 
 func change_selected_listing(idx: int, exact := false) -> void:
 	if not listing_container.get_child_count():
@@ -343,7 +343,7 @@ func try_selecting_current_chart() -> void:
 	else:
 		apply_listing_data(listing_container.get_child(0))
 
-# -------- other -------
+# -------- other --------
 
 # TODO: rename to something about idx this isnt clear at first glance
 ## goes through existing chart listings, returns the index if a chart's hash is the same as the given chart

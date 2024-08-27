@@ -29,7 +29,7 @@ var console_filter := -2
 
 var current_skin := SkinManager.new()
 
-# -------- system -------
+# -------- system --------
 
 func _init() -> void:
 	DisplayServer.window_set_title("TaiClone " + ProjectSettings.get_setting("application/config/version"), 0)
