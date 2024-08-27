@@ -5,68 +5,71 @@ class_name SkinManager
 # player variables can be edited through the preference menu (separate from settings menu)
 # settings is for changing how the program runs, preferences is for personalization
 
-# TODO: make this like zachman's implementation? like a get_colour("name") function
+# maybe make this like zachman's implementation? like a get_colour("name") function
 
 var info := ["Default Skin", "rokuhime", "v1.0"]
 var file_path: String
 
+# contains all elements of a skin; check its valid with resource_exists() before retrieving!
 var resources := {
 	"texture": {
 		# hit objects
-		"note": null,
-		"note_overlay": null,
+		"note": null,									# middle/inside of a note, tinted to be don/kat colour
+		"note_overlay": null,							# overlay of a note
 		
-		"roll_middle": null,
-		"roll_end": null,
-		"roll_tick": null,
+		"roll_middle": null,							# center of a roll, stretched to the length of the roll. tinted to roll colour
+		"roll_end": null,								# visual indicator of a roll's end. tinted to roll colour
+		"roll_tick": null,								# hittable element of a roll
 		
-		"spinner_warn": null,
-		"spinner_inside": null,
-		"spinner_outside": null,
+		"spinner_warn": null,							# gameplay track element of a spinner
+		"spinner_inside": null,							# spinning center of a spinner 
+		"spinner_outside": null,						# approach circle of a spinner
 		
 		# playfield
-		"track": null,
-		"drum_indicator": null,
-		"drum_indicator_don": null,
-		"drum_indicator_kat": null,
+		"track": null,									# backing for the chart's gameplay
+		"drum_indicator": null,							# circle to the left of the track, 
+		"drum_indicator_don": null,						# visual on top of drum_indicator, for dons
+		"drum_indicator_kat": null,						# visual on top of drum_indicator, for kats
 		
 		# judgements
-		"judgement_accurate": null,
-		"judgement_accurate_f": null,
-		"judgement_inaccurate": null,
-		"judgement_inaccurate_f": null,
-		"judgement_miss": null,
+		"judgement_accurate": null,						# picture that appears over the HitPoint for accurate hits
+		"judgement_accurate_f": null,					# picture that appears over the HitPoint for accurate finisher hits
+		"judgement_inaccurate": null,					# picture that appears over the HitPoint for inaccurate hits
+		"judgement_inaccurate_f": null,					# picture that appears over the HitPoint for inaccurate finisher hits
+		"judgement_miss": null,							# picture that appears over the HitPoint for misses
 		
 		# mascot
 		# WILL BE DEPRECATED FOR MASCOT CREATION!
-		"mascot_idle": [],
-		"mascot_kiai": [],
-		"mascot_fail": [],
-		"mascot_toast": [],
+		"mascot_idle": [],								# default mascot/pippidon animation 
+		"mascot_kiai": [],								# kiai mascot/pippidon animation
+		"mascot_fail": [],								# miss mascot/pippidon animation
+		"mascot_toast": [],								# plays when achieving a combo milestone
 	},
 	
 	"audio": {
-		"don": null,
-		"don_f": null,
-		"kat": null,
-		"kat_f": null,
-		"combo_break": null,
+		"don": null,									# plays when hitting a don key
+		"don_f": null,									# plays when hitting a finisher don note
+		"kat": null,									# plays when hitting a kat key
+		"kat_f": null,									# plays when hitting a finisher kat note
+		
+		"combo_break": null,							# plays when you miss while having 10 or more combo
 	},
 	
 	"colour": {
-		"don": Color("EB452B"),
-		"kat": Color("438EAD"),
-		"roll": Color("FCB806"),
+		"don": Color("EB452B"),							# colour of don notes
+		"kat": Color("438EAD"),							# colour of kat notes
+		"roll": Color("FCB806"),						# colour of a roll's head (base), middle, and end
 		
-		"late": Color("ff8a8a"),
-		"early": Color("8aa7ff"),
+		"late": Color("ff8a8a"),						# used in inacc indicator + results late count
+		"early": Color("8aa7ff"),						# used in inacc indicator + results early count
 		
-		"song_progress_back": Color("333333"),
-		"song_progress_front": Color("ffffff"),
-		"song_progress_skippable": Color("8bff85"),
+		"song_progress_back": Color("333333"),			# backing for song_progress
+		"song_progress_front": Color("ffffff"),			# elapsed time for song_progress
+		"song_progress_skippable": Color("8bff85"),		# remaining time to first note for song_progress
 	}
 }
 
+# list of texture elements that won't have their transparency cropped
 const dont_crop_list := [
 	"drum_indicator",
 	"drum_indicator_don",
@@ -82,6 +85,7 @@ const dont_crop_list := [
 	"judgement_miss",
 ]
 
+# translator from osu! texture filenames to taiclone texture names
 const valid_osu_textures := {
 	"taikohitcircle": "note", 
 	"taikohitcircleoverlay": "note_overlay", 
@@ -109,11 +113,13 @@ const valid_osu_textures := {
 	"pippidonclear": "mascot_toast",
 }
 
+# translator for osu! audio files to taiclone audio names
 const valid_osu_audio := {
 	"taiko-normal-hitnormal": "don",
 	"taiko-normal-hitfinish": "don_f",
 	"taiko-normal-hitclap": "kat",
 	"taiko-normal-hitwhistle": "kat_f",
+	
 	"combobreak": "combo_break",
 }
 
@@ -137,6 +143,21 @@ func _init(new_file_path = null):
 		var tc_mascot_sprite_names = ["mascot_idle", "mascot_kiai", "mascot_fail", "mascot_toast"]
 		for key in tc_mascot_sprite_names:
 			resources["texture"][key] = pippidon_textures[key]
+
+# ensures null skin elements dont cause issues
+# resource_location : resourcetype/resourcename (eg audio/don)
+func resource_exists(resource_location: String):
+	# assume no skins been loaded if theres no file path
+	if not file_path:
+		return false
+	
+	var resource_info = resource_location.split("/")
+	
+	if resource_info.size() == 2:
+		if resources[resource_info[0]].keys().has(resource_info[1]):
+			if resources[resource_info[0]][resource_info[1]]:
+				return true
+	return false
 
 # checks skin.ini for name/artist/version
 static func get_info(directory: String) -> Array:
@@ -171,39 +192,6 @@ static func get_info(directory: String) -> Array:
 		if found_skin_info[i]:
 			skin_info[i] = found_skin_info[i]
 	return skin_info
-
-static func get_pippidon_textures(directory: String) -> Dictionary:
-	var osu_mascot_sprite_names = ["pippidonidle", "pippidonkiai", "pippidonfail", "pippidonclear"]
-	var mascot_textures = {
-		"mascot_idle": [],
-		"mascot_kiai": [],
-		"mascot_fail": [],
-		"mascot_toast": [],
-	}
-	
-	var file_names := DirAccess.get_files_at(directory)
-	
-	for file in file_names:
-		if not file.begins_with("pippidon"):
-			continue
-		file = file.trim_suffix(".png")
-		
-		var frame = ""
-		for i in range(file.length() - 1, -1, -1):
-			if ["0","1","2","3","4","5","6","7","8","9"].has(file[i]):
-				frame = file[i] + frame
-		file = file.replace(frame, "")
-		frame = int(frame)
-		
-		if not valid_osu_textures.keys().has(file):
-			continue
-		
-		# make ImageTexture with the found texture and return it
-		var new_texture: ImageTexture
-		new_texture = ImageLoader.load_image(directory.path_join(file + str(frame) + ".png"), false)
-		mascot_textures[valid_osu_textures[file]].append(new_texture)
-	
-	return mascot_textures
 
 # TODO: animated textures
 static func get_all_textures(directory: String) -> Dictionary:
@@ -243,6 +231,39 @@ static func get_all_textures(directory: String) -> Dictionary:
 	
 	return texture_resources
 
+static func get_pippidon_textures(directory: String) -> Dictionary:
+	var osu_mascot_sprite_names = ["pippidonidle", "pippidonkiai", "pippidonfail", "pippidonclear"]
+	var mascot_textures = {
+		"mascot_idle": [],
+		"mascot_kiai": [],
+		"mascot_fail": [],
+		"mascot_toast": [],
+	}
+	
+	var file_names := DirAccess.get_files_at(directory)
+	
+	for file in file_names:
+		if not file.begins_with("pippidon"):
+			continue
+		file = file.trim_suffix(".png")
+		
+		var frame = ""
+		for i in range(file.length() - 1, -1, -1):
+			if ["0","1","2","3","4","5","6","7","8","9"].has(file[i]):
+				frame = file[i] + frame
+		file = file.replace(frame, "")
+		frame = int(frame)
+		
+		if not valid_osu_textures.keys().has(file):
+			continue
+		
+		# make ImageTexture with the found texture and return it
+		var new_texture: ImageTexture
+		new_texture = ImageLoader.load_image(directory.path_join(file + str(frame) + ".png"), false)
+		mascot_textures[valid_osu_textures[file]].append(new_texture)
+	
+	return mascot_textures
+
 static func get_all_audio(directory: String) -> Dictionary:
 	var file_names := DirAccess.get_files_at(directory)
 	var resource_filenames := {}
@@ -261,18 +282,3 @@ static func get_all_audio(directory: String) -> Dictionary:
 		audio_resources[resource] = new_audio
 	
 	return audio_resources
-
-# ensures null skin elements dont cause issues
-# resource_location : resourcetype/resourcename (eg audio/don)
-func resource_exists(resource_location: String):
-	# assume no skins been loaded if theres no file path
-	if not file_path:
-		return false
-	
-	var resource_info = resource_location.split("/")
-	
-	if resource_info.size() == 2:
-		if resources[resource_info[0]].keys().has(resource_info[1]):
-			if resources[resource_info[0]][resource_info[1]]:
-				return true
-	return false
