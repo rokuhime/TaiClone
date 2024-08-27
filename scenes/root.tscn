@@ -26,6 +26,16 @@ script = ExtResource("1_djqkq")
 [node name="DatabaseManager" type="Node" parent="." groups=["DatabaseManager"]]
 script = ExtResource("8_s0wf3")
 
+[node name="AudioQueuer" type="Node2D" parent="."]
+script = ExtResource("6_6gusu")
+audio_players = 10
+
+[node name="MusicStartTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Music" type="AudioStreamPlayer" parent="." groups=["RootMusic"]]
+bus = &"Music"
+
 [node name="Background" type="TextureRect" parent="."]
 self_modulate = Color(0.501961, 0.501961, 0.501961, 1)
 layout_mode = 1
@@ -37,13 +47,6 @@ grow_vertical = 2
 texture = ExtResource("2_ii7io")
 expand_mode = 2
 stretch_mode = 6
-
-[node name="AudioQueuer" type="Node2D" parent="."]
-script = ExtResource("6_6gusu")
-audio_players = 10
-
-[node name="Music" type="AudioStreamPlayer" parent="." groups=["RootMusic"]]
-bus = &"Music"
 
 [node name="NavigationBars" parent="." instance=ExtResource("5_wb84j")]
 layout_mode = 1
@@ -104,8 +107,5 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 columns = 5
-
-[node name="MusicStartTimer" type="Timer" parent="."]
-one_shot = true
 
 [connection signal="finished" from="Music" to="." method="on_music_end"]

@@ -1,7 +1,6 @@
-[gd_scene load_steps=26 format=3 uid="uid://duw1w1bhgtct6"]
+[gd_scene load_steps=25 format=3 uid="uid://duw1w1bhgtct6"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_3gk3b"]
-[ext_resource type="Texture2D" uid="uid://coxghef0nw6j6" path="res://assets/textures/screenshot387.jpg" id="1_hg67d"]
 [ext_resource type="Texture2D" uid="uid://clawvamc08lke" path="res://assets/default_skin/taiko-bar-right@2x.png" id="2_e5vbt"]
 [ext_resource type="Texture2D" uid="uid://80ovw3jdt0id" path="res://assets/default_skin/taiko-bar-left@2x.png" id="3_fdmyn"]
 [ext_resource type="Texture2D" uid="uid://dk4p0o7k8be8y" path="res://assets/default_skin/taiko-drum-outer@2x.png" id="4_enqju"]
@@ -48,17 +47,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3gk3b")
-
-[node name="ref" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_hg67d")
-expand_mode = 1
 
 [node name="Track" type="TextureRect" parent="."]
 visibility_layer = 2

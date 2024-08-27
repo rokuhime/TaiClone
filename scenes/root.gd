@@ -2,6 +2,7 @@
 class_name Root
 extends Control
 
+# gamestate
 enum GAMESTATE { MAIN_MENU, SONG_SELECT, GAMEPLAY, RESULTS }
 const NAV_BAR_ENABLED_STATES := [GAMESTATE.SONG_SELECT, GAMESTATE.RESULTS]
 var current_state: GAMESTATE
@@ -13,50 +14,58 @@ var gamestate_scenes := [
 	load("res://scenes/results/results.tscn")
 ]
 
+# transitions
 @onready var blackout_overlay := $BlackoutOverlay
 var blackout_lock := false
 
-# roku note 2024-08-01
-# how will you load different difficulties for local multiplayer? i dont know!
-# thats a problem for future roku
+# persisting data
 var current_chart: Chart
-
 @onready var music: AudioStreamPlayer = $Music
-var default_background = load("res://assets/textures/dev_art/background.png")
 @onready var background := $Background
+var default_background = preload("res://assets/textures/dev_art/background.png")
 @onready var default_sfx_audio_queuer: AudioQueuer = $AudioQueuer
-@onready var navigation_bars: NavigationBars = $NavigationBars
 
+# info
+@onready var navigation_bars: NavigationBars = $NavigationBars
 @onready var corner_info: Control = $CornerInfo
 var corner_info_tween: Tween
 
 # -------- system -------
 
 func _ready():
-	get_window().size = Vector2i(1280, 720)
 	get_window().move_to_center()
-	
 	get_tree().root.files_dropped.connect(file_dropped)
 	
-	await get_tree().process_frame
+	# ensure navbars are ready
 	navigation_bars.toggle_navigation_bars(false, false)
-	change_state(GAMESTATE.MAIN_MENU, true)
 	navigation_bars.back_button.pressed.connect(back_button_pressed)
+	
+	# default to the main menu
+	change_state(GAMESTATE.MAIN_MENU, true)
 
 func _process(delta):
+	# set corner info text and ensure the position is correct
 	corner_info.get_child(0).text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
 	var buffer := size.x - (corner_info.position.x + corner_info.size.x) # distance between corner_info and the very right side of the screen
-	corner_info.position.y = navigation_bars.get_node("Bottom").position.y - corner_info.size.y - buffer
+	var corner_info_pos_y: float = navigation_bars.get_node("Bottom").position.y - corner_info.size.y - buffer
+	if corner_info.position.y != corner_info_pos_y:
+		corner_info.position.y = corner_info_pos_y
 
 # -------- ui ----------
 
-# used to bundle ui sounds into one AudioQueuer, saves memory
-func play_ui_sound(target_stream: AudioStream, offset := Vector2.ZERO):
+# for one-shot/ui sounds
+func play_oneshot_sound(target_stream: AudioStream, offset := Vector2.ZERO):
 	default_sfx_audio_queuer.play_audio(target_stream, offset)
 
 # -------- changing states ----------
 
+# changes gamestate, and returns the new gamestate's node
 func change_state(requested_scene, hard_transition := false) -> Node:
+	if requested_scene >= GAMESTATE.size():
+		Global.push_console("Root", "invalid index called to change_state()!", 2)
+		return current_state_node
+	
+	# fade to black to mask transition
 	if not hard_transition:
 		await blackout_transition(true)
 	
@@ -64,18 +73,15 @@ func change_state(requested_scene, hard_transition := false) -> Node:
 	if current_state_node:
 		current_state_node.queue_free()
 	
+	# instantiate new scene and add to tree
 	var new_state_scene: Node
-	if requested_scene >= GAMESTATE.size():
-		Global.push_console("Root", "invalid index called to change_state(), voided current_state_node and bailed!", 2)
-		return
 	new_state_scene = gamestate_scenes[requested_scene].instantiate()
 	current_state_node = new_state_scene
 	add_child(current_state_node)
-	move_child(current_state_node, 3)  # 1 to ensure the background stays at the bottom
+	move_child(current_state_node, background.get_index() + 1)  # ensures the background stays at the bottom
 	
 	if NAV_BAR_ENABLED_STATES.has(requested_scene):
 		navigation_bars.toggle_navigation_bars(true)
-		
 	else:
 		navigation_bars.toggle_navigation_bars(false, false)
 	
@@ -83,26 +89,28 @@ func change_state(requested_scene, hard_transition := false) -> Node:
 		blackout_transition(false)
 	return new_state_scene
 
+# fades to black, for gamestate transitions
 # courotine; await this whenever transitioning from state to state
 func blackout_transition(fade_in: bool) -> void:
-	# if currently transitioning, do not interupt it
+	# if currently doing a blackout transition (lock is on), ignore
 	if blackout_lock:
 		return
 	blackout_lock = true
-	# ensure its visible
-	blackout_overlay.visible = true
 	
+	# tween alpha of blackout_overlay
+	blackout_overlay.visible = true
 	var tween = create_tween()
 	tween.tween_property(blackout_overlay, "modulate:a", 1.0 if fade_in else 0.0, 0.25).from(0.0 if fade_in else 1.0)
 	await tween.finished
 	
-	# if its faded out, hide it to save processing power
+	# if its faded out, hide it
 	if not fade_in:
 		blackout_overlay.visible = false
 	
-	# unlock and emit that its ready
+	# unlock and end courotine 
 	blackout_lock = false
 
+# universal back button on navbar/backspace
 func back_button_pressed() -> void:
 	Global.push_console("Root", "back button pressed!")
 	match current_state:
@@ -111,12 +119,16 @@ func back_button_pressed() -> void:
 		_:
 			change_state(GAMESTATE.SONG_SELECT)
 
+# -------- spesific state changes ----------
+
+# from song select: loads current chart into gameplay with given mods
 func change_to_gameplay(enabled_mods: Array):
 	navigation_bars.toggle_navigation_bars(false)
 	await change_state(GAMESTATE.GAMEPLAY)
 	current_state_node.load_chart(current_chart)
 	current_state_node.enabled_mods = enabled_mods
 
+# from gameplay: loads results screen with given score data
 func change_to_results(score: ScoreData):
 	if current_state != GAMESTATE.RESULTS:
 		await change_state(GAMESTATE.RESULTS)
@@ -130,12 +142,13 @@ func refresh_song_select() -> void:
 
 # -------- chart ----------
 
+# changes current_chart to given chart, and applies music/background
 func update_current_chart(new_chart: Chart, for_gameplay := false) -> void:
 	current_chart = new_chart
 	set_background(new_chart.chart_info["background_path"])
 	set_music(AudioLoader.load_file(new_chart.chart_info["audio_path"]), for_gameplay)
 
-# updates music
+# updates music. if not for_gameplay, play from preview point
 func set_music(new_audio: AudioStream, for_gameplay: bool) -> void:
 	if not new_audio:
 		music.stop()
@@ -167,6 +180,7 @@ func set_music(new_audio: AudioStream, for_gameplay: bool) -> void:
 		prev_point = current_chart.chart_info["preview_point"] if current_chart.chart_info["preview_point"] else 0
 		music.play(clamp(prev_point, 0, music.stream.get_length()))
 
+# updates background
 func set_background(bg_location) -> void:
 	if bg_location:
 		var new_background = ImageLoader.load_image(bg_location)
@@ -176,6 +190,7 @@ func set_background(bg_location) -> void:
 	
 	background.texture = default_background
 
+# loops music upon ending if applicable
 func on_music_end() -> void:
 	if current_state == GAMESTATE.SONG_SELECT:
 		if current_chart:
