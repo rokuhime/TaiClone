@@ -170,9 +170,6 @@ expand_mode = 4
 [node name="AudioQueuer" type="Node2D" parent="."]
 script = ExtResource("9_tgle1")
 
-[node name="Music" type="AudioStreamPlayer" parent="." groups=["Music"]]
-bus = &"Music"
-
 [node name="BarlineTick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("19_5pjr3")
 pitch_scale = 2.0

@@ -147,7 +147,6 @@ static func load_chart(game_path: String, file_path: String) -> void:
 						else:
 							total_cur_sv = timing * float(map_sv_multiplier)
 
-
 						# !!!!! APPEND TIMING POINT AS NOTE !!!!!
 						# if uninherited or changing kiai...
 						if meter or bool(kiai) != current_kiai:

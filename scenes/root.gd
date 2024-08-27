@@ -51,12 +51,6 @@ func _process(delta):
 	if corner_info.position.y != corner_info_pos_y:
 		corner_info.position.y = corner_info_pos_y
 
-# -------- ui --------
-
-# for one-shot/ui sounds
-func play_oneshot_sound(target_stream: AudioStream, offset := Vector2.ZERO):
-	default_sfx_audio_queuer.play_audio(target_stream, offset)
-
 # -------- changing states --------
 
 # changes gamestate, and returns the new gamestate's node
@@ -200,6 +194,10 @@ func on_music_end() -> void:
 
 # -------- other --------
 
+# for one-shot/ui sounds
+func play_oneshot_sound(target_stream: AudioStream, offset := Vector2.ZERO):
+	default_sfx_audio_queuer.play_audio(target_stream, offset)
+
 func file_dropped(files: PackedStringArray) -> void:
 	var target_file = files[0]
 	if files.size() > 1:
@@ -210,4 +208,3 @@ func file_dropped(files: PackedStringArray) -> void:
 		change_state(GAMESTATE.SONG_SELECT)
 	current_state_node.create_new_listing(chart)
 	current_state_node.update_visual()
-

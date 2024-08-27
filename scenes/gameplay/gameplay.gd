@@ -1,29 +1,33 @@
 class_name Gameplay
 extends Control
 
+# Core
+var current_chart : Chart # this is a bit silly considering root.current_chart, but its used frequently enough to rationalize
+@onready var hit_object_container := $Track/HitPoint/HitObjectContainer
+var music: AudioStreamPlayer # TODO: change to Global.get_root().music
+
 # UI
 @onready var pause_overlay := $PauseOverlay
 @onready var game_overlay := $GameOverlay as GameOverlay
-@onready var hit_object_container := $Track/HitPoint/HitObjectContainer
 @onready var audio_queuer := $AudioQueuer as AudioQueuer
-var music: AudioStreamPlayer
 
 @onready var drum_indicator: Node = $Track/DrumIndicator
 var drum_indicator_tweens : Array = [null, null, null, null]
-var spinner_gameplay_location := Vector2(69, 425)
+
+const SPINNER_GAMEPLAY_POS := Vector2(69, 425)
 
 # Data
-var current_chart : Chart
-var current_play_offset := 0.0
-var score_instance := ScoreData.new()
+var current_play_offset := 0.0 # rename
 var enabled_mods := []
+var score_instance := ScoreData.new()
 
-var pause_time := 0.0
-var music_starting_timer := Timer.new()
 var current_time := 0.0
 var start_time := 0.0
 var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
+
+var pause_time := 0.0
+var music_starting_timer := Timer.new()
 
 var current_bps := 0.0 # beats per second
 var playing := false
@@ -45,28 +49,28 @@ var donfinisher_audio := preload("res://assets/default_skin/hf_don.wav") as Audi
 var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as AudioStream
 @onready var barline_tick_player := $BarlineTick as AudioStreamPlayer
 
+# Offset
 @onready var offset_panel := $OffsetPanel
-
 const OFFSET_INCREASE := 0.005
 var local_offset := 0.0
 
 # -------- system --------
 
 func _ready() -> void:
+	score_instance.combo_break.connect(game_overlay.on_combo_break)
+	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
+		Global.get_root().change_to_results.bind(score_instance)
+	)
+	
 	# TODO: replace this with it being provided from root
 	apply_skin(Global.current_skin)
-	
-	score_instance.combo_break.connect(game_overlay.on_combo_break)
 	
 	add_child(music_starting_timer)
 	music_starting_timer.one_shot = true
 	music_starting_timer.stop()
 	
-	music = Global.music
+	music = Global.get_root().music
 	music.stop()
-	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
-		Global.get_root().change_to_results.bind(score_instance)
-	)
 
 func _process(_delta) -> void:
 	if playing:
@@ -86,6 +90,8 @@ func _process(_delta) -> void:
 		# check for misses/timing activations
 		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 			var hit_object := hit_object_container.get_child(i) as HitObject
+			
+			# skip inactive hobjs, stop checking hobj's later than current_time
 			if not hit_object.active:
 				continue
 			if hit_object.timing > current_time:
@@ -97,17 +103,14 @@ func _process(_delta) -> void:
 				hit_object.remove_child(hit_object.spinner_gameplay)
 				hit_object_container.get_parent().add_child(hit_object.spinner_gameplay)
 				# set position
-				hit_object.spinner_gameplay.position = spinner_gameplay_location
+				hit_object.spinner_gameplay.position = SPINNER_GAMEPLAY_POS
 				hit_object.transition_to_playable()
 				return
 			
 			# auto
 			if enabled_mods.has(ModPanel.MOD_TYPES.AUTO):
-				if hit_object is Note:
-					if hit_check(SIDE.LEFT, hit_object.is_kat, hit_object):
-						play_audio(SIDE.LEFT, hit_object.is_kat)
-						current_hitsound_state = HITSOUND_STATES.NORMAL
-						return
+				if auto_hit_check(hit_object):
+					return
 			
 			# actual miss check!!
 			var miss_result := hit_object.miss_check(current_time)
@@ -152,18 +155,12 @@ func _unhandled_input(event) -> void:
 			return
 		
 		# get rhythm gameplay input
-		var pressed_inputs := []
-		for gameplay_input in Global.GAMEPLAY_KEYS:
-			if Input.is_action_just_pressed(gameplay_input):
-				pressed_inputs.append(gameplay_input)
-				break
-		
+		var pressed_inputs := get_gameplay_inputs()
 		if pressed_inputs.is_empty(): 
 			return
 		
 		for input in pressed_inputs:
 			current_hitsound_state = HITSOUND_STATES.NORMAL
-			update_input_indicator(Global.GAMEPLAY_KEYS.find(input))
 			
 			var current_side_input = SIDE.LEFT if input.contains("Left") else SIDE.RIGHT
 			var is_input_kat := false if input.contains("Don") else true
@@ -172,12 +169,9 @@ func _unhandled_input(event) -> void:
 			if active_finisher_note:
 				var finisher_note_idx = active_finisher_note.get_index()
 				if finisher_hit_check(current_side_input, is_input_kat):
-					play_audio(current_side_input, is_input_kat) # play finisher sound
+					activate_input_feedback(input) # play finisher sound
 					continue
 			
-			# roku note 2024-08-06
-			# something went horribly wrong and will need to be undone in regards to this function
-			# starts randomly missing all the time during hitchecks
 			for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 				var hit_object := hit_object_container.get_child(i) as HitObject
 				
@@ -202,7 +196,7 @@ func _unhandled_input(event) -> void:
 						# within bounds, do a hitcheck
 						if hit_check(current_side_input, is_input_kat, hit_object):
 							break
-			play_audio(current_side_input, is_input_kat) # play normal sound
+			activate_input_feedback(input) # play normal sound
 
 # -------- offset handling --------
 
@@ -407,7 +401,24 @@ func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 								current_bps, 
 								timing_point.timing - current_time)
 
+# returns if hit was successful
+func auto_hit_check(target_hobj: HitObject) -> bool:
+	if target_hobj is Note:
+		if hit_check(SIDE.LEFT, target_hobj.is_kat, target_hobj):
+			play_audio(SIDE.LEFT, target_hobj.is_kat)
+			current_hitsound_state = HITSOUND_STATES.NORMAL
+			return true
+	return false
+
 # -------- feedback --------
+
+# plays sound + activates drum indicator visual
+func activate_input_feedback(input_name: String) -> void:
+	update_input_indicator(Global.GAMEPLAY_KEYS.find(input_name))
+	play_audio(
+		SIDE.LEFT if input_name.contains("Left") else SIDE.RIGHT,
+		true if input_name.contains("Kat") else false
+	)
 
 # plays note audio
 func play_audio(input_side: SIDE, is_input_kat: bool) -> void:
@@ -466,3 +477,11 @@ func apply_skin(skin: SkinManager) -> void:
 		kat_audio = skin.resources["audio"]["kat"]
 	if skin.resource_exists("audio/kat_f"):
 		katfinisher_audio = skin.resources["audio"]["kat_f"]
+
+func get_gameplay_inputs() -> Array:
+	var pressed_inputs := []
+	for gameplay_input in Global.GAMEPLAY_KEYS:
+		if Input.is_action_just_pressed(gameplay_input):
+			pressed_inputs.append(gameplay_input)
+	
+	return pressed_inputs
