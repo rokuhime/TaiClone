@@ -16,13 +16,14 @@ func update_visual() -> void:
 	scale = Vector2.ONE * FINISHER_SCALE if is_finisher else Vector2.ONE
 
 func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
+	#print(current_time, " vs ", timing)
 	var result := HIT_RESULT.INVALID
 	
-	# if hittable
+	# if active and within early miss window
 	if active and current_time >= timing - Global.MISS_TIMING and current_time <= timing - Global.INACC_TIMING:
 		result = HIT_RESULT.MISS
 	
-	elif active and abs(timing - current_time) <= Global.INACC_TIMING:
+	if active and abs(timing - current_time) <= Global.INACC_TIMING:
 		# default to being hit, 
 		result = HIT_RESULT.ACC if abs(timing - current_time) <= Global.ACC_TIMING else HIT_RESULT.INACC
 		
@@ -38,7 +39,6 @@ func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: boo
 	if result != HIT_RESULT.INVALID:
 		visible = false
 		active = false
-	
 	return result
 
 func miss_check(current_time: float) -> bool:

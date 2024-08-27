@@ -35,6 +35,7 @@ var corner_info_tween: Tween
 func _ready():
 	get_window().move_to_center()
 	get_tree().root.files_dropped.connect(file_dropped)
+	await get_tree().process_frame
 	
 	# ensure navbars are ready
 	navigation_bars.toggle_navigation_bars(false, false)

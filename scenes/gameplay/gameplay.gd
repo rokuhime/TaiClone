@@ -137,66 +137,54 @@ func _unhandled_input(event) -> void:
 	if Input.is_action_just_pressed("Back"):
 		change_pause_state(playing)
 	
+	if Input.is_action_just_pressed("AddLocalOffset"):
+		adjust_offset(OFFSET_INCREASE)
+	
+	if Input.is_action_just_pressed("RemoveLocalOffset"):
+		adjust_offset(-OFFSET_INCREASE)
+	
+	if Input.is_action_just_pressed("SkipIntro") and playing:
+		skip_intro()
+	
+	if Input.is_action_just_pressed("Retry"):
+		restart_chart()
+	
+	# actual rhythm game input
 	if event is InputEventKey or InputEventJoypadButton and event.is_pressed():
-		if Input.is_action_just_pressed("AddLocalOffset"):
-			adjust_offset(OFFSET_INCREASE)
-		
-		if Input.is_action_just_pressed("RemoveLocalOffset"):
-			adjust_offset(-OFFSET_INCREASE)
-		
-		
-		if Input.is_action_just_pressed("SkipIntro") and playing:
-			skip_intro()
-		
-		if Input.is_action_just_pressed("Retry"):
-			restart_chart()
-		
 		if enabled_mods.has(ModPanel.MOD_TYPES.AUTO) or !playing:
 			return
 		
 		# get rhythm gameplay input
-		var pressed_inputs := get_gameplay_inputs()
+		var pressed_inputs := get_pressed_gameplay_inputs()
 		if pressed_inputs.is_empty(): 
 			return
 		
+		# perform a hit check for each pressed input
 		for input in pressed_inputs:
+			# assume it will be a normal hitsound
 			current_hitsound_state = HITSOUND_STATES.NORMAL
 			
 			var current_side_input = SIDE.LEFT if input.contains("Left") else SIDE.RIGHT
 			var is_input_kat := false if input.contains("Don") else true
 			
-			# hit check
+			# if the last hit note was a finisher, try to redirect input to a finisher_hit_check
+			# if it fails, use it in a normal hitcheck
 			if active_finisher_note:
-				var finisher_note_idx = active_finisher_note.get_index()
 				if finisher_hit_check(current_side_input, is_input_kat):
-					activate_input_feedback(input) # play finisher sound
+					activate_input_feedback(input) # update drum indicator
 					continue
 			
-			for i in range(hit_object_container.get_child_count() - 1, -1, -1):
-				var hit_object := hit_object_container.get_child(i) as HitObject
-				
-				# ensure hobj can be hit
-				if hit_object != null and hit_object.is_in_group("Hittable"):
-					if hit_object.active:
-						var start_time := hit_object.timing - Global.MISS_TIMING
-						
-						# if its a hobj with length, check the end time
-						if hit_object is Roll or hit_object is Spinner:
-							var end_time: float = hit_object.timing + hit_object.length + Global.INACC_TIMING
-							
-							# if the end times hasnt passed, do a hitcheck
-							if end_time >= current_time:
-								hit_check(current_side_input, is_input_kat, hit_object)
-								continue # dont swallow input, continue
-						
-						# if the start is later than the current time...
-						if start_time > current_time:
-							break # stop checking hobj's
-						
-						# within bounds, do a hitcheck
-						if hit_check(current_side_input, is_input_kat, hit_object):
-							break
-			activate_input_feedback(input) # play normal sound
+			var valid_length_hobjs = get_next_hittable_length_hobjs()
+			if valid_length_hobjs:
+				for hobj in valid_length_hobjs:
+					hit_check(hobj, current_side_input, is_input_kat)
+			
+			var next_note = get_next_hittable_note()
+			if next_note:
+				hit_check(next_note, current_side_input, is_input_kat)
+			
+			# wait until now to play sound in order to ensure finishers update the current_hitsound_state
+			activate_input_feedback(input) # play sound + update drum indicator
 
 # -------- offset handling --------
 
@@ -351,12 +339,59 @@ func change_pause_state(is_paused: bool) -> void:
 		await music_starting_timer.timeout
 	music.play(current_time)
 
-# -------- hit object checks --------
+# -------- get hobj of type --------
+# roku note 2024-08-27
+# these function names suck!!!!!!!!!!!!!!!
+# finish tidying up gameplay, then rename hit object class names to something more appropriate
+# HitObject = GameplayObject or RhythmObject?
+
+func get_next_hittable_note():
+	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+		var hit_object := hit_object_container.get_child(i) as HitObject
+		# ensure hobj can be hit
+		if hit_object != null and hit_object is Note:
+			if hit_object.active:
+				var start_time := hit_object.timing - Global.MISS_TIMING
+				
+				# start is later than the current time, no valid hitobject
+				if start_time > current_time:
+					return
+				return hit_object
+	return null
+
+# gets any active hit objects with length (drumrolls, spinners)
+func get_next_hittable_length_hobjs():
+	var valid_hobjs := []
+	
+	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+		var hit_object := hit_object_container.get_child(i) as HitObject
+		# ensure hobj can be hit
+		if hit_object != null and hit_object.is_in_group("Hittable"):
+			if hit_object.active:
+				var start_time := hit_object.timing - Global.MISS_TIMING
+				# hobj timing is later than the current time, stop checking
+				if start_time > current_time:
+					break
+				
+				if not hit_object is Roll and not hit_object is Spinner:
+					continue
+				
+				# if its a hobj with length, check the end time
+				var end_time: float = hit_object.timing + hit_object.length + Global.INACC_TIMING
+				
+				# if the end times hasnt passed, return it
+				if end_time >= current_time:
+					valid_hobjs.append(hit_object)
+	
+	return valid_hobjs
+
+# -------- hit checks --------
 
 # give hitobject hit info, gets result, and applies score
 # returns true if hit was used on a note, otherwise returns false
-func hit_check(input_side: SIDE, is_input_kat: bool, target_hobj: HitObject ) -> bool:
+func hit_check(target_hobj: HitObject, input_side: SIDE, is_input_kat: bool) -> bool:
 	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
+	
 	if hit_result != HitObject.HIT_RESULT.INVALID:
 		if hit_result == HitObject.HIT_RESULT.F_INACC or hit_result == HitObject.HIT_RESULT.F_ACC:
 			active_finisher_note = target_hobj
@@ -384,12 +419,14 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 	active_finisher_note = null 
 	return false
 
-func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) -> void:
-	if target_hit_obj is Note:
-		score_instance.add_score(hit_result, target_hit_obj.timing - current_time)
-	else:
-		score_instance.add_score(hit_result)
-	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, target_hit_obj.timing - current_time)
+# returns if hit was successful
+func auto_hit_check(target_hobj: HitObject) -> bool:
+	if target_hobj is Note:
+		if hit_check(target_hobj, SIDE.LEFT, target_hobj.is_kat):
+			play_audio(SIDE.LEFT, target_hobj.is_kat)
+			current_hitsound_state = HITSOUND_STATES.NORMAL
+			return true
+	return false
 
 func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 	current_bps = 60.0 / timing_point.bpm
@@ -401,16 +438,14 @@ func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
 								current_bps, 
 								timing_point.timing - current_time)
 
-# returns if hit was successful
-func auto_hit_check(target_hobj: HitObject) -> bool:
-	if target_hobj is Note:
-		if hit_check(SIDE.LEFT, target_hobj.is_kat, target_hobj):
-			play_audio(SIDE.LEFT, target_hobj.is_kat)
-			current_hitsound_state = HITSOUND_STATES.NORMAL
-			return true
-	return false
-
 # -------- feedback --------
+
+func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) -> void:
+	if target_hit_obj is Note:
+		score_instance.add_score(hit_result, target_hit_obj.timing - current_time)
+	else:
+		score_instance.add_score(hit_result)
+	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, target_hit_obj.timing - current_time)
 
 # plays sound + activates drum indicator visual
 func activate_input_feedback(input_name: String) -> void:
@@ -478,7 +513,7 @@ func apply_skin(skin: SkinManager) -> void:
 	if skin.resource_exists("audio/kat_f"):
 		katfinisher_audio = skin.resources["audio"]["kat_f"]
 
-func get_gameplay_inputs() -> Array:
+func get_pressed_gameplay_inputs() -> Array:
 	var pressed_inputs := []
 	for gameplay_input in Global.GAMEPLAY_KEYS:
 		if Input.is_action_just_pressed(gameplay_input):
