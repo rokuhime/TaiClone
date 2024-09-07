@@ -75,7 +75,7 @@ func _process(_delta) -> void:
 	if playing:
 		current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
 		
-		if not music.playing and current_time + AudioServer.get_time_to_next_mix() >= 0:
+		if not music.playing and current_time + AudioServer.get_time_to_next_mix() >= 0 and current_time + AudioServer.get_time_to_next_mix() < last_hobj_timing:
 			music.play(current_time + AudioServer.get_time_to_next_mix())
 		
 		# update progress bar
