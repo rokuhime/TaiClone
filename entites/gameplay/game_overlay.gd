@@ -18,7 +18,7 @@ var inaccurate_indicator_tween: Tween
 
 @onready var hit_error_bar: HitErrorBar = $HitErrorBar
 
-@onready var mascot: TextureRect = $Mascot
+@onready var mascot: Mascot = $Mascot
 
 var song_progress_back := Color("333333")
 var song_progress_front := Color("ffffff")

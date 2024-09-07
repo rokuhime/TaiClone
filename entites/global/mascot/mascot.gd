@@ -20,6 +20,7 @@ var bps := 2.0 # beats per second
 
 var toast_framerate := 0.2
 var toast_lock := false
+var next_change_time := 0.0
 
 # -------- system --------
 
@@ -29,27 +30,26 @@ func _process(delta) -> void:
 		return
 	
 	var time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - anim_start_time
-	var anim_position := wrapf(time / (bps * 2), 0, 1)
-	
-	var total_frames: int = sprites[int(current_state)].size()
-	var new_frame = floor(anim_position * (total_frames))
-	
-	if new_frame != current_frame:
-		current_frame = new_frame
+	if time >= next_change_time:
+		var total_frames: int = sprites[int(current_state)].size()
+		current_frame = (current_frame + 1) % total_frames
 		update_frame()
+		
+		next_change_time += bps
 
 # -------- animation --------
 
 # restart the current animation cycle and update sprite to match the given state
 func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0) -> void:
 	# update the anim_start_time to ensure it syncs properly
-	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency() - delay
+	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency() - delay
+	next_change_time = 0.0
 	# update and reset sprite
 	current_state = state
 	current_frame = 0
 	bps = new_bps
 	
-	update_frame()
+	#update_frame()
 
 func toast() -> void:
 	toast_lock = true
