@@ -17,7 +17,6 @@ var drum_indicator_tweens : Array = [null, null, null, null]
 const SPINNER_GAMEPLAY_POS := Vector2(69, 425)
 
 # Data
-var current_play_offset := 0.0 # rename
 var enabled_mods := []
 var score_instance := ScoreData.new()
 
@@ -75,6 +74,9 @@ func _ready() -> void:
 func _process(_delta) -> void:
 	if playing:
 		current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
+		
+		if not music.playing and current_time + AudioServer.get_time_to_next_mix() >= 0:
+			music.play(current_time + AudioServer.get_time_to_next_mix())
 		
 		# update progress bar
 		game_overlay.update_progress(current_time, first_hobj_timing, last_hobj_timing)
@@ -240,6 +242,8 @@ func load_chart(requested_chart: Chart) -> void:
 	play_chart()
 
 func play_chart() -> void:
+	music.stop()
+	
 	# error checks before starting to make sure chart is valid
 	if current_chart == null:
 		Global.push_console("Gameplay", "tried to play without a valid chart! abandoning...", 2)
@@ -258,27 +262,21 @@ func play_chart() -> void:
 			apply_timing_point(hit_object, start_time)
 			break
 	
-	# get audio offset based on mix and latency
-	current_play_offset = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
+	start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency()
 	
 	# delay the chart if first note is less than 2 seconds into the song
 	if first_hobj_timing < 2.0:
-		current_play_offset -= 2.0 - first_hobj_timing
+		start_time += 2.0 - first_hobj_timing
 	
-	start_time = Time.get_ticks_msec() / 1000.0 - current_play_offset
-	# ensure the current_time is set correctly and seek the music to it
+	# ensure the current_time is set correctly before starting chart playback
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
 	playing = true
 	
-	# if theres a delay before the audio starts, await it
-	if current_time < 0:
-		music_starting_timer.start(abs(current_time))
-		await music_starting_timer.timeout
-	music.play()
+	if current_time + AudioServer.get_time_to_next_mix() >= 0:
+		music.play(current_time + AudioServer.get_time_to_next_mix())
 
 func restart_chart() -> void:
 	playing = false
-	music.stop()
 	pause_overlay.visible = false
 	
 	active_finisher_note = null
@@ -305,7 +303,7 @@ func skip_intro() -> void:
 	var first_hit_object = current_chart.get_first_hitobject()
 	
 	start_time -= first_hit_object.timing - 2.0 - current_time
-	music.seek(current_play_offset + first_hit_object.timing - 2.0)
+	music.seek(first_hit_object.timing - 2.0)
 	game_overlay.mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
 
 func change_pause_state(is_paused: bool) -> void:
