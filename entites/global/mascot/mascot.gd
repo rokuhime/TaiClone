@@ -74,3 +74,4 @@ func apply_skin(skin: SkinManager):
 		sprites[2] = skin.resources["texture"]["mascot_fail"]
 	if skin.resource_exists("texture/mascot_toast"):
 		toast_sprites = skin.resources["texture"]["mascot_toast"]
+	update_frame()
