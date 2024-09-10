@@ -8,11 +8,10 @@ class_name TimingClock
 var bps: float # beat length
 var current_time: float
 var start_time: float
-var playing := false
 var in_kiai := false
 
 # if pause_time == -1.0, assume its unpaused
-var pause_time := -1.0
+var pause_time := 0
 var child_beatsyncs := []
 
 @onready var info: Label = $Label
@@ -47,9 +46,9 @@ func start(start_offset: float) -> void:
 	if start_offset:
 		start_time += 2.0 - start_offset
 	
+	pause_time = -1.0
 	# ensure the current_time is set correctly before starting chart playback
-	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset 
-	playing = true
+	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset
 	
 	if current_time + AudioServer.get_time_to_next_mix() >= 0:
 		play_music.emit(current_time + AudioServer.get_time_to_next_mix())
@@ -107,5 +106,5 @@ func reset() -> void:
 	current_time = 0.0
 	start_time = 0.0
 
-	pause_time = -1.0
+	pause_time = 0
 	child_beatsyncs = []

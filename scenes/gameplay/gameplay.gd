@@ -246,6 +246,7 @@ func load_chart(requested_chart: Chart) -> void:
 
 func play_chart() -> void:
 	music.stop()
+	clock.reset()
 	
 	# error checks before starting to make sure chart is valid
 	if current_chart == null:
