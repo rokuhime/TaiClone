@@ -9,9 +9,10 @@ var bps: float # beat length
 var current_time: float
 var start_time: float
 var in_kiai := false
+var music_playing := false
 
 # if pause_time == -1.0, assume its unpaused
-var pause_time := 0
+var pause_time := 0.0
 var child_beatsyncs := []
 
 @onready var info: Label = $Label
@@ -23,39 +24,33 @@ signal play_music(start_time: float)
 
 func _process(delta) -> void:
 	if pause_time != -1.0:
-		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbps: %s\nin_kiai: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bps, in_kiai, child_beatsyncs]
+		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbps: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bps, music_playing, child_beatsyncs]
 		return
 	
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset
-	
 	# if the song hasnt started yet...
-	if current_time < 0:
+	if not music_playing:
 		# if the next audio mix will put the time equal to or over when it needs to play...
-		if current_time + AudioServer.get_time_to_next_mix() >= 0:
-			play_music.emit(current_time + AudioServer.get_time_to_next_mix())
+		try_play_music()
 	
-	info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbps: %s\nin_kiai: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bps, in_kiai, child_beatsyncs]
+	info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbps: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bps, music_playing, child_beatsyncs]
 
 # -------- playback --------
 
-# start_offset = first_hobj_timing
+# will delay the chart if first note is less than 2 seconds into the song
 func start(start_offset: float) -> void:
-	start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency()
-	
-	# delay the chart if first note is less than 2 seconds into the song
-	if start_offset:
-		start_time += 2.0 - start_offset
+	start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency() + start_offset
 	
 	pause_time = -1.0
 	# ensure the current_time is set correctly before starting chart playback
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset
 	
-	if current_time + AudioServer.get_time_to_next_mix() >= 0:
-		play_music.emit(current_time + AudioServer.get_time_to_next_mix())
+	try_play_music()
 
 func change_pause_state(is_paused) -> void:
 	# pause
 	if is_paused:
+		music_playing = false
 		pause_time = (Time.get_ticks_msec() / 1000.0)
 		return
 	
@@ -65,10 +60,7 @@ func change_pause_state(is_paused) -> void:
 	pause_time = -1.0
 	
 	# play_music at the current_time, not including offsets
-	play_music.emit((Time.get_ticks_msec() / 1000.0) - start_time)
-	
-	# shift start_time forward to compensate for the mix
-	start_time += AudioServer.get_time_to_next_mix()
+	try_play_music()
 	# set current_time to be accurate
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset
 	
@@ -101,6 +93,12 @@ func make_beat_syncronizer(meter: int) -> BeatSyncronizer:
 
 # -------- etc --------
 
+# checks if current_time - offsets + time to next mix will be when the audio plays
+func try_play_music() -> void:
+	if current_time + Global.global_offset + AudioServer.get_time_to_next_mix() >= 0:
+		music_playing = true
+		play_music.emit(current_time + Global.global_offset + AudioServer.get_time_to_next_mix())
+
 func reset() -> void:
 	bps = 0.0
 	current_time = 0.0
@@ -108,3 +106,4 @@ func reset() -> void:
 
 	pause_time = 0
 	child_beatsyncs = []
+	music_playing = false

@@ -27,7 +27,6 @@ var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
 
 var pause_time := 0.0
-var music_starting_timer := Timer.new()
 
 var current_bps := 0.0 # beats per second
 var playing := false
@@ -65,21 +64,18 @@ func _ready() -> void:
 	# TODO: replace this with it being provided from root
 	apply_skin(Global.current_skin)
 	
-	add_child(music_starting_timer)
-	music_starting_timer.one_shot = true
-	music_starting_timer.stop()
-	
 	music = Global.get_root().music
 	music.stop()
 	
 	clock = Global.get_root().timing_clock
+	clock.play_music.connect(music.play)
 
 func _process(_delta) -> void:
 	if playing:
 		current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
 		
-		if not music.playing and current_time + AudioServer.get_time_to_next_mix() >= 0 and current_time + AudioServer.get_time_to_next_mix() < last_hobj_timing:
-			music.play(current_time + AudioServer.get_time_to_next_mix())
+		#if not music.playing and current_time + AudioServer.get_time_to_next_mix() >= 0 and current_time + AudioServer.get_time_to_next_mix() < last_hobj_timing:
+			#music.play(current_time + AudioServer.get_time_to_next_mix())
 		
 		# update progress bar
 		game_overlay.update_progress(current_time, first_hobj_timing, last_hobj_timing)
@@ -272,7 +268,7 @@ func play_chart() -> void:
 	var start_offset := 0.0
 	
 	if first_hobj_timing < 2.0:
-		start_offset += 2.0 - first_hobj_timing
+		start_offset = 2.0 - first_hobj_timing
 		start_time += 2.0 - first_hobj_timing
 	
 	clock.start(start_offset)
@@ -281,8 +277,8 @@ func play_chart() -> void:
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
 	playing = true
 	
-	if current_time + AudioServer.get_time_to_next_mix() >= 0:
-		music.play(current_time + AudioServer.get_time_to_next_mix())
+	#if current_time + AudioServer.get_time_to_next_mix() >= 0:
+		#music.play(current_time + AudioServer.get_time_to_next_mix())
 
 func restart_chart() -> void:
 	playing = false
@@ -326,7 +322,6 @@ func change_pause_state(is_paused: bool) -> void:
 	
 	if is_paused:
 		pause_time = Time.get_ticks_msec() / 1000.0
-		music_starting_timer.stop()
 		
 		for hobj in hit_object_container.get_children():
 			if hobj is Spinner and hobj.active:
@@ -344,11 +339,7 @@ func change_pause_state(is_paused: bool) -> void:
 	start_time += (Time.get_ticks_msec() / 1000.0) - pause_time - AudioServer.get_time_to_next_mix()
 	# ensure the current_time is set correctly and seek the music to it
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
-	# if theres a delay before the audio starts, await it
-	if current_time < 0:
-		music_starting_timer.start(abs(current_time))
-		await music_starting_timer.timeout
-	music.play(current_time)
+	#music.play(current_time)
 
 # -------- get hobj of type --------
 # roku note 2024-08-27
