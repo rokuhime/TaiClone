@@ -17,7 +17,7 @@ var focus_target: Node
 # allows finer judgements if wanted and such
 const ACC_TIMING := 0.03
 const INACC_TIMING := 0.07
-const MISS_TIMING := 0.15
+const MISS_TIMING := 0.12
 
 var resolution_multiplier = 4.0
 var global_offset := 0.0

@@ -4,7 +4,7 @@ class_name ChartLoader
 # sv types could be named "default", "slide", "scale"
 # respectively taiko, mania, piu
 
-const TC_VERSION := "v0.0.3"
+const TC_VERSION := "v0.0.4"
 enum NOTETYPE {TIMING_POINT, BARLINE, DON, KAT, ROLL, SPINNER}
 const SUPPORTED_FILETYPES := ["tc", "osu"]
 

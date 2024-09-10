@@ -24,6 +24,7 @@ var next_change_time := 0.0
 
 # -------- system --------
 
+# TODO: mascot spasms out sometimes, diagnose with the print statement
 func _process(delta) -> void:
 	# if we are mid toast, ignore texture updates
 	if toast_lock:
@@ -74,4 +75,5 @@ func apply_skin(skin: SkinManager):
 		sprites[2] = skin.resources["texture"]["mascot_fail"]
 	if skin.resource_exists("texture/mascot_toast"):
 		toast_sprites = skin.resources["texture"]["mascot_toast"]
+	
 	update_frame()
