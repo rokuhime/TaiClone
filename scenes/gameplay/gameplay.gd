@@ -21,14 +21,9 @@ var enabled_mods := []
 var score_instance := ScoreData.new()
 
 var clock: TimingClock
-var current_time := 0.0
-var start_time := 0.0
 var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
 
-var pause_time := 0.0
-
-var current_bps := 0.0 # beats per second
 var playing := false
 var in_kiai := false
 
@@ -72,21 +67,16 @@ func _ready() -> void:
 
 func _process(_delta) -> void:
 	if playing:
-		current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
-		
-		#if not music.playing and current_time + AudioServer.get_time_to_next_mix() >= 0 and current_time + AudioServer.get_time_to_next_mix() < last_hobj_timing:
-			#music.play(current_time + AudioServer.get_time_to_next_mix())
-		
 		# update progress bar
-		game_overlay.update_progress(current_time, first_hobj_timing, last_hobj_timing)
+		game_overlay.update_progress(clock.current_time, first_hobj_timing, last_hobj_timing)
 		
 		# chart end check
-		if current_time >= last_hobj_timing + 1:
+		if clock.current_time >= last_hobj_timing + 1:
 			Global.get_root().change_to_results(score_instance)
 		
 		# move all hitobjects
 		for hobj in hit_object_container.get_children():
-			hobj.position.x = (hobj.speed * Global.resolution_multiplier) * (hobj.timing - current_time) - (hobj.size.x / 2)
+			hobj.position.x = (hobj.speed * Global.resolution_multiplier) * (hobj.timing - clock.current_time) - (hobj.size.x / 2)
 		
 		# check for misses/timing activations
 		for i in range(hit_object_container.get_child_count() - 1, -1, -1):
@@ -95,7 +85,7 @@ func _process(_delta) -> void:
 			# skip inactive hobjs, stop checking hobj's later than current_time
 			if not hit_object.active:
 				continue
-			if hit_object.timing > current_time:
+			if hit_object.timing > clock.current_time:
 				return
 			
 			# activating spinners
@@ -114,7 +104,7 @@ func _process(_delta) -> void:
 					return
 			
 			# actual miss check!!
-			var miss_result := hit_object.miss_check(current_time)
+			var miss_result := hit_object.miss_check(clock.current_time)
 			if miss_result:
 				if hit_object.is_in_group("Hittable"):
 					if hit_object is Note:
@@ -123,7 +113,7 @@ func _process(_delta) -> void:
 				
 				# if passing a timing point, apply it
 				if hit_object is TimingPoint:
-					apply_timing_point(hit_object, current_time)
+					apply_timing_point(hit_object, clock.current_time)
 					return
 				# assume barline
 				if enabled_mods.has(ModPanel.MOD_TYPES.BARLINE_AUDIO):
@@ -255,30 +245,22 @@ func play_chart() -> void:
 		Global.get_root().change_to_results(score_instance)
 		return
 
-	# get first timing point and apply
-	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
-		var hit_object = hit_object_container.get_child(i)
-		if hit_object is TimingPoint:
-			apply_timing_point(hit_object, start_time)
-			break
-	
-	start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency()
-	
 	# delay the chart if first note is less than 2 seconds into the song
 	var start_offset := 0.0
 	
 	if first_hobj_timing < 2.0:
 		start_offset = 2.0 - first_hobj_timing
-		start_time += 2.0 - first_hobj_timing
 	
 	clock.start(start_offset)
 	
-	# ensure the current_time is set correctly before starting chart playback
-	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
-	playing = true
+	# get first timing point and apply
+	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
+		var hit_object = hit_object_container.get_child(i)
+		if hit_object is TimingPoint:
+			apply_timing_point(hit_object, clock.start_time)
+			break
 	
-	#if current_time + AudioServer.get_time_to_next_mix() >= 0:
-		#music.play(current_time + AudioServer.get_time_to_next_mix())
+	playing = true
 
 func restart_chart() -> void:
 	playing = false
@@ -303,15 +285,14 @@ func restart_chart() -> void:
 		skip_intro()
 
 func skip_intro() -> void:
-	if current_time >= first_hobj_timing - 2.0:
+	if clock.current_time >= first_hobj_timing - 2.0:
 		return
 	var first_hit_object = current_chart.get_first_hitobject()
 	
-	start_time -= first_hit_object.timing - 2.0 - current_time
-	clock.start_time -= first_hit_object.timing - 2.0 - current_time
+	clock.start_time -= first_hit_object.timing - 2.0 - clock.current_time
 	
 	music.seek(first_hit_object.timing - 2.0)
-	game_overlay.mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
+	game_overlay.mascot.anim_start_time -= first_hit_object.timing - 2.0 - clock.current_time
 
 func change_pause_state(is_paused: bool) -> void:
 	clock.change_pause_state(is_paused)
@@ -321,8 +302,6 @@ func change_pause_state(is_paused: bool) -> void:
 	pause_overlay.visible = is_paused
 	
 	if is_paused:
-		pause_time = Time.get_ticks_msec() / 1000.0
-		
 		for hobj in hit_object_container.get_children():
 			if hobj is Spinner and hobj.active:
 				if not hobj.timer.paused:
@@ -334,12 +313,6 @@ func change_pause_state(is_paused: bool) -> void:
 			if hobj is Spinner and hobj.active:
 				if hobj.timer.paused:
 					hobj.timer.paused = false
-	
-	# add the time elapsed between pausing and unpausing, and compensate for audio delay
-	start_time += (Time.get_ticks_msec() / 1000.0) - pause_time - AudioServer.get_time_to_next_mix()
-	# ensure the current_time is set correctly and seek the music to it
-	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
-	#music.play(current_time)
 
 # -------- get hobj of type --------
 # roku note 2024-08-27
@@ -356,7 +329,7 @@ func get_next_hittable_note():
 				var start_time := hit_object.timing - Global.MISS_TIMING
 				
 				# start is later than the current time, no valid hitobject
-				if start_time > current_time:
+				if start_time > clock.current_time:
 					return
 				return hit_object
 	return null
@@ -372,7 +345,7 @@ func get_next_hittable_length_hobjs():
 			if hit_object.active:
 				var start_time := hit_object.timing - Global.MISS_TIMING
 				# hobj timing is later than the current time, stop checking
-				if start_time > current_time:
+				if start_time > clock.current_time:
 					break
 				
 				if not hit_object is Roll and not hit_object is Spinner:
@@ -382,7 +355,7 @@ func get_next_hittable_length_hobjs():
 				var end_time: float = hit_object.timing + hit_object.length + Global.INACC_TIMING
 				
 				# if the end times hasnt passed, return it
-				if end_time >= current_time:
+				if end_time >= clock.current_time:
 					valid_hobjs.append(hit_object)
 	
 	return valid_hobjs
@@ -392,7 +365,7 @@ func get_next_hittable_length_hobjs():
 # give hitobject hit info, gets result, and applies score
 # returns true if hit was used on a note, otherwise returns false
 func hit_check(target_hobj: HitObject, input_side: SIDE, is_input_kat: bool) -> bool:
-	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(current_time, input_side, is_input_kat)
+	var hit_result: HitObject.HIT_RESULT = target_hobj.hit_check(clock.current_time, input_side, is_input_kat)
 	
 	if hit_result != HitObject.HIT_RESULT.INVALID:
 		if hit_result == HitObject.HIT_RESULT.F_INACC or hit_result == HitObject.HIT_RESULT.F_ACC:
@@ -409,11 +382,11 @@ func hit_check(target_hobj: HitObject, input_side: SIDE, is_input_kat: bool) -> 
 # finisher second hit check, returns if it was successful or not
 func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 	if active_finisher_note:
-		if abs(current_time - active_finisher_note.timing) < Global.INACC_TIMING:
+		if abs(clock.current_time - active_finisher_note.timing) < Global.INACC_TIMING:
 			# in time
 			if active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
 				# add score, reset finisher variables
-				score_instance.add_finisher_score(active_finisher_note.timing - current_time)
+				score_instance.add_finisher_score(active_finisher_note.timing - clock.current_time)
 				active_finisher_note = null
 				current_hitsound_state = HITSOUND_STATES.NONE
 				return true
@@ -430,26 +403,21 @@ func auto_hit_check(target_hobj: HitObject) -> bool:
 			return true
 	return false
 
-func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
+func apply_timing_point(timing_point: TimingPoint, time: float) -> void:
 	clock.apply_timing_point(timing_point)
 	
-	current_bps = 60.0 / timing_point.bpm
-	if timing_point.is_finisher != in_kiai:
-		in_kiai = timing_point.is_finisher
-	# roku note 2024-08-06
-	# this can be implemented as a miss check
 	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if in_kiai else Mascot.SPRITETYPES.IDLE, 
-								current_bps, 
-								timing_point.timing - current_time)
+								60.0 / timing_point.bpm, 
+								timing_point.timing - time)
 
 # -------- feedback --------
 
 func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) -> void:
 	if target_hit_obj is Note:
-		score_instance.add_score(hit_result, target_hit_obj.timing - current_time)
+		score_instance.add_score(hit_result, target_hit_obj.timing - clock.current_time)
 	else:
 		score_instance.add_score(hit_result)
-	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, target_hit_obj.timing - current_time)
+	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, target_hit_obj.timing - clock.current_time)
 
 # plays sound + activates drum indicator visual
 func activate_input_feedback(input_name: String) -> void:

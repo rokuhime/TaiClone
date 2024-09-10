@@ -13,12 +13,12 @@ signal beat()
 func _init(new_timing_clock: TimingClock, new_divisor: int) -> void:
 	clock = new_timing_clock
 	divisor = new_divisor
-	next_beat_time = clock.current_time + (clock.bps / divisor)
+	next_beat_time = clock.current_time + (clock.get_bps() / divisor)
 
 func _process(delta):
 	if clock.current_time >= next_beat_time:
 		beat.emit()
-		next_beat_time = clock.current_time + (clock.bps / divisor) 
+		next_beat_time = clock.current_time + (clock.get_bps() / divisor) 
 	pass
 
 # -------- data --------

@@ -119,7 +119,7 @@ func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: Hi
 	# mascot handling
 	if hit_result == HitObject.HIT_RESULT.MISS:
 		if mascot.current_state != mascot.SPRITETYPES.FAIL:
-			update_mascot(Mascot.SPRITETYPES.FAIL, get_parent().current_bps)
+			update_mascot(Mascot.SPRITETYPES.FAIL, Global.get_root().timing_clock.get_bps())
 		return
 	
 	elif typeof(hit_time_difference) == TYPE_FLOAT and (hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC):
@@ -127,10 +127,10 @@ func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: Hi
 	
 	if get_parent().in_kiai:
 		if mascot.current_state != mascot.SPRITETYPES.KIAI:
-			update_mascot(Mascot.SPRITETYPES.KIAI, get_parent().current_bps, target_hit_obj.timing)
+			update_mascot(Mascot.SPRITETYPES.KIAI, Global.get_root().timing_clock.get_bps(), target_hit_obj.timing)
 	else:
 		if mascot.current_state != mascot.SPRITETYPES.IDLE:
-			update_mascot(Mascot.SPRITETYPES.IDLE, get_parent().current_bps, target_hit_obj.timing)
+			update_mascot(Mascot.SPRITETYPES.IDLE, Global.get_root().timing_clock.get_bps(), target_hit_obj.timing)
 	
 	if toast_values.has(score.current_combo):
 		mascot.toast()

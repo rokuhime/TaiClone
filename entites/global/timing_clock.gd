@@ -5,7 +5,7 @@ class_name TimingClock
 # far more precise and accurate than the built-in AudioStreamPlayer.get_playback_position()
 # using BeatSyncronizers, you can get signals when a beat activates
 
-var bps: float # beat length
+var bpm: float # beat length
 var current_time: float
 var start_time: float
 var in_kiai := false
@@ -24,7 +24,7 @@ signal play_music(start_time: float)
 
 func _process(delta) -> void:
 	if pause_time != -1.0:
-		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbps: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bps, music_playing, child_beatsyncs]
+		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bpm, music_playing, child_beatsyncs]
 		return
 	
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset
@@ -33,7 +33,7 @@ func _process(delta) -> void:
 		# if the next audio mix will put the time equal to or over when it needs to play...
 		try_play_music()
 	
-	info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbps: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bps, music_playing, child_beatsyncs]
+	info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bpm, music_playing, child_beatsyncs]
 
 # -------- playback --------
 
@@ -68,21 +68,8 @@ func change_pause_state(is_paused) -> void:
 
 # -------- data --------
 
-func apply_data(new_bps: float, new_start_time = null) -> TimingClock:
-	bps = new_bps
-	if typeof(new_start_time) == TYPE_FLOAT:
-		start_time = new_start_time
-	else:
-		start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency()
-	
-	if current_time + AudioServer.get_time_to_next_mix() >= 0:
-		play_music.emit(current_time + AudioServer.get_time_to_next_mix())
-	
-	update_beatsyncs.emit(TimingPoint)
-	return self
-
 func apply_timing_point(timing_point: TimingPoint) -> void:
-	bps = 60.0 / timing_point.bpm
+	bpm = timing_point.bpm
 	if timing_point.is_finisher != in_kiai:
 		in_kiai = timing_point.is_finisher
 
@@ -93,6 +80,9 @@ func make_beat_syncronizer(meter: int) -> BeatSyncronizer:
 
 # -------- etc --------
 
+func get_bps() -> float:
+	return 60.0 / bpm
+
 # checks if current_time - offsets + time to next mix will be when the audio plays
 func try_play_music() -> void:
 	if current_time + Global.global_offset + AudioServer.get_time_to_next_mix() >= 0:
@@ -100,7 +90,7 @@ func try_play_music() -> void:
 		play_music.emit(current_time + Global.global_offset + AudioServer.get_time_to_next_mix())
 
 func reset() -> void:
-	bps = 0.0
+	bpm = 0.0
 	current_time = 0.0
 	start_time = 0.0
 
