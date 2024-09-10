@@ -19,6 +19,7 @@ var gamestate_scenes := [
 var blackout_lock := false
 
 # persisting data
+@onready var timing_clock: TimingClock = $TimingClock
 var current_chart: Chart
 @onready var music: AudioStreamPlayer = $Music
 @onready var background := $Background

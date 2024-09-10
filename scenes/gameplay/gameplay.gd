@@ -20,6 +20,7 @@ const SPINNER_GAMEPLAY_POS := Vector2(69, 425)
 var enabled_mods := []
 var score_instance := ScoreData.new()
 
+var clock: TimingClock
 var current_time := 0.0
 var start_time := 0.0
 var first_hobj_timing := 0.0
@@ -70,6 +71,8 @@ func _ready() -> void:
 	
 	music = Global.get_root().music
 	music.stop()
+	
+	clock = Global.get_root().timing_clock
 
 func _process(_delta) -> void:
 	if playing:
@@ -265,8 +268,13 @@ func play_chart() -> void:
 	start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency()
 	
 	# delay the chart if first note is less than 2 seconds into the song
+	var start_offset := 0.0
+	
 	if first_hobj_timing < 2.0:
+		start_offset += 2.0 - first_hobj_timing
 		start_time += 2.0 - first_hobj_timing
+	
+	clock.start(start_offset)
 	
 	# ensure the current_time is set correctly before starting chart playback
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset 
@@ -303,10 +311,14 @@ func skip_intro() -> void:
 	var first_hit_object = current_chart.get_first_hitobject()
 	
 	start_time -= first_hit_object.timing - 2.0 - current_time
+	clock.start_time -= first_hit_object.timing - 2.0 - current_time
+	
 	music.seek(first_hit_object.timing - 2.0)
 	game_overlay.mascot.anim_start_time -= first_hit_object.timing - 2.0 - current_time
 
 func change_pause_state(is_paused: bool) -> void:
+	clock.change_pause_state(is_paused)
+	
 	playing = not is_paused
 	music.stream_paused = is_paused
 	pause_overlay.visible = is_paused
@@ -427,6 +439,8 @@ func auto_hit_check(target_hobj: HitObject) -> bool:
 	return false
 
 func apply_timing_point(timing_point: TimingPoint, current_time: float) -> void:
+	clock.apply_timing_point(timing_point)
+	
 	current_bps = 60.0 / timing_point.bpm
 	if timing_point.is_finisher != in_kiai:
 		in_kiai = timing_point.is_finisher

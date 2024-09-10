@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b1x0cuqexagsr"]
+[gd_scene load_steps=11 format=3 uid="uid://b1x0cuqexagsr"]
 
 [ext_resource type="Script" path="res://scenes/root.gd" id="1_djqkq"]
 [ext_resource type="Texture2D" uid="uid://bnx8q2yosh5qg" path="res://assets/textures/dev_art/background.png" id="2_ii7io"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://xpu07bjkfiy8" path="res://entites/global/navigation_bars/navigation_bars.tscn" id="5_wb84j"]
 [ext_resource type="Script" path="res://utility/audio/audio_queuer.gd" id="6_6gusu"]
 [ext_resource type="Script" path="res://entites/database_manager.gd" id="8_s0wf3"]
+[ext_resource type="Script" path="res://entites/global/timing_clock.gd" id="8_yykfi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0kmvs"]
 bg_color = Color(0, 0, 0, 0.607843)
@@ -22,6 +23,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_djqkq")
+metadata/_edit_lock_ = true
 
 [node name="DatabaseManager" type="Node" parent="." groups=["DatabaseManager"]]
 script = ExtResource("8_s0wf3")
@@ -29,9 +31,6 @@ script = ExtResource("8_s0wf3")
 [node name="AudioQueuer" type="Node2D" parent="."]
 script = ExtResource("6_6gusu")
 audio_players = 10
-
-[node name="MusicStartTimer" type="Timer" parent="."]
-one_shot = true
 
 [node name="Music" type="AudioStreamPlayer" parent="." groups=["RootMusic"]]
 bus = &"Music"
@@ -50,6 +49,7 @@ stretch_mode = 6
 
 [node name="NavigationBars" parent="." instance=ExtResource("5_wb84j")]
 layout_mode = 1
+metadata/_edit_lock_ = true
 
 [node name="SettingsPanel" parent="." instance=ExtResource("5_jiurb")]
 visible = false
@@ -100,5 +100,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
+
+[node name="TimingClock" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_yykfi")
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="TimingClock"]
+z_index = 10
+layout_mode = 0
+offset_right = 427.0
+offset_bottom = 338.0
 
 [connection signal="finished" from="Music" to="." method="on_music_end"]
