@@ -25,7 +25,6 @@ var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
 
 var playing := false
-var in_kiai := false
 
 # Input
 enum SIDE { NONE, LEFT, RIGHT }
@@ -406,7 +405,7 @@ func auto_hit_check(target_hobj: HitObject) -> bool:
 func apply_timing_point(timing_point: TimingPoint, time: float) -> void:
 	clock.apply_timing_point(timing_point)
 	
-	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if in_kiai else Mascot.SPRITETYPES.IDLE, 
+	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if timing_point.is_finisher else Mascot.SPRITETYPES.IDLE, 
 								60.0 / timing_point.bpm, 
 								timing_point.timing - time)
 

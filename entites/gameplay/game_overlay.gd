@@ -27,7 +27,6 @@ var late_colour := Color("ff8a8a")
 var early_colour := Color("8aa7ff")
 
 var toast_values := [50,100,150,200,250,500,1000]
-var in_kiai := false
 
 # -------- visual updates --------
 
@@ -125,7 +124,7 @@ func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: Hi
 	elif typeof(hit_time_difference) == TYPE_FLOAT and (hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC):
 		update_inacc_indicator(hit_time_difference)
 	
-	if get_parent().in_kiai:
+	if Global.get_root().timing_clock.in_kiai:
 		if mascot.current_state != mascot.SPRITETYPES.KIAI:
 			update_mascot(Mascot.SPRITETYPES.KIAI, Global.get_root().timing_clock.get_bps(), target_hit_obj.timing)
 	else:
