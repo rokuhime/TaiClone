@@ -39,7 +39,7 @@ func _process(delta) -> void:
 		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nin_kiai: %s\nchild_beatsyncs: %s"  % [start_time, current_time, pause_time, bpm, in_kiai, child_beatsyncs]
 		return
 	
-	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset
+	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset - local_offset
 	
 	if not music_playing:
 		try_play_music()
@@ -79,9 +79,9 @@ func change_pause_state(is_paused) -> void:
 
 # checks if (current_time without offsets) + (time to next mix) will be past 0, when the audio must be playing
 func try_play_music() -> void:
-	if current_time + Global.global_offset + AudioServer.get_time_to_next_mix() >= 0:
+	if (Time.get_ticks_msec() / 1000.0) - start_time + AudioServer.get_time_to_next_mix() >= 0:
 		music_playing = true
-		play_music.emit(current_time + Global.global_offset + local_offset + AudioServer.get_time_to_next_mix())
+		play_music.emit((Time.get_ticks_msec() / 1000.0) - start_time + AudioServer.get_time_to_next_mix())
 
 # -------- data --------
 
@@ -113,7 +113,6 @@ func reset() -> void:
 
 	bpm = 0.0
 	in_kiai = false
-	local_offset = 0.0
 	
 	music_playing = false
 

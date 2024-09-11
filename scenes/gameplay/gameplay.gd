@@ -45,7 +45,6 @@ var katfinisher_audio := preload("res://assets/default_skin/hf_kat.wav") as Audi
 # Offset
 @onready var offset_panel := $OffsetPanel
 const OFFSET_INCREASE := 0.005
-var local_offset := 0.0
 
 # -------- system --------
 
@@ -179,9 +178,9 @@ func _unhandled_input(event) -> void:
 # -------- offset handling --------
 
 func adjust_offset(value: float) -> float:
-	local_offset += value
-	offset_panel.change_offset_text(local_offset)
-	return local_offset
+	clock.local_offset += value
+	offset_panel.change_offset_text(clock.local_offset)
+	return clock.local_offset
 
 func save_local_offset(_active := false) -> void:
 	# _active only here so on_active_changed can work properly
@@ -190,11 +189,11 @@ func save_local_offset(_active := false) -> void:
 	
 	var chart_settings_entries: Array = Global.database_manager.get_db_entries_by_id("chart_settings", current_chart.chart_info["id"])
 	if chart_settings_entries:
-		chart_settings_entries[0]["local_offset"] = local_offset
+		chart_settings_entries[0]["local_offset"] = clock.local_offset
 	else:
-		chart_settings_entries.append({"id": current_chart.chart_info["id"], "hash": current_chart.hash, "local_offset": local_offset, "collections": 0})
+		chart_settings_entries.append({"id": current_chart.chart_info["id"], "hash": current_chart.hash, "local_offset": clock.local_offset, "collections": 0})
 	Global.database_manager.update_db_entry("chart_settings", chart_settings_entries[0])
-	Global.push_console("Gameplay", "Saved local offset: %s" % local_offset)
+	Global.push_console("Gameplay", "Saved local offset: %s" % clock.local_offset)
 
 # -------- chart playback --------
 
@@ -211,7 +210,9 @@ func load_chart(requested_chart: Chart) -> void:
 	if chart_settings:
 		if chart_settings[0]["hash"] == current_chart.hash:
 			Global.push_console("Gameplay", "Found chart settings! Offset: %s" % chart_settings[0]["local_offset"])
-			local_offset = chart_settings[0]["local_offset"]
+			clock.local_offset = chart_settings[0]["local_offset"]
+		else:
+			clock.local_offset = 0
 	
 	# add all hit objects to container
 	for hobj in requested_chart.hit_objects:
