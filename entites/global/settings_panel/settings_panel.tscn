@@ -310,6 +310,13 @@ text = "Etc."
 label_settings = SubResource("LabelSettings_xg8nn")
 horizontal_alignment = 1
 
+[node name="DisplayVersion" type="CheckBox" parent="ScrollContainer/VBoxContainer/Etc"]
+layout_mode = 2
+size_flags_horizontal = 4
+button_pressed = true
+text = " Display Version"
+alignment = 1
+
 [node name="DisplayClockInfo" type="CheckBox" parent="ScrollContainer/VBoxContainer/Etc"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -347,5 +354,6 @@ text = " Barline Limit"
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ChangeSkinButton" to="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ChangeSkinButton/FileDialog" method="show"]
 [connection signal="dir_selected" from="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ChangeSkinButton/FileDialog" to="." method="set_skin"]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/Skin/HBoxContainer/ResetButton" to="." method="set_skin" binds= [""]]
+[connection signal="toggled" from="ScrollContainer/VBoxContainer/Etc/DisplayVersion" to="." method="toggle_oneoff" binds= [0]]
 [connection signal="toggled" from="ScrollContainer/VBoxContainer/Etc/DisplayClockInfo" to="." method="toggle_oneoff" binds= [1]]
-[connection signal="toggled" from="ScrollContainer/VBoxContainer/Etc/BarlineLimit/Checkbox" to="." method="toggle_oneoff" binds= [0]]
+[connection signal="toggled" from="ScrollContainer/VBoxContainer/Etc/BarlineLimit/Checkbox" to="." method="toggle_oneoff" binds= [2]]

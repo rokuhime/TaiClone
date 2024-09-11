@@ -52,7 +52,6 @@ layout_mode = 1
 metadata/_edit_lock_ = true
 
 [node name="SettingsPanel" parent="." instance=ExtResource("5_jiurb")]
-visible = false
 z_index = 4
 layout_mode = 1
 
@@ -66,7 +65,7 @@ offset_top = -380.0
 offset_bottom = -120.0
 grow_vertical = 0
 
-[node name="CornerInfo" type="PanelContainer" parent="."]
+[node name="VersionInfo" type="PanelContainer" parent="."]
 z_index = 5
 layout_mode = 1
 anchors_preset = 3
@@ -82,7 +81,7 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_0kmvs")
 
-[node name="Label" type="Label" parent="CornerInfo"]
+[node name="Label" type="Label" parent="VersionInfo"]
 layout_mode = 2
 text = "TaiClone v1.0
 FPS: 100"

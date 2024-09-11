@@ -14,6 +14,8 @@ var gamestate_scenes := [
 	load("res://scenes/results/results.tscn")
 ]
 
+@onready var options_panel := $SettingsPanel
+
 # transitions
 @onready var blackout_overlay := $BlackoutOverlay
 var blackout_lock := false
@@ -28,8 +30,7 @@ var default_background = preload("res://assets/textures/dev_art/background.png")
 
 # info
 @onready var navigation_bars: NavigationBars = $NavigationBars
-@onready var corner_info: Control = $CornerInfo
-var corner_info_tween: Tween
+@onready var version_info: Control = $VersionInfo
 
 # -------- system --------
 
@@ -47,11 +48,23 @@ func _ready():
 
 func _process(delta):
 	# set corner info text and ensure the position is correct
-	corner_info.get_child(0).text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
-	var buffer := size.x - (corner_info.position.x + corner_info.size.x) # distance between corner_info and the very right side of the screen
-	var corner_info_pos_y: float = navigation_bars.get_node("Bottom").position.y - corner_info.size.y - buffer
-	if corner_info.position.y != corner_info_pos_y:
-		corner_info.position.y = corner_info_pos_y
+	version_info.get_child(0).text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
+	
+	if Global.display_version:
+		if not version_info.visible:
+			version_info.visible = true
+		
+		var buffer := 8
+		var version_info_pos := Vector2(
+			options_panel.position.x - version_info.size.x - buffer,
+			navigation_bars.get_node("Bottom").position.y - version_info.size.y - buffer
+		)
+	
+		if version_info.position != version_info_pos:
+			version_info.position = version_info_pos
+	
+	elif not Global.display_version and version_info.visible:
+		version_info.visible = false
 
 # -------- changing states --------
 

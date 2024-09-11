@@ -4,8 +4,6 @@ extends Panel
 @onready var player_name_edit := $ScrollContainer/VBoxContainer/Login/LineEdit
 @onready var chart_path_changer: ChartPathChanger = $ScrollContainer/VBoxContainer/ChartPathChanger
 @onready var keybind_list := $ScrollContainer/VBoxContainer/KeybindList
-@onready var barline_limit_checkbox := $ScrollContainer/VBoxContainer/Etc/BarlineLimit/Checkbox
-@onready var display_clockinfo_checkbox := $ScrollContainer/VBoxContainer/Etc/DisplayClockInfo
 @onready var skin_vbox := $ScrollContainer/VBoxContainer/Skin
 
 var is_visible := false
@@ -24,8 +22,9 @@ func _ready() -> void:
 	# load existing settings
 	chart_path_changer.refresh_paths()
 	player_name_edit.text = Global.player_name
-	barline_limit_checkbox.button_pressed = Global.limit_barlines
-	display_clockinfo_checkbox.button_pressed = Global.display_clocktiming_info
+	$ScrollContainer/VBoxContainer/Etc/DisplayVersion.button_pressed = Global.display_version
+	$ScrollContainer/VBoxContainer/Etc/DisplayClockInfo.button_pressed = Global.display_clocktiming_info
+	$ScrollContainer/VBoxContainer/Etc/BarlineLimit/Checkbox.button_pressed = Global.limit_barlines
 	
 	# check skin. if its valid (file_path exists), set data. otherwise, assume its default
 	if Global.current_skin.file_path:
@@ -177,7 +176,9 @@ func open_converted_charts_folder() -> void:
 
 func toggle_oneoff(new_value: bool, index: int) -> void:
 	match index:
-		0: # barline limit
-			Global.limit_barlines = new_value
+		0: # version info
+			Global.display_version = new_value
 		1: # clocktiming info
 			Global.display_clocktiming_info = new_value
+		2: # barline limit
+			Global.limit_barlines = new_value
