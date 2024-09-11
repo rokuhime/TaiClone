@@ -21,10 +21,11 @@ const MISS_TIMING := 0.12
 
 var resolution_multiplier = 4.0
 var global_offset := 0.0
-var limit_barlines := true
 
+var limit_barlines := true
 # lowest level of priority that will appear to console
 var console_filter := -2
+var display_clocktiming_info := false
 
 var current_skin := SkinManager.new()
 

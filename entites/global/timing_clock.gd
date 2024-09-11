@@ -30,6 +30,11 @@ signal play_music(start_time: float)
 # -------- system --------
 
 func _process(delta) -> void:
+	if Global.display_clocktiming_info and not info.visible:
+		info.visible = true
+	elif not Global.display_clocktiming_info and info.visible:
+		info.visible = false
+	
 	if pause_time != -1.0:
 		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nin_kiai: %s\nchild_beatsyncs: %s"  % [start_time, current_time, pause_time, bpm, in_kiai, child_beatsyncs]
 		return
