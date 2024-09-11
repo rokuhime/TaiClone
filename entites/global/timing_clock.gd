@@ -9,7 +9,9 @@ var current_time: float
 var start_time: float
 # if pause_time == -1.0, its unpaused
 var pause_time := 0.0
+
 var bpm: float # beat length
+var meter: int
 
 # extras
 var in_kiai := false
@@ -29,7 +31,7 @@ signal play_music(start_time: float)
 
 func _process(delta) -> void:
 	if pause_time != -1.0:
-		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bpm, music_playing, child_beatsyncs]
+		info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nin_kiai: %s\nchild_beatsyncs: %s"  % [start_time, current_time, pause_time, bpm, in_kiai, child_beatsyncs]
 		return
 	
 	current_time = (Time.get_ticks_msec() / 1000.0) - start_time - Global.global_offset
@@ -37,7 +39,7 @@ func _process(delta) -> void:
 	if not music_playing:
 		try_play_music()
 	
-	info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nusic_playing: %s\nchild_beatsyncs: %s" % [start_time, current_time, pause_time, bpm, music_playing, child_beatsyncs]
+	info.text = "start_time: %s\ncurrent_time: %s\npause_time: %s\nbpm: %s\nin_kiai: %s\nchild_beatsyncs: %s"  % [start_time, current_time, pause_time, bpm, in_kiai, child_beatsyncs]
 
 # -------- playback --------
 
@@ -80,10 +82,19 @@ func try_play_music() -> void:
 
 func apply_timing_point(timing_point: TimingPoint) -> void:
 	bpm = timing_point.bpm
+	meter = timing_point.meter
 	if timing_point.is_finisher != in_kiai:
 		in_kiai = timing_point.is_finisher
+	
+	var beatsync_start := timing_point.timing
+	if current_time < 0:
+		while beatsync_start > current_time:
+			beatsync_start -= get_bps() / 4.0
+	
+	for bs in child_beatsyncs:
+		bs.next_beat_time = beatsync_start
 
-func make_beat_syncronizer(meter: int) -> BeatSyncronizer:
+func make_beat_syncronizer(meter := -1) -> BeatSyncronizer:
 	var new_beatsync := BeatSyncronizer.new(self, meter)
 	child_beatsyncs.append(new_beatsync)
 	return new_beatsync
@@ -100,7 +111,7 @@ func reset() -> void:
 	local_offset = 0.0
 	
 	music_playing = false
-	child_beatsyncs = []
 
 func get_bps() -> float:
-	return 60.0 / bpm
+	var bps = 60.0 * meter / bpm
+	return bps if bpm != 0 else 0

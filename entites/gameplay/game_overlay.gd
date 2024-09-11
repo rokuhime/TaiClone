@@ -33,17 +33,13 @@ var toast_values := [50,100,150,200,250,500,1000]
 func update_mascot(animation: Mascot.SPRITETYPES, new_bps: float, update_time := 0.0) -> void:
 	match animation:
 		Mascot.SPRITETYPES.FAIL:
-			mascot.start_animation(mascot.SPRITETYPES.FAIL, new_bps)
+			mascot.start_animation(mascot.SPRITETYPES.FAIL)
 		
 		Mascot.SPRITETYPES.IDLE:
-			mascot.start_animation(mascot.SPRITETYPES.IDLE, 
-				new_bps, 
-				update_time)
+			mascot.start_animation(mascot.SPRITETYPES.IDLE)
 		
 		Mascot.SPRITETYPES.KIAI:
-			mascot.start_animation(mascot.SPRITETYPES.KIAI, 
-				new_bps, 
-				update_time)
+			mascot.start_animation(mascot.SPRITETYPES.KIAI)
 
 # updates progress bar, done every _process() call under gameplay
 func update_progress(cur_time: float, first_hobj_time: float, last_hobj_time: float) -> void:

@@ -114,9 +114,12 @@ script = ExtResource("8_yykfi")
 metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="TimingClock"]
+visible = false
 z_index = 10
 layout_mode = 0
-offset_right = 427.0
-offset_bottom = 338.0
+offset_left = 8.0
+offset_top = 107.0
+offset_right = 435.0
+offset_bottom = 445.0
 
 [connection signal="finished" from="Music" to="." method="on_music_end"]

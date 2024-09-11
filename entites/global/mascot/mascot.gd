@@ -16,7 +16,8 @@ var current_state: SPRITETYPES
 
 var anim_start_time := 0.0
 var current_frame := 0
-var bps := 2.0 # beats per second
+
+var beatsync: BeatSyncronizer
 
 var toast_framerate := 0.2
 var toast_lock := false
@@ -24,33 +25,20 @@ var next_change_time := 0.0
 
 # -------- system --------
 
-# TODO: mascot spasms out sometimes, diagnose with the print statement
-func _process(delta) -> void:
-	# if we are mid toast, ignore texture updates
-	if toast_lock:
-		return
-	
-	var time = (Time.get_ticks_msec() / 1000.0) - Global.global_offset - anim_start_time
-	if time >= next_change_time:
-		var total_frames: int = sprites[int(current_state)].size()
-		current_frame = (current_frame + 1) % total_frames
-		update_frame()
-		
-		next_change_time += bps
+func _ready() -> void:
+	beatsync = Global.get_root().timing_clock.make_beat_syncronizer()
+	beatsync.beat.connect(update_frame)
+	add_child(beatsync)
 
 # -------- animation --------
 
 # restart the current animation cycle and update sprite to match the given state
-func start_animation(state: SPRITETYPES, new_bps := bps, delay := 0) -> void:
-	# update the anim_start_time to ensure it syncs properly
-	anim_start_time = Time.get_ticks_msec() / 1000.0 + AudioServer.get_output_latency() - delay
-	next_change_time = 0.0
+func start_animation(state: SPRITETYPES, delay := 0) -> void:
 	# update and reset sprite
 	current_state = state
 	current_frame = 0
-	bps = new_bps
 	
-	#update_frame()
+	update_frame()
 
 func toast() -> void:
 	toast_lock = true
@@ -64,6 +52,11 @@ func toast() -> void:
 
 # updates texture of TextureRect
 func update_frame() -> void:
+	if toast_lock:
+		return
+	
+	var total_frames: int = sprites[int(current_state)].size()
+	current_frame = (current_frame + 1) % total_frames
 	texture = sprites[int(current_state)][current_frame]
 
 func apply_skin(skin: SkinManager):

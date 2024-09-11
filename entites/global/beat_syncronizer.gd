@@ -1,27 +1,24 @@
+extends Node
 class_name BeatSyncronizer
 
 var clock: TimingClock
-var divisor: int
+var meter := -1 # -1 = get from clock
 
-var first_beat_time: float
-var next_beat_time: float
+var next_beat_time := 0.0
 
 signal beat()
 
 # -------- system --------
 
-func _init(new_timing_clock: TimingClock, new_divisor: int) -> void:
+func _init(new_timing_clock: TimingClock, new_meter: int) -> void:
 	clock = new_timing_clock
-	divisor = new_divisor
-	next_beat_time = clock.current_time + (clock.get_bps() / divisor)
+	meter = new_meter
 
 func _process(delta):
 	if clock.current_time >= next_beat_time:
 		beat.emit()
-		next_beat_time = clock.current_time + (clock.get_bps() / divisor) 
-	pass
+		next_beat_time += clock.get_bps() / 4.0
 
-# -------- data --------
-
-func update_from_timing_point(timing_point: TimingPoint) -> void:
-	first_beat_time = timing_point.timing
+func _notification(what):
+	if (what == NOTIFICATION_PREDELETE):
+		clock.child_beatsyncs.erase(self)
