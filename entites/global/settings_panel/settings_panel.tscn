@@ -100,7 +100,7 @@ text_overrun_behavior = 3
 [node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/LeftKat"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.75
+size_flags_stretch_ratio = 0.5
 
 [node name="LeftDon" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
 layout_mode = 2
@@ -120,7 +120,7 @@ text_overrun_behavior = 3
 [node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/LeftDon"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.75
+size_flags_stretch_ratio = 0.5
 
 [node name="RightDon" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
 layout_mode = 2
@@ -140,7 +140,7 @@ text_overrun_behavior = 3
 [node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/RightDon"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.75
+size_flags_stretch_ratio = 0.5
 
 [node name="RightKat" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
 layout_mode = 2
@@ -160,7 +160,52 @@ text_overrun_behavior = 3
 [node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/RightKat"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.75
+size_flags_stretch_ratio = 0.5
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer/KeybindList"]
+custom_minimum_size = Vector2(275, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="RemoveLocalOffset" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/KeybindList/RemoveLocalOffset"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Remove Local Offset"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/KeybindList/RemoveLocalOffset"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Input"
+text_overrun_behavior = 3
+
+[node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/RemoveLocalOffset"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="AddLocalOffset" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/KeybindList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/KeybindList/AddLocalOffset"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add Local Offset"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/KeybindList/AddLocalOffset"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Input"
+text_overrun_behavior = 3
+
+[node name="Control" type="Control" parent="ScrollContainer/VBoxContainer/KeybindList/AddLocalOffset"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
 
 [node name="ChartPathChanger" type="VBoxContainer" parent="ScrollContainer/VBoxContainer" groups=["ChartPathChanger"]]
 layout_mode = 2
@@ -344,6 +389,8 @@ text = " Barline Limit"
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/LeftDon/Button" to="." method="change_key" binds= ["LeftDon"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightDon/Button" to="." method="change_key" binds= ["RightDon"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RightKat/Button" to="." method="change_key" binds= ["RightKat"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/RemoveLocalOffset/Button" to="." method="change_key" binds= ["RemoveLocalOffset"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/KeybindList/AddLocalOffset/Button" to="." method="change_key" binds= ["AddLocalOffset"]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton" to="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" method="show"]
 [connection signal="dir_selected" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/AddButton/FileDialog" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="add_path" binds= [true]]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/ChartPathChanger/HBoxContainer/RemoveButton" to="ScrollContainer/VBoxContainer/ChartPathChanger" method="delete_selected_path"]

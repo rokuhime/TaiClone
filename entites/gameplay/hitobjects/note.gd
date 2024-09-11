@@ -16,7 +16,6 @@ func update_visual() -> void:
 	scale = Vector2.ONE * FINISHER_SCALE if is_finisher else Vector2.ONE
 
 func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
-	#print(current_time, " vs ", timing)
 	var result := HIT_RESULT.INVALID
 	
 	# if active and within early miss window

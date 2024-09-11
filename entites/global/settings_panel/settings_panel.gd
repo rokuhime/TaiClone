@@ -28,15 +28,13 @@ func _ready() -> void:
 	
 	# check skin. if its valid (file_path exists), set data. otherwise, assume its default
 	if Global.current_skin.file_path:
-		var info = Global.current_skin.info
-		info.append(Global.current_skin.file_path)
-		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777](%s)\n%s" % info
+		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777](%s)\n%s" % (Global.current_skin.info + [Global.current_skin.file_path])
 	else:
-		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s [color=777777]" % SkinManager.new().info
+		var info = SkinManager.new().info
+		info.pop_back()
+		skin_vbox.get_node("SkinInfo").text = "[font_size=16][center]%s - %s" % info
 	
-	for key in Global.GAMEPLAY_KEYS:
-		keychange_target = key
-		change_key(key)
+	set_keybinds_to_default() 
 	
 	await Global.get_root().ready
 	var navbars = Global.get_root().get_node("NavigationBars")
@@ -61,53 +59,21 @@ func _unhandled_input(event) -> void:
 	if not keychange_target.is_empty():
 		change_input_action(keychange_target, event)
 
-# -------- keybind changing --------
+# -------- visual --------
 
-func change_key(target := keychange_target) -> void:
-	if keychange_target.is_empty():
-		Global.change_focus(keybind_list)
-		keychange_target = target
-		keybind_list.get_node(target + "/Button").text = "..."
-		
-		# disconnecting signals sucks via code, so just delete the old and make a new
-		if keychange_timeout != null:
-			keychange_timeout.queue_free()
-		
-		# add timeout before it sets back to what it was
-		keychange_timeout = Timer.new()
-		add_child(keychange_timeout)
-		keychange_timeout.timeout.connect(Callable(self, "change_key"))
-		keychange_timeout.start(3)
+# toggle visibility of the panel with a lil sliding animation
+func toggle_visible() -> void:
+	is_visible = not is_visible
 	
-	elif keychange_target == target:
-		keybind_list.get_node(target + "/Button").text = InputMap.action_get_events(target)[0].as_text()
-		
-		keychange_target = ""
-		if keychange_timeout:
-			keychange_timeout.queue_free()
-		
-		await get_tree().process_frame
-		Global.change_focus()
-
-func change_input_action(input_name: String, new_binding: InputEvent, called_by_user := true):
-	# ensure the keychange target is correct
-	keychange_target = input_name
+	if movement_tween:
+		movement_tween.kill()
 	
-	if InputMap.action_get_events(input_name):
-		InputMap.action_erase_events(input_name)
-	
-	InputMap.action_add_event(input_name, new_binding)
-	change_key(keychange_target)
-	
-	if called_by_user:
-		Global.save_settings()
-
-func load_keybinds(keybinds) -> void:
-	await ready
-	for keybind in keybinds:
-		change_input_action(keybind, keybinds[keybind], false)
-
-# -------- etc --------
+	movement_tween = Global.create_smooth_tween(
+		self, 
+		"position:x", 
+		get_viewport_rect().size.x - size.x if is_visible else get_viewport_rect().size.x, 
+		0.5 
+	)
 
 func scale_for_navbars(navbar_enabled: bool, navbars: Control) -> void:
 	# change scale to give space to navbars
@@ -136,6 +102,72 @@ func scale_for_navbars(navbar_enabled: bool, navbars: Control) -> void:
 		0.5 
 	)
 
+# -------- keybind changing --------
+
+func get_changeable_binds() -> Array:
+	var binds := []
+	for node in $ScrollContainer/VBoxContainer/KeybindList.get_children():
+		if node is HBoxContainer:
+			binds.append(node.name)
+	
+	return binds
+
+# sets keybind button text to the current binding
+func set_keybinds_to_default() -> void:
+	for bind in get_changeable_binds():
+		keychange_target = bind
+		change_key(bind)
+
+func change_key(target := keychange_target) -> void:
+	if keychange_target.is_empty():
+		Global.change_focus(keybind_list)
+		keychange_target = target
+		keybind_list.get_node(target + "/Button").text = "..."
+		
+		# disconnecting signals sucks via code, so just delete the old and make a new
+		if keychange_timeout != null:
+			keychange_timeout.queue_free()
+		
+		# add timeout before it sets back to what it was
+		keychange_timeout = Timer.new()
+		add_child(keychange_timeout)
+		keychange_timeout.timeout.connect(Callable(self, "change_key"))
+		keychange_timeout.start(3)
+		
+		return
+	
+	elif keychange_target == target:
+		keybind_list.get_node(target + "/Button").text = InputMap.action_get_events(target)[0].as_text()
+		
+		keychange_target = ""
+		if keychange_timeout:
+			keychange_timeout.queue_free()
+		
+		await get_tree().process_frame
+		Global.change_focus()
+
+# changes corresponding InputMap event to new_binding
+func change_input_action(input_name: String, new_binding: InputEvent, called_by_user := true):
+	# ensure the keychange target is correct
+	keychange_target = input_name
+	
+	if InputMap.action_get_events(input_name):
+		InputMap.action_erase_events(input_name)
+	
+	InputMap.action_add_event(input_name, new_binding)
+	change_key(keychange_target)
+	
+	if called_by_user:
+		Global.save_settings()
+
+func load_keybinds(keybinds) -> void:
+	await ready
+	for keybind in keybinds:
+		if InputMap.action_get_events(keybind):
+			change_input_action(keybind, keybinds[keybind], false)
+
+# -------- setting vars --------
+
 func set_skin(directory: String) -> void:
 	Global.current_skin = SkinManager.new(directory)
 	await get_tree().process_frame
@@ -146,33 +178,10 @@ func set_skin(directory: String) -> void:
 	
 	Global.save_settings()
 
-# toggle visibility of the panel with a lil sliding animation
-func toggle_visible() -> void:
-	is_visible = not is_visible
-	
-	if movement_tween:
-		movement_tween.kill()
-	
-	movement_tween = Global.create_smooth_tween(
-		self, 
-		"position:x", 
-		get_viewport_rect().size.x - size.x if is_visible else get_viewport_rect().size.x, 
-		0.5 
-	)
-
 func change_player_name(new_name: String) -> void:
 	Global.player_name = new_name
 	Global.save_settings()
 	Global.change_focus()
-
-# bridge to connect signals from objects on the SettingsPanel to Global
-func update_focus(new_target: Node) -> void:
-	Global.change_focus_state(new_target)
-
-# attempts to open converted charts location, and prints filepath in console
-func open_converted_charts_folder() -> void:
-	OS.shell_open(ProjectSettings.globalize_path(Global.CONVERTED_CHART_FOLDER))
-	Global.push_console("SettingsPanel", "ConvertedCharts directory: \n%s" % ProjectSettings.globalize_path(Global.CONVERTED_CHART_FOLDER))
 
 func toggle_oneoff(new_value: bool, index: int) -> void:
 	match index:
@@ -182,3 +191,14 @@ func toggle_oneoff(new_value: bool, index: int) -> void:
 			Global.display_clocktiming_info = new_value
 		2: # barline limit
 			Global.limit_barlines = new_value
+
+# -------- etc --------
+
+# bridge to connect signals from objects on the SettingsPanel to Global
+func update_focus(new_target: Node) -> void:
+	Global.change_focus_state(new_target)
+
+# attempts to open converted charts location, and prints filepath in console
+func open_converted_charts_folder() -> void:
+	OS.shell_open(ProjectSettings.globalize_path(Global.CONVERTED_CHART_FOLDER))
+	Global.push_console("SettingsPanel", "ConvertedCharts directory: \n%s" % ProjectSettings.globalize_path(Global.CONVERTED_CHART_FOLDER))

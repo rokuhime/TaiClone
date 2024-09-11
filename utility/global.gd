@@ -63,8 +63,8 @@ func save_settings() -> void:
 	for bus_index in AudioServer.bus_count:
 		config_file.set_value("Audio", AudioServer.get_bus_name(bus_index), db_to_linear(AudioServer.get_bus_volume_db(bus_index)))
 	
-	for key in Global.GAMEPLAY_KEYS:
-		config_file.set_value("Keybinds", key, InputMap.action_get_events(key)[0])
+	for bind in settings_panel.get_changeable_binds():
+		config_file.set_value("Keybinds", bind, InputMap.action_get_events(bind)[0])
 	
 	# save file
 	var err = config_file.save("user://settings.cfg")
