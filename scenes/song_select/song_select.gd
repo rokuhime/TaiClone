@@ -131,20 +131,40 @@ func refresh_from_database() -> void:
 	for db_entry in db_charts:
 		var chart = DatabaseManager.db_entry_to_chart(db_entry)
 		
-		if chart:
-			# ensure were not making a duplicate listing before adding
-			# since not found == -1, add 1 to treat it as a boolean
-			if not bool(find_listing_by_chart(chart) + 1):
-				Global.push_console("SongSelect", "creating listing for %s - %s [%s]" % [
-					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-					-2)
-				create_listing(chart)
-				continue
-			# if a duplicate listing is found...
-			Global.push_console("SongSelect", "ignoring duplicate chart: %s - %s [%s]" % [
-				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 1)
+		if not chart:
+			Global.push_console("SongSelect", "corrupted/null chart: %s - %s [%s]" % [
+				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 
+				2)
 			continue
-		Global.push_console("SongSelect", "corrupted/null chart: %s - %s [%s]" % [chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 2)
+		
+		# ensure were not making a duplicate listing before adding
+		# since not found == -1, add 1 to treat it as a boolean
+		if bool(find_listing_by_chart(chart) + 1):
+			Global.push_console("SongSelect", "ignoring duplicate chart: %s - %s [%s]" % [
+				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 
+				1)
+			continue
+		
+		# get the chart version, update it if out of date
+		if ChartLoader.get_tc_version(db_entry["file_path"]) != ChartLoader.TC_VERSION:
+			Global.push_console("SongSelect", "converted chart is outdated, updating: %s - %s [%s]" % [
+				chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]], 
+			1)
+			var origin_path: String = db_entry["origin_path"]
+			var tc_path: String = db_entry["file_path"]
+			
+			# remove old .tc and remake
+			DirAccess.remove_absolute(tc_path)
+			chart = ChartLoader.get_tc_metadata(ChartLoader.get_chart_path(origin_path))
+			chart.chart_info["id"] = db_entry["id"]
+			Global.database_manager.update_chart(chart)
+			
+			Global.push_console("SongSelect", "chart updated!", 0)
+		
+		Global.push_console("SongSelect", "creating listing for %s - %s [%s]" % [
+			chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+			-2)
+		create_listing(chart)
 		continue
 	
 	Global.push_console("SongSelect", "done creating listings!", 0)

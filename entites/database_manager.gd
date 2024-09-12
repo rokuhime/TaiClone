@@ -90,15 +90,25 @@ func get_all_charts() -> Array:
 	db.query("select * from charts")
 	return db.query_result
 
-func update_chart(chart: Chart) -> void:
-	var existing_entry := get_db_entry(chart)
-	if not existing_entry.is_empty():
-		db.update_rows("charts", "id = %s" % get_db_entry(chart)["id"], DatabaseManager.chart_to_db_entry(chart))
-		Global.push_console("DatabaseManager", "Updated entry for %s - %s [%s]" % [
-						chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
-						-2)
-		return
-	add_db_entry("charts", DatabaseManager.chart_to_db_entry(chart))
+func update_chart(chart: Chart, chart_id := -1) -> void:
+	if chart_id == -1: 
+		if chart.chart_info.keys().has("id"):
+			chart_id = chart.chart_info["id"]
+		
+		else: # try to fetch id from an existing entry
+			var existing_entry := get_db_entry(chart)
+			if not existing_entry: # if db entry doesnt exist, assume its new
+				add_db_entry("charts", DatabaseManager.chart_to_db_entry(chart))
+				return
+			# id found, set it and continue like normal
+			chart_id = existing_entry["id"]
+	
+	db.update_rows("charts", "id = %s" % chart_id, 
+		DatabaseManager.chart_to_db_entry(chart)
+	)
+	Global.push_console("DatabaseManager", "Updated entry for %s - %s [%s]" % [
+					chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
+					-2)
 
 func exists_in_db(chart: Chart) -> bool:
 	db.query_with_bindings("select * from charts where hash = ?", [chart.hash])

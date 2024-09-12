@@ -1,6 +1,6 @@
 class_name ChartLoader
 
-# TODO: change loading functions to be one big easy one with options maybe?
+# TODO: condense loading functions to be one function with options maybe?
 # bools for metadata, timing points, notes
 
 # stupid notes to roku
@@ -422,6 +422,18 @@ static func get_object_string(data: Array) -> String:
 		intended_str += line.substr(0, line.length() - 2) + "\n"
 	
 	return intended_str
+
+static func get_tc_version(file_path: String) -> String:
+	var file := FileAccess.open(file_path, FileAccess.READ)
+	var version := ""
+	if !file:
+		Global.push_console("ChartLoader", "Bad file provided for get_tc_version: " % file_path, 2)
+		return version
+	
+	var first_line := file.get_line().strip_edges()
+	if first_line.begins_with("TaiClone Chart "):
+		version = first_line.trim_prefix("TaiClone Chart ")
+	return version
 
 static func generate_hit_object(type: NOTETYPE, line_data, timing_data) -> HitObject:
 	var ex_vars := []
