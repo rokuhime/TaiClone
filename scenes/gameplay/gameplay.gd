@@ -3,8 +3,8 @@ extends Control
 
 # Core
 var current_chart : Chart # this is a bit silly considering root.current_chart, but its used frequently enough to rationalize
-@onready var hit_object_container := $Track/HitPoint/HitObjectContainer
 var music: AudioStreamPlayer # TODO: change to Global.get_root().music
+@onready var hit_object_container := $Track/HitPoint/HitObjectContainer
 
 # UI
 @onready var pause_overlay := $PauseOverlay
@@ -25,6 +25,10 @@ var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
 
 var playing := false
+var restart_count := 0
+@onready var restart_timer: Timer = $RestartTimer
+@onready var restart_overlay: ColorRect = $RestartOverlay
+var restart_tween: Tween
 
 # Input
 enum SIDE { NONE, LEFT, RIGHT }
@@ -138,7 +142,19 @@ func _unhandled_input(event) -> void:
 		skip_intro()
 	
 	if Input.is_action_just_pressed("Retry"):
-		restart_chart()
+		restart_timer.start()
+		
+		if restart_tween:
+			restart_tween.kill()
+		restart_tween = restart_overlay.create_tween()
+		restart_tween.tween_property(restart_overlay, "modulate:a", 1.0, restart_timer.wait_time)
+	
+	elif Input.is_action_just_released("Retry"):
+		restart_timer.stop()
+		
+		if restart_tween:
+			restart_tween.kill()
+		restart_tween = Global.create_smooth_tween(restart_overlay, "modulate:a", 0.0, 0.1)
 	
 	# actual rhythm game input
 	if event is InputEventKey or InputEventJoypadButton and event.is_pressed():
@@ -265,6 +281,8 @@ func play_chart() -> void:
 	playing = true
 
 func restart_chart() -> void:
+	restart_count += 1
+	
 	playing = false
 	pause_overlay.visible = false
 	
@@ -281,6 +299,11 @@ func restart_chart() -> void:
 	
 	score.reset()
 	game_overlay.update_visuals(score)
+	
+	if restart_tween:
+		restart_tween.kill()
+		restart_tween = restart_overlay.create_tween()
+		restart_tween.tween_property(restart_overlay, "modulate:a", 0.0, 0.2)
 	
 	await get_tree().process_frame
 	play_chart()
