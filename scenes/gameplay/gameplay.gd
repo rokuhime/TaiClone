@@ -18,7 +18,7 @@ const SPINNER_GAMEPLAY_POS := Vector2(69, 425)
 
 # Data
 var enabled_mods := []
-var score_instance := ScoreData.new()
+var score := ScoreData.new()
 
 var clock: TimingClock
 var first_hobj_timing := 0.0
@@ -49,9 +49,9 @@ const OFFSET_INCREASE := 0.005
 # -------- system --------
 
 func _ready() -> void:
-	score_instance.combo_break.connect(game_overlay.on_combo_break)
+	score.combo_break.connect(game_overlay.on_combo_break)
 	pause_overlay.get_node("VBoxContainer/Quit").pressed.connect(
-		Global.get_root().change_to_results.bind(score_instance)
+		Global.get_root().change_to_results.bind(score)
 	)
 	
 	# TODO: replace this with it being provided from root
@@ -72,7 +72,7 @@ func _process(_delta) -> void:
 		
 		# chart end check
 		if clock.current_time >= last_hobj_timing + 1:
-			Global.get_root().change_to_results(score_instance)
+			Global.get_root().change_to_results(score)
 		
 		# move all hitobjects
 		for hobj in hit_object_container.get_children():
@@ -239,12 +239,12 @@ func play_chart() -> void:
 	# error checks before starting to make sure chart is valid
 	if current_chart == null:
 		Global.push_console("Gameplay", "tried to play without a valid chart! abandoning...", 2)
-		Global.get_root().change_to_results(score_instance)
+		Global.get_root().change_to_results(score)
 		return
 	
 	if hit_object_container.get_child_count() <= 0:
 		Global.push_console("Gameplay", "tried to play a chart without notes! abandoning...", 2)
-		Global.get_root().change_to_results(score_instance)
+		Global.get_root().change_to_results(score)
 		return
 
 	# delay the chart if first note is less than 2 seconds into the song
@@ -279,7 +279,8 @@ func restart_chart() -> void:
 			hobj.visible = true
 			hobj.active = true
 	
-	score_instance.reset()
+	score.reset()
+	game_overlay.update_visuals(score)
 	
 	await get_tree().process_frame
 	play_chart()
@@ -388,7 +389,7 @@ func finisher_hit_check(input_side: SIDE, is_input_kat: bool) -> bool:
 			# in time
 			if active_finisher_note.last_side_hit != input_side and active_finisher_note.is_kat == is_input_kat:
 				# add score, reset finisher variables
-				score_instance.add_finisher_score(active_finisher_note.timing - clock.current_time)
+				score.add_finisher_score(active_finisher_note.timing - clock.current_time)
 				active_finisher_note = null
 				current_hitsound_state = HITSOUND_STATES.NONE
 				return true
@@ -414,10 +415,10 @@ func apply_timing_point(timing_point: TimingPoint) -> void:
 
 func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) -> void:
 	if target_hit_obj is Note:
-		score_instance.add_score(hit_result, target_hit_obj.timing - clock.current_time)
+		score.add_score(hit_result, target_hit_obj.timing - clock.current_time)
 	else:
-		score_instance.add_score(hit_result)
-	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, clock.current_time)
+		score.add_score(hit_result)
+	game_overlay.on_score_update(score, target_hit_obj, hit_result, clock.current_time)
 
 # plays sound + activates drum indicator visual
 func activate_input_feedback(input_name: String) -> void:
