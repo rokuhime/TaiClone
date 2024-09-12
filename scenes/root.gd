@@ -46,7 +46,7 @@ func _ready():
 	# default to the main menu
 	change_state(GAMESTATE.MAIN_MENU, true)
 
-func _process(delta):
+func _process(_delta):
 	# set corner info text and ensure the position is correct
 	version_info.get_child(0).text = ProjectSettings.get("application/config/version") + "\nFPS: " + str(Engine.get_frames_per_second())
 	

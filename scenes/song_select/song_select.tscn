@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/song_select/song_select.gd" id="1_lm221"]
 [ext_resource type="Script" path="res://entites/songselect/mods/mod_panel.gd" id="2_iclas"]
-[ext_resource type="Texture2D" uid="uid://dvspeqnrmdj5h" path="res://assets/textures/taiclone song select concept 2 43.png" id="2_wtfc7"]
+[ext_resource type="Texture2D" path="res://assets/textures/taiclone song select concept 2 43.png" id="2_wtfc7"]
 [ext_resource type="PackedScene" uid="uid://y4ykdewbv4c0" path="res://entites/songselect/listing_scrollbar/listing_scrollbar.tscn" id="4_nois2"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6lx67"]

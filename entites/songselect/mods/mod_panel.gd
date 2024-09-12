@@ -12,7 +12,7 @@ func _ready() -> void:
 	toggle_visual(false)
 	create_mod_icons()
 
-func _process(delta) -> void:
+func _process(_delta) -> void:
 	# ensure theres no accidental input
 	if modulate.a == 0 and visible:
 		visible = false

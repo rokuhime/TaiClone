@@ -30,7 +30,7 @@ var toast_values := [50,100,150,200,250,500,1000]
 
 # -------- visual updates --------
 
-func update_mascot(animation: Mascot.SPRITETYPES, new_bps: float, update_time := 0.0) -> void:
+func update_mascot(animation: Mascot.SPRITETYPES) -> void:
 	match animation:
 		Mascot.SPRITETYPES.FAIL:
 			mascot.start_animation(mascot.SPRITETYPES.FAIL)
@@ -105,27 +105,27 @@ func update_inacc_indicator(hit_time_difference: float) -> void:
 func on_combo_break() -> void:
 	combo_break_player.play()
 
-func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT, hit_time_difference = null) -> void:
-	if typeof(hit_time_difference) == TYPE_FLOAT:
-		hit_error_bar.add_point(hit_time_difference)
+func on_score_update(score: ScoreData, target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT, current_time = null) -> void:
+	if typeof(current_time) == TYPE_FLOAT:
+		hit_error_bar.add_point(target_hit_obj.timing - current_time)
 	update_judgement(hit_result)
 	update_visuals(score)
 	
 	# mascot handling
 	if hit_result == HitObject.HIT_RESULT.MISS:
 		if mascot.current_state != mascot.SPRITETYPES.FAIL:
-			update_mascot(Mascot.SPRITETYPES.FAIL, Global.get_root().timing_clock.get_bps())
+			update_mascot(Mascot.SPRITETYPES.FAIL)
 		return
 	
-	elif typeof(hit_time_difference) == TYPE_FLOAT and (hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC):
-		update_inacc_indicator(hit_time_difference)
+	elif typeof(current_time) == TYPE_FLOAT and (hit_result == HitObject.HIT_RESULT.INACC or hit_result == HitObject.HIT_RESULT.F_INACC):
+		update_inacc_indicator(target_hit_obj.timing - current_time)
 	
 	if Global.get_root().timing_clock.in_kiai:
 		if mascot.current_state != mascot.SPRITETYPES.KIAI:
-			update_mascot(Mascot.SPRITETYPES.KIAI, Global.get_root().timing_clock.get_bps(), target_hit_obj.timing)
+			update_mascot(Mascot.SPRITETYPES.KIAI)
 	else:
 		if mascot.current_state != mascot.SPRITETYPES.IDLE:
-			update_mascot(Mascot.SPRITETYPES.IDLE, Global.get_root().timing_clock.get_bps(), target_hit_obj.timing)
+			update_mascot(Mascot.SPRITETYPES.IDLE)
 	
 	if toast_values.has(score.current_combo):
 		mascot.toast()

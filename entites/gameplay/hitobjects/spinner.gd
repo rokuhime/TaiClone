@@ -43,7 +43,7 @@ func _process(delta) -> void:
 		# slow down rotation speed
 		inside_rotation_speed = max(inside_rotation_speed - (delta * 0.3), 0.0)
 
-func hit_check(current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
+func hit_check(_current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bool) -> HIT_RESULT:
 	if hit_status == int(is_input_kat) or hit_status == hit_type.ANY:
 		current_hits -= 1
 		hit_count_label.text = str(current_hits)
@@ -54,11 +54,12 @@ func hit_check(current_time: float, _input_side: Gameplay.SIDE, is_input_kat: bo
 			return HIT_RESULT.SPINNER_FINISH
 		else:
 			# alternate requested hit type, and report back that it was hit
+			@warning_ignore("int_as_enum_without_cast")
 			hit_status = int(not is_input_kat)
 			return HIT_RESULT.TICK_HIT
 	return HIT_RESULT.INVALID
 
-func miss_check(hit_time: float) -> bool:
+func miss_check(_hit_time: float) -> bool:
 	return false
 
 func transition_to_playable() -> void:

@@ -129,7 +129,7 @@ func refresh_from_database() -> void:
 	
 	var db_charts := Global.database_manager.get_all_charts()
 	for db_entry in db_charts:
-		var chart = Global.database_manager.db_entry_to_chart(db_entry)
+		var chart = DatabaseManager.db_entry_to_chart(db_entry)
 		
 		if chart:
 			# ensure were not making a duplicate listing before adding

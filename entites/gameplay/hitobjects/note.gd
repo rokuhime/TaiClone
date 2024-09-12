@@ -33,6 +33,7 @@ func hit_check(current_time: float, input_side: Gameplay.SIDE, is_input_kat: boo
 		# new finisher hit
 		elif is_finisher:
 			last_side_hit = input_side as Gameplay.SIDE
+			@warning_ignore("int_as_enum_without_cast")
 			result += 2 # change to finisher hit
 	
 	if result != HIT_RESULT.INVALID:

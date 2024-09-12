@@ -29,7 +29,7 @@ signal play_music(start_time: float)
 
 # -------- system --------
 
-func _process(delta) -> void:
+func _process(_delta) -> void:
 	if Global.display_clocktiming_info and not info.visible:
 		info.visible = true
 	elif not Global.display_clocktiming_info and info.visible:
@@ -99,8 +99,8 @@ func apply_timing_point(timing_point: TimingPoint) -> void:
 	for bs in child_beatsyncs:
 		bs.next_beat_time = beatsync_start
 
-func make_beat_syncronizer(meter := -1) -> BeatSyncronizer:
-	var new_beatsync := BeatSyncronizer.new(self, meter)
+func make_beat_syncronizer(bs_meter := -1) -> BeatSyncronizer:
+	var new_beatsync := BeatSyncronizer.new(self, bs_meter)
 	child_beatsyncs.append(new_beatsync)
 	return new_beatsync
 
@@ -118,4 +118,4 @@ func reset() -> void:
 
 func get_bps() -> float:
 	var bps = 60.0 * meter / bpm
-	return bps if bpm != 0 else 0
+	return bps if bpm != 0.0 else 0.0

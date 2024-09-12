@@ -1,5 +1,8 @@
 class_name ChartLoader
 
+# TODO: change loading functions to be one big easy one with options maybe?
+# bools for metadata, timing points, notes
+
 # stupid notes to roku
 # sv types could be named "default", "slide", "scale"
 # respectively taiko, mania, piu
@@ -279,14 +282,11 @@ static func get_tc_metadata(file_path: String) -> Chart:
 	
 	var line := ""
 	# 0 = metadata, 1 = hit objects
-	var section := 0
-	
-	var audio : AudioStream
-	var background
+	var _section := 0
+
 	var chart_info := {}
 	
-	var timing_points := []
-	var hit_objects := []
+	var _timing_points := []
 	
 	while file.get_position() < file.get_length():
 		line = file.get_line().strip_edges()
@@ -367,7 +367,7 @@ static func get_tc_gamedata(file_path: String) -> Chart:
 			section += 1
 			continue
 		
-		# if were only grabbing metadata, ignore everything else
+		# if were only grabbing hit objects, ignore everything else
 		if section != 1:
 			continue
 		
@@ -380,9 +380,6 @@ static func get_tc_gamedata(file_path: String) -> Chart:
 		for line_data_segment in line_data:
 			line_data[i] = line_data[i].strip_edges()
 			i += 1
-		
-		var data_name := ""
-		var data_value := ""
 		
 		if section: 
 			if int(line_data[2]) == NOTETYPE.TIMING_POINT:
@@ -581,12 +578,11 @@ static func osu_get_barlines(timing_points: Array, hit_objects: Array, slider_mu
 
 # get last hit object thats hittable, not passing end_time
 static func get_last_hit_object_array(hit_objects: Array, end_time := 0.0):
-	var first_hit_object: Array
 	for i in range(hit_objects.size() - 1, -1, -1):
 		var hit_object: Array = hit_objects[i]
 		if end_time > 0:
 			if end_time < hit_object[0]: # timing
 				continue
 		if [NOTETYPE.DON, NOTETYPE.KAT, NOTETYPE.ROLL, NOTETYPE.SPINNER].has(hit_object[2]): # if hittable
-			return hit_object 
+			return hit_object
 	return null

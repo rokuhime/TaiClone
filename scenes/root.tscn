@@ -52,6 +52,7 @@ layout_mode = 1
 metadata/_edit_lock_ = true
 
 [node name="SettingsPanel" parent="." instance=ExtResource("5_jiurb")]
+visible = false
 z_index = 4
 layout_mode = 1
 

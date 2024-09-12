@@ -11,7 +11,7 @@ var is_mouse_inside := false
 
 @export var fade_out_delay := 1.5
 const FADE_IN_TIME := 0.2
-const FADE_OUT_TIME := 1
+const FADE_OUT_TIME := 1.0
 
 signal on_active_changed(active_state: bool)
 
@@ -23,7 +23,7 @@ func _ready():
 	timeout_timer.wait_time = fade_out_delay
 	timeout_timer.timeout.connect(change_active.bind(false))
 
-func _process(delta):
+func _process(_delta):
 	# ensure control's visual is correct so no weird mouse inputs happen
 	if modulate.a == 0 and visible:
 		visible = false

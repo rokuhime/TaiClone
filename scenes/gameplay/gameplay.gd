@@ -61,6 +61,8 @@ func _ready() -> void:
 	music.stop()
 	
 	clock = Global.get_root().timing_clock
+	for connection in clock.play_music.get_connections():
+		clock.play_music.disconnect(connection["callable"])
 	clock.play_music.connect(music.play)
 
 func _process(_delta) -> void:
@@ -111,7 +113,7 @@ func _process(_delta) -> void:
 				
 				# if passing a timing point, apply it
 				if hit_object is TimingPoint:
-					apply_timing_point(hit_object, clock.current_time)
+					apply_timing_point(hit_object)
 					return
 				# assume barline
 				if enabled_mods.has(ModPanel.MOD_TYPES.BARLINE_AUDIO):
@@ -257,7 +259,7 @@ func play_chart() -> void:
 	for i in range(hit_object_container.get_child_count() - 1, -1, -1):
 		var hit_object = hit_object_container.get_child(i)
 		if hit_object is TimingPoint:
-			apply_timing_point(hit_object, clock.start_time)
+			apply_timing_point(hit_object)
 			break
 	
 	playing = true
@@ -403,12 +405,10 @@ func auto_hit_check(target_hobj: HitObject) -> bool:
 			return true
 	return false
 
-func apply_timing_point(timing_point: TimingPoint, time: float) -> void:
+func apply_timing_point(timing_point: TimingPoint) -> void:
 	clock.apply_timing_point(timing_point)
 	
-	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if timing_point.is_finisher else Mascot.SPRITETYPES.IDLE, 
-								60.0 / timing_point.bpm, 
-								timing_point.timing - time)
+	game_overlay.update_mascot(Mascot.SPRITETYPES.KIAI if timing_point.is_finisher else Mascot.SPRITETYPES.IDLE)
 
 # -------- feedback --------
 
@@ -417,7 +417,7 @@ func apply_score(target_hit_obj: HitObject, hit_result: HitObject.HIT_RESULT) ->
 		score_instance.add_score(hit_result, target_hit_obj.timing - clock.current_time)
 	else:
 		score_instance.add_score(hit_result)
-	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, target_hit_obj.timing - clock.current_time)
+	game_overlay.on_score_update(score_instance, target_hit_obj, hit_result, clock.current_time)
 
 # plays sound + activates drum indicator visual
 func activate_input_feedback(input_name: String) -> void:

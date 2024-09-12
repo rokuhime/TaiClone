@@ -93,12 +93,12 @@ func get_all_charts() -> Array:
 func update_chart(chart: Chart) -> void:
 	var existing_entry := get_db_entry(chart)
 	if not existing_entry.is_empty():
-		db.update_rows("charts", "id = %s" % get_db_entry(chart)["id"], chart_to_db_entry(chart))
+		db.update_rows("charts", "id = %s" % get_db_entry(chart)["id"], DatabaseManager.chart_to_db_entry(chart))
 		Global.push_console("DatabaseManager", "Updated entry for %s - %s [%s]" % [
 						chart.chart_info["song_title"], chart.chart_info["song_artist"], chart.chart_info["chart_title"]],
 						-2)
 		return
-	add_db_entry("charts", chart_to_db_entry(chart))
+	add_db_entry("charts", DatabaseManager.chart_to_db_entry(chart))
 
 func exists_in_db(chart: Chart) -> bool:
 	db.query_with_bindings("select * from charts where hash = ?", [chart.hash])
@@ -183,8 +183,6 @@ static func chart_to_db_entry(chart: Chart) -> Dictionary:
 # generates a chart variable from a database row
 static func db_entry_to_chart(db_entry: Dictionary) -> Chart:
 	var file_path: String
-	var audio: AudioStream
-	var background: ImageTexture
 	var hash: PackedByteArray
 	var chart_info := {}
 	

@@ -33,7 +33,7 @@ func _ready() -> void:
 # -------- animation --------
 
 # restart the current animation cycle and update sprite to match the given state
-func start_animation(state: SPRITETYPES, delay := 0) -> void:
+func start_animation(state: SPRITETYPES) -> void:
 	# update and reset sprite
 	current_state = state
 	current_frame = 0

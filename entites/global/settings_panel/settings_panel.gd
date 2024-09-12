@@ -6,7 +6,7 @@ extends Panel
 @onready var keybind_list := $ScrollContainer/VBoxContainer/KeybindList
 @onready var skin_vbox := $ScrollContainer/VBoxContainer/Skin
 
-var is_visible := false
+var enabled := false
 var movement_tween: Tween
 var size_tween: Tween
 
@@ -63,7 +63,7 @@ func _unhandled_input(event) -> void:
 
 # toggle visibility of the panel with a lil sliding animation
 func toggle_visible() -> void:
-	is_visible = not is_visible
+	enabled = not enabled
 	
 	if movement_tween:
 		movement_tween.kill()
@@ -71,7 +71,7 @@ func toggle_visible() -> void:
 	movement_tween = Global.create_smooth_tween(
 		self, 
 		"position:x", 
-		get_viewport_rect().size.x - size.x if is_visible else get_viewport_rect().size.x, 
+		get_viewport_rect().size.x - size.x if enabled else get_viewport_rect().size.x, 
 		0.5 
 	)
 
@@ -91,14 +91,14 @@ func scale_for_navbars(navbar_enabled: bool, navbars: Control) -> void:
 	if movement_tween:
 		movement_tween.kill()
 	
-	var position := Vector2(
-		get_viewport_rect().size.x - size.x if is_visible else get_viewport_rect().size.x, 
+	var new_position := Vector2(
+		get_viewport_rect().size.x - size.x if enabled else get_viewport_rect().size.x, 
 		navbars.get_node("Top").size.y if navbar_enabled else 0
 	)
 	movement_tween = Global.create_smooth_tween(
 		self, 
 		"position", 
-		position, 
+		new_position, 
 		0.5 
 	)
 

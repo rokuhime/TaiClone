@@ -18,25 +18,14 @@ var state: STATE
 ## 3 (FINISHED): This [HitObject] has been fully hit or missed. It will be disposed of once all animations finish.
 enum STATE {READY = 1, ACTIVE, FINISHED}
 
-func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: bool) -> HIT_RESULT:
+func hit_check(_current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: bool) -> HIT_RESULT:
 	return HIT_RESULT.INVALID
 
-func miss_check(hit_time: float) -> bool:
+func miss_check(_hit_time: float) -> bool:
 	if active:
 		active = false
 		return true
 	return false
 
-# TC3 CODE
-## Sets this [HitObject] to the FINISHED [member State].
-## type ([int]): The optional type of [member Score] to score. If -1, no score will be added.
-## marker ([bool]): Whether or not a marker on the hit error bar should be added.
-func finish(type := -1, marker := true) -> void:
-	if state != int(STATE.FINISHED):
-		state = int(STATE.FINISHED)
-		queue_free()
-		if type + 1:
-			emit_signal("score_added", type, marker)
-
-func apply_skin(skin: SkinManager) -> void:
+func apply_skin(_skin: SkinManager) -> void:
 	pass

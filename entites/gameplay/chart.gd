@@ -37,15 +37,14 @@ func load_hit_objects() -> Chart:
 	return self
 
 func get_timing_points() -> Array:
-	var timing_points := []
+	var found_timing_points := []
 	for hobj in hit_objects:
 		if hobj is TimingPoint:
-			timing_points.append(hobj)
-	return timing_points
+			found_timing_points.append(hobj)
+	return found_timing_points
 
 # get first hit object thats hittable
 func get_first_hitobject() -> HitObject:
-	var first_hit_object: HitObject
 	for i in range(hit_objects.size() - 1, -1, -1):
 		var hit_object := hit_objects[i] as HitObject
 		if hit_object.is_in_group("Hittable"):
@@ -54,7 +53,6 @@ func get_first_hitobject() -> HitObject:
 
 # get last hit object thats hittable, not passing end_time
 func get_last_hitobject(end_time := 0.0) -> HitObject:
-	var first_hit_object: HitObject
 	for hit_object in hit_objects:
 		if end_time > 0:
 			if end_time < hit_object.timing:

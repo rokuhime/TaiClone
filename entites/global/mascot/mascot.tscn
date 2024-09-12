@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cx25nj2j45ujs"]
 
-[ext_resource type="Texture2D" uid="uid://dh836ppj76rb6" path="res://assets/textures/dev_art/brehd.png" id="1_p4lvr"]
+[ext_resource type="Texture2D" path="res://assets/textures/dev_art/brehd.png" id="1_p4lvr"]
 [ext_resource type="Script" path="res://entites/global/mascot/mascot.gd" id="2_wo78v"]
 
 [node name="Mascot" type="TextureRect"]

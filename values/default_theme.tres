@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=4 format=3 uid="uid://21k2l6wak2d2"]
 
-[ext_resource type="FontFile" uid="uid://trnptxw2gl40" path="res://assets/fonts/noto_sans_jp-regular.otf" id="1_wy7e6"]
+[ext_resource type="FontFile" path="res://assets/fonts/noto_sans_jp-regular.otf" id="1_wy7e6"]
 
 [sub_resource type="FontVariation" id="FontVariation_7582k"]
 base_font = ExtResource("1_wy7e6")

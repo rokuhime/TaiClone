@@ -168,7 +168,7 @@ func get_root() -> Root:
 	return root
 
 # shortcut to make smooth tweens consistent
-static func create_smooth_tween(target: Node, property: NodePath, final_val, duration: float, from = null) -> Tween:
+func create_smooth_tween(target: Node, property: NodePath, final_val, duration: float, from = null) -> Tween:
 	var new_tween = target.create_tween().set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	if from:
 		new_tween.tween_property(target, property, final_val, duration).from(from)
@@ -176,13 +176,13 @@ static func create_smooth_tween(target: Node, property: NodePath, final_val, dur
 		new_tween.tween_property(target, property, final_val, duration)
 	return new_tween
 
-static func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: int) -> float:
+func get_accuracy(accurate_hits: int, inaccurate_hits: int, miss_count: int) -> float:
 	var acc_hit_count : float = (accurate_hits + float(inaccurate_hits / 2.0))
 	if acc_hit_count == 0:
 		return 0.0
 	return (acc_hit_count / float(accurate_hits + inaccurate_hits + miss_count)) * 100.0
 
-static func get_hash(file_path: String) -> PackedByteArray:
+func get_hash(file_path: String) -> PackedByteArray:
 	# Start a SHA-256 context.
 	var ctx = HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)

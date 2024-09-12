@@ -1,11 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://bn6ths8vm7at4"]
 
-[ext_resource type="Texture2D" uid="uid://b46qmmhrha5hh" path="res://assets/default_skin/taikohitcircle.png" id="1_wci5x"]
-[ext_resource type="Texture2D" uid="uid://b205j5inokbyq" path="res://assets/default_skin/taikohitcircleoverlay.png" id="2_bjkoi"]
-[ext_resource type="Texture2D" uid="uid://cjl7p3oldqsrn" path="res://assets/default_skin/taiko-roll-middle@2x.png" id="2_jycwo"]
+[ext_resource type="Texture2D" path="res://assets/default_skin/taikohitcircle.png" id="1_wci5x"]
+[ext_resource type="Texture2D" path="res://assets/default_skin/taikohitcircleoverlay.png" id="2_bjkoi"]
+[ext_resource type="Texture2D" path="res://assets/default_skin/taiko-roll-middle@2x.png" id="2_jycwo"]
 [ext_resource type="Script" path="res://entites/gameplay/hitobjects/roll.gd" id="2_k0sra"]
-[ext_resource type="Texture2D" uid="uid://cfoeh6uhq2tgo" path="res://assets/default_skin/taiko-roll-end@2x.png" id="3_fikdl"]
-[ext_resource type="Script" path="res://entites/global/skinnable_rect.gd" id="4_g1ghv"]
+[ext_resource type="Texture2D" path="res://assets/default_skin/taiko-roll-end@2x.png" id="3_fikdl"]
 
 [node name="Roll" type="TextureRect" groups=["Hittable"]]
 visibility_layer = 8
@@ -36,7 +35,6 @@ offset_right = 170.0
 grow_vertical = 2
 texture = ExtResource("2_jycwo")
 expand_mode = 1
-script = ExtResource("4_g1ghv")
 texture_name = "roll_middle"
 
 [node name="End" type="TextureRect" parent="Middle"]
@@ -50,7 +48,6 @@ grow_horizontal = 0
 grow_vertical = 2
 texture = ExtResource("3_fikdl")
 expand_mode = 1
-script = ExtResource("4_g1ghv")
 texture_name = "roll_end"
 
 [node name="Ticks" type="Control" parent="."]
@@ -80,5 +77,4 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_bjkoi")
 expand_mode = 1
-script = ExtResource("4_g1ghv")
 texture_name = "note_overlay"

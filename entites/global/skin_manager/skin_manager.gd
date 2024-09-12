@@ -123,6 +123,8 @@ const valid_osu_audio := {
 	"combobreak": "combo_break",
 }
 
+# -------- system --------
+
 func _init(new_file_path = null):
 	if new_file_path:
 		if not DirAccess.dir_exists_absolute(new_file_path):
@@ -144,23 +146,10 @@ func _init(new_file_path = null):
 		for key in tc_mascot_sprite_names:
 			resources["texture"][key] = pippidon_textures[key]
 
-# ensures null skin elements dont cause issues
-# resource_location : resourcetype/resourcename (eg audio/don)
-func resource_exists(resource_location: String):
-	# assume no skins been loaded if theres no file path
-	if not file_path:
-		return false
-	
-	var resource_info = resource_location.split("/")
-	
-	if resource_info.size() == 2:
-		if resources[resource_info[0]].keys().has(resource_info[1]):
-			if resources[resource_info[0]][resource_info[1]]:
-				return true
-	return false
+# -------- getting resources --------
 
 # checks skin.ini for name/artist/version
-static func get_info(directory: String) -> Array:
+func get_info(directory: String) -> Array:
 	var file_names := DirAccess.get_files_at(directory)
 	# default the skin name to the skin folder's name
 	var skin_info := [directory.trim_prefix(directory.get_base_dir() + "/"), "Unknown Author", "v0.0"]
@@ -194,7 +183,7 @@ static func get_info(directory: String) -> Array:
 	return skin_info
 
 # TODO: animated textures
-static func get_all_textures(directory: String) -> Dictionary:
+func get_all_textures(directory: String) -> Dictionary:
 	var file_names := DirAccess.get_files_at(directory)
 	var resource_filenames := {}
 	
@@ -231,8 +220,7 @@ static func get_all_textures(directory: String) -> Dictionary:
 	
 	return texture_resources
 
-static func get_pippidon_textures(directory: String) -> Dictionary:
-	var osu_mascot_sprite_names = ["pippidonidle", "pippidonkiai", "pippidonfail", "pippidonclear"]
+func get_pippidon_textures(directory: String) -> Dictionary:
 	var mascot_textures = {
 		"mascot_idle": [],
 		"mascot_kiai": [],
@@ -264,7 +252,7 @@ static func get_pippidon_textures(directory: String) -> Dictionary:
 	
 	return mascot_textures
 
-static func get_all_audio(directory: String) -> Dictionary:
+func get_all_audio(directory: String) -> Dictionary:
 	var file_names := DirAccess.get_files_at(directory)
 	var resource_filenames := {}
 	
@@ -282,3 +270,20 @@ static func get_all_audio(directory: String) -> Dictionary:
 		audio_resources[resource] = new_audio
 	
 	return audio_resources
+
+# -------- etc --------
+
+# ensures null skin elements dont cause issues
+# resource_location : resourcetype/resourcename (eg audio/don)
+func resource_exists(resource_location: String):
+	# assume no skins been loaded if theres no file path
+	if not file_path:
+		return false
+	
+	var resource_info = resource_location.split("/")
+	
+	if resource_info.size() == 2:
+		if resources[resource_info[0]].keys().has(resource_info[1]):
+			if resources[resource_info[0]][resource_info[1]]:
+				return true
+	return false

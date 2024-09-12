@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://cd5gwotq82dtk"]
 
 [ext_resource type="Script" path="res://entites/global/volume_control/volume_control.gd" id="1_db2nh"]
-[ext_resource type="AudioStream" uid="uid://bklysspgs8y11" path="res://assets/sfx/volchange.wav" id="2_v5r4f"]
+[ext_resource type="AudioStream" uid="uid://btpgon3lielfh" path="res://assets/sfx/volchange.wav" id="2_v5r4f"]
 
 [sub_resource type="Gradient" id="Gradient_nhkpq"]
 offsets = PackedFloat32Array(0)

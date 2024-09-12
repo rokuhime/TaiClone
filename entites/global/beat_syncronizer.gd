@@ -14,7 +14,7 @@ func _init(new_timing_clock: TimingClock, new_meter: int) -> void:
 	clock = new_timing_clock
 	meter = new_meter
 
-func _process(delta):
+func _process(_delta):
 	if clock.current_time >= next_beat_time:
 		beat.emit()
 		next_beat_time += clock.get_bps() / 4.0

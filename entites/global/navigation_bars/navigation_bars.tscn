@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://5uta1xlclcoh" path="res://values/navigation_theme.tres" id="1_8m4up"]
 [ext_resource type="Script" path="res://entites/global/navigation_bars/navigation_bars.gd" id="2_agq4q"]
-[ext_resource type="Texture2D" uid="uid://dh836ppj76rb6" path="res://assets/textures/dev_art/brehd.png" id="3_mn4hm"]
+[ext_resource type="Texture2D" path="res://assets/textures/dev_art/brehd.png" id="3_mn4hm"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_w4s3d"]
 font_size = 32

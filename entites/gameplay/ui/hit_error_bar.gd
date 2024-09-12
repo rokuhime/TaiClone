@@ -24,7 +24,7 @@ func update_bar_size():
 	var inaccurate_size = Vector2(Global.INACC_TIMING * TIMING_MULTIPLIER, 25)
 	var accurate_size = Vector2(Global.ACC_TIMING * TIMING_MULTIPLIER, 25)
 	size = inaccurate_size
-	accurate_rect.size = accurate_size
+	accurate_rect.set_deferred("size", accurate_size)
 	
 	# this will force it to be at the bottom
 	position.y = Global.get_root().size.y - size.y
@@ -41,20 +41,19 @@ func add_point(hit_time: float):
 	# remap the position to be the size of the hit error bar
 	var point_posx = remap(clamped_hittime, -Global.INACC_TIMING, Global.INACC_TIMING, 
 							0, point_container.size.x)
-	new_point.position = Vector2(point_posx, -point_height_boost / 2)
+	new_point.position = Vector2(point_posx, -point_height_boost / 2.0)
 	
 	# delete previous point if we've looped back
 	if point_container.get_child_count() >= max_points:
-		point_container.get_child(current_point_index).queue_free()
-	
-	# kill existing tween if needed
-	if point_tweens.size() - 1 >= current_point_index:
 		if point_tweens[current_point_index]:
 			point_tweens[current_point_index].kill()
+			await get_tree().process_frame
+		point_container.get_child(current_point_index).queue_free()
 	
 	# modulate alpha of the point
-	point_tweens[current_point_index] = create_tween()
+	point_tweens[current_point_index] = new_point.create_tween()
 	point_tweens[current_point_index].tween_property(new_point, "modulate:a", 0.0, point_lifespan)
+	
 	
 	current_point_index = (current_point_index + 1) % max_points
 	adjust_average_marker()

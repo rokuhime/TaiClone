@@ -50,7 +50,6 @@ func apply_skin(skin: SkinManager) -> void:
 	update_visual()
 
 func create_ticks() -> void:
-	var tick_velocity = length * speed * Global.resolution_multiplier
 	var tick_timing := 0.0
 	
 	await ready
@@ -86,5 +85,5 @@ func hit_check(current_time: float, _input_side: Gameplay.SIDE, _is_input_kat: b
 		return HIT_RESULT.TICK_HIT
 	return HIT_RESULT.INVALID
 
-func miss_check(hit_time: float) -> bool:
+func miss_check(_hit_time: float) -> bool:
 	return false
