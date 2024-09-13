@@ -25,7 +25,6 @@ var first_hobj_timing := 0.0
 var last_hobj_timing := 0.0
 
 var playing := false
-var restart_count := 0
 @onready var restart_timer: Timer = $RestartTimer
 @onready var restart_overlay: ColorRect = $RestartOverlay
 var restart_tween: Tween
@@ -281,7 +280,7 @@ func play_chart() -> void:
 	playing = true
 
 func restart_chart() -> void:
-	restart_count += 1
+	score.retry_count += 1
 	
 	playing = false
 	pause_overlay.visible = false

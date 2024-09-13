@@ -13,6 +13,8 @@ var late_hits := 0
 var top_combo := 0
 var current_combo := 0
 
+var retry_count := 0
+
 signal combo_break
 
 # -------- score management --------

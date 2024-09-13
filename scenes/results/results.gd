@@ -31,7 +31,7 @@ func _ready() -> void:
 	Global.get_root().navigation_bars.set_navbar_text([
 					chart.chart_info["song_title"] + " - " + chart.chart_info["song_artist"],
 					chart.chart_info["chart_title"] + " - " + chart.chart_info["chart_artist"],
-					"Played by %s" % Global.player_name,
+					"Played by %s in %s %s" % [Global.player_name, score.retry_count + 1, "attempts" if score.retry_count > 1 else "attempt"],
 					Time.get_datetime_string_from_system(false, true)
 					])
 	

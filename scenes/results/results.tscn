@@ -2,10 +2,10 @@
 
 [ext_resource type="Theme" uid="uid://21k2l6wak2d2" path="res://values/default_theme.tres" id="1_3isl6"]
 [ext_resource type="Script" path="res://scenes/results/results.gd" id="1_umc1a"]
-[ext_resource type="Texture2D" path="res://assets/textures/dev_art/brehd.png" id="3_fykk1"]
-[ext_resource type="Texture2D" path="res://assets/default_skin/taiko-hit300.png" id="4_fnmyj"]
-[ext_resource type="Texture2D" path="res://assets/default_skin/taiko-hit100.png" id="5_gondt"]
-[ext_resource type="Texture2D" path="res://assets/default_skin/taiko-hit0@2x.png" id="6_jeb85"]
+[ext_resource type="Texture2D" uid="uid://348juiibqc5j" path="res://assets/textures/dev_art/brehd.png" id="3_fykk1"]
+[ext_resource type="Texture2D" uid="uid://bm5c0phd0mknj" path="res://assets/default_skin/taiko-hit300.png" id="4_fnmyj"]
+[ext_resource type="Texture2D" uid="uid://do4kwdvpid4yh" path="res://assets/default_skin/taiko-hit100.png" id="5_gondt"]
+[ext_resource type="Texture2D" uid="uid://b6sb74eo0shyv" path="res://assets/default_skin/taiko-hit0@2x.png" id="6_jeb85"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_brp07"]
 font_size = 24
