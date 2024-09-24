@@ -1,7 +1,7 @@
 class_name GameOverlay
 extends Control
 
-@onready var raw_info : Label = $RawInfo
+@onready var judgement_table: JudgementTable = $JudgementTable
 
 @onready var score_label: Label = $Score
 @onready var accuracy_label: Label = $Accuracy
@@ -75,7 +75,7 @@ func update_visuals(score: ScoreData) -> void:
 	
 	accuracy_label.text = "%2.2f%%" % accuracy
 	
-	raw_info.text = "accurate: " + str(score.accurate_hits) + "\ninaccurate: " + str(score.inaccurate_hits) + "\nmiss: " + str(score.miss_count) + "\ntop combo: " + str(score.top_combo)
+	judgement_table.update_visual(score)
 
 # updates hit point judgement visual (acc, inacc, miss)
 func update_judgement(hit_result: HitObject.HIT_RESULT) -> void:
@@ -153,3 +153,5 @@ func apply_skin(skin: SkinManager) -> void:
 	
 	if skin.resource_exists("audio/combo_break"):
 		combo_break_player.stream = skin.resources["audio"]["combo_break"]
+	
+	judgement_table.apply_skin(skin)

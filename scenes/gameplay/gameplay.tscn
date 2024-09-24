@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://duw1w1bhgtct6"]
+[gd_scene load_steps=27 format=3 uid="uid://duw1w1bhgtct6"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/gameplay.gd" id="1_3gk3b"]
 [ext_resource type="Texture2D" uid="uid://coorcmdegeo1u" path="res://assets/default_skin/taiko-bar-right@2x.png" id="2_e5vbt"]
@@ -18,7 +18,9 @@
 [ext_resource type="PackedScene" uid="uid://cx25nj2j45ujs" path="res://entites/global/mascot/mascot.tscn" id="17_w7oq0"]
 [ext_resource type="Texture2D" uid="uid://b6sb74eo0shyv" path="res://assets/default_skin/taiko-hit0@2x.png" id="18_t1emc"]
 [ext_resource type="AudioStream" uid="uid://btpgon3lielfh" path="res://assets/sfx/volchange.wav" id="19_5pjr3"]
+[ext_resource type="PackedScene" uid="uid://drf2ht082k4eh" path="res://entites/gameplay/ui/judgement_table.tscn" id="19_doxx4"]
 [ext_resource type="PackedScene" uid="uid://cbwxsw5rlkahd" path="res://entites/gameplay/ui/offset_panel.tscn" id="20_4mhgx"]
+[ext_resource type="Script" path="res://entites/gameplay/ui/judgement_table.gd" id="20_c714e"]
 [ext_resource type="Theme" uid="uid://5uta1xlclcoh" path="res://values/navigation_theme.tres" id="21_4wxp6"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_u26yd"]
@@ -261,16 +263,6 @@ texture_progress = ExtResource("15_o6ggk")
 stream = ExtResource("13_kii7l")
 bus = &"SFX"
 
-[node name="RawInfo" type="Label" parent="GameOverlay"]
-layout_mode = 1
-offset_left = 969.0
-offset_top = 2.0
-offset_right = 1193.0
-offset_bottom = 99.0
-text = "accurate: 0
-inaccurate: 0
-miss: 0"
-
 [node name="Judgements" type="Control" parent="GameOverlay"]
 layout_mode = 1
 anchors_preset = 4
@@ -403,6 +395,18 @@ offset_bottom = -121.0
 grow_horizontal = 1
 metadata/_edit_lock_ = true
 
+[node name="JudgementTable" parent="GameOverlay" instance=ExtResource("19_doxx4")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -415.0
+offset_top = 8.0
+offset_right = -272.0
+offset_bottom = 116.0
+grow_horizontal = 0
+script = ExtResource("20_c714e")
+
 [node name="OffsetPanel" parent="." instance=ExtResource("20_4mhgx")]
 visible = false
 layout_mode = 1
@@ -422,6 +426,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("21_4wxp6")
 texture = SubResource("GradientTexture1D_drw2r")
+metadata/_edit_lock_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PauseOverlay"]
 layout_mode = 1
@@ -461,6 +466,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
 
 [node name="RestartTimer" type="Timer" parent="."]
 wait_time = 0.2

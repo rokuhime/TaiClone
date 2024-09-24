@@ -288,7 +288,10 @@ func restart_chart() -> void:
 	active_finisher_note = null
 	
 	for hobj in hit_object_container.get_children():
-		if hobj is Spinner:
+		if hobj is Roll:
+			hobj.create_ticks()
+		
+		elif hobj is Spinner:
 			hobj.reset()
 			continue
 		

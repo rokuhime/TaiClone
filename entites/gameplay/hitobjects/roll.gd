@@ -50,9 +50,13 @@ func apply_skin(skin: SkinManager) -> void:
 	update_visual()
 
 func create_ticks() -> void:
-	var tick_timing := 0.0
+	if not is_node_ready():
+		await ready
 	
-	await ready
+	for tick in tick_container.get_children():
+		tick.queue_free()
+	
+	var tick_timing := 0.0
 	while tick_timing <= length:
 		var new_tick: Control = tick_scene.instantiate()
 		tick_container.add_child(new_tick)

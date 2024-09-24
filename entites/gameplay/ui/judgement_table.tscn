@@ -1,0 +1,156 @@
+[gd_scene load_steps=5 format=3 uid="uid://drf2ht082k4eh"]
+
+[ext_resource type="Texture2D" uid="uid://7oelurrhhg1i" path="res://assets/default_skin/taikohitcircle.png" id="1_asxcs"]
+[ext_resource type="Texture2D" uid="uid://du0eog17vtc0p" path="res://assets/textures/triangle.png" id="2_jqo5y"]
+
+[sub_resource type="Gradient" id="Gradient_1cjkv"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_wtekl"]
+gradient = SubResource("Gradient_1cjkv")
+width = 1
+
+[node name="JudgementTable" type="PanelContainer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -71.5
+offset_right = 71.5
+offset_bottom = 108.0
+grow_horizontal = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 2
+
+[node name="Acc" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="TextureRect" parent="GridContainer/Acc"]
+modulate = Color(0.368627, 0.756863, 1, 1)
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("1_asxcs")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="GridContainer/Acc"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
+
+[node name="F_Acc" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="TextureRect" parent="GridContainer/F_Acc"]
+modulate = Color(0.368627, 0.756863, 1, 1)
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = SubResource("GradientTexture1D_wtekl")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="GridContainer/F_Acc"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
+
+[node name="Inacc" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="TextureRect" parent="GridContainer/Inacc"]
+modulate = Color(0.487667, 1, 0.47, 1)
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("1_asxcs")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="GridContainer/Inacc"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
+
+[node name="F_Inacc" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="TextureRect" parent="GridContainer/F_Inacc"]
+modulate = Color(0.487667, 1, 0.47, 1)
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = SubResource("GradientTexture1D_wtekl")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="GridContainer/F_Inacc"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
+
+[node name="Miss" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="TextureRect" parent="GridContainer/Miss"]
+modulate = Color(1, 0.37, 0.37, 1)
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("1_asxcs")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="GridContainer/Miss"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
+
+[node name="LateEarly" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Late" type="Label" parent="GridContainer/LateEarly"]
+modulate = Color(1, 0.541176, 0.541176, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
+
+[node name="Slash" type="Label" parent="GridContainer/LateEarly"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "/"
+
+[node name="Early" type="Label" parent="GridContainer/LateEarly"]
+modulate = Color(0.541176, 0.654902, 1, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
+
+[node name="TopCombo" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="TextureRect" parent="GridContainer/TopCombo"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("2_jqo5y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="GridContainer/TopCombo"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+horizontal_alignment = 1
