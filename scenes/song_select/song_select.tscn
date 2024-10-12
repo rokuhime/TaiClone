@@ -1,12 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bwqvkai2nr2gi"]
+[gd_scene load_steps=7 format=3 uid="uid://bwqvkai2nr2gi"]
 
 [ext_resource type="Script" path="res://scenes/song_select/song_select.gd" id="1_lm221"]
 [ext_resource type="Script" path="res://entites/songselect/mods/mod_panel.gd" id="2_iclas"]
 [ext_resource type="Texture2D" uid="uid://c4a4slb50sl2q" path="res://assets/textures/taiclone song select concept 2 43.png" id="2_wtfc7"]
+[ext_resource type="Theme" uid="uid://dncqvenqwlml1" path="res://values/menu_theme.tres" id="3_gyilr"]
+[ext_resource type="Script" path="res://scenes/song_select/card_container.gd" id="4_3cww5"]
 [ext_resource type="PackedScene" uid="uid://y4ykdewbv4c0" path="res://entites/songselect/listing_scrollbar/listing_scrollbar.tscn" id="4_nois2"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_6lx67"]
-font_size = 32
 
 [node name="SongSelect" type="Control"]
 layout_mode = 3
@@ -61,42 +60,50 @@ anchor_bottom = 0.5
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="ModPanel" type="Panel" parent="."]
+[node name="ModPanel" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -271.0
-offset_top = -189.0
-offset_right = 271.0
-offset_bottom = 189.0
+anchor_bottom = 1.0
+offset_left = -375.0
+offset_top = -616.0
+offset_right = 375.0
+offset_bottom = -104.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
+theme = ExtResource("3_gyilr")
 script = ExtResource("2_iclas")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ModPanel"]
+[node name="SelectedMods" type="Panel" parent="ModPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="ModDeck" type="Container" parent="ModPanel/SelectedMods"]
+layout_mode = 0
+script = ExtResource("4_3cww5")
+
+[node name="ModGrid" type="Panel" parent="ModPanel"]
+custom_minimum_size = Vector2(0, 448)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="GridContainer" type="GridContainer" parent="ModPanel/ModGrid"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 21.0
-offset_right = -21.0
+offset_left = 16.0
+offset_top = 17.0
+offset_right = -16.0
+offset_bottom = -17.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Title" type="Label" parent="ModPanel/VBoxContainer"]
-layout_mode = 2
-text = "Mods"
-label_settings = SubResource("LabelSettings_6lx67")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ModContainer" type="GridContainer" parent="ModPanel/VBoxContainer"]
-layout_mode = 2
 size_flags_vertical = 3
-columns = 2
+columns = 4
 
 [node name="ListingScrollbar" parent="." instance=ExtResource("4_nois2")]
 layout_mode = 1
