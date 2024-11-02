@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://5onjkyyjdb6g"]
+
+[ext_resource type="Script" path="res://entites/songselect/mods/mod_values/float_slider.gd" id="1_600g5"]
+
+[node name="FloatSlider" type="VBoxContainer"]
+script = ExtResource("1_600g5")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "FloatSlider"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.25
+max_value = 1.75
+step = 0.05
+value = 1.0
+tick_count = 3
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer"]
+layout_mode = 2
+text = "1.0"
+alignment = 1
+virtual_keyboard_type = 3
+
+[connection signal="value_changed" from="HBoxContainer/HSlider" to="." method="value_changed" binds= [true]]
+[connection signal="text_submitted" from="HBoxContainer/LineEdit" to="." method="on_text_changed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bwqvkai2nr2gi"]
+[gd_scene load_steps=10 format=3 uid="uid://bwqvkai2nr2gi"]
 
 [ext_resource type="Script" path="res://scenes/song_select/song_select.gd" id="1_lm221"]
 [ext_resource type="Script" path="res://entites/songselect/mods/mod_panel.gd" id="2_iclas"]
@@ -6,6 +6,15 @@
 [ext_resource type="Theme" uid="uid://dncqvenqwlml1" path="res://values/menu_theme.tres" id="3_gyilr"]
 [ext_resource type="Script" path="res://scenes/song_select/card_container.gd" id="4_3cww5"]
 [ext_resource type="PackedScene" uid="uid://y4ykdewbv4c0" path="res://entites/songselect/listing_scrollbar/listing_scrollbar.tscn" id="4_nois2"]
+[ext_resource type="Script" path="res://entites/songselect/mods/mod_settings.gd" id="6_tq8vw"]
+[ext_resource type="PackedScene" uid="uid://5onjkyyjdb6g" path="res://entites/songselect/mods/mod_values/float_slider.tscn" id="7_heu82"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6kpt2"]
+bg_color = Color(0.273873, 0.273873, 0.273873, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 
 [node name="SongSelect" type="Control"]
 layout_mode = 3
@@ -85,6 +94,49 @@ size_flags_stretch_ratio = 0.75
 layout_mode = 0
 script = ExtResource("4_3cww5")
 
+[node name="ScrollContainer" type="ScrollContainer" parent="ModPanel/SelectedMods"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -432.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ModSettingContainer" type="VBoxContainer" parent="ModPanel/SelectedMods/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Mod" type="PanelContainer" parent="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6kpt2")
+script = ExtResource("6_tq8vw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer/Mod"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="TopInfo" type="HBoxContainer" parent="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer/Mod/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer/Mod/VBoxContainer/TopInfo"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Double Time"
+
+[node name="RemoveButton" type="Button" parent="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer/Mod/VBoxContainer/TopInfo"]
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+text = "X"
+
+[node name="FloatSlider" parent="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer/Mod/VBoxContainer" instance=ExtResource("7_heu82")]
+layout_mode = 2
+
 [node name="ModGrid" type="Panel" parent="ModPanel"]
 custom_minimum_size = Vector2(0, 448)
 layout_mode = 2
@@ -115,3 +167,4 @@ offset_bottom = -213.0
 one_shot = true
 
 [connection signal="gui_input" from="." to="." method="gui_input"]
+[connection signal="pressed" from="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer/Mod/VBoxContainer/TopInfo/RemoveButton" to="ModPanel/SelectedMods/ScrollContainer/ModSettingContainer/Mod" method="on_remove_button_pressed"]
